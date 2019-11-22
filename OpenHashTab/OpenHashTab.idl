@@ -1,0 +1,34 @@
+// OpenHashTab.idl : IDL source for OpenHashTab
+//
+
+// This file will be processed by the MIDL tool to
+// produce the type library (OpenHashTab.tlb) and marshalling code.
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+[
+	object,
+	uuid(50b2e14f-21c8-4a3c-9a25-3d3356178549),
+	pointer_default(unique)
+]
+interface IOpenHashTabShlExt : IUnknown
+{
+};
+[
+	uuid(715dae2b-0063-4d88-8f94-3dc072fc3fb0),
+	version(1.0),
+]
+library OpenHashTabLib
+{
+	importlib("stdole2.tlb");
+	[
+		uuid(23b5bdd4-7669-42b8-9cdc-beebc8a5baa9)
+	]
+	coclass OpenHashTabShlExt
+	{
+		[default] interface IOpenHashTabShlExt;
+	};
+};
+
+import "shobjidl.idl";

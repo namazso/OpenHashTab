@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.572
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpenHashTab", "OpenHashTab\OpenHashTab.vcxproj", "{4473C545-7008-47B6-BDB6-E904B540B77F}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OpenHashTabPS", "OpenHashTabPS\OpenHashTabPS.vcxproj", "{4DFA10F5-003B-49B8-AE4D-1A539F058ABD}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4473C545-7008-47B6-BDB6-E904B540B77F} = {4473C545-7008-47B6-BDB6-E904B540B77F}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4473C545-7008-47B6-BDB6-E904B540B77F}.Debug|x64.ActiveCfg = Debug|x64
+		{4473C545-7008-47B6-BDB6-E904B540B77F}.Debug|x64.Build.0 = Debug|x64
+		{4473C545-7008-47B6-BDB6-E904B540B77F}.Debug|x86.ActiveCfg = Debug|Win32
+		{4473C545-7008-47B6-BDB6-E904B540B77F}.Debug|x86.Build.0 = Debug|Win32
+		{4473C545-7008-47B6-BDB6-E904B540B77F}.Release|x64.ActiveCfg = Release|x64
+		{4473C545-7008-47B6-BDB6-E904B540B77F}.Release|x64.Build.0 = Release|x64
+		{4473C545-7008-47B6-BDB6-E904B540B77F}.Release|x86.ActiveCfg = Release|Win32
+		{4473C545-7008-47B6-BDB6-E904B540B77F}.Release|x86.Build.0 = Release|Win32
+		{4DFA10F5-003B-49B8-AE4D-1A539F058ABD}.Debug|x64.ActiveCfg = Debug|x64
+		{4DFA10F5-003B-49B8-AE4D-1A539F058ABD}.Debug|x86.ActiveCfg = Debug|Win32
+		{4DFA10F5-003B-49B8-AE4D-1A539F058ABD}.Release|x64.ActiveCfg = Release|x64
+		{4DFA10F5-003B-49B8-AE4D-1A539F058ABD}.Release|x86.ActiveCfg = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1965CDF9-CA49-473F-9165-3CBC814FD585}
+	EndGlobalSection
+EndGlobal
