@@ -11,7 +11,7 @@ OpenHashTab is a shell extension for conveniently calculating and checking file 
 * Easy to use checker and single-click export to clipboard or file
 * High performance hash calculation
 * Native Windows looks
-* Multilingual: English, German, Italian, Hungarian, Simplified Chinese, Spanish supported currently
+* Multilingual: English, German, Italian, Hungarian, Simplified Chinese, Spanish, Danish
 
 ## Download
 
@@ -46,7 +46,7 @@ Look into OpenHashTab/OpenHashTab.rc, figuring out what to translate should be t
 
 ### Translation contributors
 
-**xprism** (Simplified Chinese), **Niccolò Zanichelli** (Italian)
+**xprism** (Simplified Chinese), **Niccolò Zanichelli** (Italian), **[@vmcall](https://github.com/vmcall/)** (Danish)
 
 ## License
 
