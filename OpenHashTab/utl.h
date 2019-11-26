@@ -186,11 +186,17 @@ namespace utl
 
   bool AreFilesTheSame(HANDLE a, HANDLE b);
 
-  HANDLE OpenForRead(tstring file, bool async = false);
+  tstring MakePathLongCompatible(const tstring& file);
+
+  tstring CanonicalizePath(const tstring& path);
+
+  HANDLE OpenForRead(const tstring& file, bool async = false);
 
   DWORD SetClipboardText(HWND hwnd, LPCTSTR text);
 
-  void SaveMemoryAsFile(HWND hwnd, const void* p, size_t size, LPCTSTR defpath, LPCTSTR defname);
+  tstring SaveDialog(HWND hwnd, LPCTSTR defpath, LPCTSTR defname);
+
+  DWORD SaveMemoryAsFile(LPCTSTR path, const void* p, size_t size);
 
   tstring UTF8ToTString(const char* p);
   std::string TStringToUTF8(LPCTSTR p);

@@ -38,6 +38,7 @@ class ATL_NO_VTABLE COpenHashTabShlExt :
 {
 protected:
   std::list<tstring> _files;
+  tstring _base;
 
 public:
   COpenHashTabShlExt() = default;

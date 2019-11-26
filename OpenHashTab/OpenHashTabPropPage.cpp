@@ -33,8 +33,9 @@ inline void SetTextFromTable(HWND hwnd, int control, UINT string_id)
   SetDlgItemText(hwnd, control, utl::GetString(string_id).c_str());
 };
 
-OpenHashTabPropPage::OpenHashTabPropPage(std::list<tstring> files)
+OpenHashTabPropPage::OpenHashTabPropPage(std::list<tstring> files, tstring base)
   : _files(std::move(files))
+  , _base(std::move(base))
 {
 }
 
@@ -48,6 +49,11 @@ OpenHashTabPropPage::~OpenHashTabPropPage()
 
 INT_PTR OpenHashTabPropPage::CustomDrawListView(LPARAM lparam, HWND list) const
 {
+  // No hash to compare to  - system colors
+  // Error processing file  - system bg, red text
+  // Hash mismatch          - red bg, white text for all
+  // Hash matches           - green bg, white text for algo matching
+
   const auto lplvcd = (LPNMLVCUSTOMDRAW)lparam;
 
   switch (lplvcd->nmcd.dwDrawStage)
@@ -62,10 +68,6 @@ INT_PTR OpenHashTabPropPage::CustomDrawListView(LPARAM lparam, HWND list) const
   {
     switch (lplvcd->iSubItem)
     {
-    // No hash to compare to  - system colors
-    // Error processing file  - system bg, red text
-    // Hash mismatch          - red bg, white text for all
-    // Hash matches           - green bg, white text for algo matching
     case ColIndex_Hash:
     {
       LVITEM lvitem
@@ -74,7 +76,8 @@ INT_PTR OpenHashTabPropPage::CustomDrawListView(LPARAM lparam, HWND list) const
         (int)lplvcd->nmcd.dwItemSpec
       };
       ListView_GetItem(list, &lvitem);
-      const auto file = (FileHashTask*)lvitem.lParam;
+      const auto file_hash = FileHashTask::FromLparam(lvitem.lParam);
+      const auto file = file_hash.first;
       const auto match = file->GetMatchState();
       if(file->GetError() != ERROR_SUCCESS)
       {
@@ -90,10 +93,7 @@ INT_PTR OpenHashTabPropPage::CustomDrawListView(LPARAM lparam, HWND list) const
         }
         else // Match
         {
-          TCHAR text[256];
-          ListView_GetItemText(list, (int)lplvcd->nmcd.dwItemSpec, ColIndex_Algorithm, text, (int)std::size(text));
-          const auto comp_alg = k_hashers_name[match];
-          if (0 == _tcscmp(comp_alg, text))
+          if((size_t)match == file_hash.second)
           {
             lplvcd->clrText = k_color_match_fg;
             lplvcd->clrTextBk = k_color_match_bg;
@@ -209,7 +209,7 @@ INT_PTR OpenHashTabPropPage::DlgProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM 
         }
         else
         {
-          TCHAR name[4097];
+          TCHAR name[PATHCCH_MAX_CCH];
           ListView_GetItemText(phdr->hwndFrom, lvhtinfo.iItem, ColIndex_Filename, name, (int)std::size(name));
           utl::SetClipboardText(hwnd, (tstring{ hash } +_T(" *") + name).c_str());
         }
@@ -296,14 +296,29 @@ INT_PTR OpenHashTabPropPage::DlgProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM 
         const auto sel = ComboBox_GetCurSel(GetDlgItem(hwnd, IDC_COMBO_EXPORT));
         if (sel >= 0 && sel < k_hashers_count)
         {
-          const auto ext = tstring{ _T(".") } +hasher_get_extension_search_string(k_hashers[sel]);
+          // TODO: relativize sumfile contents to save path.
+          // This may sound trivial at first, but we can't use PathRelativeToPath because it doesn't support long paths.
+          
+          const auto ext = tstring{ _T(".") } + hasher_get_extension_search_string(k_hashers[sel]);
           const auto& file = *_files.begin();
           const auto file_path = file.c_str();
           const auto file_name = (LPCTSTR)PathFindFileName(file_path);
           const auto dir = tstring{ file_path, file_name };
           const auto name = _files.size() == 1 ? (tstring{ file_name } + ext) : ext;
           const auto content = GetSumfileAsString((size_t)sel);
-          utl::SaveMemoryAsFile(hwnd, content.c_str(), content.size(), dir.c_str(), name.c_str());
+          const auto sumfile_path = utl::SaveDialog(hwnd, _base.c_str(), name.c_str());
+          if(!sumfile_path.empty())
+          {
+            const auto err = utl::SaveMemoryAsFile(sumfile_path.c_str(), content.c_str(), content.size());
+            if(err != ERROR_SUCCESS)
+              utl::FormattedMessageBox(
+                hwnd,
+                _T("Error"),
+                MB_ICONERROR | MB_OK,
+                _T("utl::SaveMemoryAsFile returned with error: %08X"),
+                err
+              );
+          }
         }
         break;
       }
@@ -342,15 +357,15 @@ void OpenHashTabPropPage::AddFiles()
 
         const auto sumfile_path = file.c_str();
         const auto sumfile_name = (LPCTSTR)PathFindFileName(sumfile_path);
-        const auto base_path = tstring{ sumfile_path, sumfile_name };
+        const auto sumfile_base_path = tstring{ sumfile_path, sumfile_name };
         for(auto& filesum : fsl)
         {
-          // we disallow no filename in sumfile as main file
+          // we disallow no filename when sumfile is main file
           if (filesum.first.empty())
             continue;
 
-          const auto path = base_path + utl::UTF8ToTString(filesum.first.c_str());
-          AddFile(path, filesum.second, utl::UTF8ToTString(filesum.first.c_str()));
+          const auto path = sumfile_base_path + utl::UTF8ToTString(filesum.first.c_str());
+          AddFile(path, filesum.second);
         }
 
         // fall through - let it calculate the sumfile's sum, in case the user needs that
@@ -365,14 +380,31 @@ void OpenHashTabPropPage::AddFiles()
   }
 }
 
-void OpenHashTabPropPage::AddFile(const tstring& path, const std::vector<std::uint8_t>& expected_hash, tstring display_name)
+/*void OpenHashTabPropPage::AddFile(const tstring& path, const std::vector<std::uint8_t>& expected_hash, tstring display_name)
 {
   if (display_name.empty())
     display_name = tstring{ PathFindFileName(path.c_str()) };
 
   const auto task = new FileHashTask(path, this, std::move(display_name), expected_hash);
   _file_tasks.push_back(task);
-  ++_files_being_processed;
+  ++_files_not_finished;
+}*/
+
+void OpenHashTabPropPage::AddFile(const tstring& path, const std::vector<std::uint8_t>& expected_hash)
+{
+  auto dispname = utl::CanonicalizePath(path);
+
+  // If path looks like _base + filename use filename as displayname, else the canonical name.
+  // Optimally you'd use PathRelativePathTo for this, however that function not only doesn't support long paths, it also
+  // doesn't have a PathCch alternative on Win8+. Additionally, seeing ".." and similar in the Name part could be confusing
+  // to users, so printing full path instead is probably a better idea anyways.
+  if(dispname.size() >= _base.size())
+    if(std::equal(begin(_base), end(_base), begin(dispname)))
+      dispname = dispname.substr(_base.size());
+
+  const auto task = new FileHashTask(path, this, std::move(dispname), expected_hash);
+  _file_tasks.push_back(task);
+  ++_files_not_finished;
 }
 
 std::vector<std::uint8_t> OpenHashTabPropPage::TryGetExpectedSumForFile(const tstring& path)
@@ -449,7 +481,7 @@ void OpenHashTabPropPage::Cancel()
   for (auto file : _file_tasks)
     file->SetCancelled();
 
-  while (_files_being_processed > 0)
+  while (_files_not_finished > 0)
     _mm_pause();
 }
 
@@ -457,7 +489,7 @@ void OpenHashTabPropPage::FileCompletionCallback(FileHashTask* file)
 {
   std::lock_guard<std::mutex> guard(_list_view_lock);
 
-  const auto files_being_processed = --_files_being_processed;
+  const auto files_being_processed = --_files_not_finished;
 
   if (_hwnd_deleted)
     return;
@@ -466,7 +498,7 @@ void OpenHashTabPropPage::FileCompletionCallback(FileHashTask* file)
   if (!list)
     return;
 
-  const auto add_item = [list](LPCTSTR filename, LPCTSTR algorithm, LPCTSTR hash, FileHashTask* file)
+  const auto add_item = [list](LPCTSTR filename, LPCTSTR algorithm, LPCTSTR hash, LPARAM lparam)
   {
     LVITEM lvitem
     {
@@ -477,7 +509,7 @@ void OpenHashTabPropPage::FileCompletionCallback(FileHashTask* file)
       0,
       (LPTSTR)_T("")
     };
-    lvitem.lParam = (LPARAM)file;
+    lvitem.lParam = lparam;
     const auto item = ListView_InsertItem(list, &lvitem);
     ListView_SetItemText(list, item, ColIndex_Filename, (LPTSTR)filename);
     ListView_SetItemText(list, item, ColIndex_Algorithm, (PTSTR)algorithm);
@@ -493,7 +525,7 @@ void OpenHashTabPropPage::FileCompletionCallback(FileHashTask* file)
       auto& result = results[i];
       TCHAR hash_str[MBEDTLS_MD_MAX_SIZE * 2 + 1];
       utl::HashBytesToString(hash_str, result);
-      add_item(file->GetDisplayName().c_str(), k_hashers_name[i], hash_str, file);
+      add_item(file->GetDisplayName().c_str(), k_hashers_name[i], hash_str, file->ToLparam(i));
     }
   }
   else
@@ -508,7 +540,7 @@ void OpenHashTabPropPage::FileCompletionCallback(FileHashTask* file)
       _ARRAYSIZE(buf),
       nullptr
     );
-    add_item(file->GetDisplayName().c_str(), utl::GetString(IDS_ERROR).c_str(), buf, file);
+    add_item(file->GetDisplayName().c_str(), utl::GetString(IDS_ERROR).c_str(), buf, file->ToLparam(0));
   }
 
   if(files_being_processed == 0)

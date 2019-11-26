@@ -22,6 +22,8 @@ class OpenHashTabPropPage
 {
   std::list<tstring> _files;
 
+  tstring _base;
+
   HWND _hwnd{};
 
   std::mutex _list_view_lock;
@@ -30,7 +32,7 @@ class OpenHashTabPropPage
 
   std::atomic<unsigned> _references{};
 
-  std::atomic<unsigned> _files_being_processed{};
+  std::atomic<unsigned> _files_not_finished{};
 
   bool _is_sumfile{ false };
 
@@ -50,13 +52,13 @@ class OpenHashTabPropPage
   std::string GetSumfileAsString(size_t hasher);
 
   void AddFiles();
-  void AddFile(const tstring& path, const std::vector<std::uint8_t>& expected_hash = {}, tstring display_name = {});
+  void AddFile(const tstring& path, const std::vector<std::uint8_t>& expected_hash = {});
   static std::vector<std::uint8_t> TryGetExpectedSumForFile(const tstring& path);
   void ProcessFiles();
   void Cancel();
 
 public:
-  OpenHashTabPropPage(std::list<tstring> files);
+  OpenHashTabPropPage(std::list<tstring> files, tstring base);
 
   UINT Create(HWND hwnd, LPPROPSHEETPAGE ppsp) { return 1; }
 

@@ -11,7 +11,10 @@ OpenHashTab is a shell extension for conveniently calculating and checking file 
 * Easy to use checker and single-click export to clipboard or file
 * High performance hash calculation
 * Native Windows looks
+* Long path support\*
 * Multilingual: English, German, Italian, Hungarian, Simplified Chinese, Spanish, Danish
+
+\* On Windows 8 or later, to the extent Windows supports it.
 
 ## Download
 

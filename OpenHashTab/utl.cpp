@@ -54,16 +54,61 @@ bool utl::AreFilesTheSame(HANDLE a, HANDLE b)
     && fia.nFileIndexHigh == fib.nFileIndexHigh;
 }
 
-HANDLE utl::OpenForRead(tstring file, bool async)
+tstring utl::MakePathLongCompatible(const tstring& file)
 {
-  auto file_cstr = file.c_str();
 #ifdef _UNICODE
-  if (file_cstr[0] != '\\' || file_cstr[1] != '\\' || file_cstr[2] != '?' || file_cstr[3] != '\\')
-    file.insert(0, _T("\\\\?\\"));
-  file_cstr = file.c_str();
+  constexpr static TCHAR prefix[] = _T("\\\\?\\");
+  constexpr static auto prefixlen = std::size(prefix) - 1;
+  const auto file_cstr = file.c_str();
+  if (file.size() < prefixlen || 0 != _tcsncmp(file_cstr, prefix, prefixlen))
+    return tstring{ prefix } + file;
 #endif
+  return file;
+}
+
+tstring utl::CanonicalizePath(const tstring& path)
+{
+  // PathCanonicalize doesn't support long paths, and pathcch.h isn't backward compatible, PathCch*
+  // functions are only available on Windows 8+, so since I really don't feel like reimplementing it
+  // myself long paths are only supported on Windows 8+
+
+  using tPathAllocCanonicalize = decltype(&PathAllocCanonicalize);
+  static const auto pPathAllocCanonicalize = []
+  {
+    if (const auto kernelbase = GetModuleHandle(_T("kernelbase")))
+      if (const auto fn = GetProcAddress(kernelbase, "PathAllocCanonicalize"))
+        return (tPathAllocCanonicalize)fn;
+    return (tPathAllocCanonicalize)nullptr;
+  } ();
+
+  if (pPathAllocCanonicalize)
+  {
+    PWSTR outpath;
+    const auto ret = pPathAllocCanonicalize(
+      (PCWSTR)path.c_str(), // cast needed for non-UNICODE, where this will never run
+      PATHCCH_ALLOW_LONG_PATHS | PATHCCH_FORCE_ENABLE_LONG_NAME_PROCESS,
+      &outpath
+    );
+    if (ret == S_OK)
+    {
+      const auto result = tstring{ (PCTSTR)outpath };
+      LocalFree(outpath);
+      return result;
+    }
+
+    // fall through if PathAllocCanonicalize didn't work out
+  }
+
+  TCHAR canonical[MAX_PATH + 1];
+  if(PathCanonicalize(canonical, path.c_str()))
+    return { canonical };
+  return {};
+}
+
+HANDLE utl::OpenForRead(const tstring& file, bool async)
+{
   return CreateFile(
-    file_cstr,
+    MakePathLongCompatible(file).c_str(),
     GENERIC_READ,
     FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
     nullptr,
@@ -115,16 +160,16 @@ DWORD utl::SetClipboardText(HWND hwnd, LPCTSTR text)
   return error;
 }
 
-void utl::SaveMemoryAsFile(HWND hwnd, const void* p, size_t size, LPCTSTR defpath, LPCTSTR defname)
+tstring utl::SaveDialog(HWND hwnd, LPCTSTR defpath, LPCTSTR defname)
 {
-  TCHAR name[4097];
+  TCHAR name[PATHCCH_MAX_CCH];
   _tcscpy_s(name, defname);
 
-  OPENFILENAME of    = {sizeof(OPENFILENAME), hwnd};
-  of.lpstrFile       = name;
-  of.nMaxFile        = (DWORD)std::size(name);
+  OPENFILENAME of = { sizeof(OPENFILENAME), hwnd };
+  of.lpstrFile = name;
+  of.nMaxFile = (DWORD)std::size(name);
   of.lpstrInitialDir = defpath;
-  of.Flags           = OFN_EXPLORER | OFN_OVERWRITEPROMPT;
+  of.Flags = OFN_EXPLORER | OFN_OVERWRITEPROMPT;
   if (!GetSaveFileName(&of))
   {
     const auto error = CommDlgExtendedError();
@@ -137,11 +182,15 @@ void utl::SaveMemoryAsFile(HWND hwnd, const void* p, size_t size, LPCTSTR defpat
         _T("GetSaveFileName returned with error: %08X"),
         error
       );
-    return;
+    return {};
   }
+  return { name };
+}
 
+DWORD utl::SaveMemoryAsFile(LPCTSTR path, const void* p, size_t size)
+{
   const auto h = CreateFile(
-    name,
+    MakePathLongCompatible(path).c_str(),
     GENERIC_WRITE,
     0,
     nullptr,
@@ -150,29 +199,17 @@ void utl::SaveMemoryAsFile(HWND hwnd, const void* p, size_t size, LPCTSTR defpat
     nullptr
   );
 
+  DWORD error = ERROR_SUCCESS;
+
   if (h == INVALID_HANDLE_VALUE)
   {
-    utl::FormattedMessageBox(
-      hwnd,
-      _T("Error"),
-      MB_ICONERROR | MB_OK,
-      _T("CreateFile returned with error: %08X"),
-      GetLastError()
-    );
+    error = GetLastError();
     return;
   }
 
   DWORD written = 0;
   if (!WriteFile(h, p, (DWORD)size, &written, nullptr))
-  {
-    utl::FormattedMessageBox(
-      hwnd,
-      _T("Error"),
-      MB_ICONERROR | MB_OK,
-      _T("WriteFile returned with error: %08X"),
-      GetLastError()
-    );
-  }
+    error = GetLastError();
 
   CloseHandle(h);
 }

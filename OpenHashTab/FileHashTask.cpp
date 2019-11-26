@@ -112,6 +112,9 @@ FileHashTask::FileHashTask(const tstring& path, OpenHashTabPropPage* prop_page, 
   // Instead of exception, set _error because a failed file is still a finished
   // file task. Finish mechanism will trigger on first block read
 
+  for (auto i = 0u; i < k_hashers_count; ++i)
+    _lparam_idx[i] = i;
+
   for (auto& ctx : _hash_contexts)
     mbedtls_md_init(&ctx);
 

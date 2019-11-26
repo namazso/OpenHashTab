@@ -39,7 +39,7 @@ HRESULT STDMETHODCALLTYPE COpenHashTabShlExt::Initialize(
   };
   InitCommonControlsEx(&iccex);
 
-  // Read the list of folders from the data object.  They're stored in HDROP
+  // Read the list of folders from the data object. They're stored in HDROP
   // form, so just get the HDROP handle and then use the drag 'n' drop APIs
   // on it.
   FORMATETC etc
@@ -73,19 +73,66 @@ HRESULT STDMETHODCALLTYPE COpenHashTabShlExt::Initialize(
 
   for (auto i = 0u; i < file_count; i++)
   {
-    // NT paths can be 32k long, plus one for null terminator
-    TCHAR file_name[0x8001];
+    TCHAR file_name[PATHCCH_MAX_CCH];
 
     // Get the next filename.
     if (0 == DragQueryFile(drop, i, file_name, (UINT)std::size(file_name)))
       continue;
 
-    // Skip directories. TODO: Maybe a setting entry for recursing into them?
-    if (PathIsDirectory(file_name))
-      continue;
-
     // Add the filename to our list of files to act on.
     _files.emplace_back(file_name);
+  }
+
+  if (_files.empty())
+    return E_FAIL;
+
+  const auto& shortest = std::min_element(
+    begin(_files),
+    end(_files),
+    [](const tstring& a, const tstring& b)
+    {
+      return a.size() < b.size();
+    }
+  );
+
+  const auto pb = shortest->c_str();
+
+  // if PathFindFileName it returns pb, making base path "". This is intended.
+  _base = tstring{ pb, (LPCWSTR)PathFindFileName(pb) };
+
+  // for each directory in _files remove it from the list add it's content to the end.
+  // since we push elements to the end end iterator is intentionally not saved.
+  for(auto it = begin(_files); it != end(_files);)
+  {
+    if (PathIsDirectory(it->c_str()))
+    {
+      WIN32_FIND_DATA find_data;
+      const auto find_handle = FindFirstFile(utl::MakePathLongCompatible(*it + _T("\\*")).c_str(), &find_data);
+
+      DWORD error;
+
+      if (find_handle != INVALID_HANDLE_VALUE)
+      {
+        do
+          _files.push_back(*it + _T("\\") + find_data.cFileName);
+        while (FindNextFile(find_handle, &find_data) != 0);
+        error = GetLastError();
+        FindClose(find_handle);
+      }
+      else
+      {
+        error = GetLastError();
+      }
+
+      // TODO: maybe handle error differently?
+      (void)error;
+
+      _files.erase(it++);
+    }
+    else
+    {
+      ++it;
+    }
   }
 
   // Release resources.
@@ -123,7 +170,7 @@ HRESULT STDMETHODCALLTYPE COpenHashTabShlExt::AddPages(
   psp.pszTitle = tab_name.c_str();
   psp.pcRefParent = (UINT*)&_AtlModule.m_nLockCnt;
 
-  const auto page = new OpenHashTabPropPage(_files);
+  const auto page = new OpenHashTabPropPage(_files, _base);
   const auto hpage = utl::MakePropPageWrapper(psp, page);
 
   if (hpage)

@@ -43,6 +43,7 @@
 #include <CommCtrl.h>
 #include <windowsx.h>
 #include <VersionHelpers.h>
+#include <pathcch.h>
 
 // STL
 #include <cstdint>
