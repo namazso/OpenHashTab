@@ -294,7 +294,7 @@ INT_PTR OpenHashTabPropPage::DlgProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM 
       case BN_CLICKED:
       {
         const auto sel = ComboBox_GetCurSel(GetDlgItem(hwnd, IDC_COMBO_EXPORT));
-        if (sel >= 0 && sel < k_hashers_count)
+        if (sel >= 0 && sel < k_hashers_count && !_file_tasks.empty())
         {
           // TODO: relativize sumfile contents to save path.
           // This may sound trivial at first, but we can't use PathRelativeToPath because it doesn't support long paths.
@@ -342,6 +342,44 @@ INT_PTR OpenHashTabPropPage::DlgProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM 
 
 void OpenHashTabPropPage::AddFiles()
 {
+  // for each directory in _files remove it from the list add it's content to the end.
+  // since we push elements to the end end iterator is intentionally not saved.
+  for (auto it = begin(_files); it != end(_files);)
+  {
+    if (PathIsDirectory(it->c_str()))
+    {
+      WIN32_FIND_DATA find_data;
+      const auto find_handle = FindFirstFile(utl::MakePathLongCompatible(*it + _T("\\*")).c_str(), &find_data);
+
+      DWORD error;
+
+      if (find_handle != INVALID_HANDLE_VALUE)
+      {
+        do
+          _files.push_back(*it + _T("\\") + find_data.cFileName);
+        while (FindNextFile(find_handle, &find_data) != 0);
+        error = GetLastError();
+        FindClose(find_handle);
+      }
+      else
+      {
+        error = GetLastError();
+      }
+
+      // TODO: maybe handle error differently?
+      (void)error;
+
+      _files.erase(it++);
+    }
+    else
+    {
+      ++it;
+    }
+  }
+
+  if (_files.empty())
+    return;
+
   if(_files.size() == 1)
   {
     auto& file = *_files.begin();
@@ -482,7 +520,7 @@ void OpenHashTabPropPage::Cancel()
     file->SetCancelled();
 
   while (_files_not_finished > 0)
-    _mm_pause();
+    Sleep(1);
 }
 
 void OpenHashTabPropPage::FileCompletionCallback(FileHashTask* file)

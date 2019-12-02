@@ -83,6 +83,10 @@ HRESULT STDMETHODCALLTYPE COpenHashTabShlExt::Initialize(
     _files.emplace_back(file_name);
   }
 
+  // Release resources.
+  GlobalUnlock(stg.hGlobal);
+  ReleaseStgMedium(&stg);
+
   if (_files.empty())
     return E_FAIL;
 
@@ -99,45 +103,6 @@ HRESULT STDMETHODCALLTYPE COpenHashTabShlExt::Initialize(
 
   // if PathFindFileName it returns pb, making base path "". This is intended.
   _base = tstring{ pb, (LPCWSTR)PathFindFileName(pb) };
-
-  // for each directory in _files remove it from the list add it's content to the end.
-  // since we push elements to the end end iterator is intentionally not saved.
-  for(auto it = begin(_files); it != end(_files);)
-  {
-    if (PathIsDirectory(it->c_str()))
-    {
-      WIN32_FIND_DATA find_data;
-      const auto find_handle = FindFirstFile(utl::MakePathLongCompatible(*it + _T("\\*")).c_str(), &find_data);
-
-      DWORD error;
-
-      if (find_handle != INVALID_HANDLE_VALUE)
-      {
-        do
-          _files.push_back(*it + _T("\\") + find_data.cFileName);
-        while (FindNextFile(find_handle, &find_data) != 0);
-        error = GetLastError();
-        FindClose(find_handle);
-      }
-      else
-      {
-        error = GetLastError();
-      }
-
-      // TODO: maybe handle error differently?
-      (void)error;
-
-      _files.erase(it++);
-    }
-    else
-    {
-      ++it;
-    }
-  }
-
-  // Release resources.
-  GlobalUnlock(stg.hGlobal);
-  ReleaseStgMedium(&stg);
 
   // If we found any files we can work with, return S_OK.  Otherwise,
   // return E_FAIL so we don't get called again for this right-click

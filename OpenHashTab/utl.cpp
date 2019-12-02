@@ -56,7 +56,7 @@ bool utl::AreFilesTheSame(HANDLE a, HANDLE b)
 
 tstring utl::MakePathLongCompatible(const tstring& file)
 {
-#ifdef _UNICODE
+#ifdef UNICODE
   constexpr static TCHAR prefix[] = _T("\\\\?\\");
   constexpr static auto prefixlen = std::size(prefix) - 1;
   const auto file_cstr = file.c_str();
@@ -71,6 +71,8 @@ tstring utl::CanonicalizePath(const tstring& path)
   // PathCanonicalize doesn't support long paths, and pathcch.h isn't backward compatible, PathCch*
   // functions are only available on Windows 8+, so since I really don't feel like reimplementing it
   // myself long paths are only supported on Windows 8+
+
+#ifdef UNICODE
 
   using tPathAllocCanonicalize = decltype(&PathAllocCanonicalize);
   static const auto pPathAllocCanonicalize = []
@@ -98,6 +100,8 @@ tstring utl::CanonicalizePath(const tstring& path)
 
     // fall through if PathAllocCanonicalize didn't work out
   }
+
+#endif
 
   TCHAR canonical[MAX_PATH + 1];
   if(PathCanonicalize(canonical, path.c_str()))
@@ -204,7 +208,7 @@ DWORD utl::SaveMemoryAsFile(LPCTSTR path, const void* p, size_t size)
   if (h == INVALID_HANDLE_VALUE)
   {
     error = GetLastError();
-    return;
+    return error;
   }
 
   DWORD written = 0;
@@ -212,11 +216,12 @@ DWORD utl::SaveMemoryAsFile(LPCTSTR path, const void* p, size_t size)
     error = GetLastError();
 
   CloseHandle(h);
+  return error;
 }
 
 tstring utl::UTF8ToTString(const char* p)
 {
-#ifdef _UNICODE
+#ifdef UNICODE
   const auto wsize = MultiByteToWideChar(
     CP_UTF8,
     0,
@@ -247,7 +252,7 @@ tstring utl::UTF8ToTString(const char* p)
 
 std::string utl::TStringToUTF8(LPCTSTR p)
 {
-#ifdef _UNICODE
+#ifdef UNICODE
   const auto size = WideCharToMultiByte(
     CP_UTF8,
     0,
