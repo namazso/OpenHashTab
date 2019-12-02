@@ -63,10 +63,10 @@ Source: "Release\OpenHashTab.dll";       DestDir: "{sys}"; Flags: ignoreversion 
 [Code]
 function InstallX64: Boolean;
 begin
-  Result := Is64BitInstallMode and (ProcessorArchitecture = paX64);
+  Result := (ProcessorArchitecture = paX64);
 end;
 
 function InstallARM64: Boolean;
 begin
-  Result := Is64BitInstallMode and (ProcessorArchitecture = paARM64);
+  Result := (ProcessorArchitecture = paARM64);
 end;
