@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "OpenHashTab"
-#define MyAppVersion "1.2"
+#define MyAppVersion "1.3"
 #define MyAppPublisher "namazso"
 #define MyAppURL "https://github.com/namazso/OpenHashTab"
 
@@ -54,7 +54,19 @@ Name: "turkish"; MessagesFile: "compiler:Languages\Turkish.isl"
 Name: "ukrainian"; MessagesFile: "compiler:Languages\Ukrainian.isl"
 
 [Files]
-Source: "x64\Release\OpenHashTab.dll"; DestDir: "{sys}"; Flags: ignoreversion restartreplace regserver 64bit
-Source: "Release\OpenHashTab.dll";     DestDir: "{sys}"; Flags: ignoreversion restartreplace regserver 32bit
+Source: "x64\Release\OpenHashTab.dll";   DestDir: "{sys}"; Flags: ignoreversion restartreplace regserver solidbreak 64bit; Check: InstallX64
+Source: "ARM64\Release\OpenHashTab.dll"; DestDir: "{sys}"; Flags: ignoreversion restartreplace regserver solidbreak 64bit; Check: InstallARM64
+Source: "Release\OpenHashTab.dll";       DestDir: "{sys}"; Flags: ignoreversion restartreplace regserver solidbreak 32bit
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
+
+[Code]
+function InstallX64: Boolean;
+begin
+  Result := Is64BitInstallMode and (ProcessorArchitecture = paX64);
+end;
+
+function InstallARM64: Boolean;
+begin
+  Result := Is64BitInstallMode and (ProcessorArchitecture = paARM64);
+end;
