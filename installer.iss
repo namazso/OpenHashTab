@@ -5,6 +5,7 @@
 #define MyAppVersion "1.3.1"
 #define MyAppPublisher "namazso"
 #define MyAppURL "https://github.com/namazso/OpenHashTab"
+#define DLLName "OpenHashTab.dll"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
@@ -54,19 +55,18 @@ Name: "turkish"; MessagesFile: "compiler:Languages\Turkish.isl"
 Name: "ukrainian"; MessagesFile: "compiler:Languages\Ukrainian.isl"
 
 [Files]
-Source: "x64\Release\OpenHashTab.dll";   DestDir: "{sysnative}"; Flags: ignoreversion restartreplace regserver solidbreak 64bit; Check: InstallX64
-Source: "ARM64\Release\OpenHashTab.dll"; DestDir: "{sysnative}"; Flags: ignoreversion restartreplace regserver solidbreak; Check: InstallARM64
-Source: "Release\OpenHashTab.dll";       DestDir: "{sys}"; Flags: ignoreversion restartreplace regserver solidbreak 32bit
-; NOTE: Don't use "Flags: ignoreversion" on any shared system files
-
+Source: "x64\Release\{#DLLName}";   DestDir: "{sys}"; Flags: ignoreversion restartreplace regserver solidbreak 64bit; Check: InstallArch('x64')
+Source: "ARM64\Release\{#DLLName}"; DestDir: "{sys}"; Flags: ignoreversion restartreplace regserver solidbreak 64bit; Check: InstallArch('arm64') 
+Source: "Release\{#DLLName}";       DestDir: "{sys}"; Flags: ignoreversion restartreplace regserver solidbreak 32bit
 
 [Code]
-function InstallX64: Boolean;
+function InstallArch(Arch: String): Boolean;
 begin
-  Result := (ProcessorArchitecture = paX64);
-end;
-
-function InstallARM64: Boolean;
-begin
-  Result := (ProcessorArchitecture = paARM64);
-end;
+    Result := False;
+    case ProcessorArchitecture of
+        paX86:    Result := Arch = 'x86';
+        paX64:    Result := (Arch = 'x64') or (Arch = 'wow');
+        paIA64:   Result := (Arch = 'ia64') or (Arch = 'wow');
+        paARM64:  Result := (Arch = 'arm64') or (Arch = 'wow');
+    end;
+end; 
