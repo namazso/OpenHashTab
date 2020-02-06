@@ -3,9 +3,17 @@
 
 #include <stdint.h>
 
+#ifndef EXTERN_C_START
 #ifdef __cplusplus
-extern "C" {
+#define EXTERN_C_START extern "C" {
+#define EXTERN_C_END }
+#else
+#define EXTERN_C_START
+#define EXTERN_C_END
 #endif
+#endif
+
+EXTERN_C_START
 
 /* -------------------------------------------------------------------------
  * Works when compiled for either 32-bit or 64-bit targets, optimized for 
@@ -53,9 +61,6 @@ void sha3_Update(void *priv, void const *bufIn, size_t len);
 
 void const *sha3_Finalize(void *priv);
 
-#ifdef __cplusplus
-// extern "C"
-}
-#endif
+EXTERN_C_END
 
 #endif

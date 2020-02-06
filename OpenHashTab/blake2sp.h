@@ -1,6 +1,19 @@
 // Public domain
 // Based on public domain 7zip implementation by Igor Pavlov and Samuel Neves
 #pragma once
+
+#ifndef EXTERN_C_START
+#ifdef __cplusplus
+#define EXTERN_C_START extern "C" {
+#define EXTERN_C_END }
+#else
+#define EXTERN_C_START
+#define EXTERN_C_END
+#endif
+#endif
+
+EXTERN_C_START
+
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
@@ -32,3 +45,5 @@ typedef struct
 void Blake2sp_Init(CBlake2sp *p);
 void Blake2sp_Update(CBlake2sp *p, const uint8_t *data, size_t size);
 void Blake2sp_Final(CBlake2sp *p, uint8_t *digest);
+
+EXTERN_C_END
