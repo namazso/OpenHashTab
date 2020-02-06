@@ -25,6 +25,9 @@ static constexpr auto k_color_error_fg = RGB(255, 55, 23);
 static constexpr auto k_color_match_fg = RGB(255, 255, 255);
 static constexpr auto k_color_match_bg = RGB(45, 170, 23);
 
+static constexpr auto k_color_insecure_fg = RGB(255, 255, 255);
+static constexpr auto k_color_insecure_bg = RGB(170, 82, 23);
+
 static constexpr auto k_color_mismatch_fg = RGB(255, 255, 255);
 static constexpr auto k_color_mismatch_bg = RGB(230, 55, 23);
 
@@ -51,8 +54,9 @@ INT_PTR OpenHashTabPropPage::CustomDrawListView(LPARAM lparam, HWND list) const
 {
   // No hash to compare to  - system colors
   // Error processing file  - system bg, red text
-  // Hash mismatch          - red bg, white text for all
-  // Hash matches           - green bg, white text for algo matching
+  // Hash mismatch          - red bg, white text for all algos
+  // Secure hash matches    - green bg, white text for algo matching
+  // Insecure hash matches  - orange bg, white text for algo matching
 
   const auto lplvcd = (LPNMLVCUSTOMDRAW)lparam;
 
@@ -95,8 +99,16 @@ INT_PTR OpenHashTabPropPage::CustomDrawListView(LPARAM lparam, HWND list) const
         {
           if((size_t)match == file_hash.second)
           {
-            lplvcd->clrText = k_color_match_fg;
-            lplvcd->clrTextBk = k_color_match_bg;
+            if(HashAlgorithm::g_hashers[(size_t)match].IsSecure())
+            {
+              lplvcd->clrText = k_color_match_fg;
+              lplvcd->clrTextBk = k_color_match_bg;
+            }
+            else
+            {
+              lplvcd->clrText = k_color_insecure_fg;
+              lplvcd->clrTextBk = k_color_insecure_bg;
+            }
           }
         }
         return CDRF_NEWFONT;
