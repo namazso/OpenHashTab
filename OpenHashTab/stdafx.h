@@ -58,9 +58,6 @@
 #include <mutex>
 #include <sstream>
 
-// mbedtls
-#include <mbedtls/md.h>
-
 // concurrentqueue
 #include <blockingconcurrentqueue.h>
 

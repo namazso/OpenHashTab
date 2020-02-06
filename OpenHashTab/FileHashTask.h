@@ -22,7 +22,7 @@ class FileHashTask
 {
   // Increasing this will make CPU use more efficent,
   // but also increase memory usage
-  constexpr static intptr_t k_block_size = 2 << 20; // 2 MB
+  constexpr static size_t k_block_size = 2 << 20; // 2 MB
 
   // Increasing this will increase memory use and reduce
   // possibility of a slower disk clogging up the queue
@@ -57,11 +57,11 @@ class FileHashTask
 
   PTP_IO _threadpool_io = nullptr;
   
-  mbedtls_md_context_t _hash_contexts[k_hashers_count];
+  std::unique_ptr<HashContext> _hash_contexts[HashAlgorithm::k_count];
 
   OVERLAPPED _overlapped{};
 
-  using hash_results_t = std::array<std::vector<uint8_t>, k_hashers_count>;
+  using hash_results_t = std::array<std::vector<uint8_t>, HashAlgorithm::k_count>;
 
   hash_results_t _hash_results;
 
@@ -86,7 +86,7 @@ class FileHashTask
   int _match_state{};
   bool _cancelled{};
 
-  uint8_t _lparam_idx[k_hashers_count];
+  uint8_t _lparam_idx[HashAlgorithm::k_count];
 
 public:
   FileHashTask(const FileHashTask&) = delete;
@@ -119,12 +119,12 @@ private:
   // This may be the last reference to PropPage, which then deletes us in destructor.
   void Finish();
 
-  uint64_t GetCurrentBlockSize() const
+  size_t GetCurrentBlockSize() const
   {
     auto size = _file_size - _current_offset;
     if (size > k_block_size)
       size = k_block_size;
-    return size;
+    return (size_t)size;
   }
 
 public:

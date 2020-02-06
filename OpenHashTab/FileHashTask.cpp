@@ -112,11 +112,12 @@ FileHashTask::FileHashTask(const tstring& path, OpenHashTabPropPage* prop_page, 
   // Instead of exception, set _error because a failed file is still a finished
   // file task. Finish mechanism will trigger on first block read
 
-  for (auto i = 0u; i < k_hashers_count; ++i)
+  for (auto i = 0u; i < HashAlgorithm::k_count; ++i)
+  {
     _lparam_idx[i] = i;
-
-  for (auto& ctx : _hash_contexts)
-    mbedtls_md_init(&ctx);
+    if (HashAlgorithm::g_hashers[i].IsEnabled())
+      _hash_contexts[i].reset(HashAlgorithm::g_hashers[i].MakeContext());
+  }
 
   _handle = utl::OpenForRead(path, true);
 
@@ -124,21 +125,6 @@ FileHashTask::FileHashTask(const tstring& path, OpenHashTabPropPage* prop_page, 
   {
     _error = GetLastError();
     return;
-  }
-
-  for (auto i = 0u; i < k_hashers_count; ++i)
-  {
-    const auto ctx = &_hash_contexts[i];
-    auto ret = mbedtls_md_setup(ctx, k_hashers[i], 0);
-    if (ret == MBEDTLS_ERR_MD_ALLOC_FAILED)
-    {
-      _error = ERROR_NOT_ENOUGH_MEMORY;
-      return;
-    }
-    assert(ret == 0);
-
-    ret = mbedtls_md_starts(ctx);
-    assert(ret == 0);
   }
 
   BY_HANDLE_FILE_INFORMATION fi;
@@ -182,9 +168,6 @@ FileHashTask::FileHashTask(const tstring& path, OpenHashTabPropPage* prop_page, 
 FileHashTask::~FileHashTask()
 {
   assert(_block == nullptr);
-
-  for (auto& ctx : _hash_contexts)
-    mbedtls_md_free(&ctx);
 
   if(_handle != INVALID_HANDLE_VALUE)
     CloseHandle(_handle);
@@ -283,20 +266,20 @@ void FileHashTask::AddToHashQueue()
 {
   assert(_block);
 
-  _hash_start_counter.store(k_hashers_count, std::memory_order_relaxed);
-  _hash_finish_counter.store(k_hashers_count, std::memory_order_relaxed);
+  _hash_start_counter.store(HashAlgorithm::k_count, std::memory_order_relaxed);
+  _hash_finish_counter.store(HashAlgorithm::k_count, std::memory_order_relaxed);
 
-  for (auto i = 0u; i < k_hashers_count; ++i)
+  for (auto i = 0u; i < HashAlgorithm::k_count; ++i)
     SubmitThreadpoolWork(_threadpool_hash_work);
 }
 
 void FileHashTask::DoHashRound()
 {
   const auto ctx_index = --_hash_start_counter;
-  const auto ctx = &_hash_contexts[ctx_index];
+  const auto ctx = _hash_contexts[ctx_index].get();
   const auto block_size = GetCurrentBlockSize();
-  const auto ret = mbedtls_md_update(ctx, _block, block_size);
-  assert(ret == 0);
+  if (ctx)
+    ctx->Update(_block, block_size);
   const auto locks_on_this = --_hash_finish_counter;
   if (locks_on_this == 0)
     FinishedBlock();
@@ -331,14 +314,12 @@ void FileHashTask::Finish()
     // If we expect a hash but none match, write no match to all algos
     _match_state = _expected_hash.empty() ? MatchState_None : MatchState_Mismatch;
 
-    for (auto i = 0u; i < k_hashers_count; ++i)
+    for (auto i = 0u; i < HashAlgorithm::k_count; ++i)
     {
-      auto& it_ctx = _hash_contexts[i];
       auto& it_result = _hash_results[i];
-      const auto hash_size = mbedtls_md_get_size(it_ctx.md_info);
-      it_result.resize(hash_size);
-      const auto ret = mbedtls_md_finish(&it_ctx, it_result.data());
-      assert(ret == 0);
+      const auto it_ctx = _hash_contexts[i].get();
+      if(it_ctx)
+        it_result = it_ctx->Finish();
       if (_match_state == MatchState_Mismatch && it_result == _expected_hash)
         _match_state = i;
     }

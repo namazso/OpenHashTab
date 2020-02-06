@@ -114,6 +114,17 @@ INT_PTR OpenHashTabPropPage::CustomDrawListView(LPARAM lparam, HWND list) const
   return CDRF_DODEFAULT;
 }
 
+static int ComboBoxGetSelectedAlgorithmIdx(HWND combo)
+{
+  const auto sel = ComboBox_GetCurSel(combo);
+  const auto len = ComboBox_GetLBTextLen(combo, sel);
+  tstring name;
+  name.resize(len);
+  ComboBox_GetLBText(combo, sel, name.data());
+  const auto idx = HashAlgorithm::IdxByName(utl::TStringToUTF8(name.c_str()));
+  return idx;
+}
+
 INT_PTR OpenHashTabPropPage::DlgProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
   auto ret = FALSE;
@@ -157,8 +168,9 @@ INT_PTR OpenHashTabPropPage::DlgProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM 
     }
 
     const auto combobox = GetDlgItem(hwnd, IDC_COMBO_EXPORT);
-    for(auto name : k_hashers_name)
-      ComboBox_AddString(combobox, name);
+    for(auto algorithm : HashAlgorithm::g_hashers)
+      if(algorithm.IsEnabled())
+        ComboBox_AddString(combobox, utl::UTF8ToTString(algorithm.GetName()).c_str());
 
     ComboBox_SetCurSel(combobox, 0);
 
@@ -201,7 +213,7 @@ INT_PTR OpenHashTabPropPage::DlgProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM 
         lvhtinfo.pt = lpnmia->ptAction;
         ListView_SubItemHitTest(phdr->hwndFrom, &lvhtinfo);
         const auto subitem = lvhtinfo.iSubItem;
-        TCHAR hash[MBEDTLS_MD_MAX_SIZE * 2 + 1];
+        TCHAR hash[HashAlgorithm::k_max_size * 2 + 1];
         ListView_GetItemText(phdr->hwndFrom, lvhtinfo.iItem, ColIndex_Hash, hash, (int)std::size(hash));
         if(subitem == ColIndex_Hash)
         {
@@ -243,12 +255,13 @@ INT_PTR OpenHashTabPropPage::DlgProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM 
         for (const auto file : _file_tasks)
         {
           const auto& result = file->GetHashResult();
-          for (auto i = 0; i < k_hashers_count; ++i)
+          for (auto i = 0; i < HashAlgorithm::k_count; ++i)
           {
-            if (result[i] == find_hash)
+            if (!result[i].empty() && result[i] == find_hash)
             {
               found = true;
-              const auto txt = tstring{ k_hashers_name[i] } +_T(" / ") + file->GetDisplayName();
+              const auto algorithm_name = utl::UTF8ToTString(HashAlgorithm::g_hashers[i].GetName());
+              const auto txt = algorithm_name +_T(" / ") + file->GetDisplayName();
               SetDlgItemText(hwnd, IDC_STATIC_CHECK_RESULT, txt.c_str());
               break;
             }
@@ -273,10 +286,10 @@ INT_PTR OpenHashTabPropPage::DlgProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM 
       {
       case BN_CLICKED:
       {
-        const auto sel = ComboBox_GetCurSel(GetDlgItem(hwnd, IDC_COMBO_EXPORT));
-        if (sel >= 0 && sel < k_hashers_count)
+        const auto idx = ComboBoxGetSelectedAlgorithmIdx(GetDlgItem(hwnd, IDC_COMBO_EXPORT));
+        if (idx >= 0)
         {
-          const auto tstr = utl::UTF8ToTString(GetSumfileAsString((size_t)sel).c_str());
+          const auto tstr = utl::UTF8ToTString(GetSumfileAsString((size_t)idx).c_str());
           utl::SetClipboardText(hwnd, tstr.c_str());
         }
         break;
@@ -293,19 +306,20 @@ INT_PTR OpenHashTabPropPage::DlgProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM 
       {
       case BN_CLICKED:
       {
-        const auto sel = ComboBox_GetCurSel(GetDlgItem(hwnd, IDC_COMBO_EXPORT));
-        if (sel >= 0 && sel < k_hashers_count && !_file_tasks.empty())
+        const auto idx = ComboBoxGetSelectedAlgorithmIdx(GetDlgItem(hwnd, IDC_COMBO_EXPORT));
+        if (idx >= 0 && !_file_tasks.empty())
         {
           // TODO: relativize sumfile contents to save path.
           // This may sound trivial at first, but we can't use PathRelativeToPath because it doesn't support long paths.
-          
-          const auto ext = tstring{ _T(".") } + hasher_get_extension_search_string(k_hashers[sel]);
+
+          const auto exts = HashAlgorithm::g_hashers[idx].GetExtensions();
+          const auto ext = *exts ? tstring{ _T(".") } + utl::UTF8ToTString(*exts) : tstring{};
           const auto& file = *_files.begin();
           const auto file_path = file.c_str();
           const auto file_name = (LPCTSTR)PathFindFileName(file_path);
           const auto dir = tstring{ file_path, file_name };
           const auto name = _files.size() == 1 ? (tstring{ file_name } + ext) : ext;
-          const auto content = GetSumfileAsString((size_t)sel);
+          const auto content = GetSumfileAsString((size_t)idx);
           const auto sumfile_path = utl::SaveDialog(hwnd, _base.c_str(), name.c_str());
           if(!sumfile_path.empty())
           {
@@ -457,15 +471,15 @@ std::vector<std::uint8_t> OpenHashTabPropPage::TryGetExpectedSumForFile(const ts
   const auto file_name = (LPCTSTR)PathFindFileName(file_path);
   const auto base_path = tstring{ file_path, file_name };
 
-  for(auto hasher : k_hashers)
+  for(auto hasher : HashAlgorithm::g_hashers)
   {
-    auto sumfile_path = path + _T(".") + hasher_get_extension_search_string(hasher);
-    auto handle = utl::OpenForRead(sumfile_path);
-    if(handle == INVALID_HANDLE_VALUE)
-    {
-      sumfile_path += _T("sum");
-      handle = utl::OpenForRead(sumfile_path);
-    }
+    if (!hasher.IsEnabled())
+      continue;
+
+    auto sumfile_path = path + _T(".");
+    auto handle = INVALID_HANDLE_VALUE;
+    for(auto it = hasher.GetExtensions(); handle == INVALID_HANDLE_VALUE && *it; ++it)
+      handle = utl::OpenForRead(sumfile_path + utl::UTF8ToTString(*it));
 
     if (handle != INVALID_HANDLE_VALUE)
     {
@@ -558,12 +572,16 @@ void OpenHashTabPropPage::FileCompletionCallback(FileHashTask* file)
   {
     const auto& results = file->GetHashResult();
 
-    for (auto i = 0u; i < k_hashers_count; ++i)
+    for (auto i = 0u; i < HashAlgorithm::k_count; ++i)
     {
       auto& result = results[i];
-      TCHAR hash_str[MBEDTLS_MD_MAX_SIZE * 2 + 1];
-      utl::HashBytesToString(hash_str, result);
-      add_item(file->GetDisplayName().c_str(), k_hashers_name[i], hash_str, file->ToLparam(i));
+      if(!result.empty())
+      {
+        TCHAR hash_str[HashAlgorithm::k_max_size * 2 + 1];
+        utl::HashBytesToString(hash_str, result);
+        const auto tname = utl::UTF8ToTString(HashAlgorithm::g_hashers[i].GetName());
+        add_item(file->GetDisplayName().c_str(), tname.c_str(), hash_str, file->ToLparam(i));
+      }
     }
   }
   else
@@ -617,12 +635,12 @@ std::string OpenHashTabPropPage::GetSumfileAsString(size_t hasher)
   for(auto file : _file_tasks)
   {
     const auto& hash = file->GetHashResult()[hasher];
-    char hash_str[MBEDTLS_MD_MAX_SIZE * 2 + 1];
-    const auto size = (size_t)mbedtls_md_get_size(k_hashers[hasher]);
+    char hash_str[HashAlgorithm::k_max_size * 2 + 1];
+    const auto size = HashAlgorithm::g_hashers[hasher].GetSize();
     if (hash.empty())
     {
       std::fill(hash_str, hash_str + size * 2, '0');
-      hash_str[MBEDTLS_MD_MAX_SIZE * 2] = 0;
+      hash_str[size * 2] = 0;
     }
     else
     {

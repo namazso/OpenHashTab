@@ -106,7 +106,7 @@ public:
       if (hexchar != 0xFF)
       {
         _current_hash.push_back(hexchar | _half_byte);
-        if (_current_hash.size() > k_max_hash_size)
+        if (_current_hash.size() > HashAlgorithm::k_max_size)
           _state = State::Space;
         else
           _state = State::Hash1;

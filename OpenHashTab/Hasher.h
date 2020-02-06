@@ -15,12 +15,79 @@
 //    along with OpenHashTab.  If not, see <https://www.gnu.org/licenses/>.
 #pragma once
 
-constexpr static auto k_hashers_count = 4;
+class HashAlgorithm;
 
-// As of now, 512 bits is the longest hash we handle
-constexpr static size_t k_max_hash_size = MBEDTLS_MD_MAX_SIZE;
+class HashContext
+{
+  HashAlgorithm* _algorithm{};
 
-extern const mbedtls_md_info_t* k_hashers[k_hashers_count];
-extern const PCTSTR k_hashers_name[k_hashers_count];
+protected:
+  HashContext(HashAlgorithm* algorithm) : _algorithm(algorithm) {}
 
-tstring hasher_get_extension_search_string(const mbedtls_md_info_t* info);
+public:
+  HashContext(const HashContext&) = delete;
+  HashContext(HashContext&&) = delete;
+  HashContext& operator=(const HashContext&) = delete;
+  HashContext& operator=(HashContext&&) = delete;
+  virtual ~HashContext() = default;
+  virtual void Clear() = 0;
+  virtual void Update(const void* data, size_t size) = 0;
+  virtual std::vector<uint8_t> Finish() = 0;
+  HashAlgorithm* GetAlgorithm() const { return _algorithm; };
+};
+
+class HashAlgorithm
+{
+public:
+  using FactoryFn = HashContext*(HashAlgorithm* algorithm);
+  constexpr static auto k_count = 14;
+  constexpr static auto k_max_size = 64;
+  static HashAlgorithm g_hashers[k_count];
+  static HashAlgorithm* ByName(std::string_view name)
+  {
+    const auto begin = std::begin(g_hashers);
+    const auto end = std::end(g_hashers);
+    const auto it = std::find_if(begin, end, [&name](const HashAlgorithm& a)
+      {
+        return name == a.GetName();
+      });
+    return it == end ? nullptr : it;
+  }
+  static int IdxByName(std::string_view name)
+  {
+    const auto it = ByName(name);
+    return it == nullptr ? -1 : (int)(it - std::begin(g_hashers));
+  }
+
+private:
+  const char* _name;
+  const char* const* _extensions;
+  FactoryFn* _factory_fn;
+  uint32_t _size;
+  bool _is_secure;
+  bool _is_enabled;
+
+public:
+  HashAlgorithm(
+    const char* name,
+    uint32_t size,
+    const char* const* extensions,
+    FactoryFn* factory_fn,
+    bool is_secure,
+    bool is_enabled
+  ) : _name(name)
+    , _extensions(extensions)
+    , _factory_fn(factory_fn)
+    , _size(size)
+    , _is_secure(is_secure)
+    , _is_enabled(is_enabled)
+  {}
+
+  bool IsSecure() const { return _is_secure; }
+  bool IsEnabled() const { return _is_enabled; }
+  //void SetEnabled(bool enabled);
+  const char* GetName() const { return _name; }
+  uint32_t GetSize() const { return _size; }
+  const char* const* GetExtensions() const { return _extensions; }
+  HashContext* MakeContext() { return _factory_fn(this); }
+};

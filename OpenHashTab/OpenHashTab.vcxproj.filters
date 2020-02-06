@@ -26,6 +26,9 @@
     <Filter Include="SHA3">
       <UniqueIdentifier>{3af9cddb-3a71-4132-80dd-906c4a07bf99}</UniqueIdentifier>
     </Filter>
+    <Filter Include="CRC32">
+      <UniqueIdentifier>{f023d767-ba4d-4281-9822-8aff43aeaf05}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -289,13 +292,7 @@
     <ClCompile Include="utl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Hasher.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="blake2sp.c">
-      <Filter>BLAKE2sp</Filter>
-    </ClCompile>
-    <ClCompile Include="blake2sp_wrap.c">
       <Filter>BLAKE2sp</Filter>
     </ClCompile>
     <ClCompile Include="Queues.cpp">
@@ -307,8 +304,11 @@
     <ClCompile Include="sha3.c">
       <Filter>SHA3</Filter>
     </ClCompile>
-    <ClCompile Include="sha3_wrap.c">
-      <Filter>SHA3</Filter>
+    <ClCompile Include="crc32.c">
+      <Filter>CRC32</Filter>
+    </ClCompile>
+    <ClCompile Include="Hasher.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -353,6 +353,9 @@
     </ClInclude>
     <ClInclude Include="sha3.h">
       <Filter>SHA3</Filter>
+    </ClInclude>
+    <ClInclude Include="crc32.h">
+      <Filter>CRC32</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
