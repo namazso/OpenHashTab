@@ -1,3 +1,4 @@
+// public domain
 #pragma once
 
 #ifndef EXTERN_C_START
