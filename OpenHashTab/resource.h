@@ -2,6 +2,7 @@
 // Microsoft Visual C++ generated include file.
 // Used by OpenHashTab.rc
 //
+#define IDD_SETTINGS                    9
 #define IDS_PROJNAME                    100
 #define IDR_OPENHASHTAB                 101
 #define IDR_OPENHASHTABSHLEXT           106
@@ -24,7 +25,10 @@
 #define IDS_SUMFILE                     213
 #define IDC_BUTTON_CLIPBOARD            213
 #define IDS_DONE                        214
+#define IDC_BUTTON_SETTINGS             214
 #define IDS_PROCESSING                  215
+#define IDC_LIST1                       215
+#define IDC_ALGORITHM_LIST              215
 #define IDS_HASHES                      216
 #define IDS_CLIPBOARD                   217
 #define IDS_NOMATCH                     218
@@ -34,9 +38,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        220
+#define _APS_NEXT_RESOURCE_VALUE        222
 #define _APS_NEXT_COMMAND_VALUE         32768
-#define _APS_NEXT_CONTROL_VALUE         212
+#define _APS_NEXT_CONTROL_VALUE         216
 #define _APS_NEXT_SYMED_VALUE           107
 #endif
 #endif

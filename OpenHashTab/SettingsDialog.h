@@ -13,18 +13,15 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with OpenHashTab.  If not, see <https://www.gnu.org/licenses/>.
-#include "stdafx.h"
+#pragma once
 
-#include "resource.h"
-#include "dllmain.h"
-#include "Queues.h"
-
-COpenHashTabModule _AtlModule;
-HINSTANCE g_instance;
-
-// DLL Entry Point
-extern "C" BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, LPVOID reserved)
+class SettingsDialog
 {
-	g_instance = instance;
-	return _AtlModule.DllMain(reason, reserved);
-}
+  HWND _handle;
+  bool _done_setup = false;
+
+public:
+  SettingsDialog(HWND handle, void*) : _handle(handle) {}
+
+  INT_PTR DlgProc(UINT uMsg, WPARAM wParam, LPARAM lParam);
+};

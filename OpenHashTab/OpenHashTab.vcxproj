@@ -999,6 +999,7 @@
     </ClCompile>
     <ClCompile Include="FileHashTask.cpp" />
     <ClCompile Include="Hasher.cpp" />
+    <ClCompile Include="HasherRegistry.cpp" />
     <ClCompile Include="OpenHashTab.cpp" />
     <ClCompile Include="OpenHashTabPropPage.cpp" />
     <ClCompile Include="OpenHashTabShlExt.cpp" />
@@ -1023,6 +1024,7 @@
       </PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Queues.cpp" />
+    <ClCompile Include="SettingsDialog.cpp" />
     <ClCompile Include="sha3.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
@@ -1053,6 +1055,7 @@
     <ClInclude Include="OpenHashTab_i.h" />
     <ClInclude Include="Queues.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="SettingsDialog.h" />
     <ClInclude Include="sha3.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SumFileParser.h" />

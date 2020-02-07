@@ -18,7 +18,9 @@
 #include "OpenHashTabPropPage.h"
 #include "SumFileParser.h"
 #include "FileHashTask.h"
+#include "SettingsDialog.h"
 #include "utl.h"
+#include "dllmain.h"
 
 static constexpr auto k_color_error_fg = RGB(255, 55, 23);
 
@@ -305,6 +307,26 @@ INT_PTR OpenHashTabPropPage::DlgProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM 
           utl::SetClipboardText(hwnd, tstr.c_str());
         }
         break;
+      }
+      default:
+        break;
+      }
+      break;
+    }
+
+    case IDC_BUTTON_SETTINGS:
+    {
+      switch (code)
+      {
+      case BN_CLICKED:
+      {
+        DialogBoxParam(
+          g_instance,
+          MAKEINTRESOURCE(IDD_SETTINGS),
+          hwnd,
+          &utl::DlgProcClassBinder<SettingsDialog>,
+          0
+        );
       }
       default:
         break;
@@ -613,6 +635,9 @@ void OpenHashTabPropPage::FileCompletionCallback(FileHashTask* file)
 
   if(files_being_processed == 0)
   {
+    // We only enable settings button after processing is done because changing enabled algorithms could result
+    // in much more problems
+    Button_Enable(GetDlgItem(_hwnd, IDC_BUTTON_SETTINGS), true);
     Button_Enable(GetDlgItem(_hwnd, IDC_BUTTON_EXPORT), true);
     Button_Enable(GetDlgItem(_hwnd, IDC_BUTTON_CLIPBOARD), true);
     //SetTextFromTable(_hwnd, IDC_STATIC_PROCESSING, IDS_DONE);

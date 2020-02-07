@@ -26,6 +26,36 @@ inline ULONG DebugMsg(PCSTR Format, ...) { return 0; }
 
 namespace utl
 {
+  // T should be a class handling a dialog, having implemented these:
+  // T(HWND hDlg, void* user_param)
+  //   hDlg: the HWND of the dialog, guaranteed to be valid for the lifetime of the object
+  //   user_param: parameter passed to the function creating the dialog
+  // INT_PTR DlgProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
+  template <typename T>
+  INT_PTR CALLBACK DlgProcClassBinder(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+  {
+    T* p;
+    if (uMsg == WM_INITDIALOG)
+    {
+      p = new T(hDlg, (void*)lParam);
+      SetWindowLongPtr(hDlg, GWLP_USERDATA, (LONG_PTR)p);
+    }
+    else
+    {
+      p = (T*)GetWindowLongPtr(hDlg, GWLP_USERDATA);
+    }
+    // there are some unimportant messages sent before WM_INITDIALOG
+    const INT_PTR ret = p ? p->DlgProc(uMsg, wParam, lParam) : (INT_PTR)FALSE;
+    if (uMsg == WM_NCDESTROY)
+    {
+      delete p;
+      // even if we were to somehow receive messages after WM_NCDESTROY make sure we dont call invalid ptr
+      SetWindowLongPtr(hDlg, GWLP_USERDATA, 0);
+    }
+    return ret;
+  }
+
+  // TODO: consider dropping this in favor of DlgProcClassBinder
   // Called in the following order:
   // name           hwnd  when
   // -----------------------------------------------

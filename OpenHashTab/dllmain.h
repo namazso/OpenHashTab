@@ -24,3 +24,4 @@ public:
 };
 
 extern class COpenHashTabModule _AtlModule;
+extern HINSTANCE g_instance;

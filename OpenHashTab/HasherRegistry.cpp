@@ -15,16 +15,39 @@
 //    along with OpenHashTab.  If not, see <https://www.gnu.org/licenses/>.
 #include "stdafx.h"
 
-#include "resource.h"
-#include "dllmain.h"
-#include "Queues.h"
+#include "Hasher.h"
+#include "utl.h"
 
-COpenHashTabModule _AtlModule;
-HINSTANCE g_instance;
+constexpr static auto k_reg_path = TEXT("Software\\OpenHashTab");
 
-// DLL Entry Point
-extern "C" BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, LPVOID reserved)
+void HashAlgorithm::LoadEnabled()
 {
-	g_instance = instance;
-	return _AtlModule.DllMain(reason, reserved);
+  DWORD enabled;
+  DWORD size = sizeof(enabled);
+  const auto status = RegGetValue(
+    HKEY_CURRENT_USER,
+    k_reg_path,
+    utl::UTF8ToTString(GetName()).c_str(),
+    RRF_RT_REG_DWORD,
+    nullptr,
+    &enabled,
+    &size
+  );
+  if(status == ERROR_SUCCESS && size == sizeof(enabled))
+  {
+    _is_enabled = (bool)enabled;
+  }
+}
+void HashAlgorithm::StoreEnabled() const
+{
+  DWORD value = _is_enabled;
+  RegSetKeyValue(
+    HKEY_CURRENT_USER,
+    k_reg_path,
+    utl::UTF8ToTString(GetName()).c_str(),
+    REG_DWORD,
+    &value,
+    sizeof(value)
+  );
+  // we don't care about the result
 }

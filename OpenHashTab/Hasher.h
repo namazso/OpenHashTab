@@ -67,6 +67,9 @@ private:
   bool _is_secure;
   bool _is_enabled;
 
+  void LoadEnabled();
+  void StoreEnabled() const;
+
 public:
   HashAlgorithm(
     const char* name,
@@ -81,11 +84,20 @@ public:
     , _size(size)
     , _is_secure(is_secure)
     , _is_enabled(is_enabled)
-  {}
+  {
+    LoadEnabled();
+  }
 
   bool IsSecure() const { return _is_secure; }
   bool IsEnabled() const { return _is_enabled; }
-  //void SetEnabled(bool enabled);
+  void SetEnabled(bool enabled)
+  {
+    if(enabled != _is_enabled)
+    {
+      _is_enabled = enabled;
+      StoreEnabled();
+    }
+  }
   const char* GetName() const { return _name; }
   uint32_t GetSize() const { return _size; }
   const char* const* GetExtensions() const { return _extensions; }
