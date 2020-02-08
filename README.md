@@ -6,9 +6,10 @@ OpenHashTab is a shell extension for conveniently calculating and checking file 
 
 ## Features
 
-* MD5, SHA1, SHA-256 and SHA-512 support
-* md5sum / sha1sum / sha256sum / sha512sum compatibility for checking and exporting hashes
-* Easy to use checker and single-click export to clipboard or file
+* Support for 14 different selectable algorithms, see **Algorithms**
+* md5sum / sha1sum / sha256sum / etc.. compatibility for checking and exporting hashes
+* Easy to use checker and single-click sumfile export to clipboard or file
+* Select then 
 * High performance hash calculation
 * Native Windows looks
 * Long path support\*
@@ -16,13 +17,32 @@ OpenHashTab is a shell extension for conveniently calculating and checking file 
 
 \* On Windows 8 or later, to the extent Windows supports it.
 
+## Usage
+
+Most of the actions should be obvious. The hash list supports the following actions:
+
+* Double click hash to copy it
+* Double click name or algorithm to copy the line in sumfile format
+* Select (possibly multiple) then right click to copy all columns separated by tabs
+* The counters next to the status text is in the format `(match/mismatch/nothing to check against/error)`
+
+## Algorithms
+
+* CRC32
+* MD2, MD4, MD5
+* RipeMD160
+* Blake2sp
+* SHA-1
+* SHA-2 (SHA-224, SHA-256, SHA-384, SHA-512)
+* SHA-3 (SHA3-256, SHA3-384, SHA3-512)
+
 ## Download
 
 [Latest release](https://github.com/namazso/OpenHashTab/releases/latest/download/OpenHashTab_setup.exe)
 
 ## Screenshot
 
-![Screenshot](resources/screenshot.png)
+![Screenshot](resources/screenshot.png) ![Algorithms](resources/algorithms.png)
 
 ## Donations
 
