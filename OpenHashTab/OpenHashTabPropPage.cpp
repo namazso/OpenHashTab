@@ -38,6 +38,17 @@ inline void SetTextFromTable(HWND hwnd, int control, UINT string_id)
   SetDlgItemText(hwnd, control, utl::GetString(string_id).c_str());
 };
 
+static int ComboBoxGetSelectedAlgorithmIdx(HWND combo)
+{
+  const auto sel = ComboBox_GetCurSel(combo);
+  const auto len = ComboBox_GetLBTextLen(combo, sel);
+  tstring name;
+  name.resize(len);
+  ComboBox_GetLBText(combo, sel, name.data());
+  const auto idx = HashAlgorithm::IdxByName(utl::TStringToUTF8(name.c_str()));
+  return idx;
+}
+
 OpenHashTabPropPage::OpenHashTabPropPage(std::list<tstring> files, tstring base)
   : _files(std::move(files))
   , _base(std::move(base))
@@ -128,17 +139,6 @@ INT_PTR OpenHashTabPropPage::CustomDrawListView(LPARAM lparam, HWND list) const
   return CDRF_DODEFAULT;
 }
 
-static int ComboBoxGetSelectedAlgorithmIdx(HWND combo)
-{
-  const auto sel = ComboBox_GetCurSel(combo);
-  const auto len = ComboBox_GetLBTextLen(combo, sel);
-  tstring name;
-  name.resize(len);
-  ComboBox_GetLBText(combo, sel, name.data());
-  const auto idx = HashAlgorithm::IdxByName(utl::TStringToUTF8(name.c_str()));
-  return idx;
-}
-
 INT_PTR OpenHashTabPropPage::DlgProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
   auto ret = FALSE;
@@ -202,14 +202,23 @@ INT_PTR OpenHashTabPropPage::DlgProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM 
   case WM_DESTROY: //WM_NCDESTROY:
   {
     {
-      std::lock_guard<std::mutex> guard(_list_view_lock);
+      std::lock_guard<std::mutex> guard(_dont_let_the_window_delete_lock);
       _hwnd_deleted = true;
     }
     break;
   }
+  case WM_USER_FILE_COMPLETED:
+    if (wparam == k_magic_user_wparam)
+      FileCompleted((FileHashTask*)lparam);
+    break;
+  case WM_TIMER:
+    if (wparam == k_status_update_timer_id)
+      UpdateDefaultStatus(true);
+    break;
   case WM_NOTIFY:
   {
     const auto phdr = (LPNMHDR)lparam;
+    const auto list = phdr->hwndFrom;
     switch(phdr->idFrom)
     {
     case IDC_HASH_LIST:
@@ -217,7 +226,7 @@ INT_PTR OpenHashTabPropPage::DlgProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM 
       {
       case NM_CUSTOMDRAW:
       {
-        SetWindowLongPtr(hwnd, DWLP_MSGRESULT, CustomDrawListView(lparam, phdr->hwndFrom));
+        SetWindowLongPtr(hwnd, DWLP_MSGRESULT, CustomDrawListView(lparam, list));
         return TRUE;
       }
       case NM_DBLCLK:
@@ -225,21 +234,45 @@ INT_PTR OpenHashTabPropPage::DlgProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM 
         const auto lpnmia = (LPNMITEMACTIVATE)lparam;
         LVHITTESTINFO lvhtinfo;
         lvhtinfo.pt = lpnmia->ptAction;
-        ListView_SubItemHitTest(phdr->hwndFrom, &lvhtinfo);
+        ListView_SubItemHitTest(list, &lvhtinfo);
         const auto subitem = lvhtinfo.iSubItem;
         TCHAR hash[HashAlgorithm::k_max_size * 2 + 1];
-        ListView_GetItemText(phdr->hwndFrom, lvhtinfo.iItem, ColIndex_Hash, hash, (int)std::size(hash));
+        ListView_GetItemText(list, lvhtinfo.iItem, ColIndex_Hash, hash, (int)std::size(hash));
         if(subitem == ColIndex_Hash)
         {
           utl::SetClipboardText(hwnd, hash);
         }
         else
         {
-          TCHAR name[PATHCCH_MAX_CCH];
-          ListView_GetItemText(phdr->hwndFrom, lvhtinfo.iItem, ColIndex_Filename, name, (int)std::size(name));
-          utl::SetClipboardText(hwnd, (tstring{ hash } +_T(" *") + name).c_str());
+          const auto name = std::make_unique<std::array<TCHAR, PATHCCH_MAX_CCH>>();
+          ListView_GetItemText(list, lvhtinfo.iItem, ColIndex_Filename, name->data(), (int)name->size());
+          utl::SetClipboardText(hwnd, (tstring{ hash } +_T(" *") + name->data()).c_str());
         }
+        SetTempStatus(utl::GetString(IDS_COPIED).c_str(), 1000);
         break;
+      }
+      case NM_RCLICK:
+      {
+        const auto count = ListView_GetItemCount(list);
+        const auto buf = std::make_unique<std::array<TCHAR, PATHCCH_MAX_CCH>>();
+        std::basic_stringstream<TCHAR> clipboard;
+        const auto list_get_text = [&](int idx, int subitem)
+        {
+          ListView_GetItemText(list, idx, subitem, buf->data(), (int)buf->size());
+          return buf->data();
+        };
+        for(auto i = 0; i < count; ++i)
+        {
+          if (!ListView_GetItemState(list, i, LVIS_SELECTED))
+            continue;
+
+          clipboard
+            << list_get_text(i, ColIndex_Filename) << TEXT("\t")
+            << list_get_text(i, ColIndex_Algorithm) << TEXT("\t")
+            << list_get_text(i, ColIndex_Hash) << TEXT("\r\n");
+        }
+        utl::SetClipboardText(hwnd, clipboard.str().c_str());
+        SetTempStatus(utl::GetString(IDS_COPIED).c_str(), 1000);
       }
       default:
         break;
@@ -466,16 +499,6 @@ void OpenHashTabPropPage::AddFiles()
   }
 }
 
-/*void OpenHashTabPropPage::AddFile(const tstring& path, const std::vector<std::uint8_t>& expected_hash, tstring display_name)
-{
-  if (display_name.empty())
-    display_name = tstring{ PathFindFileName(path.c_str()) };
-
-  const auto task = new FileHashTask(path, this, std::move(display_name), expected_hash);
-  _file_tasks.push_back(task);
-  ++_files_not_finished;
-}*/
-
 void OpenHashTabPropPage::AddFile(const tstring& path, const std::vector<std::uint8_t>& expected_hash)
 {
   auto dispname = utl::CanonicalizePath(path);
@@ -573,13 +596,19 @@ void OpenHashTabPropPage::Cancel()
 
 void OpenHashTabPropPage::FileCompletionCallback(FileHashTask* file)
 {
-  std::lock_guard<std::mutex> guard(_list_view_lock);
+  // We prevent the window to be accidentally deleted until we can post our message. We don't actually care if
+  // the message received since reference count is already decreased here
 
-  const auto files_being_processed = --_files_not_finished;
+  std::lock_guard<std::mutex> guard(_dont_let_the_window_delete_lock);
 
-  if (_hwnd_deleted)
-    return;
+  --_files_not_finished;
 
+  if (!_hwnd_deleted)
+    SendNotifyMessage(_hwnd, WM_USER_FILE_COMPLETED, k_magic_user_wparam, (LPARAM)file);
+}
+
+void OpenHashTabPropPage::FileCompleted(FileHashTask* file)
+{
   const auto list = GetDlgItem(_hwnd, IDC_HASH_LIST);
   if (!list)
     return;
@@ -602,14 +631,27 @@ void OpenHashTabPropPage::FileCompletionCallback(FileHashTask* file)
     ListView_SetItemText(list, item, ColIndex_Hash, (LPTSTR)hash);
   };
 
-  if(const auto error = file->GetError(); error == ERROR_SUCCESS)
+  if (const auto error = file->GetError(); error == ERROR_SUCCESS)
   {
+    switch (file->GetMatchState())
+    {
+    case FileHashTask::MatchState_None:
+      ++_count_unknown;
+      break;
+    case FileHashTask::MatchState_Mismatch:
+      ++_count_mismatch;
+      break;
+    default:
+      ++_count_match;
+      break;
+    }
+
     const auto& results = file->GetHashResult();
 
     for (auto i = 0u; i < HashAlgorithm::k_count; ++i)
     {
       auto& result = results[i];
-      if(!result.empty())
+      if (!result.empty())
       {
         TCHAR hash_str[HashAlgorithm::k_max_size * 2 + 1];
         utl::HashBytesToString(hash_str, result);
@@ -620,6 +662,7 @@ void OpenHashTabPropPage::FileCompletionCallback(FileHashTask* file)
   }
   else
   {
+    ++_count_error;
     TCHAR buf[1024];
     FormatMessage(
       FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
@@ -633,38 +676,19 @@ void OpenHashTabPropPage::FileCompletionCallback(FileHashTask* file)
     add_item(file->GetDisplayName().c_str(), utl::GetString(IDS_ERROR).c_str(), buf, file->ToLparam(0));
   }
 
-  if(files_being_processed == 0)
+  // note that this might be true multiple times (but at least once!) since this function runs async
+  if (_files_not_finished == 0)
   {
     // We only enable settings button after processing is done because changing enabled algorithms could result
     // in much more problems
     Button_Enable(GetDlgItem(_hwnd, IDC_BUTTON_SETTINGS), true);
     Button_Enable(GetDlgItem(_hwnd, IDC_BUTTON_EXPORT), true);
     Button_Enable(GetDlgItem(_hwnd, IDC_BUTTON_CLIPBOARD), true);
-    //SetTextFromTable(_hwnd, IDC_STATIC_PROCESSING, IDS_DONE);
-    TCHAR done[64];
-    size_t match = 0, mismatch = 0, none = 0, error = 0;
-    for(auto file_task : _file_tasks)
-    {
-      if (file_task->GetError() != ERROR_SUCCESS)
-        error++;
-      else
-        switch (file_task->GetMatchState())
-        {
-        case FileHashTask::MatchState_None:
-          ++none;
-          break;
-        case FileHashTask::MatchState_Mismatch:
-          ++mismatch;
-          break;
-        default:
-          ++match;
-          break;
-        }
-    }
-    _stprintf_s(done, _T("%s (%zd/%zd/%zd/%zd)"), utl::GetString(IDS_DONE).c_str(), match, mismatch, none, error);
-    SetDlgItemText(_hwnd, IDC_STATIC_PROCESSING, done);
   }
+
+  UpdateDefaultStatus();
 }
+
 
 std::string OpenHashTabPropPage::GetSumfileAsString(size_t hasher)
 {
@@ -687,4 +711,33 @@ std::string OpenHashTabPropPage::GetSumfileAsString(size_t hasher)
     str << hash_str << " *" << utl::TStringToUTF8(file->GetDisplayName().c_str()) << "\r\n";
   }
   return str.str();
+}
+
+void OpenHashTabPropPage::SetTempStatus(PCTSTR status, UINT time)
+{
+  _temporary_status = true;
+  SetDlgItemText(_hwnd, IDC_STATIC_PROCESSING, status);
+  SetTimer(_hwnd, k_status_update_timer_id, time, nullptr);
+}
+
+void OpenHashTabPropPage::UpdateDefaultStatus(bool force_reset)
+{
+  if (force_reset)
+    _temporary_status = false;
+
+  if(!_temporary_status)
+  {
+    const auto msg = _files_not_finished ? IDS_PROCESSING : IDS_DONE;
+    TCHAR done[64];
+    _stprintf_s(
+      done,
+      _T("%s (%u/%u/%u/%u)"),
+      utl::GetString(msg).c_str(),
+      _count_match,
+      _count_mismatch,
+      _count_unknown,
+      _count_error
+    );
+    SetDlgItemText(_hwnd, IDC_STATIC_PROCESSING, done);
+  }
 }

@@ -11,6 +11,7 @@
 #define IDC_HASH_LIST                   203
 #define IDS_ALGORITHM                   203
 #define IDC_EDIT_HASH                   204
+#define IDS_COPIED                      204
 #define IDS_HASH                        205
 #define IDC_COMBO_EXPORT                206
 #define IDC_BUTTON_EXPORT               207

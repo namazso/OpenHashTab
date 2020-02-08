@@ -20,22 +20,27 @@ class FileHashTask;
 
 class OpenHashTabPropPage
 {
+  static constexpr auto k_status_update_timer_id = (UINT_PTR)0x7c253816f7ef92ea;
+  static constexpr auto k_magic_user_wparam = (WPARAM)0x1c725fcfdcbf5843;
+
+  enum UserWindowMessages : UINT
+  {
+    WM_USER_FILE_COMPLETED = WM_USER
+  };
+
   std::list<tstring> _files;
-
   tstring _base;
-
   HWND _hwnd{};
-
-  std::mutex _list_view_lock;
-
+  std::mutex _dont_let_the_window_delete_lock;
   std::list<FileHashTask*> _file_tasks;
-
   std::atomic<unsigned> _references{};
-
   std::atomic<unsigned> _files_not_finished{};
-
+  unsigned _count_error{};
+  unsigned _count_match{};
+  unsigned _count_mismatch{};
+  unsigned _count_unknown{};
+  bool _temporary_status{};
   bool _is_sumfile{ false };
-
   volatile bool _hwnd_deleted{ false };
 
   enum ColIndex : int
@@ -50,6 +55,9 @@ class OpenHashTabPropPage
   INT_PTR CustomDrawListView(LPARAM lparam, HWND list) const;
 
   std::string GetSumfileAsString(size_t hasher);
+  void SetTempStatus(PCTSTR status, UINT time);
+  void UpdateDefaultStatus(bool force_reset = false);
+  void FileCompleted(FileHashTask* file);
 
   void AddFiles();
   void AddFile(const tstring& path, const std::vector<std::uint8_t>& expected_hash = {});
