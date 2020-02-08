@@ -16,9 +16,10 @@
 #include "stdafx.h"
 
 #include "OpenHashTabShlExt.h"
-#include "OpenHashTabPropPage.h"
 #include "dllmain.h"
 #include "utl.h"
+#include "PropPage.h"
+#include "PageDialog.h"
 
 // COpenHashTabShlExt
 
@@ -125,8 +126,8 @@ HRESULT STDMETHODCALLTYPE COpenHashTabShlExt::AddPages(
 
   const auto tab_name = utl::GetString(IDS_HASHES);
 
-  // Set up everything but pfnDlgProc, pfnCallback, lParam which will be set
-  // up by MakePropPageWrapper to call members functions on the page object
+  // Set up everything but pfnDlgProc, pfnCallback, lParam which will be set by MakePropPage to call members
+  // functions on the page object
   PROPSHEETPAGE psp{};
   psp.dwSize = sizeof(PROPSHEETPAGE);
   psp.dwFlags = PSP_USEREFPARENT | PSP_USETITLE | PSP_USECALLBACK;
@@ -135,8 +136,7 @@ HRESULT STDMETHODCALLTYPE COpenHashTabShlExt::AddPages(
   psp.pszTitle = tab_name.c_str();
   psp.pcRefParent = (UINT*)&_AtlModule.m_nLockCnt;
 
-  const auto page = new OpenHashTabPropPage(_files, _base);
-  const auto hpage = utl::MakePropPageWrapper(psp, page);
+  const auto hpage = utl::MakePropPage<PropPage, PageDialog>(psp, _files, _base);
 
   if (hpage)
   {

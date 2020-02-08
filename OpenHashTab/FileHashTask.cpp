@@ -16,7 +16,7 @@
 #include "stdafx.h"
 
 #include "FileHashTask.h"
-#include "OpenHashTabPropPage.h"
+#include "PropPage.h"
 #include "Queues.h"
 #include "utl.h"
 
@@ -103,7 +103,7 @@ void FileHashTask::ProcessReadQueue(uint8_t* reuse_block)
     BlockFree(reuse_block);
 }
 
-FileHashTask::FileHashTask(const tstring& path, OpenHashTabPropPage* prop_page, tstring display_name, std::vector<uint8_t> expected_hash)
+FileHashTask::FileHashTask(const tstring& path, PropPage* prop_page, tstring display_name, std::vector<uint8_t> expected_hash)
   : _hash_contexts{}
   , _prop_page{ prop_page }
   , _display_name{ std::move(display_name) }
@@ -175,6 +175,12 @@ FileHashTask::~FileHashTask()
     CloseThreadpoolWork(_threadpool_hash_work);
   if(_threadpool_io)
     CloseThreadpoolIo(_threadpool_io);
+}
+
+void FileHashTask::StartProcessing()
+{
+  _prop_page->Reference();
+  ReadBlockAsync();
 }
 
 bool FileHashTask::ReadBlockAsync(uint8_t* reuse_block)
@@ -326,4 +332,5 @@ void FileHashTask::Finish()
   }
 
   _prop_page->FileCompletionCallback(this);
+  _prop_page->Dereference();
 }

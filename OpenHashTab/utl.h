@@ -32,10 +32,10 @@ inline void DebugMsg(PCSTR fmt, ...) { }
 namespace utl
 {
   // T should be a class handling a dialog, having implemented these:
-  // T(HWND hDlg, void* user_param)
-  //   hDlg: the HWND of the dialog, guaranteed to be valid for the lifetime of the object
-  //   user_param: parameter passed to the function creating the dialog
-  // INT_PTR DlgProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
+  //   T(HWND hDlg, void* user_param)
+  //     hDlg: the HWND of the dialog, guaranteed to be valid for the lifetime of the object
+  //     user_param: parameter passed to the function creating the dialog
+  //   INT_PTR DlgProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
   template <typename T>
   INT_PTR CALLBACK DlgProcClassBinder(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
   {
@@ -60,61 +60,55 @@ namespace utl
     return ret;
   }
 
-  // TODO: consider dropping this in favor of DlgProcClassBinder
-  // Called in the following order:
-  // name           hwnd  when
-  // -----------------------------------------------
-  // ADDREF         no    on opening properties
-  // CREATE         no    on opening properties
-  // WM_INITDIALOG  yes   on first click on sheet
-  // WM_*           yes   window messages
-  // WM_DESTROY     yes   on closing properties
-  // RELEASE        no    after properties closed
-  template <typename T>
-  HPROPSHEETPAGE MakePropPageWrapper(PROPSHEETPAGE psp, T* object)
+  // PropPage should have the following functions:
+  //   PropPage(args...)
+  //   Reference(HWND hwnd, LPPROPSHEETPAGE ppsp);
+  //   Dereference(HWND hwnd, LPPROPSHEETPAGE ppsp);
+  //   Create(HWND hwnd, LPPROPSHEETPAGE ppsp);
+  //
+  // Dialog should have the functions described in DlgProcClassBinder. Additionally, dialog receives a PropPage*
+  //   as lParam in it's constructor. A dialog may or may not get created for a property sheet during lifetime.
+  template <typename PropPage, typename Dialog, typename... Args>
+  HPROPSHEETPAGE MakePropPage(PROPSHEETPAGE psp, Args&&... args)
   {
-    psp.pfnDlgProc = [](HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) -> INT_PTR
+    // Things are generally called in the following order:
+    // name           dlg   when
+    // -----------------------------------------------
+    // ADDREF         no    on opening properties
+    // CREATE         no    on opening properties
+    // *WM_INITDIALOG yes   on first click on sheet
+    // *WM_*          yes   window messages
+    // *WM_NCDESTROY  yes   on closing properties
+    // RELEASE        no    after properties closed
+    //
+    // Ones marked with * won't get called when the user never selects our prop sheet page
+
+    const auto object = new PropPage(std::forward<Args>(args)...);
+
+    psp.pfnDlgProc = [](HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) -> INT_PTR
     {
-      T* p;
-      if (msg == WM_INITDIALOG)
-      {
-        DebugMsg("WM_INITDIALOG %016X\n", hwnd);
-        const auto ppsp = (LPPROPSHEETPAGE)lparam;
-        p = (T*)ppsp->lParam;
-        SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)p);
-      }
-      else if(msg == WM_DESTROY)
-      {
-        DebugMsg("WM_DESTROY %016X\n", hwnd);
-        SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)nullptr);
-      }
-      {
-        p = (T*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
-      }
-
-      if (!p)
-        DebugMsg("message dropped: %08X %08X %016X\n", msg, wparam, lparam);
-
-      return p ? p->DlgProc(hwnd, msg, wparam, lparam) : 0;
+      if (uMsg == WM_INITDIALOG)
+        lParam = ((LPPROPSHEETPAGE)lParam)->lParam;
+      return DlgProcClassBinder<Dialog>(hDlg, uMsg, wParam, lParam);
     };
     psp.pfnCallback = [](HWND hwnd, UINT msg, LPPROPSHEETPAGE ppsp) -> UINT
     {
-      const auto p = (T*)ppsp->lParam;
+      const auto object = (PropPage*)ppsp->lParam;
       UINT ret = 1;
 
       static const char* const msgname[] = { "ADDREF", "RELEASE", "CREATE" };
-      DebugMsg("%s %016X p %016X ppsp %016X\n", msgname[msg], hwnd, p, ppsp->lParam);
+      DebugMsg("%s %p object %p ppsp %p\n", msgname[msg], hwnd, object, ppsp->lParam);
 
       switch (msg)
       {
       case PSPCB_ADDREF:
-        p->Reference(hwnd, ppsp);
+        object->Reference(hwnd, ppsp);
         break;
       case PSPCB_RELEASE:
-        p->Dereference(hwnd, ppsp);
+        object->Dereference(hwnd, ppsp);
         break;
       case PSPCB_CREATE:
-        ret = p->Create(hwnd, ppsp);
+        ret = object->Create(hwnd, ppsp);
         break;
       default:
         break;
@@ -125,15 +119,12 @@ namespace utl
 
     psp.lParam = (LPARAM)object;
 
-    const auto hPage = CreatePropertySheetPage(&psp);
+    const auto page = CreatePropertySheetPage(&psp);
 
-    if (!hPage)
-    {
-      object->Reference();
-      object->Dereference();
-    }
+    if (!page)
+      delete object;
 
-    return hPage;
+    return page;
   }
 
   template <typename Char>

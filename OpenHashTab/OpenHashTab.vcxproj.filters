@@ -46,9 +46,6 @@
     <ClCompile Include="OpenHashTabShlExt.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="OpenHashTabPropPage.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SumFileParser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -316,6 +313,12 @@
     <ClCompile Include="HasherRegistry.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="PropPage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PageDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -334,9 +337,6 @@
       <Filter>Generated Files</Filter>
     </ClInclude>
     <ClInclude Include="OpenHashTabShlExt.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OpenHashTabPropPage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SumFileParser.h">
@@ -364,6 +364,15 @@
       <Filter>CRC32</Filter>
     </ClInclude>
     <ClInclude Include="SettingsDialog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PropPage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="wnd.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PageDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

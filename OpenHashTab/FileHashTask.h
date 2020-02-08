@@ -16,7 +16,7 @@
 #pragma once
 #include "Hasher.h"
 
-class OpenHashTabPropPage;
+class PropPage;
 
 class FileHashTask
 {
@@ -67,7 +67,7 @@ class FileHashTask
 
   HANDLE _handle;
 
-  OpenHashTabPropPage* _prop_page;
+  PropPage* _prop_page;
 
   tstring _display_name;
   std::vector<uint8_t> _expected_hash;
@@ -94,13 +94,13 @@ public:
   FileHashTask& operator=(const FileHashTask&) = delete;
   FileHashTask& operator=(FileHashTask&&) = delete;
 
-  FileHashTask(const tstring& path, OpenHashTabPropPage* prop_page, tstring display_name, std::vector<uint8_t> expected_hash = {});
+  FileHashTask(const tstring& path, PropPage* prop_page, tstring display_name, std::vector<uint8_t> expected_hash = {});
 
-  // You should only ever delete this object after Finish() was called,
-  // either by error state or natural finish. TODO: check this somehow
+  // You should only ever delete this object after Finish() was called or StartProcessing() was never called.
+  // TODO: check this somehow
   ~FileHashTask();
 
-  void StartProcessing() { ReadBlockAsync(); }
+  void StartProcessing();
 
 private:
   // Enqueue the next block for reading

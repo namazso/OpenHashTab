@@ -1001,7 +1001,6 @@
     <ClCompile Include="Hasher.cpp" />
     <ClCompile Include="HasherRegistry.cpp" />
     <ClCompile Include="OpenHashTab.cpp" />
-    <ClCompile Include="OpenHashTabPropPage.cpp" />
     <ClCompile Include="OpenHashTabShlExt.cpp" />
     <ClCompile Include="OpenHashTab_i.c">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsManaged>
@@ -1023,6 +1022,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
       </PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="PageDialog.cpp" />
+    <ClCompile Include="PropPage.cpp" />
     <ClCompile Include="Queues.cpp" />
     <ClCompile Include="SettingsDialog.cpp" />
     <ClCompile Include="sha3.c">
@@ -1050,9 +1051,10 @@
     <ClInclude Include="dllmain.h" />
     <ClInclude Include="FileHashTask.h" />
     <ClInclude Include="Hasher.h" />
-    <ClInclude Include="OpenHashTabPropPage.h" />
     <ClInclude Include="OpenHashTabShlExt.h" />
     <ClInclude Include="OpenHashTab_i.h" />
+    <ClInclude Include="PageDialog.h" />
+    <ClInclude Include="PropPage.h" />
     <ClInclude Include="Queues.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SettingsDialog.h" />
@@ -1061,6 +1063,7 @@
     <ClInclude Include="SumFileParser.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="utl.h" />
+    <ClInclude Include="wnd.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="OpenHashTab.rc" />
