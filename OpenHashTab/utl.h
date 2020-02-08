@@ -16,12 +16,17 @@
 #pragma once
 
 #ifdef _DEBUG
-#pragma comment(lib, "ntdll")
-// forget you saw this, using undocced stuff is bad!
-extern "C" ULONG DbgPrint(PCSTR Format, ...);
-#define DebugMsg DbgPrint
+inline void DebugMsg(PCSTR fmt, ...)
+{
+  va_list args;
+  va_start(args, fmt);
+  char text[4096];
+  vsprintf_s(text, fmt, args);
+  va_end(args);
+  OutputDebugStringA(text);
+}
 #else
-inline ULONG DebugMsg(PCSTR Format, ...) { return 0; }
+inline void DebugMsg(PCSTR fmt, ...) { }
 #endif
 
 namespace utl
