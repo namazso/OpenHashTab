@@ -20,11 +20,10 @@
 #include "Queues.h"
 
 COpenHashTabModule _AtlModule;
-HINSTANCE g_instance;
 
 // DLL Entry Point
 extern "C" BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, LPVOID reserved)
 {
-	g_instance = instance;
+	UNREFERENCED_PARAMETER(instance);
 	return _AtlModule.DllMain(reason, reserved);
 }

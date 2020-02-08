@@ -354,7 +354,7 @@ INT_PTR OpenHashTabPropPage::DlgProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM 
       case BN_CLICKED:
       {
         DialogBoxParam(
-          g_instance,
+          ATL::_AtlBaseModule.GetResourceInstance(),
           MAKEINTRESOURCE(IDD_SETTINGS),
           hwnd,
           &utl::DlgProcClassBinder<SettingsDialog>,
