@@ -62,8 +62,8 @@ namespace utl
 
   // PropPage should have the following functions:
   //   PropPage(args...)
-  //   Reference(HWND hwnd, LPPROPSHEETPAGE ppsp);
-  //   Dereference(HWND hwnd, LPPROPSHEETPAGE ppsp);
+  //   AddRef(HWND hwnd, LPPROPSHEETPAGE ppsp);
+  //   Release(HWND hwnd, LPPROPSHEETPAGE ppsp);
   //   Create(HWND hwnd, LPPROPSHEETPAGE ppsp);
   //
   // Dialog should have the functions described in DlgProcClassBinder. Additionally, dialog receives a PropPage*
@@ -102,10 +102,10 @@ namespace utl
       switch (msg)
       {
       case PSPCB_ADDREF:
-        object->Reference(hwnd, ppsp);
+        object->AddRef(hwnd, ppsp);
         break;
       case PSPCB_RELEASE:
-        object->Dereference(hwnd, ppsp);
+        object->Release(hwnd, ppsp);
         break;
       case PSPCB_CREATE:
         ret = object->Create(hwnd, ppsp);

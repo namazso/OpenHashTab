@@ -92,12 +92,14 @@ PropPage::PropPage(std::list<tstring> files, tstring base)
 PropPage::~PropPage()
 {
   Cancel();
+  while (_references != 0)
+    ;
 }
 
 void PropPage::RegisterWindow(HWND window)
 {
-  // no need to reference since we are guaranteed to hang around until the window is destroyed
-
+  // Turns out the dialog can sometimes be still running at the time we receive a RELEASE, so let's reference here
+  Reference();
   std::lock_guard<std::mutex> guard{_window_mutex};
   assert(_window == nullptr);
   _window = window;
@@ -105,9 +107,12 @@ void PropPage::RegisterWindow(HWND window)
 
 void PropPage::UnregisterWindow()
 {
-  std::lock_guard<std::mutex> guard{_window_mutex};
-  assert(_window != nullptr);
-  _window = nullptr;
+  {
+    std::lock_guard<std::mutex> guard{ _window_mutex };
+    assert(_window != nullptr);
+    _window = nullptr;
+  }
+  Dereference();
 }
 
 unsigned PropPage::Reference()
@@ -121,9 +126,6 @@ unsigned PropPage::Dereference()
 {
   const auto references = --_references;
   DebugMsg("ref- %d\n", references);
-  if (references == 0)
-    delete this;
-
   return references;
 }
 

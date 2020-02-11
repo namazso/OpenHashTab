@@ -34,9 +34,9 @@ public:
   PropPage(std::list<tstring> files, tstring base);
   ~PropPage();
 
+  void AddRef(HWND, LPPROPSHEETPAGE) { }
   UINT Create(HWND, LPPROPSHEETPAGE) { return 1; }
-  void Reference(HWND, LPPROPSHEETPAGE) { Reference(); }
-  void Dereference(HWND, LPPROPSHEETPAGE) { Dereference(); }
+  void Release(HWND, LPPROPSHEETPAGE) { delete this; }
 
   void RegisterWindow(HWND window);
   void UnregisterWindow();
