@@ -17,14 +17,22 @@ OpenHashTab is a shell extension for conveniently calculating and checking file 
 
 \* On Windows 8 or later, to the extent Windows supports it.
 
+## System requirements
+
+* Windows Vista or later (x86 / x64 / ARM64)
+* 1 GB RAM or more (for efficent hashing of more than 512 files at a time)
+
 ## Usage
 
-Most of the actions should be obvious. The hash list supports the following actions:
+Most of the actions should be obvious. Some not-so-obvious features are listed here:
 
+* You can select multiple files or folders, all files will be hashed.
 * Double click hash to copy it
 * Double click name or algorithm to copy the line in sumfile format
-* Select (possibly multiple) then right click to copy all columns separated by tabs
+* Select one or more lines then right click to copy all columns of the lines, separated by tabs
 * The counters next to the status text is in the format `(match/mismatch/nothing to check against/error)`
+* Hashing a sumfile will interpret it as such and hash the files listed in it.
+* If a hashed file has a sumfile with same filename plus one of the [recognized sumfile extensions](https://github.com/namazso/OpenHashTab/blob/master/OpenHashTab/Hasher.cpp#L242-L251), the file hash is checked against it.
 
 ## Algorithms
 
@@ -70,6 +78,10 @@ Look into OpenHashTab/OpenHashTab.rc, figuring out what to translate should be t
 ### Translation contributors
 
 **xprism** (Simplified Chinese), **Niccolò Zanichelli** (Italian), **[@vmcall](https://github.com/vmcall/)** (Danish)
+
+## Relationship to HashTab
+
+HashTab is a similar purpose proprietary software. While this software has been inspired by it, I was never an user of HashTab and this software contains no code or anything related to it.
 
 ## License
 
