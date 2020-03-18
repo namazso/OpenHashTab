@@ -124,9 +124,6 @@ HANDLE utl::OpenForRead(const tstring& file, bool async)
 
 DWORD utl::SetClipboardText(HWND hwnd, LPCTSTR text)
 {
-  if (!hwnd)
-    return ERROR_INVALID_PARAMETER;
-
   DWORD error = ERROR_SUCCESS;
 
   if (OpenClipboard(hwnd))
@@ -162,6 +159,29 @@ DWORD utl::SetClipboardText(HWND hwnd, LPCTSTR text)
     error = GetLastError();
 
   return error;
+}
+
+tstring utl::GetClipboardText(HWND hwnd)
+{
+  tstring tstr;
+  if (OpenClipboard(hwnd))
+  {
+    const auto hglb = GetClipboardData(CF_UNICODETEXT);
+    if(hglb)
+    {
+      const auto text = (PCTSTR)GlobalLock(hglb);
+
+      if(text)
+      {
+        tstr = text;
+        GlobalUnlock(hglb);
+      }
+    }
+
+    CloseClipboard();
+  }
+
+  return tstr;
 }
 
 tstring utl::SaveDialog(HWND hwnd, LPCTSTR defpath, LPCTSTR defname)

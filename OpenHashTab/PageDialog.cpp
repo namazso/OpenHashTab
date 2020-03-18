@@ -404,6 +404,14 @@ void PageDialog::OnAllFilesFinished()
   Edit_Enable(GetDlgItem(_hwnd, IDC_EDIT_HASH), true);
 
   UpdateDefaultStatus();
+
+  const auto clip = utl::GetClipboardText(_hwnd);
+  const auto find_hash = utl::HashStringToBytes(clip.c_str());
+  if (find_hash.size() >= 4) // at least 4 bytes for a valid hash
+  {
+    Edit_SetText(GetDlgItem(_hwnd, IDC_EDIT_HASH), clip.c_str());
+    OnHashEditChanged(); // fake a change as if the user pasted it
+  }
 }
 
 void PageDialog::OnExportClicked()

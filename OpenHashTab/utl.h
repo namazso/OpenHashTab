@@ -220,6 +220,8 @@ namespace utl
 
   DWORD SetClipboardText(HWND hwnd, LPCTSTR text);
 
+  tstring GetClipboardText(HWND hwnd);
+
   tstring SaveDialog(HWND hwnd, LPCTSTR defpath, LPCTSTR defname);
 
   DWORD SaveMemoryAsFile(LPCTSTR path, const void* p, size_t size);
