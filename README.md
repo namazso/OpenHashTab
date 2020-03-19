@@ -77,7 +77,7 @@ Look into OpenHashTab/OpenHashTab.rc, figuring out what to translate should be t
 
 ### Translation contributors
 
-**xprism** (Simplified Chinese), **Niccolò Zanichelli** (Italian), **[@vmcall](https://github.com/vmcall/)** (Danish)
+**xprism**, **[@NieLnchn](https://github.com/NieLnchn)** (Simplified Chinese), **Niccolò Zanichelli** (Italian), **[@vmcall](https://github.com/vmcall/)** (Danish)
 
 ## Relationship to HashTab
 
