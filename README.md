@@ -30,8 +30,9 @@ Most of the actions should be obvious. Some not-so-obvious features are listed h
 * Double click hash to copy it
 * Double click name or algorithm to copy the line in sumfile format
 * Select one or more lines then right click to copy all columns of the lines, separated by tabs
+* Double right click to copy everything, separated by tabs
 * The counters next to the status text is in the format `(match/mismatch/nothing to check against/error)`
-* Hashing a sumfile will interpret it as such and hash the files listed in it.
+* Selecting the tab on a sumfile will interpret it as such and hash the files listed in it.
 * If a hashed file has a sumfile with same filename plus one of the [recognized sumfile extensions](https://github.com/namazso/OpenHashTab/blob/master/OpenHashTab/Hasher.cpp#L242-L251), the file hash is checked against it.
 
 ## Algorithms
