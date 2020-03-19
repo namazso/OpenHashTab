@@ -202,7 +202,11 @@ INT_PTR PageDialog::DlgProc(UINT msg, WPARAM wparam, LPARAM lparam)
         break;
       }
       case NM_RCLICK:
-        OnListRightClick();
+        OnListRightClick(false);
+        break;
+
+      case NM_RDBLCLK:
+        OnListRightClick(true);
         break;
 
       default:
@@ -483,7 +487,7 @@ void PageDialog::OnListDoubleClick(int item, int subitem)
   SetTempStatus(utl::GetString(IDS_COPIED).c_str(), 1000);
 }
 
-void PageDialog::OnListRightClick()
+void PageDialog::OnListRightClick(bool dblclick)
 {
   const auto list = GetDlgItem(_hwnd, IDC_HASH_LIST);
   const auto count = ListView_GetItemCount(list);
@@ -496,7 +500,7 @@ void PageDialog::OnListRightClick()
   };
   for (auto i = 0; i < count; ++i)
   {
-    if (!ListView_GetItemState(list, i, LVIS_SELECTED))
+    if (!dblclick && !ListView_GetItemState(list, i, LVIS_SELECTED))
       continue;
 
     clipboard

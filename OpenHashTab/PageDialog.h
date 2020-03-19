@@ -53,7 +53,7 @@ class PageDialog
   void OnExportClicked();
   void OnHashEditChanged();
   void OnListDoubleClick(int item, int subitem);
-  void OnListRightClick();
+  void OnListRightClick(bool dblclick = false);
 
 public:
   PageDialog(HWND hwnd, void* prop_page);
