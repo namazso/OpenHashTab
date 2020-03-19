@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "OpenHashTab"
-#define MyAppVersion "2.1.0"
+#define MyAppVersion "2.2.0"
 #define MyAppPublisher "namazso"
 #define MyAppURL "https://github.com/namazso/OpenHashTab"
 #define DLLName "OpenHashTab.dll"
