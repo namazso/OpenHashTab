@@ -228,4 +228,6 @@ namespace utl
 
   tstring UTF8ToTString(const char* p);
   std::string TStringToUTF8(LPCTSTR p);
+
+  tstring ErrorToString(DWORD error);
 }

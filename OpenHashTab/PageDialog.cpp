@@ -376,17 +376,12 @@ void PageDialog::OnFileFinished(FileHashTask* file)
   else
   {
     ++_count_error;
-    TCHAR buf[1024];
-    FormatMessage(
-      FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-      nullptr,
-      error,
-      MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-      buf,
-      _ARRAYSIZE(buf),
-      nullptr
+    add_item(
+      file->GetDisplayName().c_str(),
+      utl::GetString(IDS_ERROR).c_str(),
+      utl::ErrorToString(error).c_str(),
+      file->ToLparam(0)
     );
-    add_item(file->GetDisplayName().c_str(), utl::GetString(IDS_ERROR).c_str(), buf, file->ToLparam(0));
   }
 
   UpdateDefaultStatus();

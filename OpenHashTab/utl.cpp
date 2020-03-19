@@ -304,3 +304,23 @@ std::string utl::TStringToUTF8(LPCTSTR p)
   return { p };
 #endif
 }
+
+tstring utl::ErrorToString(DWORD error)
+{
+  TCHAR buf[0x1000];
+
+  FormatMessage(
+    FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+    nullptr,
+    error,
+    MAKELANGID(LANG_USER_DEFAULT, SUBLANG_DEFAULT),
+    buf,
+    (DWORD)std::size(buf),
+    nullptr
+  );
+  tstring tstr{ buf };
+  const auto pos = tstr.find_last_not_of(_T("\r\n"));
+  if (pos != tstring::npos)
+    tstr.resize(pos);
+  return tstr;
+}
