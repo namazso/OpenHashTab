@@ -1,4 +1,4 @@
-Copyright 2019 namazso <admin@namazso.eu>
+Copyright 2019-2020 namazso <admin@namazso.eu>
 OpenHashTab - File hashing shell extension
 Licensed under GPLv3, included here
 Code available at https://github.com/namazso/OpenHashTab
