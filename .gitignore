@@ -245,3 +245,6 @@ ModelManifest.xml
 
 # InnoSetup output
 OpenHashTab_setup.exe
+
+# Compiled localization
+OpenHashTab/localization.rc

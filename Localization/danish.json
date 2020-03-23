@@ -1,0 +1,20 @@
+{
+	"langid":              "LANG_DANISH",
+	"sublangid":           "SUBLANG_DEFAULT",
+	"strings": {
+		"FILENAME":            "Navn",
+		"ALGORITHM":           "Algoritme",
+		"COPIED":              "✔ Kopieret",
+		"HASH":                "Hash",
+		"CHECK_AGAINST":       "Tjek mod:",
+		"EXPORT_TO":           "Eksport til sum-fil:",
+		"EXPORT_BTN":          "Eksport...",
+		"SUMFILE":             "Fortolket som sum-fil.",
+		"DONE":                "Færdig!",
+		"PROCESSING":          "Arbejder...",
+		"HASHES":              "Hashes",
+		"CLIPBOARD":           "Til clipboard",
+		"NOMATCH":             "Intet match fundet.",
+		"ERROR":               "Fejl"
+	}
+}

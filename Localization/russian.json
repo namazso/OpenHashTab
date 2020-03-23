@@ -1,0 +1,20 @@
+{
+	"langid":              "LANG_RUSSIAN",
+	"sublangid":           "SUBLANG_DEFAULT",
+	"strings": {
+		"FILENAME":            "Имя",
+		"ALGORITHM":           "Алгоритм",
+		"COPIED":              "✔ Скопирован",
+		"HASH":                "Хэш",
+		"CHECK_AGAINST":       "Сравнить c:",
+		"EXPORT_TO":           "Экспорт в хэш-файл:",
+		"EXPORT_BTN":          "Экспорт...",
+		"SUMFILE":             "Это хэш-файл.",
+		"DONE":                "Готово!",
+		"PROCESSING":          "Обработка...",
+		"HASHES":              "Хэши",
+		"CLIPBOARD":           "В буфер",
+		"NOMATCH":             "Совпадений не найдено.",
+		"ERROR":               "Ошибка"
+	}
+}

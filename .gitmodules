@@ -4,3 +4,6 @@
 [submodule "mbedtls"]
 	path = mbedtls
 	url = https://github.com/ARMmbed/mbedtls.git
+[submodule "langcomp"]
+	path = langcomp
+	url = https://github.com/namazso/langcomp.git

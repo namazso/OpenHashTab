@@ -1,0 +1,20 @@
+{
+	"langid":              "LANG_HUNGARIAN",
+	"sublangid":           "SUBLANG_DEFAULT",
+	"strings": {
+		"FILENAME":            "Név",
+		"ALGORITHM":           "Algoritmus",
+		"COPIED":              "✔ Másolva",
+		"HASH":                "Hash",
+		"CHECK_AGAINST":       "Összehasonlítás evvel:",
+		"EXPORT_TO":           "Exportálás sum-fájlba:",
+		"EXPORT_BTN":          "Exportálás...",
+		"SUMFILE":             "Sum-fájlként értelmezve.",
+		"DONE":                "Kész!",
+		"PROCESSING":          "Feldolgozás...",
+		"HASHES":              "Hashek",
+		"CLIPBOARD":           "Vágólapra",
+		"NOMATCH":             "Nincs egyezés.",
+		"ERROR":               "Hiba"
+	}
+}

@@ -380,6 +380,9 @@
     <ResourceCompile Include="OpenHashTab.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
+    <ResourceCompile Include="localization.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="OpenHashTab.rgs">

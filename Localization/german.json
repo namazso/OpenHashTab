@@ -1,0 +1,20 @@
+{
+	"langid":              "LANG_GERMAN",
+	"sublangid":           "SUBLANG_GERMAN",
+	"strings": {
+		"FILENAME":            "Name",
+		"ALGORITHM":           "Algorithmus",
+		"COPIED":              "✔ Kopiert",
+		"HASH":                "Hash",
+		"CHECK_AGAINST":       "Vergleichen mit:",
+		"EXPORT_TO":           "Exportieren als Sumfile:",
+		"EXPORT_BTN":          "Exportieren...",
+		"SUMFILE":             "Als Sumfile interpretiert.",
+		"DONE":                "Fertig!",
+		"PROCESSING":          "In Bearbeitung...",
+		"HASHES":              "Hashen",
+		"CLIPBOARD":           "Kopieren",
+		"NOMATCH":             "Keine Übereinstimmung gefunden.",
+		"ERROR":               "Fehler"
+	}
+}

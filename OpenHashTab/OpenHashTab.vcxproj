@@ -1069,6 +1069,7 @@
     <ClInclude Include="wnd.h" />
   </ItemGroup>
   <ItemGroup>
+    <ResourceCompile Include="localization.rc" />
     <ResourceCompile Include="OpenHashTab.rc" />
   </ItemGroup>
   <ItemGroup>

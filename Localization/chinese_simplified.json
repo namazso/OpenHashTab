@@ -1,0 +1,20 @@
+{
+	"langid":              "LANG_CHINESE",
+	"sublangid":           "SUBLANG_CHINESE_SIMPLIFIED",
+	"strings": {
+		"FILENAME":            "文件名",
+		"ALGORITHM":           "算法",
+		"COPIED":              "✔ 已复制",
+		"HASH":                "Hash",
+		"CHECK_AGAINST":       "校验",
+		"EXPORT_TO":           "导出文件",
+		"EXPORT_BTN":          "导出",
+		"SUMFILE":             "已校验 Hash 文件",
+		"DONE":                "完成！",
+		"PROCESSING":          "处理中",
+		"HASHES":              "Hashes",
+		"CLIPBOARD":           "复制",
+		"NOMATCH":             "未找到匹配项",
+		"ERROR":               "错误"
+	}
+}

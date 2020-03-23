@@ -1,0 +1,20 @@
+{
+	"langid":              "LANG_SPANISH",
+	"sublangid":           "SUBLANG_SPANISH",
+	"strings": {
+		"FILENAME":            "Nombre",
+		"ALGORITHM":           "Algoritmo",
+		"COPIED":              "✔ Copiado",
+		"HASH":                "Hash",
+		"CHECK_AGAINST":       "Verificar contra:",
+		"EXPORT_TO":           "Exportar a sumfile:",
+		"EXPORT_BTN":          "Exportar...",
+		"SUMFILE":             "Interpretando como sumfile.",
+		"DONE":                "Completado!",
+		"PROCESSING":          "Procesando...",
+		"HASHES":              "Hashes",
+		"CLIPBOARD":           "Al portapapeles",
+		"NOMATCH":             "No se encontraron coincidencias.",
+		"ERROR":               "Error"
+	}
+}
