@@ -142,6 +142,7 @@ void PropPage::AddFile(const tstring& path, const std::vector<std::uint8_t>& exp
       dispname = dispname.substr(_base.size());
 
   const auto task = new FileHashTask(path, this, std::move(dispname), expected_hash);
+  _size_total += task->GetSize();
   _file_tasks.emplace_back(task);
 }
 
@@ -253,6 +254,29 @@ void PropPage::FileCompletionCallback(FileHashTask* file)
     SendNotifyMessage(_window, wnd::WM_USER_FILE_FINISHED, wnd::k_user_magic_wparam, (LPARAM)file);
     if (not_finished == 0)
       SendNotifyMessage(_window, wnd::WM_USER_ALL_FILES_FINISHED, wnd::k_user_magic_wparam, 0);
+  }
+}
+
+void PropPage::FileProgressCallback(uint64_t size_progress)
+{
+  if (_size_total == 0)
+    return;
+
+  const auto old_progress = _size_progressed.fetch_add(size_progress);
+  const auto new_progress = old_progress + size_progress;
+  const auto old_part = old_progress * k_progress_resolution / _size_total;
+  const auto new_part = new_progress * k_progress_resolution / _size_total;
+
+  if(old_part != new_part)
+  {
+    std::lock_guard<std::mutex> guard{ _window_mutex };
+    if(_window)
+      SendNotifyMessage(
+        _window,
+        wnd::WM_USER_FILE_PROGRESS,
+        wnd::k_user_magic_wparam,
+        new_part
+      );
   }
 }
 

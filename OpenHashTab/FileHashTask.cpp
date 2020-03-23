@@ -293,7 +293,9 @@ void FileHashTask::DoHashRound()
 
 void FileHashTask::FinishedBlock()
 {
-  _current_offset += GetCurrentBlockSize();
+  const auto block_size = GetCurrentBlockSize();
+  _prop_page->FileProgressCallback(block_size);
+  _current_offset += block_size;
   auto reuse_block = _block;
   _block = nullptr;
   BlockReset(reuse_block);

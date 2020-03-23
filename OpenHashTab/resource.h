@@ -31,6 +31,7 @@
 #define IDC_LIST1                       215
 #define IDC_ALGORITHM_LIST              215
 #define IDS_HASHES                      216
+#define IDC_PROGRESS                    216
 #define IDS_CLIPBOARD                   217
 #define IDS_NOMATCH                     218
 #define IDS_ERROR                       219
@@ -41,7 +42,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        222
 #define _APS_NEXT_COMMAND_VALUE         32768
-#define _APS_NEXT_CONTROL_VALUE         216
+#define _APS_NEXT_CONTROL_VALUE         217
 #define _APS_NEXT_SYMED_VALUE           107
 #endif
 #endif

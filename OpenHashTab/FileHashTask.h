@@ -72,8 +72,8 @@ class FileHashTask
   tstring _display_name;
   std::vector<uint8_t> _expected_hash;
 
-  uint64_t _file_size;
-  uint64_t _current_offset{ 0 };
+  uint64_t _file_size{};
+  uint64_t _current_offset{};
 
   uint64_t _file_index;
   uint32_t _volume_serial;
@@ -136,6 +136,7 @@ public:
   }
 
   DWORD GetError() const { return _error; }
+  uint64_t GetSize() const { return _file_size; }
   HANDLE GetHandle() const { return _handle; }
   const hash_results_t& GetHashResult() const { return _hash_results; }
   const tstring& GetDisplayName() const { return _display_name; }

@@ -175,6 +175,11 @@ INT_PTR PageDialog::DlgProc(UINT msg, WPARAM wparam, LPARAM lparam)
       OnAllFilesFinished();
     break;
 
+  case wnd::WM_USER_FILE_PROGRESS:
+    if (wparam == wnd::k_user_magic_wparam)
+      SendMessage(GetDlgItem(_hwnd, IDC_PROGRESS), PBM_SETPOS, lparam, 0);
+    break;
+
   case WM_TIMER:
     if (wparam == k_status_update_timer_id)
       UpdateDefaultStatus(true);
@@ -313,6 +318,8 @@ void PageDialog::InitDialog()
 
   ComboBox_SetCurSel(combobox, 0);
 
+  SendMessage(GetDlgItem(_hwnd, IDC_PROGRESS), PBM_SETRANGE32, 0, PropPage::k_progress_resolution);
+
   _prop_page->AddFiles();
 
   if (_prop_page->IsSumfile())
@@ -401,6 +408,13 @@ void PageDialog::OnAllFilesFinished()
   Button_Enable(GetDlgItem(_hwnd, IDC_BUTTON_EXPORT), true);
   Button_Enable(GetDlgItem(_hwnd, IDC_BUTTON_CLIPBOARD), true);
   Edit_Enable(GetDlgItem(_hwnd, IDC_EDIT_HASH), true);
+
+  SendMessage(
+    GetDlgItem(_hwnd, IDC_PROGRESS),
+    PBM_SETPOS,
+    PropPage::k_progress_resolution,
+    PropPage::k_progress_resolution
+  );
 
   UpdateDefaultStatus();
 

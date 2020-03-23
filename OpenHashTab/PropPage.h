@@ -19,9 +19,15 @@ class FileHashTask;
 
 class PropPage
 {
+public:
+  constexpr static auto k_progress_resolution = 256u;
+
+private:
   std::list<tstring> _files;
   tstring _base;
   HWND _window{};
+  uint64_t _size_total{};
+  std::atomic<uint64_t> _size_progressed{};
   std::list<std::unique_ptr<FileHashTask>> _file_tasks;
   std::mutex _window_mutex{};
   std::atomic<unsigned> _references{};
@@ -48,6 +54,7 @@ public:
   void ProcessFiles();
   void Cancel(bool wait = true);
   void FileCompletionCallback(FileHashTask* file);
+  void FileProgressCallback(uint64_t size_progress);
 
   // The window should probably only inspect files before processing or after all are done
   const std::list<std::unique_ptr<FileHashTask>>& GetFiles() const { return _file_tasks; };
