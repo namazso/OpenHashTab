@@ -2431,7 +2431,7 @@
  *
  * This module enables mbedtls_strerror().
  */
-#define MBEDTLS_ERROR_C
+//#define MBEDTLS_ERROR_C
 
 /**
  * \def MBEDTLS_GCM_C
@@ -2522,7 +2522,7 @@
  *
  * Uncomment to enable generic message digest wrappers.
  */
-#define MBEDTLS_MD_C
+//#define MBEDTLS_MD_C
 
 /**
  * \def MBEDTLS_MD2_C

@@ -49,12 +49,6 @@
     <ClCompile Include="SumFileParser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\mbedtls\library\md.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\md_wrap.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
     <ClCompile Include="..\mbedtls\library\md2.c">
       <Filter>mbedtls</Filter>
     </ClCompile>
