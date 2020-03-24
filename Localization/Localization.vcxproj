@@ -57,6 +57,7 @@
   <ItemGroup>
     <None Include="chinese_simplified.json" />
     <None Include="danish.json" />
+    <None Include="english_us.json" />
     <None Include="german.json" />
     <None Include="hungarian.json" />
     <None Include="italian.json" />

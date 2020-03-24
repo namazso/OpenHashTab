@@ -181,7 +181,6 @@
     <None Include="OpenHashTabShlExt.rgs">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="..\mbedtls\library\Makefile" />
   </ItemGroup>
   <ItemGroup>
     <Midl Include="OpenHashTab.idl">

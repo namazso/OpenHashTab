@@ -1,0 +1,20 @@
+{
+	"langid":              "LANG_ENGLISH",
+	"sublangid":           "SUBLANG_ENGLISH_US",
+	"strings": {
+		"FILENAME":            "Name",
+		"ALGORITHM":           "Algorithm",
+		"COPIED":              "✔ Copied",
+		"HASH":                "Hash",
+		"CHECK_AGAINST":       "Check against:",
+		"EXPORT_TO":           "Export to sumfile:",
+		"EXPORT_BTN":          "Export...",
+		"SUMFILE":             "Interpreted as sumfile.",
+		"DONE":                "Done!",
+		"PROCESSING":          "Processing...",
+		"HASHES":              "Hashes",
+		"CLIPBOARD":           "To clipboard",
+		"NOMATCH":             "No match found.",
+		"ERROR":               "Error"
+	}
+}

@@ -22,5 +22,6 @@
     <None Include="italian.json" />
     <None Include="russian.json" />
     <None Include="spanish.json" />
+    <None Include="english_us.json" />
   </ItemGroup>
 </Project>

@@ -505,7 +505,6 @@
     <ResourceCompile Include="OpenHashTab.rc" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\mbedtls\library\Makefile" />
     <None Include="OpenHashTab.def" />
     <None Include="OpenHashTab.rgs" />
     <None Include="OpenHashTabShlExt.rgs" />
