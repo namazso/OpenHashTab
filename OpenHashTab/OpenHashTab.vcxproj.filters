@@ -49,105 +49,6 @@
     <ClCompile Include="SumFileParser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\mbedtls\library\aes.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\aesni.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\arc4.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\aria.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\asn1parse.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\asn1write.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\base64.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\bignum.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\blowfish.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\camellia.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\ccm.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\certs.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\chacha20.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\chachapoly.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\cipher.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\cipher_wrap.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\cmac.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\ctr_drbg.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\debug.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\des.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\dhm.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\ecdh.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\ecdsa.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\ecjpake.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\ecp.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\ecp_curves.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\entropy.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\entropy_poll.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\error.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\gcm.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\havege.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\hkdf.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\hmac_drbg.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
     <ClCompile Include="..\mbedtls\library\md.c">
       <Filter>mbedtls</Filter>
     </ClCompile>
@@ -163,61 +64,10 @@
     <ClCompile Include="..\mbedtls\library\md5.c">
       <Filter>mbedtls</Filter>
     </ClCompile>
-    <ClCompile Include="..\mbedtls\library\memory_buffer_alloc.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\net_sockets.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\nist_kw.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\oid.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\padlock.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\pem.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\pk.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\pk_wrap.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\pkcs5.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\pkcs11.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\pkcs12.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\pkparse.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\pkwrite.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\platform.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
     <ClCompile Include="..\mbedtls\library\platform_util.c">
       <Filter>mbedtls</Filter>
     </ClCompile>
-    <ClCompile Include="..\mbedtls\library\poly1305.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
     <ClCompile Include="..\mbedtls\library\ripemd160.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\rsa.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\rsa_internal.c">
       <Filter>mbedtls</Filter>
     </ClCompile>
     <ClCompile Include="..\mbedtls\library\sha1.c">
@@ -227,63 +77,6 @@
       <Filter>mbedtls</Filter>
     </ClCompile>
     <ClCompile Include="..\mbedtls\library\sha512.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\ssl_cache.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\ssl_ciphersuites.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\ssl_cli.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\ssl_cookie.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\ssl_srv.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\ssl_ticket.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\ssl_tls.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\threading.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\timing.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\version.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\version_features.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\x509.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\x509_create.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\x509_crl.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\x509_crt.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\x509_csr.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\x509write_crt.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\x509write_csr.c">
-      <Filter>mbedtls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\mbedtls\library\xtea.c">
       <Filter>mbedtls</Filter>
     </ClCompile>
     <ClCompile Include="utl.cpp">
