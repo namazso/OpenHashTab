@@ -1,11 +1,27 @@
 Copyright 2019-2020 namazso <admin@namazso.eu>
 OpenHashTab - File hashing shell extension
-Licensed under GPLv3, included here
+Licensed under GPLv3, the text of which is included here
 Code available at https://github.com/namazso/OpenHashTab
 
-This software contains code from mbedTLS, originally licensed under
-Apache2 license, here distributed as GPLv3:
+This software contains code from the following projects:
+
+mbedTLS (licensed under Apache2):
 Copyright (C) 2006-2015, ARM Limited, All Rights Reserved
+
+concurrentqueue (licensed under Boost Software License):
+Copyright (c) 2013-2016, Cameron Desrochers. All rights reserved.
+
+blake2sp implementation (public domain):
+7zip implementation by Igor Pavlov and Samuel Neves
+
+crc32 implementation (public domain):
+version 2.0.0 by Craig Bruce
+
+sha3 implementation (public domain):
+by Andrey Jivsov, based on code from https://keccak.team/
+
+langcomp (licensed under GPLv3+):
+Copyright (C) 2020  namazso
 
 Full text of GPLv3:
 
