@@ -17,11 +17,11 @@
 
 class SettingsDialog
 {
-  HWND _handle;
+  HWND _hwnd;
   bool _done_setup = false;
 
 public:
-  SettingsDialog(HWND handle, void*) : _handle(handle) {}
+  SettingsDialog(HWND handle, void*) : _hwnd(handle) {}
 
   INT_PTR DlgProc(UINT uMsg, WPARAM wParam, LPARAM lParam);
 };

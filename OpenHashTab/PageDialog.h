@@ -15,6 +15,8 @@
 //    along with OpenHashTab.  If not, see <https://www.gnu.org/licenses/>.
 #pragma once
 
+#include "utl.h"
+
 class FileHashTask;
 class PropPage;
 
@@ -24,6 +26,20 @@ class PageDialog
 
   HWND _hwnd{};
   PropPage* _prop_page;
+
+  MAKE_IDC_MEMBER(_hwnd, HASH_LIST);
+  MAKE_IDC_MEMBER(_hwnd, EDIT_HASH);
+  MAKE_IDC_MEMBER(_hwnd, COMBO_EXPORT);
+  MAKE_IDC_MEMBER(_hwnd, BUTTON_EXPORT);
+  MAKE_IDC_MEMBER(_hwnd, STATIC_CHECK_AGAINST);
+  MAKE_IDC_MEMBER(_hwnd, STATIC_EXPORT_TO);
+  MAKE_IDC_MEMBER(_hwnd, STATIC_CHECK_RESULT);
+  MAKE_IDC_MEMBER(_hwnd, STATIC_SUMFILE);
+  MAKE_IDC_MEMBER(_hwnd, STATIC_PROCESSING);
+  MAKE_IDC_MEMBER(_hwnd, BUTTON_CLIPBOARD);
+  MAKE_IDC_MEMBER(_hwnd, BUTTON_SETTINGS);
+  MAKE_IDC_MEMBER(_hwnd, ALGORITHM_LIST);
+  MAKE_IDC_MEMBER(_hwnd, PROGRESS);
 
   unsigned _count_error{};
   unsigned _count_match{};

@@ -210,6 +210,19 @@ namespace utl
     return {v, v + len};
   }
 
+  inline tstring GetWindowTextString(HWND hwnd)
+  {
+    SetLastError(0);
+    // GetWindowTextLength may return more than actual length, so we can't use a tstring directly
+    const auto len = GetWindowTextLength(hwnd);
+    // if text is 0 long, GetWindowTextLength returns 0, same as when error happened
+    if (len == 0 && GetLastError() != 0)
+      return {};
+    const auto p = std::make_unique<TCHAR[]>(len + 1);
+    GetWindowText(hwnd, p.get(), len + 1);
+    return { p.get() };
+  }
+
   bool AreFilesTheSame(HANDLE a, HANDLE b);
 
   tstring MakePathLongCompatible(const tstring& file);
@@ -231,3 +244,5 @@ namespace utl
 
   tstring ErrorToString(DWORD error);
 }
+
+#define MAKE_IDC_MEMBER(hwnd, name) HWND _hwnd_ ## name = GetDlgItem(hwnd, IDC_ ## name);

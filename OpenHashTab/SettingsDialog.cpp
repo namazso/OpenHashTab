@@ -26,7 +26,7 @@ INT_PTR SettingsDialog::DlgProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
   {
   case WM_INITDIALOG:
   {
-    const auto list = GetDlgItem(_handle, IDC_ALGORITHM_LIST);
+    const auto list = GetDlgItem(_hwnd, IDC_ALGORITHM_LIST);
     ListView_SetExtendedListViewStyleEx(list, LVS_EX_CHECKBOXES, LVS_EX_CHECKBOXES);
     for (auto& algorithm : HashAlgorithm::g_hashers)
     {
@@ -52,7 +52,7 @@ INT_PTR SettingsDialog::DlgProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
   case WM_COMMAND:
     if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
     {
-      EndDialog(_handle, LOWORD(wParam));
+      EndDialog(_hwnd, LOWORD(wParam));
       return TRUE;
     }
     break;

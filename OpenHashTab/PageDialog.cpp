@@ -82,10 +82,10 @@ static HashColorType HashColorTypeForFile(FileHashTask* file, size_t hasher)
   return HashColorType::Unknown;
 }
 
-static void SetTextFromTable(HWND hwnd, int control, UINT string_id)
+static void SetTextFromTable(HWND hwnd, UINT string_id)
 {
-  SetDlgItemText(hwnd, control, utl::GetString(string_id).c_str());
-};
+  SetWindowText(hwnd, utl::GetString(string_id).c_str());
+}
 
 static int ComboBoxGetSelectedAlgorithmIdx(HWND combo)
 {
@@ -177,7 +177,7 @@ INT_PTR PageDialog::DlgProc(UINT msg, WPARAM wparam, LPARAM lparam)
 
   case wnd::WM_USER_FILE_PROGRESS:
     if (wparam == wnd::k_user_magic_wparam)
-      SendMessage(GetDlgItem(_hwnd, IDC_PROGRESS), PBM_SETPOS, lparam, 0);
+      SendMessage(_hwnd_PROGRESS, PBM_SETPOS, lparam, 0);
     break;
 
   case WM_TIMER:
@@ -236,7 +236,7 @@ INT_PTR PageDialog::DlgProc(UINT msg, WPARAM wparam, LPARAM lparam)
     case IDC_BUTTON_CLIPBOARD:
       if (code == BN_CLICKED)
       {
-        const auto idx = ComboBoxGetSelectedAlgorithmIdx(GetDlgItem(_hwnd, IDC_COMBO_EXPORT));
+        const auto idx = ComboBoxGetSelectedAlgorithmIdx(_hwnd_COMBO_EXPORT);
         if (idx >= 0)
         {
           const auto tstr = utl::UTF8ToTString(GetSumfileAsString((size_t)idx).c_str());
@@ -284,16 +284,14 @@ void PageDialog::InitDialog()
   //GetClientRect(_hwnd, &rect);
   //SetWindowPos(_hwnd, NULL, 0, 0, rect.right - rect.left, rect.bottom - rect.top, SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
 
-  SetTextFromTable(_hwnd, IDC_STATIC_CHECK_AGAINST, IDS_CHECK_AGAINST);
-  SetTextFromTable(_hwnd, IDC_STATIC_EXPORT_TO, IDS_EXPORT_TO);
-  SetTextFromTable(_hwnd, IDC_BUTTON_EXPORT, IDS_EXPORT_BTN);
-  SetTextFromTable(_hwnd, IDC_STATIC_PROCESSING, IDS_PROCESSING);
-  SetTextFromTable(_hwnd, IDC_BUTTON_CLIPBOARD, IDS_CLIPBOARD);
+  SetTextFromTable(_hwnd_STATIC_CHECK_AGAINST, IDS_CHECK_AGAINST);
+  SetTextFromTable(_hwnd_STATIC_EXPORT_TO, IDS_EXPORT_TO);
+  SetTextFromTable(_hwnd_BUTTON_EXPORT, IDS_EXPORT_BTN);
+  SetTextFromTable(_hwnd_STATIC_PROCESSING, IDS_PROCESSING);
+  SetTextFromTable(_hwnd_BUTTON_CLIPBOARD, IDS_CLIPBOARD);
 
-  const auto list = GetDlgItem(_hwnd, IDC_HASH_LIST);
-
-  SendMessage(list, LVM_SETTEXTBKCOLOR, 0, (LPARAM)CLR_NONE);
-  SendMessage(list, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, LVS_EX_FULLROWSELECT);
+  SendMessage(_hwnd_HASH_LIST, LVM_SETTEXTBKCOLOR, 0, (LPARAM)CLR_NONE);
+  SendMessage(_hwnd_HASH_LIST, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, LVS_EX_FULLROWSELECT);
 
   // we put the string table ID in the text length field, to fix it up later
   LVCOLUMN cols[] =
@@ -308,32 +306,32 @@ void PageDialog::InitDialog()
     auto& col = cols[i];
     const auto tstr = utl::GetString(col.cchTextMax);
     col.pszText = (LPTSTR)tstr.c_str();
-    ListView_InsertColumn(list, i, &cols[i]);
+    ListView_InsertColumn(_hwnd_HASH_LIST, i, &cols[i]);
   }
 
-  const auto combobox = GetDlgItem(_hwnd, IDC_COMBO_EXPORT);
+  const auto combobox = _hwnd_COMBO_EXPORT;
   for (auto algorithm : HashAlgorithm::g_hashers)
     if (algorithm.IsEnabled())
       ComboBox_AddString(combobox, utl::UTF8ToTString(algorithm.GetName()).c_str());
 
   ComboBox_SetCurSel(combobox, 0);
 
-  SendMessage(GetDlgItem(_hwnd, IDC_PROGRESS), PBM_SETRANGE32, 0, PropPage::k_progress_resolution);
+  SendMessage(_hwnd_PROGRESS, PBM_SETRANGE32, 0, PropPage::k_progress_resolution);
 
   _prop_page->AddFiles();
 
   if (_prop_page->IsSumfile())
-    SetTextFromTable(_hwnd, IDC_STATIC_SUMFILE, IDS_SUMFILE);
+    SetTextFromTable(_hwnd_STATIC_SUMFILE, IDS_SUMFILE);
 
   if (_prop_page->GetFiles().size() == 1)
-    ListView_SetColumnWidth(list, ColIndex_Filename, 0);
+    ListView_SetColumnWidth(_hwnd_HASH_LIST, ColIndex_Filename, 0);
 
   _prop_page->ProcessFiles();
 }
 
 void PageDialog::OnFileFinished(FileHashTask* file)
 {
-  const auto list = GetDlgItem(_hwnd, IDC_HASH_LIST);
+  const auto list = _hwnd_HASH_LIST;
   if (!list)
     return;
 
@@ -404,13 +402,13 @@ void PageDialog::OnAllFilesFinished()
 
   // We only enable settings button after processing is done because changing enabled algorithms could result
   // in much more problems
-  Button_Enable(GetDlgItem(_hwnd, IDC_BUTTON_SETTINGS), true);
-  Button_Enable(GetDlgItem(_hwnd, IDC_BUTTON_EXPORT), true);
-  Button_Enable(GetDlgItem(_hwnd, IDC_BUTTON_CLIPBOARD), true);
-  Edit_Enable(GetDlgItem(_hwnd, IDC_EDIT_HASH), true);
+  Button_Enable(_hwnd_BUTTON_SETTINGS, true);
+  Button_Enable(_hwnd_BUTTON_EXPORT, true);
+  Button_Enable(_hwnd_BUTTON_CLIPBOARD, true);
+  Edit_Enable(_hwnd_EDIT_HASH, true);
 
   SendMessage(
-    GetDlgItem(_hwnd, IDC_PROGRESS),
+    _hwnd_PROGRESS,
     PBM_SETPOS,
     PropPage::k_progress_resolution,
     PropPage::k_progress_resolution
@@ -422,14 +420,14 @@ void PageDialog::OnAllFilesFinished()
   const auto find_hash = utl::HashStringToBytes(clip.c_str());
   if (find_hash.size() >= 4) // at least 4 bytes for a valid hash
   {
-    Edit_SetText(GetDlgItem(_hwnd, IDC_EDIT_HASH), clip.c_str());
+    Edit_SetText(_hwnd_EDIT_HASH, clip.c_str());
     OnHashEditChanged(); // fake a change as if the user pasted it
   }
 }
 
 void PageDialog::OnExportClicked()
 {
-  const auto idx = ComboBoxGetSelectedAlgorithmIdx(GetDlgItem(_hwnd, IDC_COMBO_EXPORT));
+  const auto idx = ComboBoxGetSelectedAlgorithmIdx(_hwnd_COMBO_EXPORT);
   if (idx >= 0 && !_prop_page->GetFiles().empty())
   {
     // TODO: relativize sumfile contents to save path.
@@ -458,9 +456,7 @@ void PageDialog::OnExportClicked()
 
 void PageDialog::OnHashEditChanged()
 {
-  TCHAR text[256];
-  GetDlgItemText(_hwnd, IDC_EDIT_HASH, text, (int)std::size(text));
-  const auto find_hash = utl::HashStringToBytes(text);
+  const auto find_hash = utl::HashStringToBytes(utl::GetWindowTextString(_hwnd_EDIT_HASH).c_str());
   auto found = false;
   for (const auto& file : _prop_page->GetFiles())
   {
@@ -472,7 +468,7 @@ void PageDialog::OnHashEditChanged()
         found = true;
         const auto algorithm_name = utl::UTF8ToTString(HashAlgorithm::g_hashers[i].GetName());
         const auto txt = algorithm_name + _T(" / ") + file->GetDisplayName();
-        SetDlgItemText(_hwnd, IDC_STATIC_CHECK_RESULT, txt.c_str());
+        SetWindowText(_hwnd_STATIC_CHECK_RESULT, txt.c_str());
         break;
       }
     }
@@ -480,12 +476,12 @@ void PageDialog::OnHashEditChanged()
       break;
   }
   if (!found)
-    SetDlgItemText(_hwnd, IDC_STATIC_CHECK_RESULT, utl::GetString(IDS_NOMATCH).c_str());
+    SetWindowText(_hwnd_STATIC_CHECK_RESULT, utl::GetString(IDS_NOMATCH).c_str());
 }
 
 void PageDialog::OnListDoubleClick(int item, int subitem)
 {
-  const auto list = GetDlgItem(_hwnd, IDC_HASH_LIST);
+  const auto list = _hwnd_HASH_LIST;
   TCHAR hash[4096]; // It's possible it will hold an error message
   ListView_GetItemText(list, item, ColIndex_Hash, hash, (int)std::size(hash));
   if (subitem == ColIndex_Hash)
@@ -503,7 +499,7 @@ void PageDialog::OnListDoubleClick(int item, int subitem)
 
 void PageDialog::OnListRightClick(bool dblclick)
 {
-  const auto list = GetDlgItem(_hwnd, IDC_HASH_LIST);
+  const auto list = _hwnd_HASH_LIST;
   const auto count = ListView_GetItemCount(list);
   const auto buf = std::make_unique<std::array<TCHAR, PATHCCH_MAX_CCH>>();
   std::basic_stringstream<TCHAR> clipboard;
@@ -552,7 +548,7 @@ std::string PageDialog::GetSumfileAsString(size_t hasher)
 void PageDialog::SetTempStatus(PCTSTR status, UINT time)
 {
   _temporary_status = true;
-  SetDlgItemText(_hwnd, IDC_STATIC_PROCESSING, status);
+  SetWindowText(_hwnd_STATIC_PROCESSING, status);
   SetTimer(_hwnd, k_status_update_timer_id, time, nullptr);
 }
 
@@ -574,6 +570,6 @@ void PageDialog::UpdateDefaultStatus(bool force_reset)
       _count_unknown,
       _count_error
     );
-    SetDlgItemText(_hwnd, IDC_STATIC_PROCESSING, done);
+    SetWindowText(_hwnd_STATIC_PROCESSING, done);
   }
 }
