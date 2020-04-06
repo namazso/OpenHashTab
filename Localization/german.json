@@ -12,8 +12,8 @@
 		"SUMFILE":             "Als Sumfile interpretiert.",
 		"DONE":                "Fertig!",
 		"PROCESSING":          "In Bearbeitung...",
-		"HASHES":              "Hashen",
-		"CLIPBOARD":           "Kopieren",
+		"HASHES":              "Hashwerte",
+		"CLIPBOARD":           "In Zwischenablage",
 		"NOMATCH":             "Keine Übereinstimmung gefunden.",
 		"ERROR":               "Fehler"
 	}
