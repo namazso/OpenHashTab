@@ -26,6 +26,9 @@ INT_PTR SettingsDialog::DlgProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
   {
   case WM_INITDIALOG:
   {
+    if (IsWindows8OrGreater())
+      SetWindowText(_hwnd, _T("\u2699"));
+
     const auto list = GetDlgItem(_hwnd, IDC_ALGORITHM_LIST);
     ListView_SetExtendedListViewStyleEx(list, LVS_EX_CHECKBOXES, LVS_EX_CHECKBOXES);
     for (auto& algorithm : HashAlgorithm::g_hashers)

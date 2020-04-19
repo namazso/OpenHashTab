@@ -15,8 +15,8 @@
 //    along with OpenHashTab.  If not, see <https://www.gnu.org/licenses/>.
 #include "stdafx.h"
 
-#include "PageDialog.h"
-#include "PropPage.h"
+#include "MainDialog.h"
+#include "Coordinator.h"
 #include "Hasher.h"
 #include "utl.h"
 #include "SettingsDialog.h"
@@ -98,20 +98,20 @@ static int ComboBoxGetSelectedAlgorithmIdx(HWND combo)
   return idx;
 }
 
-PageDialog::PageDialog(HWND hwnd, void* prop_page)
+MainDialog::MainDialog(HWND hwnd, void* prop_page)
   : _hwnd(hwnd)
-  , _prop_page((PropPage*)prop_page)
+  , _prop_page((Coordinator*)prop_page)
 {
   _prop_page->RegisterWindow(hwnd);
 }
 
-PageDialog::~PageDialog()
+MainDialog::~MainDialog()
 {
   _prop_page->Cancel(false);
   _prop_page->UnregisterWindow();
 }
 
-INT_PTR PageDialog::CustomDrawListView(LPARAM lparam, HWND list) const
+INT_PTR MainDialog::CustomDrawListView(LPARAM lparam, HWND list) const
 {
   const auto lplvcd = (LPNMLVCUSTOMDRAW)lparam;
 
@@ -155,7 +155,7 @@ INT_PTR PageDialog::CustomDrawListView(LPARAM lparam, HWND list) const
   return CDRF_DODEFAULT;
 }
 
-INT_PTR PageDialog::DlgProc(UINT msg, WPARAM wparam, LPARAM lparam)
+INT_PTR MainDialog::DlgProc(UINT msg, WPARAM wparam, LPARAM lparam)
 {
   auto ret = FALSE;
   DebugMsg("WndProc uMsg: %04X wParam: %08X lParam: %016X\n", msg, wparam, lparam);
@@ -270,6 +270,12 @@ INT_PTR PageDialog::DlgProc(UINT msg, WPARAM wparam, LPARAM lparam)
     }
     break;
   }
+
+  // we should never ever receive WM_CLOSE when running as a property sheet, so DestroyWindow is safe here
+  case WM_CLOSE:
+    DestroyWindow(_hwnd);
+    break;
+
   default:
     break;
   }
@@ -277,7 +283,7 @@ INT_PTR PageDialog::DlgProc(UINT msg, WPARAM wparam, LPARAM lparam)
   return ret;
 }
 
-void PageDialog::InitDialog()
+void MainDialog::InitDialog()
 {
   // TODO: figure out a way to dynamically resize this thing
   //RECT rect;
@@ -289,6 +295,9 @@ void PageDialog::InitDialog()
   SetTextFromTable(_hwnd_BUTTON_EXPORT, IDS_EXPORT_BTN);
   SetTextFromTable(_hwnd_STATIC_PROCESSING, IDS_PROCESSING);
   SetTextFromTable(_hwnd_BUTTON_CLIPBOARD, IDS_CLIPBOARD);
+
+  if (IsWindows8OrGreater())
+    SetWindowText(_hwnd_BUTTON_SETTINGS, _T("\u2699"));
 
   SendMessage(_hwnd_HASH_LIST, LVM_SETTEXTBKCOLOR, 0, (LPARAM)CLR_NONE);
   SendMessage(_hwnd_HASH_LIST, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, LVS_EX_FULLROWSELECT);
@@ -316,7 +325,7 @@ void PageDialog::InitDialog()
 
   ComboBox_SetCurSel(combobox, 0);
 
-  SendMessage(_hwnd_PROGRESS, PBM_SETRANGE32, 0, PropPage::k_progress_resolution);
+  SendMessage(_hwnd_PROGRESS, PBM_SETRANGE32, 0, Coordinator::k_progress_resolution);
 
   _prop_page->AddFiles();
 
@@ -329,7 +338,7 @@ void PageDialog::InitDialog()
   _prop_page->ProcessFiles();
 }
 
-void PageDialog::OnFileFinished(FileHashTask* file)
+void MainDialog::OnFileFinished(FileHashTask* file)
 {
   const auto list = _hwnd_HASH_LIST;
   if (!list)
@@ -396,7 +405,7 @@ void PageDialog::OnFileFinished(FileHashTask* file)
   UpdateDefaultStatus();
 }
 
-void PageDialog::OnAllFilesFinished()
+void MainDialog::OnAllFilesFinished()
 {
   _finished = true;
 
@@ -410,8 +419,8 @@ void PageDialog::OnAllFilesFinished()
   SendMessage(
     _hwnd_PROGRESS,
     PBM_SETPOS,
-    PropPage::k_progress_resolution,
-    PropPage::k_progress_resolution
+    Coordinator::k_progress_resolution,
+    Coordinator::k_progress_resolution
   );
 
   UpdateDefaultStatus();
@@ -425,7 +434,7 @@ void PageDialog::OnAllFilesFinished()
   }
 }
 
-void PageDialog::OnExportClicked()
+void MainDialog::OnExportClicked()
 {
   const auto idx = ComboBoxGetSelectedAlgorithmIdx(_hwnd_COMBO_EXPORT);
   if (idx >= 0 && !_prop_page->GetFiles().empty())
@@ -454,7 +463,7 @@ void PageDialog::OnExportClicked()
   }
 }
 
-void PageDialog::OnHashEditChanged()
+void MainDialog::OnHashEditChanged()
 {
   const auto find_hash = utl::HashStringToBytes(utl::GetWindowTextString(_hwnd_EDIT_HASH).c_str());
   auto found = false;
@@ -479,7 +488,7 @@ void PageDialog::OnHashEditChanged()
     SetWindowText(_hwnd_STATIC_CHECK_RESULT, utl::GetString(IDS_NOMATCH).c_str());
 }
 
-void PageDialog::OnListDoubleClick(int item, int subitem)
+void MainDialog::OnListDoubleClick(int item, int subitem)
 {
   const auto list = _hwnd_HASH_LIST;
   TCHAR hash[4096]; // It's possible it will hold an error message
@@ -497,7 +506,7 @@ void PageDialog::OnListDoubleClick(int item, int subitem)
   SetTempStatus(utl::GetString(IDS_COPIED).c_str(), 1000);
 }
 
-void PageDialog::OnListRightClick(bool dblclick)
+void MainDialog::OnListRightClick(bool dblclick)
 {
   const auto list = _hwnd_HASH_LIST;
   const auto count = ListView_GetItemCount(list);
@@ -522,7 +531,7 @@ void PageDialog::OnListRightClick(bool dblclick)
   SetTempStatus(utl::GetString(IDS_COPIED).c_str(), 1000);
 }
 
-std::string PageDialog::GetSumfileAsString(size_t hasher)
+std::string MainDialog::GetSumfileAsString(size_t hasher)
 {
   std::stringstream str;
   for (const auto& file : _prop_page->GetFiles())
@@ -545,14 +554,14 @@ std::string PageDialog::GetSumfileAsString(size_t hasher)
   return str.str();
 }
 
-void PageDialog::SetTempStatus(PCTSTR status, UINT time)
+void MainDialog::SetTempStatus(PCTSTR status, UINT time)
 {
   _temporary_status = true;
   SetWindowText(_hwnd_STATIC_PROCESSING, status);
   SetTimer(_hwnd, k_status_update_timer_id, time, nullptr);
 }
 
-void PageDialog::UpdateDefaultStatus(bool force_reset)
+void MainDialog::UpdateDefaultStatus(bool force_reset)
 {
   if (force_reset)
     _temporary_status = false;

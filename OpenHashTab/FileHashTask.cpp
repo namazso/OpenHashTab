@@ -16,7 +16,7 @@
 #include "stdafx.h"
 
 #include "FileHashTask.h"
-#include "PropPage.h"
+#include "Coordinator.h"
 #include "Queues.h"
 #include "utl.h"
 
@@ -103,7 +103,7 @@ void FileHashTask::ProcessReadQueue(uint8_t* reuse_block)
     BlockFree(reuse_block);
 }
 
-FileHashTask::FileHashTask(const tstring& path, PropPage* prop_page, tstring display_name, std::vector<uint8_t> expected_hash)
+FileHashTask::FileHashTask(const tstring& path, Coordinator* prop_page, tstring display_name, std::vector<uint8_t> expected_hash)
   : _hash_contexts{}
   , _prop_page{ prop_page }
   , _display_name{ std::move(display_name) }

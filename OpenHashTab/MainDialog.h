@@ -18,14 +18,14 @@
 #include "utl.h"
 
 class FileHashTask;
-class PropPage;
+class Coordinator;
 
-class PageDialog
+class MainDialog
 {
   static constexpr auto k_status_update_timer_id = (UINT_PTR)0x7c253816f7ef92ea;
 
   HWND _hwnd{};
-  PropPage* _prop_page;
+  Coordinator* _prop_page;
 
   MAKE_IDC_MEMBER(_hwnd, HASH_LIST);
   MAKE_IDC_MEMBER(_hwnd, EDIT_HASH);
@@ -72,8 +72,8 @@ class PageDialog
   void OnListRightClick(bool dblclick = false);
 
 public:
-  PageDialog(HWND hwnd, void* prop_page);
-  ~PageDialog();
+  MainDialog(HWND hwnd, void* prop_page);
+  ~MainDialog();
 
   INT_PTR DlgProc(UINT msg, WPARAM wparam, LPARAM lparam);
 };

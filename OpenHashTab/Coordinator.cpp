@@ -15,7 +15,7 @@
 //    along with OpenHashTab.  If not, see <https://www.gnu.org/licenses/>.
 #include "stdafx.h"
 
-#include "PropPage.h"
+#include "Coordinator.h"
 #include "utl.h"
 #include "wnd.h"
 #include "SumFileParser.h"
@@ -85,18 +85,18 @@ static std::vector<std::uint8_t> TryGetExpectedSumForFile(const tstring& path)
   return hash;
 }
 
-PropPage::PropPage(std::list<tstring> files, tstring base)
+Coordinator::Coordinator(std::list<tstring> files, tstring base)
   : _files(std::move(files))
   , _base(std::move(base)) {}
 
-PropPage::~PropPage()
+Coordinator::~Coordinator()
 {
   Cancel();
   while (_references != 0)
     ;
 }
 
-void PropPage::RegisterWindow(HWND window)
+void Coordinator::RegisterWindow(HWND window)
 {
   // Turns out the dialog can sometimes be still running at the time we receive a RELEASE, so let's reference here
   Reference();
@@ -105,7 +105,7 @@ void PropPage::RegisterWindow(HWND window)
   _window = window;
 }
 
-void PropPage::UnregisterWindow()
+void Coordinator::UnregisterWindow()
 {
   {
     std::lock_guard<std::mutex> guard{ _window_mutex };
@@ -115,21 +115,21 @@ void PropPage::UnregisterWindow()
   Dereference();
 }
 
-unsigned PropPage::Reference()
+unsigned Coordinator::Reference()
 {
   const auto references = ++_references;
   DebugMsg("ref+ %d\n", references);
   return references;
 }
 
-unsigned PropPage::Dereference()
+unsigned Coordinator::Dereference()
 {
   const auto references = --_references;
   DebugMsg("ref- %d\n", references);
   return references;
 }
 
-void PropPage::AddFile(const tstring& path, const std::vector<std::uint8_t>& expected_hash)
+void Coordinator::AddFile(const tstring& path, const std::vector<std::uint8_t>& expected_hash)
 {
   auto dispname = utl::CanonicalizePath(path);
 
@@ -146,7 +146,7 @@ void PropPage::AddFile(const tstring& path, const std::vector<std::uint8_t>& exp
   _file_tasks.emplace_back(task);
 }
 
-void PropPage::AddFiles()
+void Coordinator::AddFiles()
 {
   // for each directory in _files remove it from the list add it's content to the end.
   // since we push elements to the end end iterator is intentionally not saved.
@@ -224,7 +224,7 @@ void PropPage::AddFiles()
   }
 }
 
-void PropPage::ProcessFiles()
+void Coordinator::ProcessFiles()
 {
   for (const auto& task : _file_tasks)
   {
@@ -233,7 +233,7 @@ void PropPage::ProcessFiles()
   }
 }
 
-void PropPage::Cancel(bool wait)
+void Coordinator::Cancel(bool wait)
 {
   for (const auto& file : _file_tasks)
     file->SetCancelled();
@@ -243,7 +243,7 @@ void PropPage::Cancel(bool wait)
       Sleep(1);
 }
 
-void PropPage::FileCompletionCallback(FileHashTask* file)
+void Coordinator::FileCompletionCallback(FileHashTask* file)
 {
   std::lock_guard<std::mutex> guard{ _window_mutex };
 
@@ -257,7 +257,7 @@ void PropPage::FileCompletionCallback(FileHashTask* file)
   }
 }
 
-void PropPage::FileProgressCallback(uint64_t size_progress)
+void Coordinator::FileProgressCallback(uint64_t size_progress)
 {
   if (_size_total == 0)
     return;
@@ -280,7 +280,7 @@ void PropPage::FileProgressCallback(uint64_t size_progress)
   }
 }
 
-std::pair<tstring, tstring> PropPage::GetSumfileDefaultSavePathAndBaseName()
+std::pair<tstring, tstring> Coordinator::GetSumfileDefaultSavePathAndBaseName()
 {
   const auto& file = *_files.begin();
   const auto file_path = file.c_str();

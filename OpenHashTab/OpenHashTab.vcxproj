@@ -457,8 +457,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
       </PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="PageDialog.cpp" />
-    <ClCompile Include="PropPage.cpp" />
+    <ClCompile Include="MainDialog.cpp" />
+    <ClCompile Include="Coordinator.cpp" />
     <ClCompile Include="Queues.cpp" />
     <ClCompile Include="SettingsDialog.cpp" />
     <ClCompile Include="sha3.c">
@@ -488,8 +488,8 @@
     <ClInclude Include="Hasher.h" />
     <ClInclude Include="OpenHashTabShlExt.h" />
     <ClInclude Include="OpenHashTab_i.h" />
-    <ClInclude Include="PageDialog.h" />
-    <ClInclude Include="PropPage.h" />
+    <ClInclude Include="MainDialog.h" />
+    <ClInclude Include="Coordinator.h" />
     <ClInclude Include="Queues.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SettingsDialog.h" />

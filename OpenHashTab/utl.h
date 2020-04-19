@@ -66,7 +66,7 @@ namespace utl
   //   Release(HWND hwnd, LPPROPSHEETPAGE ppsp);
   //   Create(HWND hwnd, LPPROPSHEETPAGE ppsp);
   //
-  // Dialog should have the functions described in DlgProcClassBinder. Additionally, dialog receives a PropPage*
+  // Dialog should have the functions described in DlgProcClassBinder. Additionally, dialog receives a Coordinator*
   //   as lParam in it's constructor. A dialog may or may not get created for a property sheet during lifetime.
   template <typename PropPage, typename Dialog, typename... Args>
   HPROPSHEETPAGE MakePropPage(PROPSHEETPAGE psp, Args&&... args)

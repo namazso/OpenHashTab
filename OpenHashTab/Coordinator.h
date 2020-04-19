@@ -17,7 +17,7 @@
 
 class FileHashTask;
 
-class PropPage
+class Coordinator
 {
 public:
   constexpr static auto k_progress_resolution = 256u;
@@ -37,15 +37,11 @@ private:
   void AddFile(const tstring& path, const std::vector<std::uint8_t>& expected_hash);
 
 public:
-  PropPage(std::list<tstring> files, tstring base);
-  ~PropPage();
+  Coordinator(std::list<tstring> files, tstring base);
+  virtual ~Coordinator();
 
-  void AddRef(HWND, LPPROPSHEETPAGE) { }
-  UINT Create(HWND, LPPROPSHEETPAGE) { return 1; }
-  void Release(HWND, LPPROPSHEETPAGE) { delete this; }
-
-  void RegisterWindow(HWND window);
-  void UnregisterWindow();
+  virtual void RegisterWindow(HWND window);
+  virtual void UnregisterWindow();
 
   unsigned Reference();
   unsigned Dereference();
@@ -60,4 +56,28 @@ public:
   const std::list<std::unique_ptr<FileHashTask>>& GetFiles() const { return _file_tasks; };
   bool IsSumfile() const { return _is_sumfile; }
   std::pair<tstring, tstring> GetSumfileDefaultSavePathAndBaseName();
+};
+
+class PropPageCoordinator : public Coordinator
+{
+public:
+  using Coordinator::Coordinator;
+  ~PropPageCoordinator() = default;
+
+  void AddRef(HWND, LPPROPSHEETPAGE) { }
+  UINT Create(HWND, LPPROPSHEETPAGE) { return 1; }
+  void Release(HWND, LPPROPSHEETPAGE) { delete this; }
+};
+
+class StandaloneCoordinator : public Coordinator
+{
+public:
+  using Coordinator::Coordinator;
+  ~StandaloneCoordinator() = default;
+
+  void UnregisterWindow() override
+  {
+    Coordinator::UnregisterWindow();
+    PostQuitMessage(0);
+  }
 };

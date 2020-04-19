@@ -18,8 +18,8 @@
 #include "OpenHashTabShlExt.h"
 #include "dllmain.h"
 #include "utl.h"
-#include "PropPage.h"
-#include "PageDialog.h"
+#include "Coordinator.h"
+#include "MainDialog.h"
 
 // COpenHashTabShlExt
 
@@ -136,7 +136,7 @@ HRESULT STDMETHODCALLTYPE COpenHashTabShlExt::AddPages(
   psp.pszTitle = tab_name.c_str();
   psp.pcRefParent = (UINT*)&_AtlModule.m_nLockCnt;
 
-  const auto hpage = utl::MakePropPage<PropPage, PageDialog>(psp, _files, _base);
+  const auto hpage = utl::MakePropPage<PropPageCoordinator, MainDialog>(psp, _files, _base);
 
   if (hpage)
   {
