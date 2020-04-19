@@ -35,7 +35,7 @@ void GetExtensionUUID(PTSTR str, size_t len)
 _Use_decl_annotations_
 STDAPI DllCanUnloadNow()
 {
-	return _AtlModule.DllCanUnloadNow();
+  return _AtlModule.DllCanUnloadNow();
 }
 
 // Returns a class factory to create an object of the requested type.
@@ -46,7 +46,7 @@ STDAPI DllGetClassObject(
   _Outptr_  LPVOID*   ppv
 )
 {
-	return _AtlModule.DllGetClassObject(rclsid, riid, ppv);
+  return _AtlModule.DllGetClassObject(rclsid, riid, ppv);
 }
 
 // DllRegisterServer - Adds entries to the system registry.
@@ -114,25 +114,25 @@ STDAPI DllInstall(
   _In_opt_  LPCTSTR cmd_line
 )
 {
-	static constexpr TCHAR k_user_switch[] = _T("user");
+  static constexpr TCHAR k_user_switch[] = _T("user");
 
   if (cmd_line && _tcsnicmp(cmd_line, k_user_switch, std::size(k_user_switch)) == 0)
     ATL::AtlSetPerUserRegistration(true);
 
   auto hr = E_FAIL;
 
-	if (install)
-	{
-		hr = DllRegisterServer();
-		if (FAILED(hr))
-			DllUnregisterServer();
-	}
-	else
-	{
-		hr = DllUnregisterServer();
-	}
+  if (install)
+  {
+    hr = DllRegisterServer();
+    if (FAILED(hr))
+      DllUnregisterServer();
+  }
+  else
+  {
+    hr = DllUnregisterServer();
+  }
 
-	return hr;
+  return hr;
 }
 
 

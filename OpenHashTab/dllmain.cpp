@@ -26,6 +26,6 @@ COpenHashTabModule _AtlModule;
 // DLL Entry Point
 extern "C" BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, LPVOID reserved)
 {
-	UNREFERENCED_PARAMETER(instance);
-	return _AtlModule.DllMain(reason, reserved);
+  UNREFERENCED_PARAMETER(instance);
+  return _AtlModule.DllMain(reason, reserved);
 }

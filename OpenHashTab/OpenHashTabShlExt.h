@@ -31,9 +31,9 @@ DCOM Windows CE platforms."
 using namespace ATL;
 
 class ATL_NO_VTABLE COpenHashTabShlExt :
-	public CComObjectRootEx<CComSingleThreadModel>,
-	public CComCoClass<COpenHashTabShlExt, &CLSID_OpenHashTabShlExt>,
-	public IShellExtInit,
+  public CComObjectRootEx<CComSingleThreadModel>,
+  public CComCoClass<COpenHashTabShlExt, &CLSID_OpenHashTabShlExt>,
+  public IShellExtInit,
   public IShellPropSheetExt
 {
 protected:
@@ -67,15 +67,15 @@ DECLARE_REGISTRY_RESOURCEID(IDR_OPENHASHTABSHLEXT)
 DECLARE_NOT_AGGREGATABLE(COpenHashTabShlExt)
 
 BEGIN_COM_MAP(COpenHashTabShlExt)
-	COM_INTERFACE_ENTRY(IShellExtInit)
+  COM_INTERFACE_ENTRY(IShellExtInit)
   COM_INTERFACE_ENTRY(IShellPropSheetExt)
 END_COM_MAP()
 
-	DECLARE_PROTECT_FINAL_CONSTRUCT()
+  DECLARE_PROTECT_FINAL_CONSTRUCT()
 
-	HRESULT FinalConstruct() { return S_OK; }
+  HRESULT FinalConstruct() { return S_OK; }
 
-	void FinalRelease() { }
+  void FinalRelease() { }
 };
 
 OBJECT_ENTRY_AUTO(__uuidof(OpenHashTabShlExt), COpenHashTabShlExt)
