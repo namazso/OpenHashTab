@@ -416,12 +416,14 @@ void MainDialog::OnAllFilesFinished()
   Button_Enable(_hwnd_BUTTON_CLIPBOARD, true);
   Edit_Enable(_hwnd_EDIT_HASH, true);
 
-  SendMessage(
+  /*SendMessage(
     _hwnd_PROGRESS,
     PBM_SETPOS,
     Coordinator::k_progress_resolution,
     Coordinator::k_progress_resolution
-  );
+  );*/
+
+  ShowWindow(_hwnd_PROGRESS, 0);
 
   UpdateDefaultStatus();
 
