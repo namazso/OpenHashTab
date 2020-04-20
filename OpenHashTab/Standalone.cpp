@@ -100,7 +100,7 @@ extern "C" __declspec(dllexport) void CALLBACK StandaloneEntryW(
   };
   InitCommonControlsEx(&iccex);
 
-  int argc = 0;
+  auto argc = 0;
   const auto argv = CommandLineToArgvW(lpCmdLine, &argc);
   std::list<tstring> files{argv, argv + argc};
   LocalFree(argv);
@@ -127,7 +127,7 @@ extern "C" __declspec(dllexport) void CALLBACK StandaloneEntryW(
   const auto dialog = CreateDialogFromChildDialogResourceParam(
     (HINSTANCE)&__ImageBase,
     MAKEINTRESOURCE(IDD_OPENHASHTAB_PROPPAGE),
-    nullptr,
+    hWnd,
     &utl::DlgProcClassBinder<MainDialog>,
     (LPARAM)coordinator
   );
