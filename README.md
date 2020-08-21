@@ -44,6 +44,7 @@ Most of the actions should be obvious. Some not-so-obvious features are listed h
 * SHA-1
 * SHA-2 (SHA-224, SHA-256, SHA-384, SHA-512)
 * SHA-3 (SHA3-256, SHA3-384, SHA3-512)
+* BLAKE3
 
 ## Download
 

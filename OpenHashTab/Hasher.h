@@ -40,7 +40,7 @@ class HashAlgorithm
 {
 public:
   using FactoryFn = HashContext*(HashAlgorithm* algorithm);
-  constexpr static auto k_count = 14;
+  constexpr static auto k_count = 15;
   constexpr static auto k_max_size = 64;
   static HashAlgorithm g_hashers[k_count];
   static HashAlgorithm* ByName(std::string_view name)

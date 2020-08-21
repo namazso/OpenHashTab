@@ -20,6 +20,9 @@ version 2.0.0 by Craig Bruce
 sha3 implementation (public domain):
 by Andrey Jivsov, based on code from https://keccak.team/
 
+blake3 reference implementation (CC0):
+by Samuel Neves and Jack O'Connor
+
 langcomp (licensed under GPLv3+):
 Copyright (C) 2020  namazso
 

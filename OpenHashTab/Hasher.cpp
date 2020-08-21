@@ -28,6 +28,7 @@
 #include "blake2sp.h"
 #include "sha3.h"
 #include "crc32.h"
+#include "blake3.h"
 
 template <
   typename Ctx,
@@ -237,6 +238,38 @@ public:
   }
 };
 
+class Blake3HashContext : HashContext
+{
+  template <typename T> friend HashContext* hash_context_factory(HashAlgorithm* algorithm);
+
+  blake3_hasher ctx{};
+
+public:
+  Blake3HashContext(HashAlgorithm* algorithm) : HashContext(algorithm)
+  {
+    blake3_hasher_init(&ctx);
+  }
+  ~Blake3HashContext() = default;
+
+  void Clear() override
+  {
+    blake3_hasher_init(&ctx);
+  }
+
+  void Update(const void* data, size_t size) override
+  {
+    blake3_hasher_update(&ctx, data, size);
+  }
+
+  std::vector<uint8_t> Finish() override
+  {
+    std::vector<uint8_t> result;
+    result.resize(BLAKE3_OUT_LEN);
+    blake3_hasher_finalize(&ctx, result.data(), BLAKE3_OUT_LEN);
+    return result;
+  }
+};
+
 template <typename T> HashContext* hash_context_factory(HashAlgorithm* algorithm) { return new T(algorithm); }
 
 // these are what I found with a quick FTP search
@@ -266,4 +299,5 @@ HashAlgorithm HashAlgorithm::g_hashers[] =
   { "SHA3-256", 32, no_exts, hash_context_factory<Sha3_256HashContext>, true, false },
   { "SHA3-384", 48, no_exts, hash_context_factory<Sha3_384HashContext>, true, false },
   { "SHA3-512", 64, sha3_512_exts, hash_context_factory<Sha3_512HashContext>, true, false },
+  { "BLAKE3", 32, no_exts, hash_context_factory<Blake3HashContext>, true, false },
 };
