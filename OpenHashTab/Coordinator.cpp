@@ -152,17 +152,22 @@ void Coordinator::AddFiles()
   // since we push elements to the end end iterator is intentionally not saved.
   for (auto it = begin(_files); it != end(_files);)
   {
-    if (PathIsDirectory(it->c_str()))
+    const auto it_long = utl::MakePathLongCompatible(*it);
+    if (PathIsDirectory(it_long.c_str()))
     {
       WIN32_FIND_DATA find_data;
-      const auto find_handle = FindFirstFile(utl::MakePathLongCompatible(*it + _T("\\*")).c_str(), &find_data);
+      const auto find_handle = FindFirstFile((it_long + _T("\\*")).c_str(), &find_data);
 
       DWORD error;
 
       if (find_handle != INVALID_HANDLE_VALUE)
       {
         do
+        {
+          if ((0 == _tcscmp(_T("."), find_data.cFileName)) || (0 == _tcscmp(_T(".."), find_data.cFileName)))
+            continue; // For whatever reason if you use long paths with FindFirstFile it returns "." and ".."
           _files.push_back(*it + _T("\\") + find_data.cFileName);
+        }
         while (FindNextFile(find_handle, &find_data) != 0);
         error = GetLastError();
         FindClose(find_handle);
@@ -172,10 +177,11 @@ void Coordinator::AddFiles()
         error = GetLastError();
       }
 
-      // TODO: maybe handle error differently?
-      (void)error;
+      const auto prev = it++;
 
-      _files.erase(it++);
+      // BUG: We just leave it in as file if we can't open so some random error message will be displayed
+      if(!error || error == ERROR_NO_MORE_FILES)
+        _files.erase(prev);
     }
     else
     {

@@ -162,6 +162,9 @@
       <RegisterOutput>true</RegisterOutput>
     </Link>
     <PreLinkEvent />
+    <Manifest>
+      <AdditionalManifestFiles>additional.manifest</AdditionalManifestFiles>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -194,6 +197,9 @@
       <RegisterOutput>true</RegisterOutput>
     </Link>
     <PreLinkEvent />
+    <Manifest>
+      <AdditionalManifestFiles>additional.manifest</AdditionalManifestFiles>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
     <ClCompile>
@@ -227,6 +233,9 @@
       <RegisterOutput>true</RegisterOutput>
     </Link>
     <PreLinkEvent />
+    <Manifest>
+      <AdditionalManifestFiles>additional.manifest</AdditionalManifestFiles>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -262,6 +271,9 @@
       <RegisterOutput>true</RegisterOutput>
     </Link>
     <PreLinkEvent />
+    <Manifest>
+      <AdditionalManifestFiles>additional.manifest</AdditionalManifestFiles>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -296,6 +308,9 @@
       <RegisterOutput>true</RegisterOutput>
     </Link>
     <PreLinkEvent />
+    <Manifest>
+      <AdditionalManifestFiles>additional.manifest</AdditionalManifestFiles>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
     <ClCompile>
@@ -331,6 +346,9 @@
       <RegisterOutput>true</RegisterOutput>
     </Link>
     <PreLinkEvent />
+    <Manifest>
+      <AdditionalManifestFiles>additional.manifest</AdditionalManifestFiles>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\mbedtls\library\md2.c">

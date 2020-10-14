@@ -57,11 +57,11 @@ bool utl::AreFilesTheSame(HANDLE a, HANDLE b)
 tstring utl::MakePathLongCompatible(const tstring& file)
 {
 #ifdef UNICODE
-  constexpr static TCHAR prefix[] = _T("\\\\?\\");
+  constexpr static TCHAR prefix[] = _T("\\\\");
   constexpr static auto prefixlen = std::size(prefix) - 1;
   const auto file_cstr = file.c_str();
   if (file.size() < prefixlen || 0 != _tcsncmp(file_cstr, prefix, prefixlen))
-    return tstring{ prefix } + file;
+    return tstring{ _T("\\\\?\\") } + file;
 #endif
   return file;
 }
