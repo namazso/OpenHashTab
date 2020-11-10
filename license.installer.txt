@@ -23,6 +23,9 @@ by Andrey Jivsov, based on code from https://keccak.team/
 blake3 reference implementation (CC0):
 by Samuel Neves and Jack O'Connor
 
+phnt (licensed under CC BY 4.0):
+from https://github.com/processhacker/phnt
+
 langcomp (licensed under GPLv3+):
 Copyright (C) 2020  namazso
 
