@@ -37,8 +37,8 @@ class ATL_NO_VTABLE COpenHashTabShlExt :
   public IShellPropSheetExt
 {
 protected:
-  std::list<tstring> _files;
-  tstring _base;
+  std::list<std::wstring> _files;
+  std::wstring _base;
 
 public:
   COpenHashTabShlExt() = default;

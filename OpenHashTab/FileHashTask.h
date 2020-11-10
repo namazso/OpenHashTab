@@ -69,7 +69,7 @@ class FileHashTask
 
   Coordinator* _prop_page;
 
-  tstring _display_name;
+  std::wstring _display_name;
   std::vector<uint8_t> _expected_hash;
 
   uint64_t _file_size{};
@@ -94,7 +94,7 @@ public:
   FileHashTask& operator=(const FileHashTask&) = delete;
   FileHashTask& operator=(FileHashTask&&) = delete;
 
-  FileHashTask(const tstring& path, Coordinator* prop_page, tstring display_name, std::vector<uint8_t> expected_hash = {});
+  FileHashTask(const std::wstring& path, Coordinator* prop_page, std::wstring display_name, std::vector<uint8_t> expected_hash = {});
 
   // You should only ever delete this object after Finish() was called or StartProcessing() was never called.
   // TODO: check this somehow
@@ -139,7 +139,7 @@ public:
   uint64_t GetSize() const { return _file_size; }
   HANDLE GetHandle() const { return _handle; }
   const hash_results_t& GetHashResult() const { return _hash_results; }
-  const tstring& GetDisplayName() const { return _display_name; }
+  const std::wstring& GetDisplayName() const { return _display_name; }
 
   enum : int
   {

@@ -38,10 +38,8 @@
 #include <atlctl.h>
 
 // Windows
-#include <Windows.h>
 #include <WinUser.h>
 #include <CommCtrl.h>
-#include <windowsx.h>
 #include <VersionHelpers.h>
 #include <pathcch.h>
 
@@ -60,5 +58,3 @@
 
 // concurrentqueue
 #include <blockingconcurrentqueue.h>
-
-using tstring = std::basic_string<TCHAR>;

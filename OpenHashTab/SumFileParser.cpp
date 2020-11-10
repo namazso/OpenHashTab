@@ -179,7 +179,7 @@ DWORD TryParseSumFile(HANDLE h, FileSumList& output)
     return ERROR_SUCCESS;
 
   const auto size = size_t(fi.nFileSizeLow);
-  const auto mapping = CreateFileMapping(
+  const auto mapping = CreateFileMappingW(
     h,
     nullptr,
     PAGE_READONLY,

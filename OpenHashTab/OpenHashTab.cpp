@@ -19,16 +19,16 @@
 #include "OpenHashTab_i.h"
 #include "dllmain.h"
 
-static constexpr auto k_approved_reg_path = _T("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Shell Extensions\\Approved");
-static constexpr auto k_extension_name = _T("OpenHashTab Shell Extension");
+static constexpr auto k_approved_reg_path = L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Shell Extensions\\Approved";
+static constexpr auto k_extension_name = L"OpenHashTab Shell Extension";
 
 #define GUID_FORMAT "%08lx-%04hx-%04hx-%02hx%02hx-%02hx%02hx%02hx%02hx%02hx%02hx"
 #define GUID_ARG(guid) (guid).Data1, (guid).Data2, (guid).Data3, (guid).Data4[0], (guid).Data4[1], (guid).Data4[2], (guid).Data4[3], (guid).Data4[4], (guid).Data4[5], (guid).Data4[6], (guid).Data4[7]
 
-void GetExtensionUUID(PTSTR str, size_t len)
+void GetExtensionUUID(LPWSTR str, size_t len)
 {
   const auto uuid = __uuidof(OpenHashTabShlExt);
-  _stprintf_s(str, len, _T("{") _T(GUID_FORMAT) _T("}"), GUID_ARG(uuid));
+  swprintf_s(str, len, L"{" _T(GUID_FORMAT) L"}", GUID_ARG(uuid));
 }
 
 // Used to determine whether the DLL can be unloaded by OLE.
@@ -53,29 +53,25 @@ STDAPI DllGetClassObject(
 _Use_decl_annotations_
 STDAPI DllRegisterServer()
 {
-  // On NT, add ourself to the list of approved shell extensions.
-  if (0 == (GetVersion() & 0x80000000))
-  {
-    ATL::CRegKey reg;
+  ATL::CRegKey reg;
 
-    auto ret = reg.Open(
-      HKEY_LOCAL_MACHINE,
-      k_approved_reg_path,
-      KEY_SET_VALUE
-    );
+  auto ret = reg.Open(
+    HKEY_LOCAL_MACHINE,
+    k_approved_reg_path,
+    KEY_SET_VALUE
+  );
 
-    if (ERROR_SUCCESS != ret)
-      return ret;
+  if (ERROR_SUCCESS != ret)
+    return ret;
 
-    TCHAR uuid[128];
-    GetExtensionUUID(uuid, std::size(uuid));
-    ret = reg.SetStringValue(k_extension_name, uuid);
+  wchar_t uuid[128];
+  GetExtensionUUID(uuid, std::size(uuid));
+  ret = reg.SetStringValue(k_extension_name, uuid);
 
-    reg.Close();
+  reg.Close();
 
-    if (ERROR_SUCCESS != ret)
-      return ret;
-  }
+  if (ERROR_SUCCESS != ret)
+    return ret;
 
   // registers object, typelib and all interfaces in typelib
   return _AtlModule.RegisterServer(false);
@@ -85,24 +81,20 @@ STDAPI DllRegisterServer()
 _Use_decl_annotations_
 STDAPI DllUnregisterServer()
 {
-  // On NT, remove ourself from the list of approved shell extensions.
-  if (0 == (GetVersion() & 0x80000000))
+  ATL::CRegKey reg;
+
+  const auto ret = reg.Open(
+    HKEY_LOCAL_MACHINE,
+    k_approved_reg_path,
+    KEY_SET_VALUE
+  );
+
+  if (ERROR_SUCCESS == ret)
   {
-    ATL::CRegKey reg;
-
-    const auto ret = reg.Open(
-      HKEY_LOCAL_MACHINE,
-      k_approved_reg_path,
-      KEY_SET_VALUE
-    );
-
-    if (ERROR_SUCCESS == ret)
-    {
-      TCHAR uuid[128];
-      GetExtensionUUID(uuid, std::size(uuid));
-      reg.DeleteValue(uuid);
-      reg.Close();
-    }
+    wchar_t uuid[128];
+    GetExtensionUUID(uuid, std::size(uuid));
+    reg.DeleteValue(uuid);
+    reg.Close();
   }
 
   return _AtlModule.UnregisterServer(false);
@@ -111,12 +103,12 @@ STDAPI DllUnregisterServer()
 // DllInstall - Adds/Removes entries to the system registry per user per machine.
 STDAPI DllInstall(
   _In_      BOOL    install,
-  _In_opt_  LPCTSTR cmd_line
+  _In_opt_  LPCWSTR cmd_line
 )
 {
-  static constexpr TCHAR k_user_switch[] = _T("user");
+  static constexpr wchar_t k_user_switch[] = L"user";
 
-  if (cmd_line && _tcsnicmp(cmd_line, k_user_switch, std::size(k_user_switch)) == 0)
+  if (cmd_line && _wcsnicmp(cmd_line, k_user_switch, std::size(k_user_switch)) == 0)
     ATL::AtlSetPerUserRegistration(true);
 
   auto hr = E_FAIL;

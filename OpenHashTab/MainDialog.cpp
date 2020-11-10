@@ -84,14 +84,14 @@ static HashColorType HashColorTypeForFile(FileHashTask* file, size_t hasher)
 
 static void SetTextFromTable(HWND hwnd, UINT string_id)
 {
-  SetWindowText(hwnd, utl::GetString(string_id).c_str());
+  SetWindowTextW(hwnd, utl::GetString(string_id).c_str());
 }
 
 static int ComboBoxGetSelectedAlgorithmIdx(HWND combo)
 {
   const auto sel = ComboBox_GetCurSel(combo);
   const auto len = ComboBox_GetLBTextLen(combo, sel);
-  tstring name;
+  std::wstring name;
   name.resize(len);
   ComboBox_GetLBText(combo, sel, name.data());
   const auto idx = HashAlgorithm::IdxByName(utl::TStringToUTF8(name.c_str()));
@@ -129,7 +129,7 @@ INT_PTR MainDialog::CustomDrawListView(LPARAM lparam, HWND list) const
     {
     case ColIndex_Hash:
     {
-      LVITEM lvitem
+      LVITEMW lvitem
       {
         LVIF_PARAM,
         (int)lplvcd->nmcd.dwItemSpec
@@ -177,7 +177,7 @@ INT_PTR MainDialog::DlgProc(UINT msg, WPARAM wparam, LPARAM lparam)
 
   case wnd::WM_USER_FILE_PROGRESS:
     if (wparam == wnd::k_user_magic_wparam)
-      SendMessage(_hwnd_PROGRESS, PBM_SETPOS, lparam, 0);
+      SendMessageW(_hwnd_PROGRESS, PBM_SETPOS, lparam, 0);
     break;
 
   case WM_TIMER:
@@ -195,7 +195,7 @@ INT_PTR MainDialog::DlgProc(UINT msg, WPARAM wparam, LPARAM lparam)
       switch (phdr->code)
       {
       case NM_CUSTOMDRAW:
-        SetWindowLongPtr(_hwnd, DWLP_MSGRESULT, CustomDrawListView(lparam, list));
+        SetWindowLongPtrW(_hwnd, DWLP_MSGRESULT, CustomDrawListView(lparam, list));
         return TRUE;
 
       case NM_DBLCLK:
@@ -239,8 +239,8 @@ INT_PTR MainDialog::DlgProc(UINT msg, WPARAM wparam, LPARAM lparam)
         const auto idx = ComboBoxGetSelectedAlgorithmIdx(_hwnd_COMBO_EXPORT);
         if (idx >= 0)
         {
-          const auto tstr = utl::UTF8ToTString(GetSumfileAsString((size_t)idx).c_str());
-          utl::SetClipboardText(_hwnd, tstr.c_str());
+          const auto wstr = utl::UTF8ToTString(GetSumfileAsString((size_t)idx).c_str());
+          utl::SetClipboardText(_hwnd, wstr.c_str());
         }
       }
       break;
@@ -248,9 +248,9 @@ INT_PTR MainDialog::DlgProc(UINT msg, WPARAM wparam, LPARAM lparam)
     case IDC_BUTTON_SETTINGS:
     {
       if (code == BN_CLICKED)
-        DialogBoxParam(
+        DialogBoxParamW(
           ATL::_AtlBaseModule.GetResourceInstance(),
-          MAKEINTRESOURCE(IDD_SETTINGS),
+          MAKEINTRESOURCEW(IDD_SETTINGS),
           _hwnd,
           &utl::DlgProcClassBinder<SettingsDialog>,
           0
@@ -297,10 +297,10 @@ void MainDialog::InitDialog()
   SetTextFromTable(_hwnd_BUTTON_CLIPBOARD, IDS_CLIPBOARD);
 
   if (IsWindows8OrGreater())
-    SetWindowText(_hwnd_BUTTON_SETTINGS, _T("\u2699"));
+    SetWindowTextW(_hwnd_BUTTON_SETTINGS, L"\u2699");
 
-  SendMessage(_hwnd_HASH_LIST, LVM_SETTEXTBKCOLOR, 0, (LPARAM)CLR_NONE);
-  SendMessage(_hwnd_HASH_LIST, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, LVS_EX_FULLROWSELECT);
+  SendMessageW(_hwnd_HASH_LIST, LVM_SETTEXTBKCOLOR, 0, (LPARAM)CLR_NONE);
+  SendMessageW(_hwnd_HASH_LIST, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, LVS_EX_FULLROWSELECT);
 
   // we put the string table ID in the text length field, to fix it up later
   LVCOLUMN cols[] =
@@ -313,8 +313,8 @@ void MainDialog::InitDialog()
   for (auto i = 0u; i < std::size(cols); ++i)
   {
     auto& col = cols[i];
-    const auto tstr = utl::GetString(col.cchTextMax);
-    col.pszText = (LPTSTR)tstr.c_str();
+    const auto wstr = utl::GetString(col.cchTextMax);
+    col.pszText = (LPWSTR)wstr.c_str();
     ListView_InsertColumn(_hwnd_HASH_LIST, i, &cols[i]);
   }
 
@@ -325,7 +325,7 @@ void MainDialog::InitDialog()
 
   ComboBox_SetCurSel(combobox, 0);
 
-  SendMessage(_hwnd_PROGRESS, PBM_SETRANGE32, 0, Coordinator::k_progress_resolution);
+  SendMessageW(_hwnd_PROGRESS, PBM_SETRANGE32, 0, Coordinator::k_progress_resolution);
 
   _prop_page->AddFiles();
 
@@ -344,22 +344,22 @@ void MainDialog::OnFileFinished(FileHashTask* file)
   if (!list)
     return;
 
-  const auto add_item = [list](LPCTSTR filename, LPCTSTR algorithm, LPCTSTR hash, LPARAM lparam)
+  const auto add_item = [list](LPCWSTR filename, LPCWSTR algorithm, LPCWSTR hash, LPARAM lparam)
   {
-    LVITEM lvitem
+    LVITEMW lvitem
     {
       LVIF_PARAM,
       INT_MAX,
       0,
       0,
       0,
-      (LPTSTR)_T("")
+      (LPWSTR)L""
     };
     lvitem.lParam = lparam;
     const auto item = ListView_InsertItem(list, &lvitem);
-    ListView_SetItemText(list, item, ColIndex_Filename, (LPTSTR)filename);
-    ListView_SetItemText(list, item, ColIndex_Algorithm, (PTSTR)algorithm);
-    ListView_SetItemText(list, item, ColIndex_Hash, (LPTSTR)hash);
+    ListView_SetItemText(list, item, ColIndex_Filename, (LPWSTR)filename);
+    ListView_SetItemText(list, item, ColIndex_Algorithm, (LPWSTR)algorithm);
+    ListView_SetItemText(list, item, ColIndex_Hash, (LPWSTR)hash);
   };
 
   if (const auto error = file->GetError(); error == ERROR_SUCCESS)
@@ -384,7 +384,7 @@ void MainDialog::OnFileFinished(FileHashTask* file)
       auto& result = results[i];
       if (!result.empty())
       {
-        TCHAR hash_str[HashAlgorithm::k_max_size * 2 + 1];
+        wchar_t hash_str[HashAlgorithm::k_max_size * 2 + 1];
         utl::HashBytesToString(hash_str, result);
         const auto tname = utl::UTF8ToTString(HashAlgorithm::g_hashers[i].GetName());
         add_item(file->GetDisplayName().c_str(), tname.c_str(), hash_str, file->ToLparam(i));
@@ -431,7 +431,7 @@ void MainDialog::OnAllFilesFinished()
   const auto find_hash = utl::HashStringToBytes(clip.c_str());
   if (find_hash.size() >= 4) // at least 4 bytes for a valid hash
   {
-    Edit_SetText(_hwnd_EDIT_HASH, clip.c_str());
+    SetWindowTextW((_hwnd_EDIT_HASH), (clip.c_str()));
     OnHashEditChanged(); // fake a change as if the user pasted it
   }
 }
@@ -445,7 +445,7 @@ void MainDialog::OnExportClicked()
     // This may sound trivial at first, but we can't use PathRelativeToPath because it doesn't support long paths.
 
     const auto exts = HashAlgorithm::g_hashers[idx].GetExtensions();
-    const auto ext = *exts ? tstring{ _T(".") } +utl::UTF8ToTString(*exts) : tstring{};
+    const auto ext = *exts ? std::wstring{ L"." } +utl::UTF8ToTString(*exts) : std::wstring{};
     const auto path_and_basename = _prop_page->GetSumfileDefaultSavePathAndBaseName();
     const auto name = path_and_basename.second + ext;
     const auto content = GetSumfileAsString((size_t)idx);
@@ -456,9 +456,9 @@ void MainDialog::OnExportClicked()
       if (err != ERROR_SUCCESS)
         utl::FormattedMessageBox(
           _hwnd,
-          _T("Error"),
+          L"Error",
           MB_ICONERROR | MB_OK,
-          _T("utl::SaveMemoryAsFile returned with error: %08X"),
+          L"utl::SaveMemoryAsFile returned with error: %08X",
           err
         );
     }
@@ -478,8 +478,8 @@ void MainDialog::OnHashEditChanged()
       {
         found = true;
         const auto algorithm_name = utl::UTF8ToTString(HashAlgorithm::g_hashers[i].GetName());
-        const auto txt = algorithm_name + _T(" / ") + file->GetDisplayName();
-        SetWindowText(_hwnd_STATIC_CHECK_RESULT, txt.c_str());
+        const auto txt = algorithm_name + L" / " + file->GetDisplayName();
+        SetWindowTextW(_hwnd_STATIC_CHECK_RESULT, txt.c_str());
         break;
       }
     }
@@ -487,13 +487,13 @@ void MainDialog::OnHashEditChanged()
       break;
   }
   if (!found)
-    SetWindowText(_hwnd_STATIC_CHECK_RESULT, utl::GetString(IDS_NOMATCH).c_str());
+    SetWindowTextW(_hwnd_STATIC_CHECK_RESULT, utl::GetString(IDS_NOMATCH).c_str());
 }
 
 void MainDialog::OnListDoubleClick(int item, int subitem)
 {
   const auto list = _hwnd_HASH_LIST;
-  TCHAR hash[4096]; // It's possible it will hold an error message
+  wchar_t hash[4096]; // It's possible it will hold an error message
   ListView_GetItemText(list, item, ColIndex_Hash, hash, (int)std::size(hash));
   if (subitem == ColIndex_Hash)
   {
@@ -501,9 +501,9 @@ void MainDialog::OnListDoubleClick(int item, int subitem)
   }
   else
   {
-    const auto name = std::make_unique<std::array<TCHAR, PATHCCH_MAX_CCH>>();
+    const auto name = std::make_unique<std::array<wchar_t, PATHCCH_MAX_CCH>>();
     ListView_GetItemText(list, item, ColIndex_Filename, name->data(), (int)name->size());
-    utl::SetClipboardText(_hwnd, (tstring{ hash } +_T(" *") + name->data()).c_str());
+    utl::SetClipboardText(_hwnd, (std::wstring{ hash } +L" *" + name->data()).c_str());
   }
   SetTempStatus(utl::GetString(IDS_COPIED).c_str(), 1000);
 }
@@ -512,8 +512,8 @@ void MainDialog::OnListRightClick(bool dblclick)
 {
   const auto list = _hwnd_HASH_LIST;
   const auto count = ListView_GetItemCount(list);
-  const auto buf = std::make_unique<std::array<TCHAR, PATHCCH_MAX_CCH>>();
-  std::basic_stringstream<TCHAR> clipboard;
+  const auto buf = std::make_unique<std::array<wchar_t, PATHCCH_MAX_CCH>>();
+  std::basic_stringstream<wchar_t> clipboard;
   const auto list_get_text = [&](int idx, int subitem)
   {
     ListView_GetItemText(list, idx, subitem, buf->data(), (int)buf->size());
@@ -525,9 +525,9 @@ void MainDialog::OnListRightClick(bool dblclick)
       continue;
 
     clipboard
-      << list_get_text(i, ColIndex_Filename) << TEXT("\t")
-      << list_get_text(i, ColIndex_Algorithm) << TEXT("\t")
-      << list_get_text(i, ColIndex_Hash) << TEXT("\r\n");
+      << list_get_text(i, ColIndex_Filename) << L"\t"
+      << list_get_text(i, ColIndex_Algorithm) << L"\t"
+      << list_get_text(i, ColIndex_Hash) << L"\r\n";
   }
   utl::SetClipboardText(_hwnd, clipboard.str().c_str());
   SetTempStatus(utl::GetString(IDS_COPIED).c_str(), 1000);
@@ -556,10 +556,10 @@ std::string MainDialog::GetSumfileAsString(size_t hasher)
   return str.str();
 }
 
-void MainDialog::SetTempStatus(PCTSTR status, UINT time)
+void MainDialog::SetTempStatus(LPCWSTR status, UINT time)
 {
   _temporary_status = true;
-  SetWindowText(_hwnd_STATIC_PROCESSING, status);
+  SetWindowTextW(_hwnd_STATIC_PROCESSING, status);
   SetTimer(_hwnd, k_status_update_timer_id, time, nullptr);
 }
 
@@ -571,16 +571,16 @@ void MainDialog::UpdateDefaultStatus(bool force_reset)
   if (!_temporary_status)
   {
     const auto msg = _finished ? IDS_DONE : IDS_PROCESSING;
-    TCHAR done[64];
-    _stprintf_s(
+    wchar_t done[64];
+    swprintf_s(
       done,
-      _T("%s (%u/%u/%u/%u)"),
+      L"%s (%u/%u/%u/%u)",
       utl::GetString(msg).c_str(),
       _count_match,
       _count_mismatch,
       _count_unknown,
       _count_error
     );
-    SetWindowText(_hwnd_STATIC_PROCESSING, done);
+    SetWindowTextW(_hwnd_STATIC_PROCESSING, done);
   }
 }

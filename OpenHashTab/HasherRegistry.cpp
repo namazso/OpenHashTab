@@ -18,13 +18,13 @@
 #include "Hasher.h"
 #include "utl.h"
 
-constexpr static auto k_reg_path = TEXT("Software\\OpenHashTab");
+constexpr static auto k_reg_path = L"Software\\OpenHashTab";
 
 void HashAlgorithm::LoadEnabled()
 {
   DWORD enabled;
   DWORD size = sizeof(enabled);
-  const auto status = RegGetValue(
+  const auto status = RegGetValueW(
     HKEY_CURRENT_USER,
     k_reg_path,
     utl::UTF8ToTString(GetName()).c_str(),
@@ -41,7 +41,7 @@ void HashAlgorithm::LoadEnabled()
 void HashAlgorithm::StoreEnabled() const
 {
   DWORD value = _is_enabled;
-  RegSetKeyValue(
+  RegSetKeyValueW(
     HKEY_CURRENT_USER,
     k_reg_path,
     utl::UTF8ToTString(GetName()).c_str(),

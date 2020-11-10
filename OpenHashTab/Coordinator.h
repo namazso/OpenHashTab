@@ -23,8 +23,8 @@ public:
   constexpr static auto k_progress_resolution = 256u;
 
 private:
-  std::list<tstring> _files;
-  tstring _base;
+  std::list<std::wstring> _files;
+  std::wstring _base;
   HWND _window{};
   uint64_t _size_total{};
   std::atomic<uint64_t> _size_progressed{};
@@ -34,10 +34,10 @@ private:
   std::atomic<unsigned> _files_not_finished{};
   bool _is_sumfile{};
 
-  void AddFile(const tstring& path, const std::vector<std::uint8_t>& expected_hash);
+  void AddFile(const std::wstring& path, const std::vector<std::uint8_t>& expected_hash);
 
 public:
-  Coordinator(std::list<tstring> files, tstring base);
+  Coordinator(std::list<std::wstring> files, std::wstring base);
   virtual ~Coordinator();
 
   virtual void RegisterWindow(HWND window);
@@ -55,7 +55,7 @@ public:
   // The window should probably only inspect files before processing or after all are done
   const std::list<std::unique_ptr<FileHashTask>>& GetFiles() const { return _file_tasks; };
   bool IsSumfile() const { return _is_sumfile; }
-  std::pair<tstring, tstring> GetSumfileDefaultSavePathAndBaseName();
+  std::pair<std::wstring, std::wstring> GetSumfileDefaultSavePathAndBaseName();
 };
 
 class PropPageCoordinator : public Coordinator
@@ -64,9 +64,9 @@ public:
   using Coordinator::Coordinator;
   ~PropPageCoordinator() = default;
 
-  void AddRef(HWND, LPPROPSHEETPAGE) { }
-  UINT Create(HWND, LPPROPSHEETPAGE) { return 1; }
-  void Release(HWND, LPPROPSHEETPAGE) { delete this; }
+  void AddRef(HWND, LPPROPSHEETPAGEW) { }
+  UINT Create(HWND, LPPROPSHEETPAGEW) { return 1; }
+  void Release(HWND, LPPROPSHEETPAGEW) { delete this; }
 };
 
 class StandaloneCoordinator : public Coordinator

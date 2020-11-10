@@ -103,7 +103,7 @@ void FileHashTask::ProcessReadQueue(uint8_t* reuse_block)
     BlockFree(reuse_block);
 }
 
-FileHashTask::FileHashTask(const tstring& path, Coordinator* prop_page, tstring display_name, std::vector<uint8_t> expected_hash)
+FileHashTask::FileHashTask(const std::wstring& path, Coordinator* prop_page, std::wstring display_name, std::vector<uint8_t> expected_hash)
   : _hash_contexts{}
   , _prop_page{ prop_page }
   , _display_name{ std::move(display_name) }

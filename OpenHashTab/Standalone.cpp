@@ -7,7 +7,7 @@
 
 HWND CreateDialogFromChildDialogResourceParam(
   _In_opt_  HINSTANCE hInstance,
-  _In_      LPCTSTR   lpTemplateName,
+  _In_      LPCWSTR   lpTemplateName,
   _In_opt_  HWND      hWndParent,
   _In_opt_  DLGPROC   lpDialogFunc,
   _In_      LPARAM    dwInitParam
@@ -35,7 +35,7 @@ HWND CreateDialogFromChildDialogResourceParam(
   } DLGTEMPLATEEX;
 
   HWND hwnd = nullptr;
-  const auto hRsrc = FindResourceEx(hInstance, RT_DIALOG, lpTemplateName, 0);
+  const auto hRsrc = FindResourceExW(hInstance, RT_DIALOG, lpTemplateName, 0);
   if (hRsrc)
   {
     const auto hGlobal = LoadResource(hInstance, hRsrc);
@@ -64,7 +64,7 @@ HWND CreateDialogFromChildDialogResourceParam(
               ((DLGTEMPLATE*)pTemplate)->dwExtendedStyle = WS_EX_WINDOWEDGE;
             }
 
-            hwnd = CreateDialogIndirectParam(hInstance, (LPDLGTEMPLATE)pTemplate, hWndParent, lpDialogFunc, dwInitParam);
+            hwnd = CreateDialogIndirectParamW(hInstance, (LPDLGTEMPLATE)pTemplate, hWndParent, lpDialogFunc, dwInitParam);
 
             free(pTemplate);
           }
@@ -91,7 +91,7 @@ extern "C" __declspec(dllexport) void CALLBACK StandaloneEntryW(
   UNREFERENCED_PARAMETER(hWnd);
   UNREFERENCED_PARAMETER(hRunDLLInstance);
 
-  //utl::FormattedMessageBox(nullptr, _T("lpCmdLine"), MB_OK, _T("%s"), lpCmdLine);
+  //utl::FormattedMessageBox(nullptr, L"lpCmdLine", MB_OK, L"%s", lpCmdLine);
 
   INITCOMMONCONTROLSEX iccex
   {
@@ -102,7 +102,7 @@ extern "C" __declspec(dllexport) void CALLBACK StandaloneEntryW(
 
   auto argc = 0;
   const auto argv = CommandLineToArgvW(lpCmdLine, &argc);
-  std::list<tstring> files{argv, argv + argc};
+  std::list<std::wstring> files{argv, argv + argc};
   LocalFree(argv);
 
   if (files.empty())
@@ -111,7 +111,7 @@ extern "C" __declspec(dllexport) void CALLBACK StandaloneEntryW(
   const auto& shortest = std::min_element(
     begin(files),
     end(files),
-    [](const tstring& a, const tstring& b)
+    [](const std::wstring& a, const std::wstring& b)
     {
       return a.size() < b.size();
     }
@@ -120,13 +120,13 @@ extern "C" __declspec(dllexport) void CALLBACK StandaloneEntryW(
   const auto pb = shortest->c_str();
 
   // if PathFindFileName it returns pb, making base path "". This is intended.
-  auto base = tstring{ pb, (LPCWSTR)PathFindFileName(pb) };
+  auto base = std::wstring{ pb, (LPCWSTR)PathFindFileNameW(pb) };
 
   const auto coordinator = new StandaloneCoordinator(std::move(files), std::move(base));
 
   const auto dialog = CreateDialogFromChildDialogResourceParam(
     (HINSTANCE)&__ImageBase,
-    MAKEINTRESOURCE(IDD_OPENHASHTAB_PROPPAGE),
+    MAKEINTRESOURCEW(IDD_OPENHASHTAB_PROPPAGE),
     hWnd,
     &utl::DlgProcClassBinder<MainDialog>,
     (LPARAM)coordinator
@@ -136,12 +136,12 @@ extern "C" __declspec(dllexport) void CALLBACK StandaloneEntryW(
   MSG msg;
 
   // Main message loop:
-  while (GetMessage(&msg, nullptr, 0, 0))
+  while (GetMessageW(&msg, nullptr, 0, 0))
   {
-    if (!IsDialogMessage(dialog, &msg))
+    if (!IsDialogMessageW(dialog, &msg))
     {
       TranslateMessage(&msg);
-      DispatchMessage(&msg);
+      DispatchMessageW(&msg);
     }
   }
 

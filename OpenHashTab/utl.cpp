@@ -21,7 +21,7 @@ bool utl::AreFilesTheSame(HANDLE a, HANDLE b)
 {
   if (IsWindows8OrGreater())
   {
-    if (const auto kernel32 = GetModuleHandle(_T("kernel32")))
+    if (const auto kernel32 = GetModuleHandleW(L"kernel32"))
     {
       using fn_t = decltype(GetFileInformationByHandleEx);
       if (const auto pfn = (fn_t*)GetProcAddress(kernel32, "GetFileInformationByHandleEx"))
@@ -54,30 +54,26 @@ bool utl::AreFilesTheSame(HANDLE a, HANDLE b)
     && fia.nFileIndexHigh == fib.nFileIndexHigh;
 }
 
-tstring utl::MakePathLongCompatible(const tstring& file)
+std::wstring utl::MakePathLongCompatible(const std::wstring& file)
 {
-#ifdef UNICODE
-  constexpr static TCHAR prefix[] = _T("\\\\");
+  constexpr static wchar_t prefix[] = L"\\\\";
   constexpr static auto prefixlen = std::size(prefix) - 1;
   const auto file_cstr = file.c_str();
-  if (file.size() < prefixlen || 0 != _tcsncmp(file_cstr, prefix, prefixlen))
-    return tstring{ _T("\\\\?\\") } + file;
-#endif
+  if (file.size() < prefixlen || 0 != wcsncmp(file_cstr, prefix, prefixlen))
+    return std::wstring{ L"\\\\?\\" } + file;
   return file;
 }
 
-tstring utl::CanonicalizePath(const tstring& path)
+std::wstring utl::CanonicalizePath(const std::wstring& path)
 {
   // PathCanonicalize doesn't support long paths, and pathcch.h isn't backward compatible, PathCch*
   // functions are only available on Windows 8+, so since I really don't feel like reimplementing it
   // myself long paths are only supported on Windows 8+
 
-#ifdef UNICODE
-
   using tPathAllocCanonicalize = decltype(&PathAllocCanonicalize);
   static const auto pPathAllocCanonicalize = []
   {
-    if (const auto kernelbase = GetModuleHandle(_T("kernelbase")))
+    if (const auto kernelbase = GetModuleHandleW(L"kernelbase"))
       if (const auto fn = GetProcAddress(kernelbase, "PathAllocCanonicalize"))
         return (tPathAllocCanonicalize)fn;
     return (tPathAllocCanonicalize)nullptr;
@@ -93,7 +89,7 @@ tstring utl::CanonicalizePath(const tstring& path)
     );
     if (ret == S_OK)
     {
-      const auto result = tstring{ (PCTSTR)outpath };
+      const auto result = std::wstring{ (LPCWSTR)outpath };
       LocalFree(outpath);
       return result;
     }
@@ -101,17 +97,16 @@ tstring utl::CanonicalizePath(const tstring& path)
     // fall through if PathAllocCanonicalize didn't work out
   }
 
-#endif
 
-  TCHAR canonical[MAX_PATH + 1];
-  if(PathCanonicalize(canonical, path.c_str()))
+  wchar_t canonical[MAX_PATH + 1];
+  if(PathCanonicalizeW(canonical, path.c_str()))
     return { canonical };
   return {};
 }
 
-HANDLE utl::OpenForRead(const tstring& file, bool async)
+HANDLE utl::OpenForRead(const std::wstring& file, bool async)
 {
-  return CreateFile(
+  return CreateFileW(
     MakePathLongCompatible(file).c_str(),
     GENERIC_READ,
     FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
@@ -122,7 +117,7 @@ HANDLE utl::OpenForRead(const tstring& file, bool async)
   );
 }
 
-DWORD utl::SetClipboardText(HWND hwnd, LPCTSTR text)
+DWORD utl::SetClipboardText(HWND hwnd, LPCWSTR text)
 {
   DWORD error = ERROR_SUCCESS;
 
@@ -130,14 +125,14 @@ DWORD utl::SetClipboardText(HWND hwnd, LPCTSTR text)
   {
     EmptyClipboard();
 
-    const auto len = _tcslen(text);
+    const auto len = wcslen(text);
 
-    if (const auto cb = GlobalAlloc(GMEM_MOVEABLE, (len + 1) * sizeof(TCHAR)))
+    if (const auto cb = GlobalAlloc(GMEM_MOVEABLE, (len + 1) * sizeof(wchar_t)))
     {
       // Lock the handle and copy the text to the buffer. 
-      if (const auto lcb = (LPTSTR)GlobalLock(cb))
+      if (const auto lcb = (LPWSTR)GlobalLock(cb))
       {
-        memcpy(lcb, text, (len + 1) * sizeof(TCHAR));
+        memcpy(lcb, text, (len + 1) * sizeof(wchar_t));
         const auto ref = GlobalUnlock(cb);
         error          = GetLastError();
         if (ref != 0 || error == ERROR_SUCCESS)
@@ -161,19 +156,19 @@ DWORD utl::SetClipboardText(HWND hwnd, LPCTSTR text)
   return error;
 }
 
-tstring utl::GetClipboardText(HWND hwnd)
+std::wstring utl::GetClipboardText(HWND hwnd)
 {
-  tstring tstr;
+  std::wstring wstr;
   if (OpenClipboard(hwnd))
   {
     const auto hglb = GetClipboardData(CF_UNICODETEXT);
     if(hglb)
     {
-      const auto text = (PCTSTR)GlobalLock(hglb);
+      const auto text = (LPCWSTR)GlobalLock(hglb);
 
       if(text)
       {
-        tstr = text;
+        wstr = text;
         GlobalUnlock(hglb);
       }
     }
@@ -181,39 +176,41 @@ tstring utl::GetClipboardText(HWND hwnd)
     CloseClipboard();
   }
 
-  return tstr;
+  return wstr;
 }
 
-tstring utl::SaveDialog(HWND hwnd, LPCTSTR defpath, LPCTSTR defname)
+std::wstring utl::SaveDialog(HWND hwnd, LPCWSTR defpath, LPCWSTR defname)
 {
-  TCHAR name[PATHCCH_MAX_CCH];
-  _tcscpy_s(name, defname);
+  wchar_t name[PATHCCH_MAX_CCH];
+  wcscpy_s(name, defname);
 
   OPENFILENAME of = { sizeof(OPENFILENAME), hwnd };
   of.lpstrFile = name;
   of.nMaxFile = (DWORD)std::size(name);
   of.lpstrInitialDir = defpath;
   of.Flags = OFN_EXPLORER | OFN_OVERWRITEPROMPT;
-  if (!GetSaveFileName(&of))
+  if (!GetSaveFileNameW(&of))
   {
     const auto error = CommDlgExtendedError();
     // if error is 0 the user just cancelled the action
     if (error)
       utl::FormattedMessageBox(
         hwnd,
-        _T("Error"),
+        L"Error",
         MB_ICONERROR | MB_OK,
-        _T("GetSaveFileName returned with error: %08X"),
+        L"GetSaveFileName returned with error: %08X",
         error
       );
     return {};
   }
+  // Compiler keeps crying about it even though it's impossible
+  name[std::size(name) - 1] = 0;
   return { name };
 }
 
-DWORD utl::SaveMemoryAsFile(LPCTSTR path, const void* p, size_t size)
+DWORD utl::SaveMemoryAsFile(LPCWSTR path, const void* p, size_t size)
 {
-  const auto h = CreateFile(
+  const auto h = CreateFileW(
     MakePathLongCompatible(path).c_str(),
     GENERIC_WRITE,
     0,
@@ -239,9 +236,8 @@ DWORD utl::SaveMemoryAsFile(LPCTSTR path, const void* p, size_t size)
   return error;
 }
 
-tstring utl::UTF8ToTString(const char* p)
+std::wstring utl::UTF8ToTString(const char* p)
 {
-#ifdef UNICODE
   const auto wsize = MultiByteToWideChar(
     CP_UTF8,
     0,
@@ -265,14 +261,10 @@ tstring utl::UTF8ToTString(const char* p)
   );
 
   return wstr;
-#else
-  return { p };
-#endif
 }
 
-std::string utl::TStringToUTF8(LPCTSTR p)
+std::string utl::TStringToUTF8(LPCWSTR p)
 {
-#ifdef UNICODE
   const auto size = WideCharToMultiByte(
     CP_UTF8,
     0,
@@ -300,16 +292,13 @@ std::string utl::TStringToUTF8(LPCTSTR p)
   );
 
   return str;
-#else
-  return { p };
-#endif
 }
 
-tstring utl::ErrorToString(DWORD error)
+std::wstring utl::ErrorToString(DWORD error)
 {
-  TCHAR buf[0x1000];
+  wchar_t buf[0x1000];
 
-  FormatMessage(
+  FormatMessageW(
     FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
     nullptr,
     error,
@@ -318,9 +307,9 @@ tstring utl::ErrorToString(DWORD error)
     (DWORD)std::size(buf),
     nullptr
   );
-  tstring tstr{ buf };
-  const auto pos = tstr.find_last_not_of(_T("\r\n"));
-  if (pos != tstring::npos)
-    tstr.resize(pos);
-  return tstr;
+  std::wstring wstr{ buf };
+  const auto pos = wstr.find_last_not_of(L"\r\n");
+  if (pos != std::wstring::npos)
+    wstr.resize(pos);
+  return wstr;
 }

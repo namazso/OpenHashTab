@@ -43,11 +43,11 @@ namespace utl
     if (uMsg == WM_INITDIALOG)
     {
       p = new T(hDlg, (void*)lParam);
-      SetWindowLongPtr(hDlg, GWLP_USERDATA, (LONG_PTR)p);
+      SetWindowLongPtrW(hDlg, GWLP_USERDATA, (LONG_PTR)p);
     }
     else
     {
-      p = (T*)GetWindowLongPtr(hDlg, GWLP_USERDATA);
+      p = (T*)GetWindowLongPtrW(hDlg, GWLP_USERDATA);
     }
     // there are some unimportant messages sent before WM_INITDIALOG
     const INT_PTR ret = p ? p->DlgProc(uMsg, wParam, lParam) : (INT_PTR)FALSE;
@@ -55,7 +55,7 @@ namespace utl
     {
       delete p;
       // even if we were to somehow receive messages after WM_NCDESTROY make sure we dont call invalid ptr
-      SetWindowLongPtr(hDlg, GWLP_USERDATA, 0);
+      SetWindowLongPtrW(hDlg, GWLP_USERDATA, 0);
     }
     return ret;
   }
@@ -69,7 +69,7 @@ namespace utl
   // Dialog should have the functions described in DlgProcClassBinder. Additionally, dialog receives a Coordinator*
   //   as lParam in it's constructor. A dialog may or may not get created for a property sheet during lifetime.
   template <typename PropPage, typename Dialog, typename... Args>
-  HPROPSHEETPAGE MakePropPage(PROPSHEETPAGE psp, Args&&... args)
+  HPROPSHEETPAGE MakePropPage(PROPSHEETPAGEW psp, Args&&... args)
   {
     // Things are generally called in the following order:
     // name           dlg   when
@@ -88,10 +88,10 @@ namespace utl
     psp.pfnDlgProc = [](HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) -> INT_PTR
     {
       if (uMsg == WM_INITDIALOG)
-        lParam = ((LPPROPSHEETPAGE)lParam)->lParam;
+        lParam = ((LPPROPSHEETPAGEW)lParam)->lParam;
       return DlgProcClassBinder<Dialog>(hDlg, uMsg, wParam, lParam);
     };
-    psp.pfnCallback = [](HWND hwnd, UINT msg, LPPROPSHEETPAGE ppsp) -> UINT
+    psp.pfnCallback = [](HWND hwnd, UINT msg, LPPROPSHEETPAGEW ppsp) -> UINT
     {
       const auto object = (PropPage*)ppsp->lParam;
       UINT ret = 1;
@@ -119,7 +119,7 @@ namespace utl
 
     psp.lParam = (LPARAM)object;
 
-    const auto page = CreatePropertySheetPage(&psp);
+    const auto page = CreatePropertySheetPageW(&psp);
 
     if (!page)
       delete object;
@@ -193,56 +193,56 @@ namespace utl
     return res;
   }
 
-  inline int FormattedMessageBox(HWND hwnd, LPCTSTR caption, UINT type, LPCTSTR fmt, ...)
+  inline int FormattedMessageBox(HWND hwnd, LPCWSTR caption, UINT type, LPCWSTR fmt, ...)
   {
     va_list args;
     va_start(args, fmt);
-    TCHAR text[4096];
-    _vstprintf_s(text, fmt, args);
+    wchar_t text[4096];
+    vswprintf_s(text, fmt, args);
     va_end(args);
-    return MessageBox(hwnd, text, caption, type);
+    return MessageBoxW(hwnd, text, caption, type);
   }
 
-  inline tstring GetString(UINT uID)
+  inline std::wstring GetString(UINT uID)
   {
-    PCTSTR v = nullptr;
-    const auto len = LoadString((HINSTANCE)&__ImageBase, uID, (LPTSTR)&v, 0);
+    LPCWSTR v = nullptr;
+    const auto len = LoadStringW((HINSTANCE)&__ImageBase, uID, (LPWSTR)&v, 0);
     return {v, v + len};
   }
 
-  inline tstring GetWindowTextString(HWND hwnd)
+  inline std::wstring GetWindowTextString(HWND hwnd)
   {
     SetLastError(0);
-    // GetWindowTextLength may return more than actual length, so we can't use a tstring directly
-    const auto len = GetWindowTextLength(hwnd);
+    // GetWindowTextLength may return more than actual length, so we can't use a std::wstring directly
+    const auto len = GetWindowTextLengthW(hwnd);
     // if text is 0 long, GetWindowTextLength returns 0, same as when error happened
     if (len == 0 && GetLastError() != 0)
       return {};
-    const auto p = std::make_unique<TCHAR[]>(len + 1);
-    GetWindowText(hwnd, p.get(), len + 1);
+    const auto p = std::make_unique<wchar_t[]>(len + 1);
+    GetWindowTextW(hwnd, p.get(), len + 1);
     return { p.get() };
   }
 
   bool AreFilesTheSame(HANDLE a, HANDLE b);
 
-  tstring MakePathLongCompatible(const tstring& file);
+  std::wstring MakePathLongCompatible(const std::wstring& file);
 
-  tstring CanonicalizePath(const tstring& path);
+  std::wstring CanonicalizePath(const std::wstring& path);
 
-  HANDLE OpenForRead(const tstring& file, bool async = false);
+  HANDLE OpenForRead(const std::wstring& file, bool async = false);
 
-  DWORD SetClipboardText(HWND hwnd, LPCTSTR text);
+  DWORD SetClipboardText(HWND hwnd, LPCWSTR text);
 
-  tstring GetClipboardText(HWND hwnd);
+  std::wstring GetClipboardText(HWND hwnd);
 
-  tstring SaveDialog(HWND hwnd, LPCTSTR defpath, LPCTSTR defname);
+  std::wstring SaveDialog(HWND hwnd, LPCWSTR defpath, LPCWSTR defname);
 
-  DWORD SaveMemoryAsFile(LPCTSTR path, const void* p, size_t size);
+  DWORD SaveMemoryAsFile(LPCWSTR path, const void* p, size_t size);
 
-  tstring UTF8ToTString(const char* p);
-  std::string TStringToUTF8(LPCTSTR p);
+  std::wstring UTF8ToTString(const char* p);
+  std::string TStringToUTF8(LPCWSTR p);
 
-  tstring ErrorToString(DWORD error);
+  std::wstring ErrorToString(DWORD error);
 }
 
-#define MAKE_IDC_MEMBER(hwnd, name) HWND _hwnd_ ## name = GetDlgItem(hwnd, IDC_ ## name);
+#define MAKE_IDC_MEMBER(hwnd, name) HWND _hwnd_ ## name = GetDlgItem(hwnd, IDC_ ## name)

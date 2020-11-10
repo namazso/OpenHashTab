@@ -65,7 +65,7 @@ HRESULT STDMETHODCALLTYPE COpenHashTabShlExt::Initialize(
   }
 
   // Determine how many files are involved in this operation.
-  const auto file_count = DragQueryFile(
+  const auto file_count = DragQueryFileW(
     drop,
     0xFFFFFFFF,
     nullptr,
@@ -74,10 +74,10 @@ HRESULT STDMETHODCALLTYPE COpenHashTabShlExt::Initialize(
 
   for (auto i = 0u; i < file_count; i++)
   {
-    TCHAR file_name[PATHCCH_MAX_CCH];
+    wchar_t file_name[PATHCCH_MAX_CCH];
 
     // Get the next filename.
-    if (0 == DragQueryFile(drop, i, file_name, (UINT)std::size(file_name)))
+    if (0 == DragQueryFileW(drop, i, file_name, (UINT)std::size(file_name)))
       continue;
 
     // Add the filename to our list of files to act on.
@@ -94,7 +94,7 @@ HRESULT STDMETHODCALLTYPE COpenHashTabShlExt::Initialize(
   const auto& shortest = std::min_element(
     begin(_files),
     end(_files),
-    [](const tstring& a, const tstring& b)
+    [](const std::wstring& a, const std::wstring& b)
     {
       return a.size() < b.size();
     }
@@ -103,7 +103,7 @@ HRESULT STDMETHODCALLTYPE COpenHashTabShlExt::Initialize(
   const auto pb = shortest->c_str();
 
   // if PathFindFileName it returns pb, making base path "". This is intended.
-  _base = tstring{ pb, (LPCWSTR)PathFindFileName(pb) };
+  _base = std::wstring{ pb, (LPCWSTR)PathFindFileNameW(pb) };
 
   // If we found any files we can work with, return S_OK.  Otherwise,
   // return E_FAIL so we don't get called again for this right-click
@@ -128,11 +128,11 @@ HRESULT STDMETHODCALLTYPE COpenHashTabShlExt::AddPages(
 
   // Set up everything but pfnDlgProc, pfnCallback, lParam which will be set by MakePropPage to call members
   // functions on the page object
-  PROPSHEETPAGE psp{};
-  psp.dwSize = sizeof(PROPSHEETPAGE);
+  PROPSHEETPAGEW psp{};
+  psp.dwSize = sizeof(PROPSHEETPAGEW);
   psp.dwFlags = PSP_USEREFPARENT | PSP_USETITLE | PSP_USECALLBACK;
   psp.hInstance = _AtlBaseModule.GetResourceInstance();
-  psp.pszTemplate = MAKEINTRESOURCE(IDD_OPENHASHTAB_PROPPAGE);
+  psp.pszTemplate = MAKEINTRESOURCEW(IDD_OPENHASHTAB_PROPPAGE);
   psp.pszTitle = tab_name.c_str();
   psp.pcRefParent = (UINT*)&_AtlModule.m_nLockCnt;
 

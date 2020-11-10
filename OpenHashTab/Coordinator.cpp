@@ -22,7 +22,7 @@
 #include "Hasher.h"
 #include "FileHashTask.h"
 
-static std::vector<std::uint8_t> TryGetExpectedSumForFile(const tstring& path)
+static std::vector<std::uint8_t> TryGetExpectedSumForFile(const std::wstring& path)
 {
   std::vector<std::uint8_t> hash{};
 
@@ -31,15 +31,15 @@ static std::vector<std::uint8_t> TryGetExpectedSumForFile(const tstring& path)
     return hash;
 
   const auto file_path = path.c_str();
-  const auto file_name = (LPCTSTR)PathFindFileName(file_path);
-  const auto base_path = tstring{ file_path, file_name };
+  const auto file_name = (LPCWSTR)PathFindFileNameW(file_path);
+  const auto base_path = std::wstring{ file_path, file_name };
 
   for (auto hasher : HashAlgorithm::g_hashers)
   {
     if (!hasher.IsEnabled())
       continue;
 
-    auto sumfile_path = path + _T(".");
+    auto sumfile_path = path + L".";
     auto handle = INVALID_HANDLE_VALUE;
     for (auto it = hasher.GetExtensions(); handle == INVALID_HANDLE_VALUE && *it; ++it)
       handle = utl::OpenForRead(sumfile_path + utl::UTF8ToTString(*it));
@@ -85,7 +85,7 @@ static std::vector<std::uint8_t> TryGetExpectedSumForFile(const tstring& path)
   return hash;
 }
 
-Coordinator::Coordinator(std::list<tstring> files, tstring base)
+Coordinator::Coordinator(std::list<std::wstring> files, std::wstring base)
   : _files(std::move(files))
   , _base(std::move(base)) {}
 
@@ -129,7 +129,7 @@ unsigned Coordinator::Dereference()
   return references;
 }
 
-void Coordinator::AddFile(const tstring& path, const std::vector<std::uint8_t>& expected_hash)
+void Coordinator::AddFile(const std::wstring& path, const std::vector<std::uint8_t>& expected_hash)
 {
   auto dispname = utl::CanonicalizePath(path);
 
@@ -153,10 +153,10 @@ void Coordinator::AddFiles()
   for (auto it = begin(_files); it != end(_files);)
   {
     const auto it_long = utl::MakePathLongCompatible(*it);
-    if (PathIsDirectory(it_long.c_str()))
+    if (PathIsDirectoryW(it_long.c_str()))
     {
       WIN32_FIND_DATA find_data;
-      const auto find_handle = FindFirstFile((it_long + _T("\\*")).c_str(), &find_data);
+      const auto find_handle = FindFirstFileW((it_long + L"\\*").c_str(), &find_data);
 
       DWORD error;
 
@@ -164,11 +164,11 @@ void Coordinator::AddFiles()
       {
         do
         {
-          if ((0 == _tcscmp(_T("."), find_data.cFileName)) || (0 == _tcscmp(_T(".."), find_data.cFileName)))
+          if ((0 == wcscmp(L".", find_data.cFileName)) || (0 == wcscmp(L"..", find_data.cFileName)))
             continue; // For whatever reason if you use long paths with FindFirstFile it returns "." and ".."
-          _files.push_back(*it + _T("\\") + find_data.cFileName);
+          _files.push_back(*it + L"\\" + find_data.cFileName);
         }
-        while (FindNextFile(find_handle, &find_data) != 0);
+        while (FindNextFileW(find_handle, &find_data) != 0);
         error = GetLastError();
         FindClose(find_handle);
       }
@@ -206,8 +206,8 @@ void Coordinator::AddFiles()
         _is_sumfile = true;
 
         const auto sumfile_path = file.c_str();
-        const auto sumfile_name = (LPCTSTR)PathFindFileName(sumfile_path);
-        const auto sumfile_base_path = tstring{ sumfile_path, sumfile_name };
+        const auto sumfile_name = (LPCWSTR)PathFindFileNameW(sumfile_path);
+        const auto sumfile_base_path = std::wstring{ sumfile_path, sumfile_name };
         for (auto& filesum : fsl)
         {
           // we disallow no filename when sumfile is main file
@@ -257,9 +257,9 @@ void Coordinator::FileCompletionCallback(FileHashTask* file)
 
   if (_window)
   {
-    SendNotifyMessage(_window, wnd::WM_USER_FILE_FINISHED, wnd::k_user_magic_wparam, (LPARAM)file);
+    SendNotifyMessageW(_window, wnd::WM_USER_FILE_FINISHED, wnd::k_user_magic_wparam, (LPARAM)file);
     if (not_finished == 0)
-      SendNotifyMessage(_window, wnd::WM_USER_ALL_FILES_FINISHED, wnd::k_user_magic_wparam, 0);
+      SendNotifyMessageW(_window, wnd::WM_USER_ALL_FILES_FINISHED, wnd::k_user_magic_wparam, 0);
   }
 }
 
@@ -277,7 +277,7 @@ void Coordinator::FileProgressCallback(uint64_t size_progress)
   {
     std::lock_guard<std::mutex> guard{ _window_mutex };
     if(_window)
-      SendNotifyMessage(
+      SendNotifyMessageW(
         _window,
         wnd::WM_USER_FILE_PROGRESS,
         wnd::k_user_magic_wparam,
@@ -286,12 +286,12 @@ void Coordinator::FileProgressCallback(uint64_t size_progress)
   }
 }
 
-std::pair<tstring, tstring> Coordinator::GetSumfileDefaultSavePathAndBaseName()
+std::pair<std::wstring, std::wstring> Coordinator::GetSumfileDefaultSavePathAndBaseName()
 {
   const auto& file = *_files.begin();
   const auto file_path = file.c_str();
-  const auto file_name = (LPCTSTR)PathFindFileName(file_path);
-  const auto dir = tstring{ file_path, file_name };
-  auto name = _files.size() == 1 ? tstring{ file_name } : tstring{};
+  const auto file_name = (LPCWSTR)PathFindFileNameW(file_path);
+  const auto dir = std::wstring{ file_path, file_name };
+  auto name = _files.size() == 1 ? std::wstring{ file_name } : std::wstring{};
   return { _base, std::move(name) };
 }
