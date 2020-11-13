@@ -32,7 +32,7 @@ jobs:
             $Version = $Env:GITHUB_SHA;
             $VersionMinor = 0;
             $VersionMajor = 0;
-            $VersionPatch = $Env:GITHUB_RUN_ID;
+            $VersionPatch = 0;
         }
         Echo ("::set-output name=is_release::" + $IsRelease);
         Echo ("::set-output name=version::" + $Version);
