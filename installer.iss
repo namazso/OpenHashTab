@@ -32,7 +32,7 @@ Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
 VersionInfoProductTextVersion={#CI_VERSION}
-VersionInfoVersion={#CI_VERSION_NUMBERS}
+VersionInfoVersion={#CI_VERSION_NUMERIC}
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
