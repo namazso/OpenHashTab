@@ -1,0 +1,106 @@
+name: release
+
+on:
+  push:
+    tags:
+      - 'v*'
+    branches:
+      - master
+
+jobs:
+  build:
+    name: build-windows
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+      with:
+          submodules: recursive
+          
+    - name: Figure out if we're running for a tag
+      id: checktag
+      run: |
+        If($Env:GITHUB_REF -match "v([0-9]*)\.([0-9]*)\.([0-9]*)") {
+            $IsRelease = "yes";
+            $Version = $Matches[0];
+            $VersionMinor = $Matches[1];
+            $VersionMajor = $Matches[2];
+            $VersionPatch = $Matches[3];
+        } Else {
+            $IsRelease = "no";
+            $Version = $Env:GITHUB_SHA;
+            $VersionMinor = 0;
+            $VersionMajor = 0;
+            $VersionPatch = 0;
+        }
+        Echo ("::set-output name=is_release::" + $IsRelease);
+        Echo ("::set-output name=version::" + $Version);
+        Echo ("::set-output name=version_major::" + $VersionMajor);
+        Echo ("::set-output name=version_minor::" + $VersionMinor);
+        Echo ("::set-output name=version_patch::" + $VersionPatch);
+
+    - name: Set up MSBuild
+      uses: microsoft/setup-msbuild@v1
+      
+    - name: Install InnoSetup from Chocolatey
+      uses: crazy-max/ghaction-chocolatey@v1
+      with:
+        args: install innosetup -y
+      
+    - name: Build Solution (Win32)
+      run: |
+        cd ${{ github.workspace }}
+        msbuild "-property:Configuration=Release;Platform=Win32;CI_VERSION=${{ steps.checktag.outputs.version }}" OpenHashTab.sln
+
+    - name: Build Solution (x64)
+      run: |
+        cd ${{ github.workspace }}
+        msbuild "-property:Configuration=Release;Platform=x64;CI_VERSION=${{ steps.checktag.outputs.version }}" OpenHashTab.sln
+
+    - name: Build Solution (ARM64)
+      run: |
+        cd ${{ github.workspace }}
+        msbuild "-property:Configuration=Release;Platform=ARM64;CI_VERSION=${{ steps.checktag.outputs.version }}" OpenHashTab.sln
+        
+    - name: Build Installer
+      run: |
+        cd ${{ github.workspace }}
+        iscc installer.iss
+        
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: binaries
+        path: |
+          .\bin\Release\Win32\OpenHashTab.dll
+          .\bin\Release\Win32\OpenHashTab.pdb
+          .\bin\Release\x64\OpenHashTab.dll
+          .\bin\Release\x64\OpenHashTab.pdb
+          .\bin\Release\ARM64\OpenHashTab.dll
+          .\bin\Release\ARM64\OpenHashTab.pdb
+          .\OpenHashTab_setup.exe
+
+    - name: Create release
+      if: ${{ steps.checktag.outputs.is_release == 'yes' }}
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        draft: false
+        prerelease: true
+
+    - name: Upload release asset
+      if: ${{ steps.checktag.outputs.is_release == 'yes' }}
+      id: upload-release-asset 
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+        asset_path: .\OpenHashTab_setup.exe
+        asset_name: OpenHashTab_setup.exe
+        asset_content_type: application/octet-stream
