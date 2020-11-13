@@ -172,7 +172,7 @@
       <SubSystem>Windows</SubSystem>
       <ModuleDefinitionFile>.\OpenHashTab.def</ModuleDefinitionFile>
       <RegisterOutput>true</RegisterOutput>
-      <AdditionalOptions>/PDBALTPATH:%_PDB% %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/PDBALTPATH:%_PDB%  /Brepro %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PreLinkEvent />
     <Manifest>
@@ -214,7 +214,7 @@
       <SubSystem>Windows</SubSystem>
       <ModuleDefinitionFile>.\OpenHashTab.def</ModuleDefinitionFile>
       <RegisterOutput>true</RegisterOutput>
-      <AdditionalOptions>/PDBALTPATH:%_PDB% %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/PDBALTPATH:%_PDB%  /Brepro %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PreLinkEvent />
     <Manifest>
@@ -257,7 +257,7 @@
       <SubSystem>Windows</SubSystem>
       <ModuleDefinitionFile>.\OpenHashTab.def</ModuleDefinitionFile>
       <RegisterOutput>true</RegisterOutput>
-      <AdditionalOptions>/PDBALTPATH:%_PDB% %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/PDBALTPATH:%_PDB%  /Brepro %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PreLinkEvent />
     <Manifest>
@@ -302,7 +302,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <RegisterOutput>true</RegisterOutput>
-      <AdditionalOptions>/PDBALTPATH:%_PDB% %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/PDBALTPATH:%_PDB%  /Brepro %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PreLinkEvent />
     <Manifest>
@@ -346,7 +346,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <RegisterOutput>true</RegisterOutput>
-      <AdditionalOptions>/PDBALTPATH:%_PDB% %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/PDBALTPATH:%_PDB%  /Brepro %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PreLinkEvent />
     <Manifest>
@@ -391,7 +391,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <RegisterOutput>true</RegisterOutput>
-      <AdditionalOptions>/PDBALTPATH:%_PDB% %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/PDBALTPATH:%_PDB%  /Brepro %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PreLinkEvent />
     <Manifest>
