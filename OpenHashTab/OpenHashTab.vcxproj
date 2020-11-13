@@ -96,13 +96,13 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'" Label="PropertySheets">
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'" Label="PropertySheets">
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
@@ -178,6 +178,12 @@
     <Manifest>
       <AdditionalManifestFiles>additional.manifest</AdditionalManifestFiles>
     </Manifest>
+    <PreBuildEvent>
+      <Command>powershell -ExecutionPolicy Bypass $(SolutionDir)langcomp\langcomp.ps1 $(SolutionDir)Localization $(ProjectDir)localization.rc</Command>
+    </PreBuildEvent>
+    <PreBuildEvent>
+      <Message>Compiling localization</Message>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -214,6 +220,12 @@
     <Manifest>
       <AdditionalManifestFiles>additional.manifest</AdditionalManifestFiles>
     </Manifest>
+    <PreBuildEvent>
+      <Command>powershell -ExecutionPolicy Bypass $(SolutionDir)langcomp\langcomp.ps1 $(SolutionDir)Localization $(ProjectDir)localization.rc</Command>
+    </PreBuildEvent>
+    <PreBuildEvent>
+      <Message>Compiling localization</Message>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
     <ClCompile>
@@ -251,6 +263,12 @@
     <Manifest>
       <AdditionalManifestFiles>additional.manifest</AdditionalManifestFiles>
     </Manifest>
+    <PreBuildEvent>
+      <Command>powershell -ExecutionPolicy Bypass $(SolutionDir)langcomp\langcomp.ps1 $(SolutionDir)Localization $(ProjectDir)localization.rc</Command>
+    </PreBuildEvent>
+    <PreBuildEvent>
+      <Message>Compiling localization</Message>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -290,6 +308,12 @@
     <Manifest>
       <AdditionalManifestFiles>additional.manifest</AdditionalManifestFiles>
     </Manifest>
+    <PreBuildEvent>
+      <Command>powershell -ExecutionPolicy Bypass $(SolutionDir)langcomp\langcomp.ps1 $(SolutionDir)Localization $(ProjectDir)localization.rc</Command>
+    </PreBuildEvent>
+    <PreBuildEvent>
+      <Message>Compiling localization</Message>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -328,6 +352,12 @@
     <Manifest>
       <AdditionalManifestFiles>additional.manifest</AdditionalManifestFiles>
     </Manifest>
+    <PreBuildEvent>
+      <Command>powershell -ExecutionPolicy Bypass $(SolutionDir)langcomp\langcomp.ps1 $(SolutionDir)Localization $(ProjectDir)localization.rc</Command>
+    </PreBuildEvent>
+    <PreBuildEvent>
+      <Message>Compiling localization</Message>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
     <ClCompile>
@@ -367,6 +397,12 @@
     <Manifest>
       <AdditionalManifestFiles>additional.manifest</AdditionalManifestFiles>
     </Manifest>
+    <PreBuildEvent>
+      <Command>powershell -ExecutionPolicy Bypass $(SolutionDir)langcomp\langcomp.ps1 $(SolutionDir)Localization $(ProjectDir)localization.rc</Command>
+    </PreBuildEvent>
+    <PreBuildEvent>
+      <Message>Compiling localization</Message>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\mbedtls\library\md2.c">
