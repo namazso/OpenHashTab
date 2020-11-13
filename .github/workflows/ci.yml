@@ -43,15 +43,10 @@ jobs:
     - name: Set up MSBuild
       uses: microsoft/setup-msbuild@v1
       
-    - name: Install InnoSetup from Chocolatey
-      uses: crazy-max/ghaction-chocolatey@v1
-      with:
-        args: install innosetup -y
-      
     - name: Build Solution (Win32)
       run: |
         cd ${{ github.workspace }}
-        msbuild "-property:Configuration=Release;Platform=Win32;CI_VERSION=${{ steps.checktag.outputs.version }}" OpenHashTab.sln
+        msbuild "-property:Configuration=Release;Platform=x86;CI_VERSION=${{ steps.checktag.outputs.version }}" OpenHashTab.sln
 
     - name: Build Solution (x64)
       run: |
