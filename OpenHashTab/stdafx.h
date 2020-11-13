@@ -38,6 +38,8 @@
 #include <atlctl.h>
 
 // Windows
+#include <Windows.h>
+#include <windowsx.h>
 #include <WinUser.h>
 #include <CommCtrl.h>
 #include <VersionHelpers.h>
