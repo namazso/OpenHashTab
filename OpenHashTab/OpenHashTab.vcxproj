@@ -75,6 +75,12 @@
     <CharacterSet>Unicode</CharacterSet>
     <SpectreMitigation>false</SpectreMitigation>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(CI_VERSION)'==''">
+    <CI_VERSION>(unknown)</CI_VERSION>
+    <CI_VERSION_MAJOR>0</CI_VERSION_MAJOR>
+    <CI_VERSION_MINOR>0</CI_VERSION_MINOR>
+    <CI_VERSION_PATCH>0</CI_VERSION_PATCH>
+  </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
     <Import Project="$(VCTargetsPath)\BuildCustomizations\masm.props" />
@@ -141,7 +147,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;_USRDLL;%(PreprocessorDefinitions);MBEDTLS_CONFIG_FILE=&lt;mbedtls_config.h&gt;</PreprocessorDefinitions>
+      <PreprocessorDefinitions>CI_VERSION="$(CI_VERSION)";CI_VERSION_MAJOR=$(CI_VERSION_MAJOR);CI_VERSION_MINOR=$(CI_VERSION_MINOR);CI_VERSION_PATCH=$(CI_VERSION_PATCH);WIN32;_WINDOWS;_DEBUG;_USRDLL;%(PreprocessorDefinitions);MBEDTLS_CONFIG_FILE=&lt;mbedtls_config.h&gt;</PreprocessorDefinitions>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
@@ -160,7 +166,7 @@
     <ResourceCompile>
       <Culture>0x0409</Culture>
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>CI_VERSION="$(CI_VERSION)";CI_VERSION_MAJOR=$(CI_VERSION_MAJOR);CI_VERSION_MINOR=$(CI_VERSION_MINOR);CI_VERSION_PATCH=$(CI_VERSION_PATCH);_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -178,7 +184,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>_WINDOWS;_DEBUG;_USRDLL;%(PreprocessorDefinitions);MBEDTLS_CONFIG_FILE=&lt;mbedtls_config.h&gt;</PreprocessorDefinitions>
+      <PreprocessorDefinitions>CI_VERSION="$(CI_VERSION)";CI_VERSION_MAJOR=$(CI_VERSION_MAJOR);CI_VERSION_MINOR=$(CI_VERSION_MINOR);CI_VERSION_PATCH=$(CI_VERSION_PATCH);_WINDOWS;_DEBUG;_USRDLL;%(PreprocessorDefinitions);MBEDTLS_CONFIG_FILE=&lt;mbedtls_config.h&gt;</PreprocessorDefinitions>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
@@ -196,7 +202,7 @@
     <ResourceCompile>
       <Culture>0x0409</Culture>
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>CI_VERSION="$(CI_VERSION)";CI_VERSION_MAJOR=$(CI_VERSION_MAJOR);CI_VERSION_MINOR=$(CI_VERSION_MINOR);CI_VERSION_PATCH=$(CI_VERSION_PATCH);_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -214,7 +220,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>_WINDOWS;_DEBUG;_USRDLL;%(PreprocessorDefinitions);MBEDTLS_CONFIG_FILE=&lt;mbedtls_config.h&gt;</PreprocessorDefinitions>
+      <PreprocessorDefinitions>CI_VERSION="$(CI_VERSION)";CI_VERSION_MAJOR=$(CI_VERSION_MAJOR);CI_VERSION_MINOR=$(CI_VERSION_MINOR);CI_VERSION_PATCH=$(CI_VERSION_PATCH);_WINDOWS;_DEBUG;_USRDLL;%(PreprocessorDefinitions);MBEDTLS_CONFIG_FILE=&lt;mbedtls_config.h&gt;</PreprocessorDefinitions>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
@@ -233,7 +239,7 @@
     <ResourceCompile>
       <Culture>0x0409</Culture>
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>CI_VERSION="$(CI_VERSION)";CI_VERSION_MAJOR=$(CI_VERSION_MAJOR);CI_VERSION_MINOR=$(CI_VERSION_MINOR);CI_VERSION_PATCH=$(CI_VERSION_PATCH);_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -250,7 +256,7 @@
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;_USRDLL;%(PreprocessorDefinitions);MBEDTLS_CONFIG_FILE=&lt;mbedtls_config.h&gt;</PreprocessorDefinitions>
+      <PreprocessorDefinitions>CI_VERSION="$(CI_VERSION)";CI_VERSION_MAJOR=$(CI_VERSION_MAJOR);CI_VERSION_MINOR=$(CI_VERSION_MINOR);CI_VERSION_PATCH=$(CI_VERSION_PATCH);WIN32;_WINDOWS;NDEBUG;_USRDLL;%(PreprocessorDefinitions);MBEDTLS_CONFIG_FILE=&lt;mbedtls_config.h&gt;</PreprocessorDefinitions>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -270,7 +276,7 @@
     <ResourceCompile>
       <Culture>0x0409</Culture>
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>CI_VERSION="$(CI_VERSION)";CI_VERSION_MAJOR=$(CI_VERSION_MAJOR);CI_VERSION_MINOR=$(CI_VERSION_MINOR);CI_VERSION_PATCH=$(CI_VERSION_PATCH);NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -289,7 +295,7 @@
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>_WINDOWS;NDEBUG;_USRDLL;%(PreprocessorDefinitions);MBEDTLS_CONFIG_FILE=&lt;mbedtls_config.h&gt;</PreprocessorDefinitions>
+      <PreprocessorDefinitions>CI_VERSION="$(CI_VERSION)";CI_VERSION_MAJOR=$(CI_VERSION_MAJOR);CI_VERSION_MINOR=$(CI_VERSION_MINOR);CI_VERSION_PATCH=$(CI_VERSION_PATCH);_WINDOWS;NDEBUG;_USRDLL;%(PreprocessorDefinitions);MBEDTLS_CONFIG_FILE=&lt;mbedtls_config.h&gt;</PreprocessorDefinitions>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -308,7 +314,7 @@
     <ResourceCompile>
       <Culture>0x0409</Culture>
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>CI_VERSION="$(CI_VERSION)";CI_VERSION_MAJOR=$(CI_VERSION_MAJOR);CI_VERSION_MINOR=$(CI_VERSION_MINOR);CI_VERSION_PATCH=$(CI_VERSION_PATCH);NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -327,7 +333,7 @@
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>_WINDOWS;NDEBUG;_USRDLL;%(PreprocessorDefinitions);MBEDTLS_CONFIG_FILE=&lt;mbedtls_config.h&gt;</PreprocessorDefinitions>
+      <PreprocessorDefinitions>CI_VERSION="$(CI_VERSION)";CI_VERSION_MAJOR=$(CI_VERSION_MAJOR);CI_VERSION_MINOR=$(CI_VERSION_MINOR);CI_VERSION_PATCH=$(CI_VERSION_PATCH);_WINDOWS;NDEBUG;_USRDLL;%(PreprocessorDefinitions);MBEDTLS_CONFIG_FILE=&lt;mbedtls_config.h&gt;</PreprocessorDefinitions>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -347,7 +353,7 @@
     <ResourceCompile>
       <Culture>0x0409</Culture>
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>CI_VERSION="$(CI_VERSION)";CI_VERSION_MAJOR=$(CI_VERSION_MAJOR);CI_VERSION_MINOR=$(CI_VERSION_MINOR);CI_VERSION_PATCH=$(CI_VERSION_PATCH);NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

@@ -66,7 +66,7 @@ jobs:
     - name: Build Installer
       run: |
         cd ${{ github.workspace }}
-        iscc installer.iss
+        iscc .\installer.iss -DCI_VERSION="${{ steps.checktag.outputs.version }}" -DCI_VERSION_NUMERIC="${{ steps.checktag.outputs.version_major }}.${{ steps.checktag.outputs.version_minor }}.${{ steps.checktag.outputs.version_patch }}"
         
     - name: Upload artifacts
       uses: actions/upload-artifact@v2
