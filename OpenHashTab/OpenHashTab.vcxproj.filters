@@ -130,6 +130,9 @@
     <ClCompile Include="blake3_sse41.c">
       <Filter>BLAKE3</Filter>
     </ClCompile>
+    <ClCompile Include="Benchmark.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
