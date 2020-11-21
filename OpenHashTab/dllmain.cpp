@@ -19,6 +19,8 @@
 #include "dllmain.h"
 #include "Queues.h"
 
+#include <gcrypt.h>
+
 #pragma comment(linker,"\"/manifestdependency:type='win32' name='Microsoft.Windows.Common-Controls' version = '6.0.0.0' processorArchitecture = '*' publicKeyToken = '6595b64144ccf1df' language = '*'\"")
 
 COpenHashTabModule _AtlModule;
@@ -27,5 +29,7 @@ COpenHashTabModule _AtlModule;
 extern "C" BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, LPVOID reserved)
 {
   UNREFERENCED_PARAMETER(instance);
+  gcry_check_version(nullptr);
+  gcry_control(GCRYCTL_INITIALIZATION_FINISHED, 0);
   return _AtlModule.DllMain(reason, reserved);
 }

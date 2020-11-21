@@ -30,6 +30,42 @@
 #include "crc32.h"
 #include "blake3.h"
 
+#include <gcrypt.h>
+
+template <gcry_md_algos Algo>
+class GCryptHashContext : HashContext
+{
+  template <typename T> friend HashContext* hash_context_factory(HashAlgorithm* algorithm);
+
+  gcry_md_hd_t hd{};
+
+public:
+  GCryptHashContext(HashAlgorithm* algorithm) : HashContext(algorithm)
+  {
+    gcry_md_open(&hd, Algo, 0);
+  }
+  ~GCryptHashContext() override
+  {
+    gcry_md_close(hd);
+  }
+
+  void Clear() override
+  {
+    gcry_md_reset(hd);
+  }
+
+  void Update(const void* data, size_t size) override
+  {
+    gcry_md_write(hd, data, size);
+  }
+
+  std::vector<uint8_t> Finish() override
+  {
+    const auto p = gcry_md_read(hd, Algo);
+    return std::vector<uint8_t>{p, p + gcry_md_get_algo_dlen(Algo)};
+  }
+};
+
 template <
   typename Ctx,
   size_t Size,
@@ -270,7 +306,7 @@ public:
   }
 };
 
-template <typename T> HashContext* hash_context_factory(HashAlgorithm* algorithm) { return new T(algorithm); }
+template <typename T> static HashContext* hash_context_factory(HashAlgorithm* algorithm) { return new T(algorithm); }
 
 // these are what I found with a quick FTP search
 static const char* const no_exts[] = { nullptr };
@@ -285,19 +321,19 @@ static const char* const sha3_512_exts[] = { "sha3", nullptr };
 
 HashAlgorithm HashAlgorithm::g_hashers[] =
 {
-  { "CRC32", 4, no_exts, hash_context_factory<Crc32HashContext>, false, false },
+  { "CRC32", 4, no_exts, hash_context_factory<GCryptHashContext<GCRY_MD_CRC32>>, false, false },
   { "MD2", 16, no_exts, hash_context_factory<Md2HashContext>, false, false },
-  { "MD4", 16, no_exts, hash_context_factory<Md4HashContext>, false, false },
-  { "MD5", 16, md5_exts, hash_context_factory<Md5HashContext>, false, true },
-  { "RipeMD160", 20, ripemd160_exts, hash_context_factory<RipeMD160HashContext>, true, false },
-  { "SHA-1", 20, sha1_exts, hash_context_factory<Sha1HashContext>, true, true },
-  { "SHA-224", 28, sha224_exts, hash_context_factory<Sha224HashContext>, true, false },
-  { "SHA-256", 32, sha256_exts, hash_context_factory<Sha256HashContext>, true, true },
-  { "SHA-384", 48, sha384_exts, hash_context_factory<Sha384HashContext>, true, false },
-  { "SHA-512", 64, sha512_exts, hash_context_factory<Sha512HashContext>, true, true },
+  { "MD4", 16, no_exts, hash_context_factory<GCryptHashContext<GCRY_MD_MD4>>, false, false },
+  { "MD5", 16, md5_exts, hash_context_factory<GCryptHashContext<GCRY_MD_MD5>>, false, true },
+  { "RipeMD160", 20, ripemd160_exts, hash_context_factory<GCryptHashContext<GCRY_MD_RMD160>>, true, false },
+  { "SHA-1", 20, sha1_exts, hash_context_factory<GCryptHashContext<GCRY_MD_SHA1>>, true, true },
+  { "SHA-224", 28, sha224_exts, hash_context_factory<GCryptHashContext<GCRY_MD_SHA224>>, true, false },
+  { "SHA-256", 32, sha256_exts, hash_context_factory<GCryptHashContext<GCRY_MD_SHA256>>, true, true },
+  { "SHA-384", 48, sha384_exts, hash_context_factory<GCryptHashContext<GCRY_MD_SHA384>>, true, false },
+  { "SHA-512", 64, sha512_exts, hash_context_factory<GCryptHashContext<GCRY_MD_SHA512>>, true, true },
   { "Blake2sp", 32, no_exts, hash_context_factory<Blake2SpHashContext>, true, false },
-  { "SHA3-256", 32, no_exts, hash_context_factory<Sha3_256HashContext>, true, false },
-  { "SHA3-384", 48, no_exts, hash_context_factory<Sha3_384HashContext>, true, false },
-  { "SHA3-512", 64, sha3_512_exts, hash_context_factory<Sha3_512HashContext>, true, false },
+  { "SHA3-256", 32, no_exts, hash_context_factory<GCryptHashContext<GCRY_MD_SHA3_256>>, true, false },
+  { "SHA3-384", 48, no_exts, hash_context_factory<GCryptHashContext<GCRY_MD_SHA3_384>>, true, false },
+  { "SHA3-512", 64, sha3_512_exts, hash_context_factory<GCryptHashContext<GCRY_MD_SHA3_512>>, true, false },
   { "BLAKE3", 32, no_exts, hash_context_factory<Blake3HashContext>, true, false },
 };
