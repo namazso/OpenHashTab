@@ -241,7 +241,8 @@ ModelManifest.xml
 # FAKE - F# Make
 .fake/
 
-
+# dependencies
+deps/
 
 # InnoSetup output
 OpenHashTab_setup.exe

@@ -7,3 +7,9 @@
 [submodule "langcomp"]
 	path = langcomp
 	url = https://github.com/namazso/langcomp.git
+[submodule "deps/libgcrypt/libgpg-error"]
+	path = deps/libgcrypt/libgpg-error
+	url = https://github.com/namazso/libgpg-error.git
+[submodule "deps/libgcrypt/libgcrypt"]
+	path = deps/libgcrypt/libgcrypt
+	url = https://github.com/namazso/libgcrypt.git
