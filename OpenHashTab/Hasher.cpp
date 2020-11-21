@@ -30,6 +30,8 @@
 #include "crc32.h"
 #include "blake3.h"
 
+#pragma comment(lib, "bcrypt.lib")
+
 template <
   typename Ctx,
   size_t Size,
@@ -270,6 +272,157 @@ public:
   }
 };
 
+template<const wchar_t*(*GetAlgorithmIdentifierFn)()>
+class CngHashContext : HashContext
+{
+  template <typename T> friend HashContext* hash_context_factory(HashAlgorithm* algorithm);
+
+  BCRYPT_ALG_HANDLE alg{};
+  BCRYPT_HASH_HANDLE hash{};
+  void* mem{};
+  ULONG len{};
+  NTSTATUS status{};
+  uint8_t step;
+
+public:
+  CngHashContext(HashAlgorithm* algorithm) : HashContext(algorithm)
+  {
+    const auto id = GetAlgorithmIdentifierFn();
+    status = BCryptOpenAlgorithmProvider(&alg, id, nullptr, BCRYPT_HASH_REUSABLE_FLAG);
+    if (status < 0)
+    {
+      step = 1;
+      return;
+    }
+
+    ULONG size{}, sizesize{};
+    status = BCryptGetProperty(
+      alg,
+      BCRYPT_OBJECT_LENGTH,
+      (PBYTE)&size,
+      sizeof(size),
+      &sizesize,
+      0
+    );
+    if (status < 0)
+    {
+      step = 2;
+      return;
+    }
+
+    mem = malloc(size);
+
+    ULONG lenlen{};
+    status = BCryptGetProperty(
+      alg,
+      BCRYPT_HASH_LENGTH,
+      (PBYTE)&len,
+      sizeof(len),
+      &lenlen,
+      0
+    );
+    if (status < 0)
+    {
+      step = 3;
+      return;
+    }
+
+    status = BCryptCreateHash(
+      alg,
+      &hash,
+      (PUCHAR)mem,
+      size,
+      nullptr,
+      0,
+      BCRYPT_HASH_REUSABLE_FLAG
+    );
+    if (status < 0)
+    {
+      step = 4;
+      return;
+    }
+
+    step = 5;
+  }
+
+  ~CngHashContext() override
+  {
+    if (hash)
+      BCryptDestroyHash(hash);
+    if (mem)
+      free(mem);
+    if (alg)
+      BCryptCloseAlgorithmProvider(alg, 0);
+  }
+
+  void Clear() override
+  {
+    uint8_t junk[HashAlgorithm::k_max_size];
+    BCryptFinishHash(
+      hash,
+      junk,
+      sizeof(junk),
+      0
+    );
+  }
+
+  void Update(const void* data, size_t size) override
+  {
+    if (status < 0)
+      return;
+
+    status = BCryptHashData(
+      hash,
+      (PUCHAR)data,
+      size,
+      0
+    );
+  }
+
+  std::vector<uint8_t> Finish() override
+  {
+    std::vector<uint8_t> result;
+    if(status < 0)
+    {
+      finish_broke:
+      result.resize(5);
+      result[0] = step;
+      result[1] = ((uint32_t)status >> 24) & 0xFF;
+      result[2] = ((uint32_t)status >> 16) & 0xFF;
+      result[3] = ((uint32_t)status >> 8) & 0xFF;
+      result[4] = ((uint32_t)status >> 0) & 0xFF;
+      return result;
+    }
+    result.resize(len);
+    step = 6;
+    status = BCryptFinishHash(
+      hash,
+      result.data(),
+      result.size(),
+      0
+    );
+    if (status < 0)
+      goto finish_broke;
+    return result;
+  }
+};
+
+const wchar_t* cng_identifier_md2() { return BCRYPT_MD2_ALGORITHM; }
+const wchar_t* cng_identifier_md4() { return BCRYPT_MD4_ALGORITHM; }
+const wchar_t* cng_identifier_md5() { return BCRYPT_MD5_ALGORITHM; }
+const wchar_t* cng_identifier_sha1() { return BCRYPT_SHA1_ALGORITHM; }
+const wchar_t* cng_identifier_sha256() { return BCRYPT_SHA256_ALGORITHM; }
+const wchar_t* cng_identifier_sha384() { return BCRYPT_SHA384_ALGORITHM; }
+const wchar_t* cng_identifier_sha512() { return BCRYPT_SHA512_ALGORITHM; }
+
+using CngMd2HashContext = CngHashContext <&cng_identifier_md2>;
+using CngMd4HashContext = CngHashContext <&cng_identifier_md4>;
+using CngMd5HashContext = CngHashContext <&cng_identifier_md5>;
+using CngSha1HashContext = CngHashContext <&cng_identifier_sha1>;
+using CngSha256HashContext = CngHashContext <&cng_identifier_sha256>;
+using CngSha384HashContext = CngHashContext <&cng_identifier_sha384>;
+using CngSha512HashContext = CngHashContext <&cng_identifier_sha512>;
+
 template <typename T> HashContext* hash_context_factory(HashAlgorithm* algorithm) { return new T(algorithm); }
 
 // these are what I found with a quick FTP search
@@ -286,15 +439,15 @@ static const char* const sha3_512_exts[] = { "sha3", nullptr };
 HashAlgorithm HashAlgorithm::g_hashers[] =
 {
   { "CRC32", 4, no_exts, hash_context_factory<Crc32HashContext>, false, false },
-  { "MD2", 16, no_exts, hash_context_factory<Md2HashContext>, false, false },
-  { "MD4", 16, no_exts, hash_context_factory<Md4HashContext>, false, false },
-  { "MD5", 16, md5_exts, hash_context_factory<Md5HashContext>, false, true },
+  { "MD2", 16, no_exts, hash_context_factory<CngMd2HashContext>, false, false },
+  { "MD4", 16, no_exts, hash_context_factory<CngMd4HashContext>, false, false },
+  { "MD5", 16, md5_exts, hash_context_factory<CngMd5HashContext>, false, true },
   { "RipeMD160", 20, ripemd160_exts, hash_context_factory<RipeMD160HashContext>, true, false },
-  { "SHA-1", 20, sha1_exts, hash_context_factory<Sha1HashContext>, true, true },
+  { "SHA-1", 20, sha1_exts, hash_context_factory<CngSha1HashContext>, true, true },
   { "SHA-224", 28, sha224_exts, hash_context_factory<Sha224HashContext>, true, false },
-  { "SHA-256", 32, sha256_exts, hash_context_factory<Sha256HashContext>, true, true },
-  { "SHA-384", 48, sha384_exts, hash_context_factory<Sha384HashContext>, true, false },
-  { "SHA-512", 64, sha512_exts, hash_context_factory<Sha512HashContext>, true, true },
+  { "SHA-256", 32, sha256_exts, hash_context_factory<CngSha256HashContext>, true, true },
+  { "SHA-384", 48, sha384_exts, hash_context_factory<CngSha384HashContext>, true, false },
+  { "SHA-512", 64, sha512_exts, hash_context_factory<CngSha512HashContext>, true, true },
   { "Blake2sp", 32, no_exts, hash_context_factory<Blake2SpHashContext>, true, false },
   { "SHA3-256", 32, no_exts, hash_context_factory<Sha3_256HashContext>, true, false },
   { "SHA3-384", 48, no_exts, hash_context_factory<Sha3_384HashContext>, true, false },
