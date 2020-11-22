@@ -60,6 +60,44 @@ namespace utl
     return ret;
   }
 
+  namespace detail
+  {
+    template <typename Dialog>
+    INT_PTR CALLBACK DlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+    {
+      if (uMsg == WM_INITDIALOG)
+        lParam = ((LPPROPSHEETPAGEW)lParam)->lParam;
+      return DlgProcClassBinder<Dialog>(hDlg, uMsg, wParam, lParam);
+    };
+
+    template <typename PropPage>
+    UINT CALLBACK Callback(HWND hwnd, UINT msg, LPPROPSHEETPAGEW ppsp)
+    {
+      const auto object = (PropPage*)ppsp->lParam;
+      UINT ret = 1;
+
+      static const char* const msgname[] = { "ADDREF", "RELEASE", "CREATE" };
+      DebugMsg("%s %p object %p ppsp %p\n", msgname[msg], hwnd, object, ppsp->lParam);
+
+      switch (msg)
+      {
+      case PSPCB_ADDREF:
+        object->AddRef(hwnd, ppsp);
+        break;
+      case PSPCB_RELEASE:
+        object->Release(hwnd, ppsp);
+        break;
+      case PSPCB_CREATE:
+        ret = object->Create(hwnd, ppsp);
+        break;
+      default:
+        break;
+      }
+
+      return ret;
+    };
+  }
+
   // PropPage should have the following functions:
   //   PropPage(args...)
   //   AddRef(HWND hwnd, LPPROPSHEETPAGE ppsp);
@@ -85,37 +123,8 @@ namespace utl
 
     const auto object = new PropPage(std::forward<Args>(args)...);
 
-    psp.pfnDlgProc = [](HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) -> INT_PTR
-    {
-      if (uMsg == WM_INITDIALOG)
-        lParam = ((LPPROPSHEETPAGEW)lParam)->lParam;
-      return DlgProcClassBinder<Dialog>(hDlg, uMsg, wParam, lParam);
-    };
-    psp.pfnCallback = [](HWND hwnd, UINT msg, LPPROPSHEETPAGEW ppsp) -> UINT
-    {
-      const auto object = (PropPage*)ppsp->lParam;
-      UINT ret = 1;
-
-      static const char* const msgname[] = { "ADDREF", "RELEASE", "CREATE" };
-      DebugMsg("%s %p object %p ppsp %p\n", msgname[msg], hwnd, object, ppsp->lParam);
-
-      switch (msg)
-      {
-      case PSPCB_ADDREF:
-        object->AddRef(hwnd, ppsp);
-        break;
-      case PSPCB_RELEASE:
-        object->Release(hwnd, ppsp);
-        break;
-      case PSPCB_CREATE:
-        ret = object->Create(hwnd, ppsp);
-        break;
-      default:
-        break;
-      }
-
-      return ret;
-    };
+    psp.pfnDlgProc = &detail::DlgProc<Dialog>;
+    psp.pfnCallback = &detail::Callback<PropPage>;
 
     psp.lParam = (LPARAM)object;
 

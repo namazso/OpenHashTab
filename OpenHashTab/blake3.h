@@ -4,6 +4,11 @@
 #include <stddef.h>
 #include <stdint.h>
 
+// sorry but i couldn't get it work with clang
+#ifndef __x86_64__
+#define BLAKE3_NO_SSE41
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
