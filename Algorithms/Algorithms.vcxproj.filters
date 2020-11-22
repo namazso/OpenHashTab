@@ -1,0 +1,103 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="mbedtls">
+      <UniqueIdentifier>{5d6a7446-6458-4793-b7d0-7945eaded132}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SHA3">
+      <UniqueIdentifier>{e23eba31-3095-48da-a6b9-1eae0846b7d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CRC32">
+      <UniqueIdentifier>{c873e7b2-3adb-4c73-8663-dfc9215a3dd7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BLAKE3">
+      <UniqueIdentifier>{55e1a1c3-160f-48aa-9a99-10a94507b949}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BLAKE2sp">
+      <UniqueIdentifier>{c3b8912b-6327-4b90-93fd-ea11c204f3c8}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\mbedtls\library\md2.c">
+      <Filter>mbedtls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mbedtls\library\md4.c">
+      <Filter>mbedtls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mbedtls\library\md5.c">
+      <Filter>mbedtls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mbedtls\library\platform_util.c">
+      <Filter>mbedtls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mbedtls\library\ripemd160.c">
+      <Filter>mbedtls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mbedtls\library\sha1.c">
+      <Filter>mbedtls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mbedtls\library\sha256.c">
+      <Filter>mbedtls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mbedtls\library\sha512.c">
+      <Filter>mbedtls</Filter>
+    </ClCompile>
+    <ClCompile Include="sha3.c">
+      <Filter>SHA3</Filter>
+    </ClCompile>
+    <ClCompile Include="crc32.c">
+      <Filter>CRC32</Filter>
+    </ClCompile>
+    <ClCompile Include="blake3.c">
+      <Filter>BLAKE3</Filter>
+    </ClCompile>
+    <ClCompile Include="blake3_avx2.c">
+      <Filter>BLAKE3</Filter>
+    </ClCompile>
+    <ClCompile Include="blake3_avx512.c">
+      <Filter>BLAKE3</Filter>
+    </ClCompile>
+    <ClCompile Include="blake3_dispatch.c">
+      <Filter>BLAKE3</Filter>
+    </ClCompile>
+    <ClCompile Include="blake3_portable.c">
+      <Filter>BLAKE3</Filter>
+    </ClCompile>
+    <ClCompile Include="blake2sp.c">
+      <Filter>BLAKE2sp</Filter>
+    </ClCompile>
+    <ClCompile Include="Hasher.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="sha3.h">
+      <Filter>SHA3</Filter>
+    </ClInclude>
+    <ClInclude Include="crc32.h">
+      <Filter>CRC32</Filter>
+    </ClInclude>
+    <ClInclude Include="blake3.h">
+      <Filter>BLAKE3</Filter>
+    </ClInclude>
+    <ClInclude Include="blake3_impl.h">
+      <Filter>BLAKE3</Filter>
+    </ClInclude>
+    <ClInclude Include="mbedtls_config.h">
+      <Filter>mbedtls</Filter>
+    </ClInclude>
+    <ClInclude Include="blake2sp.h">
+      <Filter>BLAKE2sp</Filter>
+    </ClInclude>
+    <ClInclude Include="Hasher.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <MASM Include="blake3_avx2_x86-64_windows_msvc.asm">
+      <Filter>BLAKE3</Filter>
+    </MASM>
+    <MASM Include="blake3_avx512_x86-64_windows_msvc.asm">
+      <Filter>BLAKE3</Filter>
+    </MASM>
+    <MASM Include="blake3_sse41_x86-64_windows_msvc.asm">
+      <Filter>BLAKE3</Filter>
+    </MASM>
+  </ItemGroup>
+</Project>

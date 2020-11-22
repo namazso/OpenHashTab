@@ -14,15 +14,18 @@
 //    You should have received a copy of the GNU General Public License
 //    along with OpenHashTab.  If not, see <https://www.gnu.org/licenses/>.
 #pragma once
+#include <cstdint>
+#include <vector>
+#include <string_view>
 
 class HashAlgorithm;
 
 class HashContext
 {
-  HashAlgorithm* _algorithm{};
+  const HashAlgorithm* _algorithm{};
 
 protected:
-  HashContext(HashAlgorithm* algorithm) : _algorithm(algorithm) {}
+  HashContext(const HashAlgorithm* algorithm) : _algorithm(algorithm) {}
 
 public:
   HashContext(const HashContext&) = delete;
@@ -33,30 +36,30 @@ public:
   virtual void Clear() = 0;
   virtual void Update(const void* data, size_t size) = 0;
   virtual std::vector<uint8_t> Finish() = 0;
-  HashAlgorithm* GetAlgorithm() const { return _algorithm; };
+  const HashAlgorithm* GetAlgorithm() const { return _algorithm; }
 };
 
 class HashAlgorithm
 {
 public:
-  using FactoryFn = HashContext*(HashAlgorithm* algorithm);
+  using FactoryFn = HashContext* (const HashAlgorithm* algorithm);
   constexpr static auto k_count = 15;
   constexpr static auto k_max_size = 64;
-  static HashAlgorithm g_hashers[k_count];
-  static HashAlgorithm* ByName(std::string_view name)
+  static const HashAlgorithm g_hashers[k_count];
+  static constexpr const HashAlgorithm* ByName(std::string_view name)
   {
-    const auto begin = std::begin(g_hashers);
-    const auto end = std::end(g_hashers);
-    const auto it = std::find_if(begin, end, [&name](const HashAlgorithm& a)
-      {
-        return name == a.GetName();
-      });
-    return it == end ? nullptr : it;
+    for (const auto& algo : g_hashers)
+      if (algo.GetName() == name)
+        return &algo;
+    return nullptr;
   }
-  static int IdxByName(std::string_view name)
+  static constexpr int Idx(const HashAlgorithm* algorithm)
   {
-    const auto it = ByName(name);
-    return it == nullptr ? -1 : (int)(it - std::begin(g_hashers));
+    return algorithm ? algorithm - std::begin(g_hashers) : -1;
+  }
+  static constexpr int IdxByName(std::string_view name)
+  {
+    return Idx(ByName(name));
   }
 
 private:
@@ -65,41 +68,29 @@ private:
   FactoryFn* _factory_fn;
   uint32_t _size;
   bool _is_secure;
-  bool _is_enabled;
 
-  void LoadEnabled();
-  void StoreEnabled() const;
-
-public:
-  HashAlgorithm(
+  constexpr HashAlgorithm(
     const char* name,
     uint32_t size,
     const char* const* extensions,
     FactoryFn* factory_fn,
-    bool is_secure,
-    bool is_enabled
+    bool is_secure
   ) : _name(name)
     , _extensions(extensions)
     , _factory_fn(factory_fn)
     , _size(size)
-    , _is_secure(is_secure)
-    , _is_enabled(is_enabled)
-  {
-    LoadEnabled();
-  }
+    , _is_secure(is_secure) {}
 
-  bool IsSecure() const { return _is_secure; }
-  bool IsEnabled() const { return _is_enabled; }
-  void SetEnabled(bool enabled)
-  {
-    if(enabled != _is_enabled)
-    {
-      _is_enabled = enabled;
-      StoreEnabled();
-    }
-  }
-  const char* GetName() const { return _name; }
-  uint32_t GetSize() const { return _size; }
-  const char* const* GetExtensions() const { return _extensions; }
-  HashContext* MakeContext() { return _factory_fn(this); }
+public:
+  HashAlgorithm(const HashAlgorithm&) = delete;
+  HashAlgorithm(HashAlgorithm&&) = delete;
+
+  constexpr int Idx() const { return Idx(this); }
+
+  constexpr bool IsSecure() const { return _is_secure; }
+
+  constexpr const char* GetName() const { return _name; }
+  constexpr uint32_t GetSize() const { return _size; }
+  constexpr const char* const* GetExtensions() const { return _extensions; }
+  constexpr HashContext* MakeContext() const { return _factory_fn(this); }
 };

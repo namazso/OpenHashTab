@@ -15,36 +15,39 @@
 //    along with OpenHashTab.  If not, see <https://www.gnu.org/licenses/>.
 #include "stdafx.h"
 
-#include "Hasher.h"
+#include "Settings.h"
 #include "utl.h"
 
 constexpr static auto k_reg_path = L"Software\\OpenHashTab";
 
-void HashAlgorithm::LoadEnabled()
+Settings Settings::instance{};
+
+void Settings::LoadHashEnabled(const HashAlgorithm* algorithm)
 {
   DWORD enabled;
   DWORD size = sizeof(enabled);
   const auto status = RegGetValueW(
     HKEY_CURRENT_USER,
     k_reg_path,
-    utl::UTF8ToTString(GetName()).c_str(),
+    utl::UTF8ToTString(algorithm->GetName()).c_str(),
     RRF_RT_REG_DWORD,
     nullptr,
     &enabled,
     &size
   );
-  if(status == ERROR_SUCCESS && size == sizeof(enabled))
+  if (status == ERROR_SUCCESS && size == sizeof(enabled))
   {
-    _is_enabled = (bool)enabled;
+    _enabled[algorithm->Idx()] = (bool)enabled;
   }
 }
-void HashAlgorithm::StoreEnabled() const
+
+void Settings::StoreHashEnabled(const HashAlgorithm* algorithm) const
 {
-  DWORD value = _is_enabled;
+  DWORD value = _enabled[algorithm->Idx()];
   RegSetKeyValueW(
     HKEY_CURRENT_USER,
     k_reg_path,
-    utl::UTF8ToTString(GetName()).c_str(),
+    utl::UTF8ToTString(algorithm->GetName()).c_str(),
     REG_DWORD,
     &value,
     sizeof(value)

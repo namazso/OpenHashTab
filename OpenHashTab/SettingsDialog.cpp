@@ -16,7 +16,7 @@
 #include "stdafx.h"
 
 #include "SettingsDialog.h"
-#include "Hasher.h"
+#include "Settings.h"
 #include "utl.h"
 
 INT_PTR SettingsDialog::DlgProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -46,7 +46,7 @@ INT_PTR SettingsDialog::DlgProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
       lvitem.lParam = (LPARAM)&algorithm;
       const auto item = ListView_InsertItem(list, &lvitem);
       ListView_SetItemText(list, item, 0, (LPWSTR)name.c_str());
-      ListView_SetCheckState(list, item, algorithm.IsEnabled());
+      ListView_SetCheckState(list, item, Settings::instance.IsHashEnabled(&algorithm));
     }
     _done_setup = true;
     return FALSE; // do not select default control
@@ -73,8 +73,8 @@ INT_PTR SettingsDialog::DlgProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
         (int)idx
       };
       ListView_GetItem(list, &lvitem);
-      const auto algorithm = (HashAlgorithm*)lvitem.lParam;
-      algorithm->SetEnabled(check);
+      const auto algorithm = (const HashAlgorithm*)lvitem.lParam;
+      Settings::instance.SetHashEnabled(algorithm, check);
       return TRUE;
     }
   }

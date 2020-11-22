@@ -1,29 +1,32 @@
-#include "stdafx.h"
+//    Copyright 2019-2020 namazso <admin@namazso.eu>
+//    This file is part of OpenHashTab.
+//
+//    OpenHashTab is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, either version 3 of the License, or
+//    (at your option) any later version.
+//
+//    OpenHashTab is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with OpenHashTab.  If not, see <https://www.gnu.org/licenses/>.
+#define VC_EXTRALEAN
+#define WIN32_LEAN_AND_MEAN
 
-#include "Hasher.h"
-
+#include <Windows.h>
 #include <random>
 
-// rundll32 OpenHashTab.dll,BenchmarkEntry
-extern "C" __declspec(dllexport) void CALLBACK BenchmarkEntryW(
-  _In_  HWND      hWnd,
-  _In_  HINSTANCE hRunDLLInstance,
-  _In_  LPCWSTR   lpCmdLine,
-  _In_  int       nShowCmd
-)
-{
-  UNREFERENCED_PARAMETER(hWnd);
-  UNREFERENCED_PARAMETER(hRunDLLInstance);
-  UNREFERENCED_PARAMETER(lpCmdLine);
-  UNREFERENCED_PARAMETER(nShowCmd);
+#include "../Algorithms/Hasher.h"
 
+int main()
+{
   //constexpr static auto k_passes = 5u;
   //constexpr static auto k_size = 1ull << 30;
   constexpr static auto k_passes = 3u;
   constexpr static auto k_size = 100ull << 20;
-
-  FILE* fp{};
-  fopen_s(&fp, "benchmark.txt", "w");
 
   const auto p = (uint64_t*)VirtualAlloc(
     nullptr,
@@ -32,10 +35,10 @@ extern "C" __declspec(dllexport) void CALLBACK BenchmarkEntryW(
     PAGE_READWRITE
   );
 
-  if(!p)
+  if (!p)
   {
-    fprintf(fp, "VirtualAlloc failed.");
-    return;
+    printf("VirtualAlloc failed.");
+    return 1;
   }
 
   std::mt19937_64 engine{ 0 };  // NOLINT(cert-msc51-cpp)
@@ -72,7 +75,7 @@ extern "C" __declspec(dllexport) void CALLBACK BenchmarkEntryW(
   {
     auto& h = HashAlgorithm::g_hashers[i];
 
-    fprintf(fp, "%s\t", h.GetName());
+    printf("%s\t", h.GetName());
 
     uint64_t sum = 0;
 
@@ -80,13 +83,13 @@ extern "C" __declspec(dllexport) void CALLBACK BenchmarkEntryW(
     {
       const auto v = measurement[i];
       sum += v;
-      fprintf(fp, "%llu\t", v);
+      printf("%llu\t", v);
     }
 
     const auto mbps = (k_size * frequency.QuadPart) / (double(sum) / k_passes) / (1ull << 20); // MB/s
 
-    fprintf(fp, "%.7lf MB/s\n", mbps);
+    printf("%.7lf MB/s\n", mbps);
   }
 
-  fclose(fp);
+  return 0;
 }

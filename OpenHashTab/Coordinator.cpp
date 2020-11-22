@@ -19,7 +19,7 @@
 #include "utl.h"
 #include "wnd.h"
 #include "SumFileParser.h"
-#include "Hasher.h"
+#include "Settings.h"
 #include "FileHashTask.h"
 
 static std::vector<std::uint8_t> TryGetExpectedSumForFile(const std::wstring& path)
@@ -34,9 +34,9 @@ static std::vector<std::uint8_t> TryGetExpectedSumForFile(const std::wstring& pa
   const auto file_name = (LPCWSTR)PathFindFileNameW(file_path);
   const auto base_path = std::wstring{ file_path, file_name };
 
-  for (auto hasher : HashAlgorithm::g_hashers)
+  for (const auto& hasher : HashAlgorithm::g_hashers)
   {
-    if (!hasher.IsEnabled())
+    if (!Settings::instance.IsHashEnabled(&hasher))
       continue;
 
     auto sumfile_path = path + L".";

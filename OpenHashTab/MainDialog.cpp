@@ -17,7 +17,7 @@
 
 #include "MainDialog.h"
 #include "Coordinator.h"
-#include "Hasher.h"
+#include "Settings.h"
 #include "utl.h"
 #include "SettingsDialog.h"
 #include "FileHashTask.h"
@@ -319,8 +319,8 @@ void MainDialog::InitDialog()
   }
 
   const auto combobox = _hwnd_COMBO_EXPORT;
-  for (auto algorithm : HashAlgorithm::g_hashers)
-    if (algorithm.IsEnabled())
+  for (const auto& algorithm : HashAlgorithm::g_hashers)
+    if (Settings::instance.IsHashEnabled(&algorithm))
       ComboBox_AddString(combobox, utl::UTF8ToTString(algorithm.GetName()).c_str());
 
   ComboBox_SetCurSel(combobox, 0);

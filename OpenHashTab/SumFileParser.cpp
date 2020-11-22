@@ -16,7 +16,7 @@
 #include "stdafx.h"
 
 #include "SumFileParser.h"
-#include "Hasher.h"
+#include "Settings.h"
 #include "utl.h"
 
 class SumFileParser
