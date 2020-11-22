@@ -15,6 +15,7 @@
 		"HASHES":              "Hashes",
 		"CLIPBOARD":           "To clipboard",
 		"NOMATCH":             "No match found.",
-		"ERROR":               "Error"
+		"ERROR":               "Error",
+		"CANCEL":              "Cancel"
 	}
 }

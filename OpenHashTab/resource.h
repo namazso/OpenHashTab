@@ -3,7 +3,6 @@
 // Used by OpenHashTab.rc
 //
 #define IDD_SETTINGS                    9
-#define IDS_PROJNAME                    100
 #define IDR_OPENHASHTAB                 101
 #define IDR_OPENHASHTABSHLEXT           106
 #define IDD_OPENHASHTAB_PROPPAGE        107
@@ -28,19 +27,20 @@
 #define IDS_DONE                        214
 #define IDC_BUTTON_SETTINGS             214
 #define IDS_PROCESSING                  215
-#define IDC_LIST1                       215
 #define IDC_ALGORITHM_LIST              215
+#define IDC_BUTTON_CANCEL               215
 #define IDS_HASHES                      216
 #define IDC_PROGRESS                    216
 #define IDS_CLIPBOARD                   217
 #define IDS_NOMATCH                     218
 #define IDS_ERROR                       219
+#define IDS_CANCEL                      220
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        222
+#define _APS_NEXT_RESOURCE_VALUE        221
 #define _APS_NEXT_COMMAND_VALUE         32768
 #define _APS_NEXT_CONTROL_VALUE         217
 #define _APS_NEXT_SYMED_VALUE           107

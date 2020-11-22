@@ -265,6 +265,14 @@ INT_PTR MainDialog::DlgProc(UINT msg, WPARAM wparam, LPARAM lparam)
       break;
     }
 
+
+    case IDC_BUTTON_CANCEL:
+    {
+      if (code == BN_CLICKED)
+        _prop_page->Cancel(true);
+      break;
+    }
+
     default:
       break;
     }
@@ -295,6 +303,7 @@ void MainDialog::InitDialog()
   SetTextFromTable(_hwnd_BUTTON_EXPORT, IDS_EXPORT_BTN);
   SetTextFromTable(_hwnd_STATIC_PROCESSING, IDS_PROCESSING);
   SetTextFromTable(_hwnd_BUTTON_CLIPBOARD, IDS_CLIPBOARD);
+  SetTextFromTable(_hwnd_BUTTON_CANCEL, IDS_CANCEL);
 
   if (IsWindows8OrGreater())
     SetWindowTextW(_hwnd_BUTTON_SETTINGS, L"\u2699");
