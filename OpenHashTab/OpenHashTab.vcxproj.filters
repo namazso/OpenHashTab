@@ -127,9 +127,6 @@
     <ClCompile Include="blake3_portable.c">
       <Filter>BLAKE3</Filter>
     </ClCompile>
-    <ClCompile Include="blake3_sse41.c">
-      <Filter>BLAKE3</Filter>
-    </ClCompile>
     <ClCompile Include="Benchmark.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -214,19 +211,21 @@
     <None Include="OpenHashTabShlExt.rgs">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="blake3_avx2_x86-64_windows_msvc.asm">
-      <Filter>BLAKE3</Filter>
-    </None>
-    <None Include="blake3_avx512_x86-64_windows_msvc.asm">
-      <Filter>BLAKE3</Filter>
-    </None>
-    <None Include="blake3_sse41_x86-64_windows_msvc.asm">
-      <Filter>BLAKE3</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="OpenHashTab.idl">
       <Filter>Source Files</Filter>
     </Midl>
+  </ItemGroup>
+  <ItemGroup>
+    <MASM Include="blake3_avx512_x86-64_windows_msvc.asm">
+      <Filter>BLAKE3</Filter>
+    </MASM>
+    <MASM Include="blake3_avx2_x86-64_windows_msvc.asm">
+      <Filter>BLAKE3</Filter>
+    </MASM>
+    <MASM Include="blake3_sse41_x86-64_windows_msvc.asm">
+      <Filter>BLAKE3</Filter>
+    </MASM>
   </ItemGroup>
 </Project>
