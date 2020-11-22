@@ -265,7 +265,6 @@ INT_PTR MainDialog::DlgProc(UINT msg, WPARAM wparam, LPARAM lparam)
       break;
     }
 
-
     case IDC_BUTTON_CANCEL:
     {
       if (code == BN_CLICKED)
@@ -433,6 +432,7 @@ void MainDialog::OnAllFilesFinished()
   );*/
 
   ShowWindow(_hwnd_PROGRESS, 0);
+  ShowWindow(_hwnd_BUTTON_CANCEL, 0);
 
   UpdateDefaultStatus();
 
