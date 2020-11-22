@@ -50,6 +50,8 @@ Most of the actions should be obvious. Some not-so-obvious features are listed h
 
 [Latest release](https://github.com/namazso/OpenHashTab/releases/latest/download/OpenHashTab_setup.exe)
 
+[Development builds](https://github.com/namazso/OpenHashTab/actions)
+
 ## Screenshot
 
 ![Screenshot](resources/screenshot.png) ![Algorithms](resources/algorithms.png)
@@ -65,12 +67,12 @@ This software is provided completely free of charge to you, however I spent time
 
 ### Requirements
 
-* Visual Studio 2019
+* Visual Studio 2019 16.8+ (with ARM64 and clang-cl)
 * [InnoSetup](http://www.jrsoftware.org/isinfo.php)
 
 ### Compiling
 
-1. Open OpenHashTab.sln and click __Build Solution__ on x64/Release and Win32/Release settings
+1. Build OpenHashTab.sln for x86, x64, ARM64
 2. Use Inno Setup Compiler to compile installer.iss to get the installer
 
 ## Translation
