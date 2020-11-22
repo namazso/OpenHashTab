@@ -491,6 +491,7 @@
   <ItemGroup>
     <ResourceCompile Include="localization.rc" />
     <ResourceCompile Include="OpenHashTab.rc" />
+    <ResourceCompile Include="version.rc" />
   </ItemGroup>
   <ItemGroup>
     <None Include="OpenHashTab.def" />
