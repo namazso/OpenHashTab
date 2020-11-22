@@ -7,3 +7,6 @@
 [submodule "langcomp"]
 	path = langcomp
 	url = https://github.com/namazso/langcomp.git
+[submodule "phnt"]
+	path = phnt
+	url = https://github.com/processhacker/phnt.git
