@@ -135,8 +135,6 @@ END
 #endif    // APSTUDIO_INVOKED
 
 
-#define TO_VERSION_NUMERIC_STRING(major, minor, patch) "" #major "."  #minor "." #patch
-
 /////////////////////////////////////////////////////////////////////////////
 //
 // Version
@@ -161,12 +159,10 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "namazso"
             VALUE "FileDescription", "OpenHashTab Shell Extension"
-            VALUE "FileVersion", TO_VERSION_NUMERIC_STRING(CI_VERSION_MAJOR, CI_VERSION_MINOR, CI_VERSION_PATCH)
             VALUE "InternalName", "OpenHashTab.dll"
             VALUE "LegalCopyright", "(c) namazso. Licensed under GNU GPLv3 or (at your option) later."
             VALUE "OriginalFilename", "OpenHashTab.dll"
             VALUE "ProductName", "OpenHashTab"
-            VALUE "ProductVersion", TO_VERSION_NUMERIC_STRING(CI_VERSION_MAJOR, CI_VERSION_MINOR, CI_VERSION_PATCH)
         END
     END
     BLOCK "VarFileInfo"
@@ -184,17 +180,6 @@ END
 IDR_OPENHASHTAB         REGISTRY                "OpenHashTab.rgs"
 
 IDR_OPENHASHTABSHLEXT   REGISTRY                "OpenHashTabShlExt.rgs"
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// String Table
-//
-
-STRINGTABLE
-BEGIN
-    IDS_PROJNAME            "OpenHashTab"
-END
 
 #endif    // Neutral (Default) resources
 /////////////////////////////////////////////////////////////////////////////
