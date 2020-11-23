@@ -55,12 +55,12 @@ HWND CreateDialogFromChildDialogResourceParam(
             if(pTemplate->signature == 0xFFFF)
             {
               // I have NO IDEA what 0x48 mean, but apparently stuff works with this
-              pTemplate->style = WS_POPUPWINDOW | WS_CAPTION | 0x00000048;
+              pTemplate->style = WS_POPUPWINDOW | WS_CAPTION | 0x00000048 | WS_THICKFRAME;
               pTemplate->exStyle = WS_EX_WINDOWEDGE;
             }
             else
             {
-              ((DLGTEMPLATE*)pTemplate)->style = WS_POPUPWINDOW | WS_CAPTION | 0x00000048;
+              ((DLGTEMPLATE*)pTemplate)->style = WS_POPUPWINDOW | WS_CAPTION | 0x00000048 | WS_THICKFRAME;
               ((DLGTEMPLATE*)pTemplate)->dwExtendedStyle = WS_EX_WINDOWEDGE;
             }
 
@@ -125,7 +125,7 @@ extern "C" __declspec(dllexport) void CALLBACK StandaloneEntryW(
   const auto coordinator = new StandaloneCoordinator(std::move(files), std::move(base));
 
   const auto dialog = CreateDialogFromChildDialogResourceParam(
-    (HINSTANCE)&__ImageBase,
+    utl::GetInstance(),
     MAKEINTRESOURCEW(IDD_OPENHASHTAB_PROPPAGE),
     hWnd,
     &utl::DlgProcClassBinder<MainDialog>,

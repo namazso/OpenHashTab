@@ -283,6 +283,11 @@ INT_PTR MainDialog::DlgProc(UINT msg, WPARAM wparam, LPARAM lparam)
     DestroyWindow(_hwnd);
     break;
 
+  case WM_WINDOWPOSCHANGING:
+  case WM_WINDOWPOSCHANGED:
+    _adapter.Adjust();
+    break;
+
   default:
     break;
   }
@@ -424,13 +429,6 @@ void MainDialog::OnAllFilesFinished()
   Button_Enable(_hwnd_BUTTON_CLIPBOARD, true);
   Edit_Enable(_hwnd_EDIT_HASH, true);
 
-  /*SendMessage(
-    _hwnd_PROGRESS,
-    PBM_SETPOS,
-    Coordinator::k_progress_resolution,
-    Coordinator::k_progress_resolution
-  );*/
-
   ShowWindow(_hwnd_PROGRESS, 0);
   ShowWindow(_hwnd_BUTTON_CANCEL, 0);
 
@@ -440,7 +438,7 @@ void MainDialog::OnAllFilesFinished()
   const auto find_hash = utl::HashStringToBytes(clip.c_str());
   if (find_hash.size() >= 4) // at least 4 bytes for a valid hash
   {
-    SetWindowTextW((_hwnd_EDIT_HASH), (clip.c_str()));
+    SetWindowTextW(_hwnd_EDIT_HASH, (clip.c_str()));
     OnHashEditChanged(); // fake a change as if the user pasted it
   }
 }

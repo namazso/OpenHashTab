@@ -31,6 +31,8 @@ inline void DebugMsg(PCSTR fmt, ...) { }
 
 namespace utl
 {
+  inline HINSTANCE GetInstance() { return (HINSTANCE)&__ImageBase; }
+
   // T should be a class handling a dialog, having implemented these:
   //   T(HWND hDlg, void* user_param)
   //     hDlg: the HWND of the dialog, guaranteed to be valid for the lifetime of the object
@@ -215,7 +217,7 @@ namespace utl
   inline std::wstring GetString(UINT uID)
   {
     LPCWSTR v = nullptr;
-    const auto len = LoadStringW((HINSTANCE)&__ImageBase, uID, (LPWSTR)&v, 0);
+    const auto len = LoadStringW(utl::GetInstance(), uID, (LPWSTR)&v, 0);
     return {v, v + len};
   }
 
@@ -252,6 +254,8 @@ namespace utl
   std::string TStringToUTF8(LPCWSTR p);
 
   std::wstring ErrorToString(DWORD error);
+
+  std::pair<const char*, size_t> GetResource(LPCWSTR name, LPCWSTR type);
 }
 
 #define MAKE_IDC_MEMBER(hwnd, name) HWND _hwnd_ ## name = GetDlgItem(hwnd, IDC_ ## name)

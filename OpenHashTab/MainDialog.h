@@ -16,6 +16,7 @@
 #pragma once
 
 #include "utl.h"
+#include "wnd.h"
 
 class FileHashTask;
 class Coordinator;
@@ -26,6 +27,7 @@ class MainDialog
 
   HWND _hwnd{};
   Coordinator* _prop_page;
+  wnd::WindowLayoutAdapter _adapter{ _hwnd, IDD_OPENHASHTAB_PROPPAGE };
 
   MAKE_IDC_MEMBER(_hwnd, HASH_LIST);
   MAKE_IDC_MEMBER(_hwnd, EDIT_HASH);

@@ -313,3 +313,16 @@ std::wstring utl::ErrorToString(DWORD error)
     wstr.resize(pos);
   return wstr;
 }
+
+std::pair<const char*, size_t> utl::GetResource(LPCWSTR name, LPCWSTR type)
+{
+  const auto rc = FindResourceW(
+    GetInstance(),
+    name,
+    type
+  );
+  const auto rc_data = LoadResource(GetInstance(), rc);
+  const auto size = SizeofResource(GetInstance(), rc);
+  const auto data = static_cast<const char*>(LockResource(rc_data));
+  return { data, size };
+}
