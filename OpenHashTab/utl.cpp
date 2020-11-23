@@ -54,13 +54,13 @@ bool utl::AreFilesTheSame(HANDLE a, HANDLE b)
     && fia.nFileIndexHigh == fib.nFileIndexHigh;
 }
 
-std::wstring utl::MakePathLongCompatible(const std::wstring& file)
+std::wstring utl::MakePathLongCompatible(std::wstring file)
 {
   constexpr static wchar_t prefix[] = L"\\\\";
   constexpr static auto prefixlen = std::size(prefix) - 1;
   const auto file_cstr = file.c_str();
   if (file.size() < prefixlen || 0 != wcsncmp(file_cstr, prefix, prefixlen))
-    return std::wstring{ L"\\\\?\\" } + file;
+    file.insert(0, L"\\\\?\\");
   return file;
 }
 
