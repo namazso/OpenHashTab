@@ -61,7 +61,7 @@ class MainDialog
 
   INT_PTR CustomDrawListView(LPARAM lparam, HWND list) const;
 
-  std::string GetSumfileAsString(size_t hasher);
+  std::string GetSumfileAsString(size_t hasher, bool rn);
   void SetTempStatus(LPCWSTR status, UINT time);
   void UpdateDefaultStatus(bool force_reset = false);
 
