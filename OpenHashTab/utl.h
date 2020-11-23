@@ -236,7 +236,7 @@ namespace utl
 
   bool AreFilesTheSame(HANDLE a, HANDLE b);
 
-  std::wstring MakePathLongCompatible(const std::wstring& file);
+  std::wstring MakePathLongCompatible(std::wstring file);
 
   std::wstring CanonicalizePath(const std::wstring& path);
 

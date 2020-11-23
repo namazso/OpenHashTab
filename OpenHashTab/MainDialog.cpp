@@ -239,7 +239,7 @@ INT_PTR MainDialog::DlgProc(UINT msg, WPARAM wparam, LPARAM lparam)
         const auto idx = ComboBoxGetSelectedAlgorithmIdx(_hwnd_COMBO_EXPORT);
         if (idx >= 0)
         {
-          const auto wstr = utl::UTF8ToTString(GetSumfileAsString((size_t)idx).c_str());
+          const auto wstr = utl::UTF8ToTString(GetSumfileAsString((size_t)idx, true).c_str());
           utl::SetClipboardText(_hwnd, wstr.c_str());
         }
       }
@@ -455,7 +455,7 @@ void MainDialog::OnExportClicked()
     const auto ext = *exts ? std::wstring{ L"." } +utl::UTF8ToTString(*exts) : std::wstring{};
     const auto path_and_basename = _prop_page->GetSumfileDefaultSavePathAndBaseName();
     const auto name = path_and_basename.second + ext;
-    const auto content = GetSumfileAsString((size_t)idx);
+    const auto content = GetSumfileAsString((size_t)idx, false);
     const auto sumfile_path = utl::SaveDialog(_hwnd, path_and_basename.first.c_str(), name.c_str());
     if (!sumfile_path.empty())
     {
@@ -499,6 +499,8 @@ void MainDialog::OnHashEditChanged()
 
 void MainDialog::OnListDoubleClick(int item, int subitem)
 {
+  if (item == -1)
+    return;
   const auto list = _hwnd_HASH_LIST;
   wchar_t hash[4096]; // It's possible it will hold an error message
   ListView_GetItemText(list, item, ColIndex_Hash, hash, (int)std::size(hash));
@@ -519,6 +521,8 @@ void MainDialog::OnListRightClick(bool dblclick)
 {
   const auto list = _hwnd_HASH_LIST;
   const auto count = ListView_GetItemCount(list);
+  if (!count)
+    return;
   const auto buf = std::make_unique<std::array<wchar_t, PATHCCH_MAX_CCH>>();
   std::basic_stringstream<wchar_t> clipboard;
   const auto list_get_text = [&](int idx, int subitem)
@@ -540,7 +544,7 @@ void MainDialog::OnListRightClick(bool dblclick)
   SetTempStatus(utl::GetString(IDS_COPIED).c_str(), 1000);
 }
 
-std::string MainDialog::GetSumfileAsString(size_t hasher)
+std::string MainDialog::GetSumfileAsString(size_t hasher, bool rn)
 {
   std::stringstream str;
   for (const auto& file : _prop_page->GetFiles())
@@ -557,8 +561,13 @@ std::string MainDialog::GetSumfileAsString(size_t hasher)
     {
       utl::HashBytesToString(hash_str, hash);
     }
+
+    auto name = file->GetDisplayName();
+    // flip slashes to conform sumfile format
+    std::replace(begin(name), end(name), '\\', '/');
+
     // force \r\n because clipboard expects that
-    str << hash_str << " *" << utl::TStringToUTF8(file->GetDisplayName().c_str()) << "\r\n";
+    str << hash_str << " *" << utl::TStringToUTF8(name.c_str()) << (rn ? "\r\n" : "\n");
   }
   return str.str();
 }
