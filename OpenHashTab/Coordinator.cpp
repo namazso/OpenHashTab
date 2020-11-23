@@ -85,9 +85,8 @@ static std::vector<std::uint8_t> TryGetExpectedSumForFile(const std::wstring& pa
   return hash;
 }
 
-Coordinator::Coordinator(std::list<std::wstring> files, std::wstring base)
-  : _files(std::move(files))
-  , _base(std::move(base)) {}
+Coordinator::Coordinator(std::list<std::wstring> files)
+  : _files_raw(std::move(files)) {}
 
 Coordinator::~Coordinator()
 {
@@ -129,109 +128,37 @@ unsigned Coordinator::Dereference()
   return references;
 }
 
-void Coordinator::AddFile(const std::wstring& path, const std::vector<std::uint8_t>& expected_hash)
+void Coordinator::AddFile(std::wstring path, const ProcessedFileList::FileData& fd)
 {
-  auto dispname = utl::CanonicalizePath(path);
+  // BUG: we ignore what kind of hash we're looking for for now
+  const auto expected = !fd.expected_unknown_hash.empty()
+    ? fd.expected_unknown_hash
+    : *std::max_element(begin(fd.expected_hashes), end(fd.expected_hashes), [] (const auto& a, const auto& b)
+      {
+        return a.size() < b.size();
+      });
 
-  // If path looks like _base + filename use filename as displayname, else the canonical name.
-  // Optimally you'd use PathRelativePathTo for this, however that function not only doesn't support long paths, it also
-  // doesn't have a PathCch alternative on Win8+. Additionally, seeing ".." and similar in the Name part could be confusing
-  // to users, so printing full path instead is probably a better idea anyways.
-  if (dispname.size() >= _base.size())
-    if (std::equal(begin(_base), end(_base), begin(dispname)))
-      dispname = dispname.substr(_base.size());
-
-  const auto task = new FileHashTask(path, this, std::move(dispname), expected_hash);
+  const auto task = new FileHashTask(std::move(path), this, fd.relative_path, expected);
   _size_total += task->GetSize();
   _file_tasks.emplace_back(task);
 }
 
 void Coordinator::AddFiles()
 {
-  // for each directory in _files remove it from the list add it's content to the end.
-  // since we push elements to the end end iterator is intentionally not saved.
-  for (auto it = begin(_files); it != end(_files);)
-  {
-    const auto it_long = utl::MakePathLongCompatible(*it);
-    if (PathIsDirectoryW(it_long.c_str()))
-    {
-      WIN32_FIND_DATA find_data;
-      const auto find_handle = FindFirstFileW((it_long + L"\\*").c_str(), &find_data);
+  _files = ProcessEverything(_files_raw);
 
-      DWORD error;
-
-      if (find_handle != INVALID_HANDLE_VALUE)
-      {
-        do
-        {
-          if ((0 == wcscmp(L".", find_data.cFileName)) || (0 == wcscmp(L"..", find_data.cFileName)))
-            continue; // For whatever reason if you use long paths with FindFirstFile it returns "." and ".."
-          _files.push_back(*it + L"\\" + find_data.cFileName);
-        }
-        while (FindNextFileW(find_handle, &find_data) != 0);
-        error = GetLastError();
-        FindClose(find_handle);
-      }
-      else
-      {
-        error = GetLastError();
-      }
-
-      const auto prev = it++;
-
-      // BUG: We just leave it in as file if we can't open so some random error message will be displayed
-      if(!error || error == ERROR_NO_MORE_FILES)
-        _files.erase(prev);
-    }
-    else
-    {
-      ++it;
-    }
-  }
-
-  if (_files.empty())
-    return;
-
-  if (_files.size() == 1)
-  {
-    auto& file = *_files.begin();
-    const auto handle = utl::OpenForRead(file);
-    if (handle != INVALID_HANDLE_VALUE)
-    {
-      FileSumList fsl;
-      TryParseSumFile(handle, fsl);
-      CloseHandle(handle);
-      if (!fsl.empty())
-      {
-        _is_sumfile = true;
-
-        const auto sumfile_path = file.c_str();
-        const auto sumfile_name = (LPCWSTR)PathFindFileNameW(sumfile_path);
-        const auto sumfile_base_path = std::wstring{ sumfile_path, sumfile_name };
-        for (auto& filesum : fsl)
-        {
-          // we disallow no filename when sumfile is main file
-          if (filesum.first.empty())
-            continue;
-
-          const auto path = sumfile_base_path + utl::UTF8ToTString(filesum.first.c_str());
-          AddFile(path, filesum.second);
-        }
-
-        // fall through - let it calculate the sumfile's sum, in case the user needs that
-      }
-    }
-  }
-
-  for (auto& file : _files)
-  {
-    const auto expected = TryGetExpectedSumForFile(file);
-    AddFile(file, expected);
-  }
+  for (const auto& file : _files.files)
+    AddFile(file.first, file.second);
 }
 
 void Coordinator::ProcessFiles()
 {
+  // We have 0 files, oops!
+  if(_file_tasks.empty() && _window)
+  {
+    SendNotifyMessageW(_window, wnd::WM_USER_ALL_FILES_FINISHED, wnd::k_user_magic_wparam, 0);
+    return;
+  }
   for (const auto& task : _file_tasks)
   {
     ++_files_not_finished;
@@ -288,10 +215,13 @@ void Coordinator::FileProgressCallback(uint64_t size_progress)
 
 std::pair<std::wstring, std::wstring> Coordinator::GetSumfileDefaultSavePathAndBaseName()
 {
-  const auto& file = *_files.begin();
-  const auto file_path = file.c_str();
-  const auto file_name = (LPCWSTR)PathFindFileNameW(file_path);
-  const auto dir = std::wstring{ file_path, file_name };
-  auto name = _files.size() == 1 ? std::wstring{ file_name } : std::wstring{};
-  return { _base, std::move(name) };
+  std::wstring name{};
+  if(_files.files.size() == 1)
+  {
+    const auto& file = _files.files.begin()->first;
+    const auto file_path = file.c_str();
+    const auto file_name = (LPCWSTR)PathFindFileNameW(file_path);
+    name = file_name;
+  }
+  return { _files.base_path, std::move(name) };
 }

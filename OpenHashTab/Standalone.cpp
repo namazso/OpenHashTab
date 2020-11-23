@@ -3,6 +3,7 @@
 
 #include "Coordinator.h"
 #include "MainDialog.h"
+#include "path.h"
 #include "utl.h"
 
 HWND CreateDialogFromChildDialogResourceParam(
@@ -108,21 +109,18 @@ extern "C" __declspec(dllexport) void CALLBACK StandaloneEntryW(
   if (files.empty())
     return;
 
-  const auto& shortest = std::min_element(
-    begin(files),
-    end(files),
-    [](const std::wstring& a, const std::wstring& b)
-    {
-      return a.size() < b.size();
-    }
-  );
+  /*const auto pfl = ProcessEverything(std::move(files));
+  std::list<std::wstring> pfl_filelist;
+  for (auto& e : pfl.files)
+    pfl_filelist.push_back(e.first);
 
-  const auto pb = shortest->c_str();
+  std::wstringstream ss;
+  ss << pfl.base_path << std::endl;
+  for (auto& e : pfl.files)
+    ss << e.second.relative_path << " -> " << e.first << std::endl;
+  utl::FormattedMessageBox(nullptr, L"debug", MB_OK, L"%s", ss.str().c_str());*/
 
-  // if PathFindFileName it returns pb, making base path "". This is intended.
-  auto base = std::wstring{ pb, (LPCWSTR)PathFindFileNameW(pb) };
-
-  const auto coordinator = new StandaloneCoordinator(std::move(files), std::move(base));
+  const auto coordinator = new StandaloneCoordinator(files);
 
   const auto dialog = CreateDialogFromChildDialogResourceParam(
     utl::GetInstance(),

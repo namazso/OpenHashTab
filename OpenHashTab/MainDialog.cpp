@@ -499,6 +499,8 @@ void MainDialog::OnHashEditChanged()
 
 void MainDialog::OnListDoubleClick(int item, int subitem)
 {
+  if (item == -1)
+    return;
   const auto list = _hwnd_HASH_LIST;
   wchar_t hash[4096]; // It's possible it will hold an error message
   ListView_GetItemText(list, item, ColIndex_Hash, hash, (int)std::size(hash));
@@ -519,6 +521,8 @@ void MainDialog::OnListRightClick(bool dblclick)
 {
   const auto list = _hwnd_HASH_LIST;
   const auto count = ListView_GetItemCount(list);
+  if (!count)
+    return;
   const auto buf = std::make_unique<std::array<wchar_t, PATHCCH_MAX_CCH>>();
   std::basic_stringstream<wchar_t> clipboard;
   const auto list_get_text = [&](int idx, int subitem)

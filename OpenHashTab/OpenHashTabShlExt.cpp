@@ -81,34 +81,17 @@ HRESULT STDMETHODCALLTYPE COpenHashTabShlExt::Initialize(
       continue;
 
     // Add the filename to our list of files to act on.
-    _files.emplace_back(file_name);
+    _files_raw.emplace_back(file_name);
   }
 
   // Release resources.
   GlobalUnlock(stg.hGlobal);
   ReleaseStgMedium(&stg);
 
-  if (_files.empty())
-    return E_FAIL;
-
-  const auto& shortest = std::min_element(
-    begin(_files),
-    end(_files),
-    [](const std::wstring& a, const std::wstring& b)
-    {
-      return a.size() < b.size();
-    }
-  );
-
-  const auto pb = shortest->c_str();
-
-  // if PathFindFileName it returns pb, making base path "". This is intended.
-  _base = std::wstring{ pb, (LPCWSTR)PathFindFileNameW(pb) };
-
   // If we found any files we can work with, return S_OK.  Otherwise,
   // return E_FAIL so we don't get called again for this right-click
   // operation.
-  return _files.empty() ? E_FAIL : S_OK;
+  return _files_raw.empty() ? E_FAIL : S_OK;
 }
 
 // IShellPropSheetExt
@@ -120,8 +103,8 @@ HRESULT STDMETHODCALLTYPE COpenHashTabShlExt::AddPages(
 {
   // We shouldn't ever get called with empty files, since Initialize should
   // return failure. So if we somehow do, just don't add any pages.
-  assert(!_files.empty());
-  if (_files.empty())
+  assert(!_files_raw.empty());
+  if (_files_raw.empty())
     return S_OK;
 
   const auto tab_name = utl::GetString(IDS_HASHES);
@@ -136,7 +119,7 @@ HRESULT STDMETHODCALLTYPE COpenHashTabShlExt::AddPages(
   psp.pszTitle = tab_name.c_str();
   psp.pcRefParent = (UINT*)&_AtlModule.m_nLockCnt;
 
-  const auto hpage = utl::MakePropPage<PropPageCoordinator, MainDialog>(psp, _files, _base);
+  const auto hpage = utl::MakePropPage<PropPageCoordinator, MainDialog>(psp, _files_raw);
 
   if (hpage)
   {

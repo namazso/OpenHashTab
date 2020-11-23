@@ -14,6 +14,7 @@
 //    You should have received a copy of the GNU General Public License
 //    along with OpenHashTab.  If not, see <https://www.gnu.org/licenses/>.
 #pragma once
+#include "path.h"
 
 class FileHashTask;
 
@@ -23,8 +24,8 @@ public:
   constexpr static auto k_progress_resolution = 256u;
 
 private:
-  std::list<std::wstring> _files;
-  std::wstring _base;
+  std::list<std::wstring> _files_raw;
+  ProcessedFileList _files;
   HWND _window{};
   uint64_t _size_total{};
   std::atomic<uint64_t> _size_progressed{};
@@ -34,10 +35,10 @@ private:
   std::atomic<unsigned> _files_not_finished{};
   bool _is_sumfile{};
 
-  void AddFile(const std::wstring& path, const std::vector<std::uint8_t>& expected_hash);
+  void AddFile(std::wstring path, const ProcessedFileList::FileData& fd);
 
 public:
-  Coordinator(std::list<std::wstring> files, std::wstring base);
+  Coordinator(std::list<std::wstring> files);
   virtual ~Coordinator();
 
   virtual void RegisterWindow(HWND window);
