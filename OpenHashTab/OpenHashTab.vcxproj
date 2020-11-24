@@ -150,6 +150,7 @@
       <PreprocessorDefinitions>CI_VERSION="$(CI_VERSION)";CI_VERSION_MAJOR=$(CI_VERSION_MAJOR);CI_VERSION_MINOR=$(CI_VERSION_MINOR);CI_VERSION_PATCH=$(CI_VERSION_PATCH);WIN32;_WINDOWS;_DEBUG;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -194,6 +195,7 @@
       <PreprocessorDefinitions>CI_VERSION="$(CI_VERSION)";CI_VERSION_MAJOR=$(CI_VERSION_MAJOR);CI_VERSION_MINOR=$(CI_VERSION_MINOR);CI_VERSION_PATCH=$(CI_VERSION_PATCH);_WINDOWS;_DEBUG;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -237,6 +239,7 @@
       <PreprocessorDefinitions>CI_VERSION="$(CI_VERSION)";CI_VERSION_MAJOR=$(CI_VERSION_MAJOR);CI_VERSION_MINOR=$(CI_VERSION_MINOR);CI_VERSION_PATCH=$(CI_VERSION_PATCH);_WINDOWS;_DEBUG;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
