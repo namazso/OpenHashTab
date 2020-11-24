@@ -297,11 +297,6 @@ INT_PTR MainDialog::DlgProc(UINT msg, WPARAM wparam, LPARAM lparam)
 
 void MainDialog::InitDialog()
 {
-  // TODO: figure out a way to dynamically resize this thing
-  //RECT rect;
-  //GetClientRect(_hwnd, &rect);
-  //SetWindowPos(_hwnd, NULL, 0, 0, rect.right - rect.left, rect.bottom - rect.top, SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
-
   SetTextFromTable(_hwnd_STATIC_CHECK_AGAINST, IDS_CHECK_AGAINST);
   SetTextFromTable(_hwnd_STATIC_EXPORT_TO, IDS_EXPORT_TO);
   SetTextFromTable(_hwnd_BUTTON_EXPORT, IDS_EXPORT_BTN);
@@ -448,9 +443,6 @@ void MainDialog::OnExportClicked()
   const auto idx = ComboBoxGetSelectedAlgorithmIdx(_hwnd_COMBO_EXPORT);
   if (idx >= 0 && !_prop_page->GetFiles().empty())
   {
-    // TODO: relativize sumfile contents to save path.
-    // This may sound trivial at first, but we can't use PathRelativeToPath because it doesn't support long paths.
-
     const auto exts = HashAlgorithm::g_hashers[idx].GetExtensions();
     const auto ext = *exts ? std::wstring{ L"." } +utl::UTF8ToTString(*exts) : std::wstring{};
     const auto path_and_basename = _prop_page->GetSumfileDefaultSavePathAndBaseName();
