@@ -178,8 +178,6 @@ ProcessedFileList ProcessEverything(std::list<std::wstring> list)
     pfl.base_path = NormalizePath(pfl.base_path);
   }
 
-  std::list<std::wstring> directories;
-
   for(const auto& entry : fsl_absolute)
   {
     const auto normalized = NormalizePath(entry.first);
@@ -207,8 +205,6 @@ ProcessedFileList ProcessEverything(std::list<std::wstring> list)
 
     if(PathIsDirectoryW(normalized.c_str()))
     {
-      // TODO: handle infinite recursion
-
       DWORD error = 0;
 
       {
@@ -221,6 +217,11 @@ ProcessedFileList ProcessEverything(std::list<std::wstring> list)
           {
             if ((0 == wcscmp(L".", find_data.cFileName)) || (0 == wcscmp(L"..", find_data.cFileName)))
               continue; // For whatever reason if you use long paths with FindFirstFile it returns "." and ".."
+
+            // TODO: figure out what to do with reparse points
+            if (find_data.dwFileAttributes & FILE_ATTRIBUTE_REPARSE_POINT)
+              continue;
+
             list.push_back(normalized + L"\\" + find_data.cFileName);
           } while (FindNextFileW(find_handle, &find_data) != 0);
           error = GetLastError();
