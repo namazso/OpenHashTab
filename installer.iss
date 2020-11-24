@@ -3,12 +3,12 @@
 #define CI_VERSION_NUMERIC "0.0.0"
 #endif
 
-#define MyAppName 		"OpenHashTab"
-#define MyAppVersion 	CI_VERSION
-#define MyAppPublisher 	"namazso"
-#define MyAppURL 		"https://github.com/namazso/OpenHashTab"
-#define MyCopyright 	"(c) namazso. Licensed under GNU GPLv3 or (at your option) later."
-#define DLLName 		"OpenHashTab.dll"
+#define MyAppName       "OpenHashTab"
+#define MyAppVersion    CI_VERSION
+#define MyAppPublisher  "namazso"
+#define MyAppURL        "https://github.com/namazso/OpenHashTab"
+#define MyCopyright     "(c) namazso. Licensed under GNU GPLv3 or (at your option) later."
+#define DLLName         "OpenHashTab.dll"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
@@ -33,6 +33,7 @@ SolidCompression=yes
 WizardStyle=modern
 VersionInfoProductTextVersion={#CI_VERSION}
 VersionInfoVersion={#CI_VERSION_NUMERIC}
+ChangesAssociations = yes
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -64,6 +65,33 @@ Name: "ukrainian"; MessagesFile: "compiler:Languages\Ukrainian.isl"
 Source: "bin\Release\x64\{#DLLName}";   DestDir: "{sys}"; Flags: ignoreversion restartreplace regserver solidbreak 64bit; Check: InstallArch('x64')
 Source: "bin\Release\ARM64\{#DLLName}"; DestDir: "{sys}"; Flags: ignoreversion restartreplace regserver solidbreak 64bit; Check: InstallArch('arm64') 
 Source: "bin\Release\Win32\{#DLLName}"; DestDir: "{sys}"; Flags: ignoreversion restartreplace regserver solidbreak 32bit
+
+[Tasks]
+Name: myAssociation; Description: "Associate with known sumfile formats"; GroupDescription: File extensions:
+
+
+[Registry]
+Root: HKCR; Subkey: "{#MyAppName}";                     ValueData: "{#MyAppName}";                                ValueType: string; ValueName: ""; Flags: uninsdeletekey;
+Root: HKCR; Subkey: "{#MyAppName}\DefaultIcon";         ValueData: "{sys}\{#DLLName},0";                          ValueType: string; ValueName: ""
+Root: HKCR; Subkey: "{#MyAppName}\shell\open\command";  ValueData: "rundll32 {#DLLName},StandaloneEntry ""%1""";  ValueType: string; ValueName: ""
+
+Root: HKCR; Subkey: ".md5"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKCR; Subkey: ".md5sum"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKCR; Subkey: ".md5sums"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKCR; Subkey: ".ripemd160"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKCR; Subkey: ".sha1"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKCR; Subkey: ".sha1sum"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKCR; Subkey: ".sha1sums"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKCR; Subkey: ".sha224"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKCR; Subkey: ".sha224sum"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKCR; Subkey: ".sha256"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKCR; Subkey: ".sha256sum"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKCR; Subkey: ".sha256sums"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKCR; Subkey: ".sha384"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKCR; Subkey: ".sha512"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKCR; Subkey: ".sha512sum"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKCR; Subkey: ".sha512sums"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKCR; Subkey: ".sha3"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
 
 [Code]
 function InstallArch(Arch: String): Boolean;
