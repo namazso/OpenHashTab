@@ -22,35 +22,39 @@ constexpr static auto k_reg_path = L"Software\\OpenHashTab";
 
 Settings Settings::instance{};
 
-void Settings::LoadHashEnabled(const HashAlgorithm* algorithm)
+DWORD detail::GetSettingDWORD(const char* name, DWORD default_value)
 {
-  DWORD enabled;
-  DWORD size = sizeof(enabled);
+  DWORD value;
+  DWORD size = sizeof(value);
   const auto status = RegGetValueW(
     HKEY_CURRENT_USER,
     k_reg_path,
-    utl::UTF8ToTString(algorithm->GetName()).c_str(),
+    utl::UTF8ToTString(name).c_str(),
     RRF_RT_REG_DWORD,
     nullptr,
-    &enabled,
+    &value,
     &size
   );
-  if (status == ERROR_SUCCESS && size == sizeof(enabled))
-  {
-    _enabled[algorithm->Idx()] = (bool)enabled;
-  }
+  return status == ERROR_SUCCESS ? value : default_value;
 }
 
-void Settings::StoreHashEnabled(const HashAlgorithm* algorithm) const
+void detail::SetSettingDWORD(const char* name, DWORD new_value)
 {
-  DWORD value = _enabled[algorithm->Idx()];
   RegSetKeyValueW(
     HKEY_CURRENT_USER,
     k_reg_path,
-    utl::UTF8ToTString(algorithm->GetName()).c_str(),
+    utl::UTF8ToTString(name).c_str(),
     REG_DWORD,
-    &value,
-    sizeof(value)
+    &new_value,
+    sizeof(new_value)
   );
-  // we don't care about the result
+}
+
+Settings::Settings()
+{
+  bool defaults[HashAlgorithm::k_count]{};
+  for (const auto name : {"MD5", "SHA-1", "SHA-256", "SHA-512"})
+    defaults[HashAlgorithm::IdxByName(name)] = true;
+  for (auto i = 0u; i < HashAlgorithm::k_count; ++i)
+    algorithms[i].Init(HashAlgorithm::g_hashers[i].GetName(), defaults[i]);
 }
