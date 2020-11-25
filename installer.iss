@@ -71,7 +71,7 @@ Name: myAssociation; Description: "Associate with known sumfile formats"; GroupD
 
 
 [Registry]
-Root: HKCR; Subkey: "{#MyAppName}";                     ValueData: "{#MyAppName}";                                ValueType: string; ValueName: ""; Flags: uninsdeletekey;
+Root: HKCR; Subkey: "{#MyAppName}";                     ValueData: "Checksum file";                               ValueType: string; ValueName: ""; Flags: uninsdeletekey;
 Root: HKCR; Subkey: "{#MyAppName}\DefaultIcon";         ValueData: "{sys}\{#DLLName},0";                          ValueType: string; ValueName: ""
 Root: HKCR; Subkey: "{#MyAppName}\shell\open\command";  ValueData: "rundll32 {#DLLName},StandaloneEntry ""%1""";  ValueType: string; ValueName: ""
 
@@ -92,6 +92,9 @@ Root: HKCR; Subkey: ".sha512"; ValueType: string; ValueName: ""; ValueData: "{#M
 Root: HKCR; Subkey: ".sha512sum"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
 Root: HKCR; Subkey: ".sha512sums"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
 Root: HKCR; Subkey: ".sha3"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+
+; corz checksum that we accidentally support
+Root: HKCR; Subkey: ".hash"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
 
 [Code]
 function InstallArch(Arch: String): Boolean;
