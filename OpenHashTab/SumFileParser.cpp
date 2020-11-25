@@ -29,6 +29,9 @@ class SumFileParser
 
   enum class State
   {
+    FileBegin,
+    Bom1,
+    Bom2,
     LineBegin,
     Comment,
     Hash1,
@@ -40,7 +43,7 @@ class SumFileParser
     Invalid
   };
 
-  State _state{ State::LineBegin };
+  State _state{ State::FileBegin };
 
 
 public:
@@ -51,6 +54,40 @@ public:
   {
     switch (_state)
     {
+    case State::FileBegin:
+      switch (c)
+      {
+      case '\xEF':
+        _state = State::Bom1;
+        break;
+      default:
+        _state = State::LineBegin;
+        Process(c);
+        break;
+      }
+      break;
+    case State::Bom1:
+      switch (c)
+      {
+      case '\xBB':
+        _state = State::Bom2;
+        break;
+      default:
+        _state = State::Invalid;
+        break;
+      }
+      break;
+    case State::Bom2:
+      switch (c)
+      {
+      case '\xBF':
+        _state = State::LineBegin;
+        break;
+      default:
+        _state = State::Invalid;
+        break;
+      }
+      break;
     case State::LineBegin:
       switch (c)
       {
