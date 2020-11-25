@@ -44,7 +44,7 @@ BEGIN
     PUSHBUTTON      "IDS_CLIPBOARD",IDC_BUTTON_CLIPBOARD,102,216,54,15,WS_DISABLED
     PUSHBUTTON      "*",IDC_BUTTON_SETTINGS,203,149,16,14,WS_DISABLED
     CONTROL         "",IDC_PROGRESS,"msctls_progress32",WS_BORDER,6,233,150,14
-    PUSHBUTTON      "IDS_CANCEL",IDC_BUTTON_CANCEL,162,234,54,12,0
+    PUSHBUTTON      "IDS_CANCEL",IDC_BUTTON_CANCEL,162,234,54,12
 END
 
 IDD_SETTINGS DIALOGEX 0, 0, 127, 178
@@ -147,6 +147,26 @@ IDR_OPENHASHTAB         REGISTRY                "OpenHashTab.rgs"
 IDR_OPENHASHTABSHLEXT   REGISTRY                "OpenHashTabShlExt.rgs"
 
 #endif    // Neutral (Default) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// English (United States) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_ICON1               ICON                    "icon.ico"
+
+#endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
