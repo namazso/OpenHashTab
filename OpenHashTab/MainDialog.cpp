@@ -297,6 +297,12 @@ INT_PTR MainDialog::DlgProc(UINT msg, WPARAM wparam, LPARAM lparam)
 
 void MainDialog::InitDialog()
 {
+  SetClassLongPtrW(
+    _hwnd,
+    GCLP_HICON,
+    (LONG_PTR)LoadIconW(utl::GetInstance(), MAKEINTRESOURCEW(IDI_ICON1))
+  );
+
   SetTextFromTable(_hwnd_STATIC_CHECK_AGAINST, IDS_CHECK_AGAINST);
   SetTextFromTable(_hwnd_STATIC_EXPORT_TO, IDS_EXPORT_TO);
   SetTextFromTable(_hwnd_BUTTON_EXPORT, IDS_EXPORT_BTN);
