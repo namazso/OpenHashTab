@@ -33,47 +33,17 @@
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+  <PropertyGroup Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>ClangCL</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <SpectreMitigation>false</SpectreMitigation>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)'=='Debug'" Label="Configuration">
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>ClangCL</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
-    <SpectreMitigation>false</SpectreMitigation>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+  <PropertyGroup Condition="'$(Configuration)'=='Release'" Label="Configuration">
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>ClangCL</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
-    <SpectreMitigation>false</SpectreMitigation>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>ClangCL</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
-    <SpectreMitigation>false</SpectreMitigation>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>ClangCL</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
-    <SpectreMitigation>false</SpectreMitigation>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>ClangCL</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
-    <SpectreMitigation>false</SpectreMitigation>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>ClangCL</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
-    <SpectreMitigation>false</SpectreMitigation>
   </PropertyGroup>
   <PropertyGroup Condition="'$(CI_VERSION)'==''">
     <CI_VERSION>(unknown)</CI_VERSION>
@@ -87,390 +57,92 @@
   </ImportGroup>
   <ImportGroup Label="Shared">
   </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
+  <ImportGroup Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+  <PropertyGroup>
     <IgnoreImportLibrary>true</IgnoreImportLibrary>
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(SolutionDir)concurrentqueue;$(SolutionDir)phnt;$(IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)bin\$(Configuration)\$(Platform)\</OutDir>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IgnoreImportLibrary>true</IgnoreImportLibrary>
-    <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)concurrentqueue;$(SolutionDir)phnt;$(IncludePath)</IncludePath>
-    <OutDir>$(SolutionDir)bin\$(Configuration)\$(Platform)\</OutDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
-    <IgnoreImportLibrary>true</IgnoreImportLibrary>
-    <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)concurrentqueue;$(SolutionDir)phnt;$(IncludePath)</IncludePath>
-    <OutDir>$(SolutionDir)bin\$(Configuration)\$(Platform)\</OutDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IgnoreImportLibrary>true</IgnoreImportLibrary>
-    <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(SolutionDir)concurrentqueue;$(SolutionDir)phnt;$(IncludePath)</IncludePath>
-    <OutDir>$(SolutionDir)bin\$(Configuration)\$(Platform)\</OutDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IgnoreImportLibrary>true</IgnoreImportLibrary>
-    <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(SolutionDir)concurrentqueue;$(SolutionDir)phnt;$(IncludePath)</IncludePath>
-    <OutDir>$(SolutionDir)bin\$(Configuration)\$(Platform)\</OutDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
-    <IgnoreImportLibrary>true</IgnoreImportLibrary>
-    <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(SolutionDir)concurrentqueue;$(SolutionDir)phnt;$(IncludePath)</IncludePath>
-    <OutDir>$(SolutionDir)bin\$(Configuration)\$(Platform)\</OutDir>
-  </PropertyGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+  <ItemDefinitionGroup>
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <WarningLevel>Level3</WarningLevel>
-      <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>CI_VERSION="$(CI_VERSION)";CI_VERSION_MAJOR=$(CI_VERSION_MAJOR);CI_VERSION_MINOR=$(CI_VERSION_MINOR);CI_VERSION_PATCH=$(CI_VERSION_PATCH);WIN32;_WINDOWS;_DEBUG;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>CI_VERSION="$(CI_VERSION)";CI_VERSION_MAJOR=$(CI_VERSION_MAJOR);CI_VERSION_MINOR=$(CI_VERSION_MINOR);CI_VERSION_PATCH=$(CI_VERSION_PATCH);%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Midl>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <HeaderFileName>OpenHashTab_i.h</HeaderFileName>
+      <InterfaceIdentifierFileName>OpenHashTab_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>OpenHashTab_p.c</ProxyFileName>
+      <GenerateStublessProxies>true</GenerateStublessProxies>
+      <TypeLibraryName>$(IntDir)OpenHashTab.tlb</TypeLibraryName>
+      <ValidateAllParameters>true</ValidateAllParameters>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0409</Culture>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>CI_VERSION="$(CI_VERSION)";CI_VERSION_MAJOR=$(CI_VERSION_MAJOR);CI_VERSION_MINOR=$(CI_VERSION_MINOR);CI_VERSION_PATCH=$(CI_VERSION_PATCH);WIN32;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <ModuleDefinitionFile>.\OpenHashTab.def</ModuleDefinitionFile>
+      <RegisterOutput>true</RegisterOutput>
+      <AdditionalOptions>/PDBALTPATH:%_PDB% /Brepro %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalDependencies>$(SolutionDir)bin\$(Configuration)\$(Platform)\Algorithms.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <Manifest>
+      <AdditionalManifestFiles>additional.manifest</AdditionalManifestFiles>
+    </Manifest>
+    <PreBuildEvent>
+      <Command>powershell -ExecutionPolicy Bypass $(SolutionDir)langcomp\langcomp.ps1 $(SolutionDir)Localization $(ProjectDir)localization.rc</Command>
+    </PreBuildEvent>
+    <PreBuildEvent>
+      <Message>Compiling localization</Message>
+    </PreBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug'">
+    <ClCompile>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Midl>
-      <MkTypLibCompatible>false</MkTypLibCompatible>
-      <TargetEnvironment>Win32</TargetEnvironment>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <HeaderFileName>OpenHashTab_i.h</HeaderFileName>
-      <InterfaceIdentifierFileName>OpenHashTab_i.c</InterfaceIdentifierFileName>
-      <ProxyFileName>OpenHashTab_p.c</ProxyFileName>
-      <GenerateStublessProxies>true</GenerateStublessProxies>
-      <TypeLibraryName>$(IntDir)OpenHashTab.tlb</TypeLibraryName>
-      <DllDataFileName />
-      <ValidateAllParameters>true</ValidateAllParameters>
     </Midl>
     <ResourceCompile>
-      <Culture>0x0409</Culture>
-      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>CI_VERSION="$(CI_VERSION)";CI_VERSION_MAJOR=$(CI_VERSION_MAJOR);CI_VERSION_MINOR=$(CI_VERSION_MINOR);CI_VERSION_PATCH=$(CI_VERSION_PATCH);_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ResourceCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <ModuleDefinitionFile>.\OpenHashTab.def</ModuleDefinitionFile>
-      <RegisterOutput>true</RegisterOutput>
-      <AdditionalOptions>/PDBALTPATH:%_PDB%  /Brepro %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>$(SolutionDir)bin\$(Configuration)\$(Platform)\Algorithms.lib;%(AdditionalDependencies)</AdditionalDependencies>
-    </Link>
-    <PreLinkEvent />
-    <Manifest>
-      <AdditionalManifestFiles>additional.manifest</AdditionalManifestFiles>
-    </Manifest>
-    <PreBuildEvent>
-      <Command>powershell -ExecutionPolicy Bypass $(SolutionDir)langcomp\langcomp.ps1 $(SolutionDir)Localization $(ProjectDir)localization.rc</Command>
-    </PreBuildEvent>
-    <PreBuildEvent>
-      <Message>Compiling localization</Message>
-    </PreBuildEvent>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <WarningLevel>Level3</WarningLevel>
-      <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>CI_VERSION="$(CI_VERSION)";CI_VERSION_MAJOR=$(CI_VERSION_MAJOR);CI_VERSION_MINOR=$(CI_VERSION_MINOR);CI_VERSION_PATCH=$(CI_VERSION_PATCH);_WINDOWS;_DEBUG;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeTypeInfo>false</RuntimeTypeInfo>
-      <LanguageStandard>stdcpp17</LanguageStandard>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-    </ClCompile>
-    <Midl>
-      <MkTypLibCompatible>false</MkTypLibCompatible>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <HeaderFileName>OpenHashTab_i.h</HeaderFileName>
-      <InterfaceIdentifierFileName>OpenHashTab_i.c</InterfaceIdentifierFileName>
-      <ProxyFileName>OpenHashTab_p.c</ProxyFileName>
-      <GenerateStublessProxies>true</GenerateStublessProxies>
-      <TypeLibraryName>$(IntDir)OpenHashTab.tlb</TypeLibraryName>
-      <DllDataFileName />
-      <ValidateAllParameters>true</ValidateAllParameters>
-    </Midl>
-    <ResourceCompile>
-      <Culture>0x0409</Culture>
-      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>CI_VERSION="$(CI_VERSION)";CI_VERSION_MAJOR=$(CI_VERSION_MAJOR);CI_VERSION_MINOR=$(CI_VERSION_MINOR);CI_VERSION_PATCH=$(CI_VERSION_PATCH);_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <ModuleDefinitionFile>.\OpenHashTab.def</ModuleDefinitionFile>
-      <RegisterOutput>true</RegisterOutput>
-      <AdditionalOptions>/PDBALTPATH:%_PDB%  /Brepro %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>$(SolutionDir)bin\$(Configuration)\$(Platform)\Algorithms.lib;%(AdditionalDependencies)</AdditionalDependencies>
-    </Link>
-    <PreLinkEvent />
-    <Manifest>
-      <AdditionalManifestFiles>additional.manifest</AdditionalManifestFiles>
-    </Manifest>
-    <PreBuildEvent>
-      <Command>powershell -ExecutionPolicy Bypass $(SolutionDir)langcomp\langcomp.ps1 $(SolutionDir)Localization $(ProjectDir)localization.rc</Command>
-    </PreBuildEvent>
-    <PreBuildEvent>
-      <Message>Compiling localization</Message>
-    </PreBuildEvent>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
+  <ItemDefinitionGroup Condition="'$(Configuration)'=='Release'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <WarningLevel>Level3</WarningLevel>
-      <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>CI_VERSION="$(CI_VERSION)";CI_VERSION_MAJOR=$(CI_VERSION_MAJOR);CI_VERSION_MINOR=$(CI_VERSION_MINOR);CI_VERSION_PATCH=$(CI_VERSION_PATCH);_WINDOWS;_DEBUG;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeTypeInfo>false</RuntimeTypeInfo>
-      <LanguageStandard>stdcpp17</LanguageStandard>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-    </ClCompile>
-    <Midl>
-      <MkTypLibCompatible>false</MkTypLibCompatible>
-      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <HeaderFileName>OpenHashTab_i.h</HeaderFileName>
-      <InterfaceIdentifierFileName>OpenHashTab_i.c</InterfaceIdentifierFileName>
-      <ProxyFileName>OpenHashTab_p.c</ProxyFileName>
-      <GenerateStublessProxies>true</GenerateStublessProxies>
-      <TypeLibraryName>$(IntDir)OpenHashTab.tlb</TypeLibraryName>
-      <DllDataFileName>
-      </DllDataFileName>
-      <ValidateAllParameters>true</ValidateAllParameters>
-    </Midl>
-    <ResourceCompile>
-      <Culture>0x0409</Culture>
-      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>CI_VERSION="$(CI_VERSION)";CI_VERSION_MAJOR=$(CI_VERSION_MAJOR);CI_VERSION_MINOR=$(CI_VERSION_MINOR);CI_VERSION_PATCH=$(CI_VERSION_PATCH);_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ResourceCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <ModuleDefinitionFile>.\OpenHashTab.def</ModuleDefinitionFile>
-      <RegisterOutput>true</RegisterOutput>
-      <AdditionalOptions>/PDBALTPATH:%_PDB%  /Brepro %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>$(SolutionDir)bin\$(Configuration)\$(Platform)\Algorithms.lib;%(AdditionalDependencies)</AdditionalDependencies>
-    </Link>
-    <PreLinkEvent />
-    <Manifest>
-      <AdditionalManifestFiles>additional.manifest</AdditionalManifestFiles>
-    </Manifest>
-    <PreBuildEvent>
-      <Command>powershell -ExecutionPolicy Bypass $(SolutionDir)langcomp\langcomp.ps1 $(SolutionDir)Localization $(ProjectDir)localization.rc</Command>
-    </PreBuildEvent>
-    <PreBuildEvent>
-      <Message>Compiling localization</Message>
-    </PreBuildEvent>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>CI_VERSION="$(CI_VERSION)";CI_VERSION_MAJOR=$(CI_VERSION_MAJOR);CI_VERSION_MINOR=$(CI_VERSION_MINOR);CI_VERSION_PATCH=$(CI_VERSION_PATCH);WIN32;_WINDOWS;NDEBUG;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeTypeInfo>false</RuntimeTypeInfo>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Midl>
-      <MkTypLibCompatible>false</MkTypLibCompatible>
-      <TargetEnvironment>Win32</TargetEnvironment>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <HeaderFileName>OpenHashTab_i.h</HeaderFileName>
-      <InterfaceIdentifierFileName>OpenHashTab_i.c</InterfaceIdentifierFileName>
-      <ProxyFileName>OpenHashTab_p.c</ProxyFileName>
-      <GenerateStublessProxies>true</GenerateStublessProxies>
-      <TypeLibraryName>$(IntDir)OpenHashTab.tlb</TypeLibraryName>
-      <DllDataFileName />
-      <ValidateAllParameters>true</ValidateAllParameters>
     </Midl>
     <ResourceCompile>
-      <Culture>0x0409</Culture>
-      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>CI_VERSION="$(CI_VERSION)";CI_VERSION_MAJOR=$(CI_VERSION_MAJOR);CI_VERSION_MINOR=$(CI_VERSION_MINOR);CI_VERSION_PATCH=$(CI_VERSION_PATCH);NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ResourceCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <ModuleDefinitionFile>.\OpenHashTab.def</ModuleDefinitionFile>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-      <RegisterOutput>true</RegisterOutput>
-      <AdditionalOptions>/PDBALTPATH:%_PDB%  /Brepro %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>$(SolutionDir)bin\$(Configuration)\$(Platform)\Algorithms.lib;%(AdditionalDependencies)</AdditionalDependencies>
-    </Link>
-    <PreLinkEvent />
-    <Manifest>
-      <AdditionalManifestFiles>additional.manifest</AdditionalManifestFiles>
-    </Manifest>
-    <PreBuildEvent>
-      <Command>powershell -ExecutionPolicy Bypass $(SolutionDir)langcomp\langcomp.ps1 $(SolutionDir)Localization $(ProjectDir)localization.rc</Command>
-    </PreBuildEvent>
-    <PreBuildEvent>
-      <Message>Compiling localization</Message>
-    </PreBuildEvent>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>CI_VERSION="$(CI_VERSION)";CI_VERSION_MAJOR=$(CI_VERSION_MAJOR);CI_VERSION_MINOR=$(CI_VERSION_MINOR);CI_VERSION_PATCH=$(CI_VERSION_PATCH);_WINDOWS;NDEBUG;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeTypeInfo>false</RuntimeTypeInfo>
-      <LanguageStandard>stdcpp17</LanguageStandard>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-    </ClCompile>
-    <Midl>
-      <MkTypLibCompatible>false</MkTypLibCompatible>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <HeaderFileName>OpenHashTab_i.h</HeaderFileName>
-      <InterfaceIdentifierFileName>OpenHashTab_i.c</InterfaceIdentifierFileName>
-      <ProxyFileName>OpenHashTab_p.c</ProxyFileName>
-      <GenerateStublessProxies>true</GenerateStublessProxies>
-      <TypeLibraryName>$(IntDir)OpenHashTab.tlb</TypeLibraryName>
-      <DllDataFileName />
-      <ValidateAllParameters>true</ValidateAllParameters>
-    </Midl>
-    <ResourceCompile>
-      <Culture>0x0409</Culture>
-      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>CI_VERSION="$(CI_VERSION)";CI_VERSION_MAJOR=$(CI_VERSION_MAJOR);CI_VERSION_MINOR=$(CI_VERSION_MINOR);CI_VERSION_PATCH=$(CI_VERSION_PATCH);NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <ModuleDefinitionFile>.\OpenHashTab.def</ModuleDefinitionFile>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-      <RegisterOutput>true</RegisterOutput>
-      <AdditionalOptions>/PDBALTPATH:%_PDB%  /Brepro %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>$(SolutionDir)bin\$(Configuration)\$(Platform)\Algorithms.lib;%(AdditionalDependencies)</AdditionalDependencies>
-    </Link>
-    <PreLinkEvent />
-    <Manifest>
-      <AdditionalManifestFiles>additional.manifest</AdditionalManifestFiles>
-    </Manifest>
-    <PreBuildEvent>
-      <Command>powershell -ExecutionPolicy Bypass $(SolutionDir)langcomp\langcomp.ps1 $(SolutionDir)Localization $(ProjectDir)localization.rc</Command>
-    </PreBuildEvent>
-    <PreBuildEvent>
-      <Message>Compiling localization</Message>
-    </PreBuildEvent>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
-    <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>CI_VERSION="$(CI_VERSION)";CI_VERSION_MAJOR=$(CI_VERSION_MAJOR);CI_VERSION_MINOR=$(CI_VERSION_MINOR);CI_VERSION_PATCH=$(CI_VERSION_PATCH);_WINDOWS;NDEBUG;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeTypeInfo>false</RuntimeTypeInfo>
-      <LanguageStandard>stdcpp17</LanguageStandard>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-    </ClCompile>
-    <Midl>
-      <MkTypLibCompatible>false</MkTypLibCompatible>
-      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <HeaderFileName>OpenHashTab_i.h</HeaderFileName>
-      <InterfaceIdentifierFileName>OpenHashTab_i.c</InterfaceIdentifierFileName>
-      <ProxyFileName>OpenHashTab_p.c</ProxyFileName>
-      <GenerateStublessProxies>true</GenerateStublessProxies>
-      <TypeLibraryName>$(IntDir)OpenHashTab.tlb</TypeLibraryName>
-      <DllDataFileName>
-      </DllDataFileName>
-      <ValidateAllParameters>true</ValidateAllParameters>
-    </Midl>
-    <ResourceCompile>
-      <Culture>0x0409</Culture>
-      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>CI_VERSION="$(CI_VERSION)";CI_VERSION_MAJOR=$(CI_VERSION_MAJOR);CI_VERSION_MINOR=$(CI_VERSION_MINOR);CI_VERSION_PATCH=$(CI_VERSION_PATCH);NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ResourceCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <ModuleDefinitionFile>.\OpenHashTab.def</ModuleDefinitionFile>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-      <RegisterOutput>true</RegisterOutput>
-      <AdditionalOptions>/PDBALTPATH:%_PDB%  /Brepro %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>$(SolutionDir)bin\$(Configuration)\$(Platform)\Algorithms.lib;%(AdditionalDependencies)</AdditionalDependencies>
-    </Link>
-    <PreLinkEvent />
-    <Manifest>
-      <AdditionalManifestFiles>additional.manifest</AdditionalManifestFiles>
-    </Manifest>
-    <PreBuildEvent>
-      <Command>powershell -ExecutionPolicy Bypass $(SolutionDir)langcomp\langcomp.ps1 $(SolutionDir)Localization $(ProjectDir)localization.rc</Command>
-    </PreBuildEvent>
-    <PreBuildEvent>
-      <Message>Compiling localization</Message>
-    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="dllmain.cpp">
-      <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsManaged>
-      <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</CompileAsManaged>
-      <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">false</CompileAsManaged>
-      <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</CompileAsManaged>
-      <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</CompileAsManaged>
-      <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">false</CompileAsManaged>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-      </PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
-      </PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-      </PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-      </PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
-      </PrecompiledHeader>
-    </ClCompile>
+    <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="FileHashTask.cpp" />
     <ClCompile Include="path.cpp" />
     <ClCompile Include="Settings.cpp" />
     <ClCompile Include="OpenHashTab.cpp" />
     <ClCompile Include="OpenHashTabShlExt.cpp" />
-    <ClCompile Include="OpenHashTab_i.c">
-      <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsManaged>
-      <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</CompileAsManaged>
-      <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">false</CompileAsManaged>
-      <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</CompileAsManaged>
-      <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</CompileAsManaged>
-      <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">false</CompileAsManaged>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-      </PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
-      </PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-      </PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-      </PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
-      </PrecompiledHeader>
-    </ClCompile>
+    <ClCompile Include="OpenHashTab_i.c" />
     <ClCompile Include="MainDialog.cpp" />
     <ClCompile Include="Coordinator.cpp" />
     <ClCompile Include="Queues.cpp" />
     <ClCompile Include="SettingsDialog.cpp" />
     <ClCompile Include="Standalone.cpp" />
     <ClCompile Include="stdafx.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">Create</PrecompiledHeader>
+      <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="SumFileParser.cpp" />
     <ClCompile Include="utl.cpp" />
