@@ -32,10 +32,18 @@
 #define IDS_HASHES                      216
 #define IDC_PROGRESS                    216
 #define IDS_CLIPBOARD                   217
+#define IDC_CHECK_DISPLAY_UPPERCASE     217
 #define IDS_NOMATCH                     218
+#define IDC_CHECK_LOOK_FOR_SUMFILES     218
 #define IDS_ERROR                       219
+#define IDC_CHECK_SUMFILE_UPPERCASE     219
 #define IDS_CANCEL                      220
+#define IDC_CHECK_SUMFILE_UNIX_ENDINGS  220
 #define IDI_ICON1                       221
+#define IDC_CHECK_SUMFILE_USE_DOUBLE_SPACE 221
+#define IDC_CHECK_SUMFILE_FORWARD_SLASHES 222
+#define IDC_CHECK_SUMFILE_DOT_HASH_COMPATIBLE 223
+#define IDC_CHECK_SUMFILE_BANNER        224
 
 // Next default values for new objects
 // 
@@ -43,7 +51,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        222
 #define _APS_NEXT_COMMAND_VALUE         32768
-#define _APS_NEXT_CONTROL_VALUE         217
+#define _APS_NEXT_CONTROL_VALUE         225
 #define _APS_NEXT_SYMED_VALUE           107
 #endif
 #endif
