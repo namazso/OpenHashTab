@@ -64,7 +64,7 @@ public:
   }
 
   operator T() const { return _value; }
-  T Get() { return _value; }
+  T Get() const { return _value; }
   void Set(T v) { _value = v; Store(); }
   void SetNoSave(T v) { _value = v; }
 };
@@ -91,6 +91,4 @@ struct Settings
   {
     algorithms[algorithm->Idx()].Set(enabled);
   }
-
-  static Settings instance;
 };

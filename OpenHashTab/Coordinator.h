@@ -15,6 +15,7 @@
 //    along with OpenHashTab.  If not, see <https://www.gnu.org/licenses/>.
 #pragma once
 #include "path.h"
+#include "Settings.h"
 
 class FileHashTask;
 
@@ -54,9 +55,11 @@ public:
   void FileProgressCallback(uint64_t size_progress);
 
   // The window should probably only inspect files before processing or after all are done
-  const std::list<std::unique_ptr<FileHashTask>>& GetFiles() const { return _file_tasks; };
+  const std::list<std::unique_ptr<FileHashTask>>& GetFiles() const { return _file_tasks; }
   bool IsSumfile() const { return _is_sumfile; }
   std::pair<std::wstring, std::wstring> GetSumfileDefaultSavePathAndBaseName();
+
+  Settings settings;
 };
 
 class PropPageCoordinator : public Coordinator

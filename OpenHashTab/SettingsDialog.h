@@ -15,13 +15,16 @@
 //    along with OpenHashTab.  If not, see <https://www.gnu.org/licenses/>.
 #pragma once
 
+struct Settings;
+
 class SettingsDialog
 {
   HWND _hwnd;
   bool _done_setup = false;
+  Settings* _settings;
 
 public:
-  SettingsDialog(HWND handle, void*) : _hwnd(handle) {}
+  SettingsDialog(HWND handle, void* settings) : _hwnd(handle), _settings((Settings*)settings) {}
 
   INT_PTR DlgProc(UINT uMsg, WPARAM wParam, LPARAM lParam);
 };

@@ -20,8 +20,6 @@
 
 constexpr static auto k_reg_path = L"Software\\OpenHashTab";
 
-Settings Settings::instance{};
-
 DWORD detail::GetSettingDWORD(const char* name, DWORD default_value)
 {
   DWORD value;

@@ -22,69 +22,6 @@
 #include "Settings.h"
 #include "FileHashTask.h"
 
-static std::vector<std::uint8_t> TryGetExpectedSumForFile(const std::wstring& path)
-{
-  std::vector<std::uint8_t> hash{};
-
-  const auto file = utl::OpenForRead(path);
-  if (file == INVALID_HANDLE_VALUE)
-    return hash;
-
-  const auto file_path = path.c_str();
-  const auto file_name = (LPCWSTR)PathFindFileNameW(file_path);
-  const auto base_path = std::wstring{ file_path, file_name };
-
-  for (const auto& hasher : HashAlgorithm::g_hashers)
-  {
-    if (!Settings::instance.IsHashEnabled(&hasher))
-      continue;
-
-    auto sumfile_path = path + L".";
-    auto handle = INVALID_HANDLE_VALUE;
-    for (auto it = hasher.GetExtensions(); handle == INVALID_HANDLE_VALUE && *it; ++it)
-      handle = utl::OpenForRead(sumfile_path + utl::UTF8ToTString(*it));
-
-    if (handle != INVALID_HANDLE_VALUE)
-    {
-      FileSumList fsl;
-      TryParseSumFile(handle, fsl);
-      CloseHandle(handle);
-      if (fsl.size() == 1)
-      {
-        const auto& file_sum = *fsl.begin();
-
-        auto valid = false;
-
-        if (file_sum.first.empty())
-        {
-          valid = true;
-        }
-        else
-        {
-          const auto file_sum_path = base_path + utl::UTF8ToTString(file_sum.first.c_str());
-          const auto sum_handle = utl::OpenForRead(file_sum_path);
-          if (sum_handle != INVALID_HANDLE_VALUE)
-          {
-            const auto same = utl::AreFilesTheSame(sum_handle, file);
-            CloseHandle(sum_handle);
-            if (same)
-              valid = true;
-          }
-        }
-
-        if (valid)
-        {
-          hash = file_sum.second;
-          break;
-        }
-      }
-    }
-  }
-
-  CloseHandle(file);
-  return hash;
-}
-
 Coordinator::Coordinator(std::list<std::wstring> files)
   : _files_raw(std::move(files)) {}
 

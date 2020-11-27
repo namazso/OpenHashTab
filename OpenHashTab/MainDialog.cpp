@@ -253,7 +253,7 @@ INT_PTR MainDialog::DlgProc(UINT msg, WPARAM wparam, LPARAM lparam)
           MAKEINTRESOURCEW(IDD_SETTINGS),
           _hwnd,
           &utl::DlgProcClassBinder<SettingsDialog>,
-          0
+          (LPARAM)&_prop_page->settings
         );
       break;
     }
@@ -332,16 +332,15 @@ void MainDialog::InitDialog()
     ListView_InsertColumn(_hwnd_HASH_LIST, i, &cols[i]);
   }
 
-  const auto combobox = _hwnd_COMBO_EXPORT;
-  for (const auto& algorithm : HashAlgorithm::g_hashers)
-    if (Settings::instance.IsHashEnabled(&algorithm))
-      ComboBox_AddString(combobox, utl::UTF8ToTString(algorithm.GetName()).c_str());
-
-  ComboBox_SetCurSel(combobox, 0);
-
   SendMessageW(_hwnd_PROGRESS, PBM_SETRANGE32, 0, Coordinator::k_progress_resolution);
 
   _prop_page->AddFiles();
+
+  for (const auto& algorithm : HashAlgorithm::g_hashers)
+    if (_prop_page->settings.IsHashEnabled(&algorithm))
+      ComboBox_AddString(_hwnd_COMBO_EXPORT, utl::UTF8ToTString(algorithm.GetName()).c_str());
+
+  ComboBox_SetCurSel(_hwnd_COMBO_EXPORT, 0);
 
   if (_prop_page->IsSumfile())
     SetTextFromTable(_hwnd_STATIC_SUMFILE, IDS_SUMFILE);

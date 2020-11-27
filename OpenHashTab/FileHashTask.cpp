@@ -115,7 +115,7 @@ FileHashTask::FileHashTask(const std::wstring& path, Coordinator* prop_page, std
   for (auto i = 0u; i < HashAlgorithm::k_count; ++i)
   {
     _lparam_idx[i] = i;
-    if (Settings::instance.IsHashEnabled(i))
+    if (_prop_page->settings.IsHashEnabled(i))
       _hash_contexts[i].reset(HashAlgorithm::g_hashers[i].MakeContext());
   }
 
