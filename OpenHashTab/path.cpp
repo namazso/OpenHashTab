@@ -57,9 +57,9 @@
 }*/
 
 
-/*static std::vector<std::uint8_t> TryGetExpectedSumForFile(const std::wstring& path)
+/*static std::vector<uint8_t> TryGetExpectedSumForFile(const std::wstring& path)
 {
-  std::vector<std::uint8_t> hash{};
+  std::vector<uint8_t> hash{};
 
   const auto file = utl::OpenForRead(path);
   if (file == INVALID_HANDLE_VALUE)
@@ -138,7 +138,7 @@ static std::wstring NormalizePath(std::wstring_view path)
       nullptr
     );
     if (ret == 0)
-      return utl::MakePathLongCompatible(std::move(long_compat));
+      return utl::MakePathLongCompatible(long_compat);
     full = buf;
   }
   auto slash = full.rbegin();
@@ -160,22 +160,19 @@ static std::wstring NormalizePath(std::wstring_view path)
   }
 }
 
-// some resource:
-// https://googleprojectzero.blogspot.com/2016/02/the-definitive-guide-on-win32-to-nt.html
-
 ProcessedFileList ProcessEverything(std::list<std::wstring> list)
 {
   ProcessedFileList pfl;
 
   pfl.sumfile_type = -2;
-  std::list<std::pair<std::wstring, std::vector<std::uint8_t>>> fsl_absolute;
+  std::list<std::pair<std::wstring, std::vector<uint8_t>>> fsl_absolute;
 
   if (list.size() == 1)
   {
     auto& file = *list.begin();
 
     const auto sumfile_path = file.c_str();
-    const auto sumfile_name = (LPCWSTR)PathFindFileNameW(sumfile_path);
+    const auto sumfile_name = static_cast<LPCWSTR>(PathFindFileNameW(sumfile_path));
     const auto sumfile_base_path = std::wstring{ sumfile_path, sumfile_name };
 
     // if there is only one file that exists, the base path is surely the containing dir
@@ -228,7 +225,7 @@ ProcessedFileList ProcessEverything(std::list<std::wstring> list)
 
     auto base = std::wstring{ begin(front), mismatch.first };
 
-    const auto slashn = base.rfind(L"\\");
+    const auto slashn = base.rfind(L'\\');
 
     if (slashn != std::wstring::npos)
       base.resize(slashn);
@@ -266,7 +263,7 @@ ProcessedFileList ProcessEverything(std::list<std::wstring> list)
 
   for(const auto& file : list)
   {
-    const std::wstring normalized = NormalizePath(file);
+    const auto normalized = NormalizePath(file);
 
     if(PathIsDirectoryW(normalized.c_str()))
     {
@@ -299,7 +296,7 @@ ProcessedFileList ProcessEverything(std::list<std::wstring> list)
       }
       // BUG: We just leave it in as file if we can't open so some random error message will be displayed
       if (error && error != ERROR_NO_MORE_FILES)
-        goto not_a_directory;
+        goto not_a_directory;  // NOLINT(cppcoreguidelines-avoid-goto, hicpp-avoid-goto)
     }
     else
     {

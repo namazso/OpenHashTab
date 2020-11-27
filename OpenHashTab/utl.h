@@ -139,7 +139,7 @@ namespace utl
   }
 
   template <typename Char>
-  Char hex(std::uint8_t n)
+  Char hex(uint8_t n)
   {
     if (n < 0xA)
       return Char('0') + n;
@@ -147,7 +147,7 @@ namespace utl
   };
 
   template <typename Char>
-  std::uint8_t unhex(Char ch)
+  uint8_t unhex(Char ch)
   {
     if (ch >= 0x80 || ch <= 0)
       return 0xFF;
@@ -167,7 +167,7 @@ namespace utl
   };
 
   template <typename Char>
-  void HashBytesToString(Char* str, const std::vector<std::uint8_t>& hash)
+  void HashBytesToString(Char* str, const std::vector<uint8_t>& hash)
   {
     for (auto b : hash)
     {
@@ -178,7 +178,7 @@ namespace utl
   }
 
   template <typename Char>
-  std::vector<std::uint8_t> HashStringToBytes(Char* str)
+  std::vector<uint8_t> HashStringToBytes(Char* str)
   {
     auto it = str;
     do
@@ -186,7 +186,7 @@ namespace utl
         break;
     while (++it);
 
-    std::vector<std::uint8_t> res;
+    std::vector<uint8_t> res;
 
     uint8_t byte = 0;
     for (auto i = 0; it[i]; ++i)
@@ -248,7 +248,7 @@ namespace utl
 
   std::wstring SaveDialog(HWND hwnd, LPCWSTR defpath, LPCWSTR defname);
 
-  DWORD SaveMemoryAsFile(LPCWSTR path, const void* p, size_t size);
+  DWORD SaveMemoryAsFile(LPCWSTR path, const void* p, DWORD size);
 
   std::wstring UTF8ToTString(const char* p);
   std::string TStringToUTF8(LPCWSTR p);

@@ -59,7 +59,7 @@ class MainDialog
     ColIndex_Hash
   };
 
-  INT_PTR CustomDrawListView(LPARAM lparam, HWND list) const;
+  static INT_PTR CustomDrawListView(LPARAM lparam, HWND list);
 
   std::string GetSumfileAsString(size_t hasher, bool rn);
   void SetTempStatus(LPCWSTR status, UINT time);

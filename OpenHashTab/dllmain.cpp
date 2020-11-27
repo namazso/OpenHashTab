@@ -15,9 +15,7 @@
 //    along with OpenHashTab.  If not, see <https://www.gnu.org/licenses/>.
 #include "stdafx.h"
 
-#include "resource.h"
 #include "dllmain.h"
-#include "Queues.h"
 
 COpenHashTabModule _AtlModule;
 

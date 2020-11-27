@@ -42,32 +42,38 @@ HWND CreateDialogFromChildDialogResourceParam(
     const auto hGlobal = LoadResource(hInstance, hRsrc);
     if (hGlobal)
     {
-      const auto pOrigTemplate = (const DLGTEMPLATEEX*)LockResource(hGlobal);
+      const auto pOrigTemplate = static_cast<const DLGTEMPLATEEX*>(LockResource(hGlobal));
       if (pOrigTemplate)
       {
         const auto dwSize = SizeofResource(hInstance, hRsrc);
         if(dwSize)
         {
-          const auto pTemplate = (DLGTEMPLATEEX*)malloc(dwSize);
-          if(pTemplate)
+          const auto pTemplate = static_cast<DLGTEMPLATE*>(malloc(dwSize));
+          const auto pTemplateEx = reinterpret_cast<DLGTEMPLATEEX*>(pTemplate);
+          if(pTemplateEx)
           {
-            memcpy(pTemplate, pOrigTemplate, dwSize);
+            memcpy(pTemplateEx, pOrigTemplate, dwSize);
 
-            if(pTemplate->signature == 0xFFFF)
+            PDWORD pStyle, pexStyle;
+
+            if(pTemplateEx->signature == 0xFFFF)
             {
-              // I have NO IDEA what 0x48 mean, but apparently stuff works with this
-              pTemplate->style = WS_POPUPWINDOW | WS_CAPTION | 0x00000048 | WS_THICKFRAME;
-              pTemplate->exStyle = WS_EX_WINDOWEDGE;
+              pStyle = &pTemplateEx->style;
+              pexStyle = &pTemplateEx->exStyle;
             }
             else
             {
-              ((DLGTEMPLATE*)pTemplate)->style = WS_POPUPWINDOW | WS_CAPTION | 0x00000048 | WS_THICKFRAME;
-              ((DLGTEMPLATE*)pTemplate)->dwExtendedStyle = WS_EX_WINDOWEDGE;
+              pStyle = &pTemplate->style;
+              pexStyle = &pTemplate->dwExtendedStyle;
             }
 
-            hwnd = CreateDialogIndirectParamW(hInstance, (LPDLGTEMPLATE)pTemplate, hWndParent, lpDialogFunc, dwInitParam);
+            // I have NO IDEA what 0x48 mean, but apparently stuff works with this
+            *pStyle = WS_POPUPWINDOW | WS_CAPTION | 0x00000048 | WS_THICKFRAME;
+            *pexStyle = WS_EX_WINDOWEDGE;
 
-            free(pTemplate);
+            hwnd = CreateDialogIndirectParamW(hInstance, pTemplate, hWndParent, lpDialogFunc, dwInitParam);
+
+            free(pTemplateEx);
           }
         }
       }
@@ -79,10 +85,6 @@ HWND CreateDialogFromChildDialogResourceParam(
 
 // rundll32 OpenHashTab.dll,StandaloneEntry <args>
 extern "C" __declspec(dllexport) void CALLBACK StandaloneEntryW(
-//  _In_      HINSTANCE hInstance,
-//  _In_opt_  HINSTANCE hPrevInstance,
-//  _In_      LPCSTR    lpCmdLine,
-//  _In_      int       nShowCmd
   _In_  HWND      hWnd,
   _In_  HINSTANCE hRunDLLInstance,
   _In_  LPCWSTR   lpCmdLine,
@@ -103,22 +105,11 @@ extern "C" __declspec(dllexport) void CALLBACK StandaloneEntryW(
 
   auto argc = 0;
   const auto argv = CommandLineToArgvW(lpCmdLine, &argc);
-  std::list<std::wstring> files{argv, argv + argc};
+  const std::list<std::wstring> files{argv, argv + argc};
   LocalFree(argv);
 
   if (files.empty())
     return;
-
-  /*const auto pfl = ProcessEverything(std::move(files));
-  std::list<std::wstring> pfl_filelist;
-  for (auto& e : pfl.files)
-    pfl_filelist.push_back(e.first);
-
-  std::wstringstream ss;
-  ss << pfl.base_path << std::endl;
-  for (auto& e : pfl.files)
-    ss << e.second.relative_path << " -> " << e.first << std::endl;
-  utl::FormattedMessageBox(nullptr, L"debug", MB_OK, L"%s", ss.str().c_str());*/
 
   const auto coordinator = new StandaloneCoordinator(files);
 
@@ -127,7 +118,7 @@ extern "C" __declspec(dllexport) void CALLBACK StandaloneEntryW(
     MAKEINTRESOURCEW(IDD_OPENHASHTAB_PROPPAGE),
     hWnd,
     &utl::DlgProcClassBinder<MainDialog>,
-    (LPARAM)coordinator
+    reinterpret_cast<LPARAM>(coordinator)
   );
   ShowWindow(dialog, nShowCmd);
 

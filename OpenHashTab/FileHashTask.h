@@ -86,7 +86,7 @@ class FileHashTask
   int _match_state{};
   bool _cancelled{};
 
-  uint8_t _lparam_idx[HashAlgorithm::k_count];
+  uint8_t _lparam_idx[HashAlgorithm::k_count]{};
 
 public:
   FileHashTask(const FileHashTask&) = delete;
@@ -128,10 +128,10 @@ private:
   }
 
 public:
-  LPARAM ToLparam(size_t hasher) const { return (LPARAM)&_lparam_idx[hasher]; }
+  LPARAM ToLparam(size_t hasher) const { return reinterpret_cast<LPARAM>(&_lparam_idx[hasher]); }
   static std::pair<FileHashTask*, size_t> FromLparam(LPARAM lparam)
   {
-    const auto lp = (const std::uint8_t*)lparam;
+    const auto lp = reinterpret_cast<const uint8_t*>(lparam);
     return { CONTAINING_RECORD(lp - *lp, FileHashTask, _lparam_idx), *lp };
   }
 

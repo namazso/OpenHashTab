@@ -56,7 +56,7 @@ HRESULT STDMETHODCALLTYPE COpenHashTabShlExt::Initialize(
     return E_INVALIDARG;
 
   // Get an HDROP handle.
-  const auto drop = (HDROP)GlobalLock(stg.hGlobal);
+  const auto drop = static_cast<HDROP>(GlobalLock(stg.hGlobal));
 
   if (!drop)
   {
@@ -77,7 +77,7 @@ HRESULT STDMETHODCALLTYPE COpenHashTabShlExt::Initialize(
     wchar_t file_name[PATHCCH_MAX_CCH];
 
     // Get the next filename.
-    if (0 == DragQueryFileW(drop, i, file_name, (UINT)std::size(file_name)))
+    if (0 == DragQueryFileW(drop, i, file_name, static_cast<UINT>(std::size(file_name))))
       continue;
 
     // Add the filename to our list of files to act on.
@@ -117,7 +117,7 @@ HRESULT STDMETHODCALLTYPE COpenHashTabShlExt::AddPages(
   psp.hInstance = _AtlBaseModule.GetResourceInstance();
   psp.pszTemplate = MAKEINTRESOURCEW(IDD_OPENHASHTAB_PROPPAGE);
   psp.pszTitle = tab_name.c_str();
-  psp.pcRefParent = (UINT*)&_AtlModule.m_nLockCnt;
+  psp.pcRefParent = reinterpret_cast<UINT*>(&_AtlModule.m_nLockCnt);
 
   const auto hpage = utl::MakePropPage<PropPageCoordinator, MainDialog>(psp, _files_raw);
 

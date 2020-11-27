@@ -18,7 +18,6 @@
 #include "Coordinator.h"
 #include "utl.h"
 #include "wnd.h"
-#include "SumFileParser.h"
 #include "Settings.h"
 #include "FileHashTask.h"
 
@@ -65,7 +64,7 @@ unsigned Coordinator::Dereference()
   return references;
 }
 
-void Coordinator::AddFile(std::wstring path, const ProcessedFileList::FileData& fd)
+void Coordinator::AddFile(const std::wstring& path, const ProcessedFileList::FileData& fd)
 {
   // BUG: we ignore what kind of hash we're looking for for now
   const auto expected = !fd.expected_unknown_hash.empty()
@@ -75,7 +74,7 @@ void Coordinator::AddFile(std::wstring path, const ProcessedFileList::FileData& 
         return a.size() < b.size();
       });
 
-  const auto task = new FileHashTask(std::move(path), this, fd.relative_path, expected);
+  const auto task = new FileHashTask(path, this, fd.relative_path, expected);
   _size_total += task->GetSize();
   _file_tasks.emplace_back(task);
 }

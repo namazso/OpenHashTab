@@ -127,7 +127,7 @@ public:
       const auto hexchar = utl::unhex(c);
       if (hexchar != 0xFF)
       {
-        _half_byte = hexchar << 4;
+        _half_byte = static_cast<uint8_t>(hexchar << 4);
         _state = State::Hash2;
       }
       else
@@ -190,7 +190,7 @@ public:
         _state = State::Invalid;
         break;
       default:
-        _current_filename += char(c);
+        _current_filename += static_cast<char>(c);
         break;
       }
       break;
@@ -215,7 +215,7 @@ DWORD TryParseSumFile(HANDLE h, FileSumList& output)
   if (fi.nFileSizeHigh > 0 || fi.nFileSizeLow > k_max_sumfile_size || fi.nFileSizeLow == 0)
     return ERROR_SUCCESS;
 
-  const auto size = size_t(fi.nFileSizeLow);
+  const auto size = static_cast<size_t>(fi.nFileSizeLow);
   const auto mapping = CreateFileMappingW(
     h,
     nullptr,
@@ -242,7 +242,7 @@ DWORD TryParseSumFile(HANDLE h, FileSumList& output)
   }
 
   SumFileParser sfp;
-  const auto first = (char*)address;
+  const auto first = static_cast<char*>(address);
   const auto last = first + size;
   for (auto it = first; it != last; ++it)
     if (!sfp.Process(*it))

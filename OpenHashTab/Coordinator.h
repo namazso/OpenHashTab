@@ -26,7 +26,7 @@ public:
 
 private:
   std::list<std::wstring> _files_raw;
-  ProcessedFileList _files;
+  ProcessedFileList _files{};
   HWND _window{};
   uint64_t _size_total{};
   std::atomic<uint64_t> _size_progressed{};
@@ -36,7 +36,7 @@ private:
   std::atomic<unsigned> _files_not_finished{};
   bool _is_sumfile{};
 
-  void AddFile(std::wstring path, const ProcessedFileList::FileData& fd);
+  void AddFile(const std::wstring& path, const ProcessedFileList::FileData& fd);
 
 public:
   Coordinator(std::list<std::wstring> files);

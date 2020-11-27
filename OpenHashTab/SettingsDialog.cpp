@@ -31,7 +31,7 @@ INT_PTR SettingsDialog::DlgProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 
     const auto list = GetDlgItem(_hwnd, IDC_ALGORITHM_LIST);
     ListView_SetExtendedListViewStyleEx(list, LVS_EX_CHECKBOXES, LVS_EX_CHECKBOXES);
-    for (auto& algorithm : HashAlgorithm::g_hashers)
+    for (const auto& algorithm : HashAlgorithm::g_hashers)
     {
       const auto name = utl::UTF8ToTString(algorithm.GetName());
       LVITEMW lvitem
@@ -41,11 +41,11 @@ INT_PTR SettingsDialog::DlgProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
         0,
         0,
         0,
-        (LPWSTR)L""
+        const_cast<LPWSTR>(L"")
       };
-      lvitem.lParam = (LPARAM)&algorithm;
+      lvitem.lParam = reinterpret_cast<LPARAM>(&algorithm);
       const auto item = ListView_InsertItem(list, &lvitem);
-      ListView_SetItemText(list, item, 0, (LPWSTR)name.c_str());
+      ListView_SetItemText(list, item, 0, const_cast<LPWSTR>(name.c_str()));
       ListView_SetCheckState(list, item, _settings->algorithms[algorithm.Idx()]);
     }
     _done_setup = true;
@@ -63,17 +63,17 @@ INT_PTR SettingsDialog::DlgProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
   case WM_NOTIFY:
     if(pnmhdr->idFrom == IDC_ALGORITHM_LIST && pnmhdr->code == LVN_ITEMCHANGED && _done_setup)
     {
-      const auto pnmlv = (LPNMLISTVIEW)lParam;
+      const auto pnmlv = reinterpret_cast<LPNMLISTVIEW>(lParam);
       const auto idx = pnmlv->iItem;
       const auto list = pnmhdr->hwndFrom;
-      const auto check = (bool)ListView_GetCheckState(list, idx);
+      const auto check = static_cast<bool>(ListView_GetCheckState(list, idx));
       LVITEMW lvitem
       {
         LVIF_PARAM,
-        (int)idx
+        static_cast<int>(idx)
       };
       ListView_GetItem(list, &lvitem);
-      const auto algorithm = (const HashAlgorithm*)lvitem.lParam;
+      const auto algorithm = reinterpret_cast<const HashAlgorithm*>(lvitem.lParam);
       _settings->algorithms[algorithm->Idx()].Set(check);
       return TRUE;
     }

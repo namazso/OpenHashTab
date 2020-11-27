@@ -24,15 +24,15 @@ bool utl::AreFilesTheSame(HANDLE a, HANDLE b)
     if (const auto kernel32 = GetModuleHandleW(L"kernel32"))
     {
       using fn_t = decltype(GetFileInformationByHandleEx);
-      if (const auto pfn = (fn_t*)GetProcAddress(kernel32, "GetFileInformationByHandleEx"))
+      if (const auto pfn = reinterpret_cast<fn_t*>(GetProcAddress(kernel32, "GetFileInformationByHandleEx")))
       {
-        typedef struct _FILE_ID_INFO {
+        struct xFILE_ID_INFO {
           ULONGLONG VolumeSerialNumber;
           FILE_ID_128 FileId;
-        } FILE_ID_INFO;
-        constexpr static auto FileIdInfo = (FILE_INFO_BY_HANDLE_CLASS)18;
+        };
+        constexpr static auto FileIdInfo = static_cast<FILE_INFO_BY_HANDLE_CLASS>(18);
 
-        FILE_ID_INFO fiia, fiib;
+        xFILE_ID_INFO fiia{}, fiib{};
 
         if(pfn(a, FileIdInfo, &fiia, sizeof(fiia)) && pfn(b, FileIdInfo, &fiib, sizeof(fiib)))
         {
@@ -75,21 +75,21 @@ std::wstring utl::CanonicalizePath(const std::wstring& path)
   {
     if (const auto kernelbase = GetModuleHandleW(L"kernelbase"))
       if (const auto fn = GetProcAddress(kernelbase, "PathAllocCanonicalize"))
-        return (tPathAllocCanonicalize)fn;
-    return (tPathAllocCanonicalize)nullptr;
+        return reinterpret_cast<tPathAllocCanonicalize>(fn);
+    return static_cast<tPathAllocCanonicalize>(nullptr);
   } ();
 
   if (pPathAllocCanonicalize)
   {
     PWSTR outpath;
     const auto ret = pPathAllocCanonicalize(
-      (PCWSTR)path.c_str(), // cast needed for non-UNICODE, where this will never run
+      path.c_str(),
       PATHCCH_ALLOW_LONG_PATHS | PATHCCH_FORCE_ENABLE_LONG_NAME_PROCESS,
       &outpath
     );
     if (ret == S_OK)
     {
-      const auto result = std::wstring{ (LPCWSTR)outpath };
+      auto result = std::wstring{ outpath };
       LocalFree(outpath);
       return result;
     }
@@ -119,7 +119,7 @@ HANDLE utl::OpenForRead(const std::wstring& file, bool async)
 
 DWORD utl::SetClipboardText(HWND hwnd, LPCWSTR text)
 {
-  DWORD error = ERROR_SUCCESS;
+  DWORD error;
 
   if (OpenClipboard(hwnd))
   {
@@ -130,7 +130,7 @@ DWORD utl::SetClipboardText(HWND hwnd, LPCWSTR text)
     if (const auto cb = GlobalAlloc(GMEM_MOVEABLE, (len + 1) * sizeof(wchar_t)))
     {
       // Lock the handle and copy the text to the buffer. 
-      if (const auto lcb = (LPWSTR)GlobalLock(cb))
+      if (const auto lcb = static_cast<LPWSTR>(GlobalLock(cb)))
       {
         memcpy(lcb, text, (len + 1) * sizeof(wchar_t));
         const auto ref = GlobalUnlock(cb);
@@ -164,7 +164,7 @@ std::wstring utl::GetClipboardText(HWND hwnd)
     const auto hglb = GetClipboardData(CF_UNICODETEXT);
     if(hglb)
     {
-      const auto text = (LPCWSTR)GlobalLock(hglb);
+      const auto text = static_cast<LPCWSTR>(GlobalLock(hglb));
 
       if(text)
       {
@@ -186,7 +186,7 @@ std::wstring utl::SaveDialog(HWND hwnd, LPCWSTR defpath, LPCWSTR defname)
 
   OPENFILENAME of = { sizeof(OPENFILENAME), hwnd };
   of.lpstrFile = name;
-  of.nMaxFile = (DWORD)std::size(name);
+  of.nMaxFile = static_cast<DWORD>(std::size(name));
   of.lpstrInitialDir = defpath;
   of.Flags = OFN_EXPLORER | OFN_OVERWRITEPROMPT;
   if (!GetSaveFileNameW(&of))
@@ -208,7 +208,7 @@ std::wstring utl::SaveDialog(HWND hwnd, LPCWSTR defpath, LPCWSTR defname)
   return { name };
 }
 
-DWORD utl::SaveMemoryAsFile(LPCWSTR path, const void* p, size_t size)
+DWORD utl::SaveMemoryAsFile(LPCWSTR path, const void* p, DWORD size)
 {
   const auto h = CreateFileW(
     MakePathLongCompatible(path).c_str(),
@@ -229,7 +229,7 @@ DWORD utl::SaveMemoryAsFile(LPCWSTR path, const void* p, size_t size)
   }
 
   DWORD written = 0;
-  if (!WriteFile(h, p, (DWORD)size, &written, nullptr))
+  if (!WriteFile(h, p, size, &written, nullptr))
     error = GetLastError();
 
   CloseHandle(h);
@@ -304,7 +304,7 @@ std::wstring utl::ErrorToString(DWORD error)
     error,
     MAKELANGID(LANG_USER_DEFAULT, SUBLANG_DEFAULT),
     buf,
-    (DWORD)std::size(buf),
+    static_cast<DWORD>(std::size(buf)),
     nullptr
   );
   std::wstring wstr{ buf };

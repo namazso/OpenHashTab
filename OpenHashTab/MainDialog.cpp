@@ -72,9 +72,9 @@ static HashColorType HashColorTypeForFile(FileHashTask* file, size_t hasher)
   if (match == FileHashTask::MatchState_Mismatch)
     return HashColorType::Mismatch;
 
-  if (match != FileHashTask::MatchState_None && (size_t)match == hasher)
+  if (match != FileHashTask::MatchState_None && static_cast<size_t>(match) == hasher)
   {
-    if (HashAlgorithm::g_hashers[(size_t)match].IsSecure())
+    if (HashAlgorithm::g_hashers[hasher].IsSecure())
       return HashColorType::Match;
     
     return HashColorType::Insecure;
@@ -100,7 +100,7 @@ static int ComboBoxGetSelectedAlgorithmIdx(HWND combo)
 
 MainDialog::MainDialog(HWND hwnd, void* prop_page)
   : _hwnd(hwnd)
-  , _prop_page((Coordinator*)prop_page)
+  , _prop_page(static_cast<Coordinator*>(prop_page))
 {
   _prop_page->RegisterWindow(hwnd);
 }
@@ -111,13 +111,13 @@ MainDialog::~MainDialog()
   _prop_page->UnregisterWindow();
 }
 
-INT_PTR MainDialog::CustomDrawListView(LPARAM lparam, HWND list) const
+INT_PTR MainDialog::CustomDrawListView(LPARAM lparam, HWND list)
 {
-  const auto lplvcd = (LPNMLVCUSTOMDRAW)lparam;
+  const auto lplvcd = reinterpret_cast<LPNMLVCUSTOMDRAW>(lparam);
 
   switch (lplvcd->nmcd.dwDrawStage)
   {
-  case CDDS_PREPAINT:
+  case CDDS_PREPAINT:  // NOLINT(bugprone-branch-clone)
     return CDRF_NOTIFYITEMDRAW;
 
   case CDDS_ITEMPREPAINT:
@@ -132,7 +132,7 @@ INT_PTR MainDialog::CustomDrawListView(LPARAM lparam, HWND list) const
       LVITEMW lvitem
       {
         LVIF_PARAM,
-        (int)lplvcd->nmcd.dwItemSpec
+        static_cast<int>(lplvcd->nmcd.dwItemSpec)
       };
       ListView_GetItem(list, &lvitem);
       const auto file_hash = FileHashTask::FromLparam(lvitem.lParam);
@@ -155,6 +155,7 @@ INT_PTR MainDialog::CustomDrawListView(LPARAM lparam, HWND list) const
   return CDRF_DODEFAULT;
 }
 
+
 INT_PTR MainDialog::DlgProc(UINT msg, WPARAM wparam, LPARAM lparam)
 {
   auto ret = FALSE;
@@ -167,7 +168,7 @@ INT_PTR MainDialog::DlgProc(UINT msg, WPARAM wparam, LPARAM lparam)
 
   case wnd::WM_USER_FILE_FINISHED:
     if (wparam == wnd::k_user_magic_wparam)
-      OnFileFinished((FileHashTask*)lparam);
+      OnFileFinished(reinterpret_cast<FileHashTask*>(lparam));
     break;
 
   case wnd::WM_USER_ALL_FILES_FINISHED:
@@ -187,7 +188,7 @@ INT_PTR MainDialog::DlgProc(UINT msg, WPARAM wparam, LPARAM lparam)
 
   case WM_NOTIFY:
   {
-    const auto phdr = (LPNMHDR)lparam;
+    const auto phdr = reinterpret_cast<LPNMHDR>(lparam);
     const auto list = phdr->hwndFrom;
     switch (phdr->idFrom)
     {
@@ -200,7 +201,7 @@ INT_PTR MainDialog::DlgProc(UINT msg, WPARAM wparam, LPARAM lparam)
 
       case NM_DBLCLK:
       {
-        const auto lpnmia = (LPNMITEMACTIVATE)lparam;
+        const auto lpnmia = reinterpret_cast<LPNMITEMACTIVATE>(lparam);
         LVHITTESTINFO lvhtinfo = { lpnmia->ptAction };
         ListView_SubItemHitTest(list, &lvhtinfo);
         OnListDoubleClick(lvhtinfo.iItem, lvhtinfo.iSubItem);
@@ -217,6 +218,7 @@ INT_PTR MainDialog::DlgProc(UINT msg, WPARAM wparam, LPARAM lparam)
       default:
         break;
       }
+      break;
     default:
       break;
     }
@@ -239,7 +241,7 @@ INT_PTR MainDialog::DlgProc(UINT msg, WPARAM wparam, LPARAM lparam)
         const auto idx = ComboBoxGetSelectedAlgorithmIdx(_hwnd_COMBO_EXPORT);
         if (idx >= 0)
         {
-          const auto wstr = utl::UTF8ToTString(GetSumfileAsString((size_t)idx, true).c_str());
+          const auto wstr = utl::UTF8ToTString(GetSumfileAsString(static_cast<size_t>(idx), true).c_str());
           utl::SetClipboardText(_hwnd, wstr.c_str());
         }
       }
@@ -253,7 +255,7 @@ INT_PTR MainDialog::DlgProc(UINT msg, WPARAM wparam, LPARAM lparam)
           MAKEINTRESOURCEW(IDD_SETTINGS),
           _hwnd,
           &utl::DlgProcClassBinder<SettingsDialog>,
-          (LPARAM)&_prop_page->settings
+          reinterpret_cast<LPARAM>(&_prop_page->settings)
         );
       break;
     }
@@ -300,7 +302,7 @@ void MainDialog::InitDialog()
   SetClassLongPtrW(
     _hwnd,
     GCLP_HICON,
-    (LONG_PTR)LoadIconW(utl::GetInstance(), MAKEINTRESOURCEW(IDI_ICON1))
+    reinterpret_cast<LONG_PTR>(LoadIconW(utl::GetInstance(), MAKEINTRESOURCEW(IDI_ICON1)))
   );
 
   SetTextFromTable(_hwnd_STATIC_CHECK_AGAINST, IDS_CHECK_AGAINST);
@@ -313,7 +315,7 @@ void MainDialog::InitDialog()
   if (IsWindows8OrGreater())
     SetWindowTextW(_hwnd_BUTTON_SETTINGS, L"\u2699");
 
-  SendMessageW(_hwnd_HASH_LIST, LVM_SETTEXTBKCOLOR, 0, (LPARAM)CLR_NONE);
+  SendMessageW(_hwnd_HASH_LIST, LVM_SETTEXTBKCOLOR, 0, CLR_NONE);
   SendMessageW(_hwnd_HASH_LIST, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, LVS_EX_FULLROWSELECT);
 
   // we put the string table ID in the text length field, to fix it up later
@@ -328,7 +330,7 @@ void MainDialog::InitDialog()
   {
     auto& col = cols[i];
     const auto wstr = utl::GetString(col.cchTextMax);
-    col.pszText = (LPWSTR)wstr.c_str();
+    col.pszText = const_cast<LPWSTR>(wstr.c_str());
     ListView_InsertColumn(_hwnd_HASH_LIST, i, &cols[i]);
   }
 
@@ -366,13 +368,13 @@ void MainDialog::OnFileFinished(FileHashTask* file)
       0,
       0,
       0,
-      (LPWSTR)L""
+      const_cast<LPWSTR>(L"")
     };
     lvitem.lParam = lparam;
     const auto item = ListView_InsertItem(list, &lvitem);
-    ListView_SetItemText(list, item, ColIndex_Filename, (LPWSTR)filename);
-    ListView_SetItemText(list, item, ColIndex_Algorithm, (LPWSTR)algorithm);
-    ListView_SetItemText(list, item, ColIndex_Hash, (LPWSTR)hash);
+    ListView_SetItemText(list, item, ColIndex_Filename, const_cast<LPWSTR>(filename));
+    ListView_SetItemText(list, item, ColIndex_Algorithm, const_cast<LPWSTR>(algorithm));
+    ListView_SetItemText(list, item, ColIndex_Hash, const_cast<LPWSTR>(hash));
   };
 
   if (const auto error = file->GetError(); error == ERROR_SUCCESS)
@@ -452,7 +454,7 @@ void MainDialog::OnExportClicked()
     const auto ext = *exts ? std::wstring{ L"." } +utl::UTF8ToTString(*exts) : std::wstring{};
     const auto path_and_basename = _prop_page->GetSumfileDefaultSavePathAndBaseName();
     const auto name = path_and_basename.second + ext;
-    const auto content = GetSumfileAsString((size_t)idx, false);
+    const auto content = GetSumfileAsString(static_cast<size_t>(idx), false);
     const auto sumfile_path = utl::SaveDialog(_hwnd, path_and_basename.first.c_str(), name.c_str());
     if (!sumfile_path.empty())
     {
@@ -500,7 +502,7 @@ void MainDialog::OnListDoubleClick(int item, int subitem)
     return;
   const auto list = _hwnd_HASH_LIST;
   wchar_t hash[4096]; // It's possible it will hold an error message
-  ListView_GetItemText(list, item, ColIndex_Hash, hash, (int)std::size(hash));
+  ListView_GetItemText(list, item, ColIndex_Hash, hash, static_cast<int>(std::size(hash)));
   if (subitem == ColIndex_Hash)
   {
     utl::SetClipboardText(_hwnd, hash);
@@ -508,7 +510,7 @@ void MainDialog::OnListDoubleClick(int item, int subitem)
   else
   {
     const auto name = std::make_unique<std::array<wchar_t, PATHCCH_MAX_CCH>>();
-    ListView_GetItemText(list, item, ColIndex_Filename, name->data(), (int)name->size());
+    ListView_GetItemText(list, item, ColIndex_Filename, name->data(), static_cast<int>(name->size()));
     utl::SetClipboardText(_hwnd, (std::wstring{ hash } +L" *" + name->data()).c_str());
   }
   SetTempStatus(utl::GetString(IDS_COPIED).c_str(), 1000);
@@ -524,7 +526,7 @@ void MainDialog::OnListRightClick(bool dblclick)
   std::basic_stringstream<wchar_t> clipboard;
   const auto list_get_text = [&](int idx, int subitem)
   {
-    ListView_GetItemText(list, idx, subitem, buf->data(), (int)buf->size());
+    ListView_GetItemText(list, idx, subitem, buf->data(), static_cast<int>(buf->size()));
     return buf->data();
   };
   for (auto i = 0; i < count; ++i)
@@ -551,7 +553,7 @@ std::string MainDialog::GetSumfileAsString(size_t hasher, bool rn)
     const auto size = HashAlgorithm::g_hashers[hasher].GetSize();
     if (hash.empty())
     {
-      std::fill(hash_str, hash_str + size * 2, '0');
+      std::fill_n(hash_str, size * 2, '0');
       hash_str[size * 2] = 0;
     }
     else

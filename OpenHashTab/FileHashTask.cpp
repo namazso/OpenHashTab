@@ -34,7 +34,7 @@ uint8_t* FileHashTask::BlockTryAllocate()
     );
 
     if (p)
-      return (uint8_t*)p;
+      return static_cast<uint8_t*>(p);
   }
 
   ++s_allocations_remaining;
@@ -55,6 +55,7 @@ void FileHashTask::BlockReset(uint8_t* p)
 void FileHashTask::BlockFree(uint8_t* p)
 {
   const auto ret = VirtualFree(p, 0, MEM_RELEASE);
+  (void)ret;
   assert(ret);
   ++s_allocations_remaining;
 }
@@ -67,7 +68,7 @@ VOID NTAPI FileHashTask::HashWorkCallback(
 {
   UNREFERENCED_PARAMETER(instance);
   UNREFERENCED_PARAMETER(work);
-  ((FileHashTask*)ctx)->DoHashRound();
+  static_cast<FileHashTask*>(ctx)->DoHashRound();
 }
 
 VOID WINAPI FileHashTask::IoCallback(
@@ -82,7 +83,7 @@ VOID WINAPI FileHashTask::IoCallback(
   UNREFERENCED_PARAMETER(instance);
   UNREFERENCED_PARAMETER(overlapped);
   UNREFERENCED_PARAMETER(io);
-  ((FileHashTask*)ctx)->OverlappedCompletionRoutine(result, bytes_transferred);
+  static_cast<FileHashTask*>(ctx)->OverlappedCompletionRoutine(result, bytes_transferred);
 }
 
 void FileHashTask::ProcessReadQueue(uint8_t* reuse_block)
@@ -114,7 +115,7 @@ FileHashTask::FileHashTask(const std::wstring& path, Coordinator* prop_page, std
 
   for (auto i = 0u; i < HashAlgorithm::k_count; ++i)
   {
-    _lparam_idx[i] = i;
+    _lparam_idx[i] = static_cast<uint8_t>(i);
     if (_prop_page->settings.algorithms[i])
       _hash_contexts[i].reset(HashAlgorithm::g_hashers[i].MakeContext());
   }
@@ -134,8 +135,9 @@ FileHashTask::FileHashTask(const std::wstring& path, Coordinator* prop_page, std
     return;
   }
 
-  _file_size = uint64_t(fi.nFileSizeHigh) << 32 | fi.nFileSizeLow;
-  _file_index = uint64_t(fi.nFileIndexHigh) << 32 | fi.nFileIndexLow;
+  _file_size = static_cast<uint64_t>(fi.nFileSizeHigh) << 32 | fi.nFileSizeLow;
+  _file_index = static_cast<uint64_t>(fi.nFileIndexHigh) << 32 | fi.nFileIndexLow;
+
   // TODO: use this in queue so a lot of files from a slower device can't slow down another faster device
   _volume_serial = fi.dwVolumeSerialNumber;
 
@@ -196,13 +198,13 @@ bool FileHashTask::ReadBlockAsync(uint8_t* reuse_block)
   // Set up OVERLAPPED fields for either reading or enqueueing for read
   _overlapped.Internal = 0; // reserved
   _overlapped.InternalHigh = 0; // reserved
-  _overlapped.Offset = (DWORD)_current_offset;
-  _overlapped.OffsetHigh = (DWORD)(_current_offset >> 32);
+  _overlapped.Offset = static_cast<DWORD>(_current_offset);
+  _overlapped.OffsetHigh = static_cast<DWORD>(_current_offset >> 32);
   //_overlapped.hEvent = this; // for caller use
 
   if (const auto block = reuse_block ? reuse_block : BlockTryAllocate())
   {
-    const auto read_size = (DWORD)GetCurrentBlockSize();
+    const auto read_size = static_cast<DWORD>(GetCurrentBlockSize());
 
     StartThreadpoolIo(_threadpool_io);
 

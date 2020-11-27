@@ -27,7 +27,7 @@ static constexpr auto k_extension_name = L"OpenHashTab Shell Extension";
 
 void GetExtensionUUID(LPWSTR str, size_t len)
 {
-  const auto uuid = __uuidof(OpenHashTabShlExt);
+  const auto uuid = __uuidof(OpenHashTabShlExt);  // NOLINT(clang-diagnostic-language-extension-token)
   swprintf_s(str, len, L"{" _T(GUID_FORMAT) L"}", GUID_ARG(uuid));
 }
 
