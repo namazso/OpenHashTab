@@ -337,7 +337,7 @@ void MainDialog::InitDialog()
   _prop_page->AddFiles();
 
   for (const auto& algorithm : HashAlgorithm::g_hashers)
-    if (_prop_page->settings.IsHashEnabled(&algorithm))
+    if (_prop_page->settings.algorithms[algorithm.Idx()])
       ComboBox_AddString(_hwnd_COMBO_EXPORT, utl::UTF8ToTString(algorithm.GetName()).c_str());
 
   ComboBox_SetCurSel(_hwnd_COMBO_EXPORT, 0);

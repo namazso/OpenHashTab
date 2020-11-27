@@ -46,7 +46,7 @@ INT_PTR SettingsDialog::DlgProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
       lvitem.lParam = (LPARAM)&algorithm;
       const auto item = ListView_InsertItem(list, &lvitem);
       ListView_SetItemText(list, item, 0, (LPWSTR)name.c_str());
-      ListView_SetCheckState(list, item, _settings->IsHashEnabled(&algorithm));
+      ListView_SetCheckState(list, item, _settings->algorithms[algorithm.Idx()]);
     }
     _done_setup = true;
     return FALSE; // do not select default control
@@ -74,7 +74,7 @@ INT_PTR SettingsDialog::DlgProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
       };
       ListView_GetItem(list, &lvitem);
       const auto algorithm = (const HashAlgorithm*)lvitem.lParam;
-      _settings->SetHashEnabled(algorithm, check);
+      _settings->algorithms[algorithm->Idx()].Set(check);
       return TRUE;
     }
   }

@@ -83,12 +83,4 @@ struct Settings
   RegistrySetting<bool> sumfile_forward_slashes{ "SumfileForwardSlash", true };
   RegistrySetting<bool> sumfile_dot_hash_compatible{ "SumfileDotHashCompat", true };
   RegistrySetting<bool> sumfile_banner{ "SumfileBanner", true };
-
-  bool IsHashEnabled(int idx) const { return algorithms[idx]; }
-  bool IsHashEnabled(const HashAlgorithm* algorithm) const { return IsHashEnabled(algorithm->Idx()); }
-  void SetHashEnabled(int idx, bool enabled) { SetHashEnabled(&HashAlgorithm::g_hashers[idx], enabled); }
-  void SetHashEnabled(const HashAlgorithm* algorithm, bool enabled)
-  {
-    algorithms[algorithm->Idx()].Set(enabled);
-  }
 };
