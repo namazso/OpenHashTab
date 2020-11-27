@@ -40,6 +40,7 @@
     <SpectreMitigation>false</SpectreMitigation>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)'=='Debug'" Label="Configuration">
+    <LinkIncremental>true</LinkIncremental>
     <UseDebugLibraries>true</UseDebugLibraries>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)'=='Release'" Label="Configuration">
@@ -63,7 +64,6 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <IgnoreImportLibrary>true</IgnoreImportLibrary>
-    <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(SolutionDir)concurrentqueue;$(SolutionDir)phnt;$(IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)bin\$(Configuration)\$(Platform)\</OutDir>
   </PropertyGroup>
@@ -72,6 +72,7 @@
       <PreprocessorDefinitions>CI_VERSION="$(CI_VERSION)";CI_VERSION_MAJOR=$(CI_VERSION_MAJOR);CI_VERSION_MINOR=$(CI_VERSION_MINOR);CI_VERSION_PATCH=$(CI_VERSION_PATCH);%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <PrecompiledHeader>Use</PrecompiledHeader>
     </ClCompile>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -91,6 +92,8 @@
       <SubSystem>Windows</SubSystem>
       <ModuleDefinitionFile>.\OpenHashTab.def</ModuleDefinitionFile>
       <RegisterOutput>true</RegisterOutput>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
       <AdditionalOptions>/PDBALTPATH:%_PDB% /Brepro %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>$(SolutionDir)bin\$(Configuration)\$(Platform)\Algorithms.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
@@ -135,7 +138,9 @@
     <ClCompile Include="Settings.cpp" />
     <ClCompile Include="OpenHashTab.cpp" />
     <ClCompile Include="OpenHashTabShlExt.cpp" />
-    <ClCompile Include="OpenHashTab_i.c" />
+    <ClCompile Include="OpenHashTab_i.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="MainDialog.cpp" />
     <ClCompile Include="Coordinator.cpp" />
     <ClCompile Include="Queues.cpp" />
