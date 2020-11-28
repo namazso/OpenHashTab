@@ -19,6 +19,30 @@
 #include "Settings.h"
 #include "utl.h"
 
+struct SettingCheckbox
+{
+  RegistrySetting<bool> Settings::* setting;
+  int control_id;
+  int string_id;
+};
+
+#define CTLSTR(name) IDC_CHECK_ ## name, IDS_ ## name
+
+static constexpr SettingCheckbox s_boxes[] =
+{
+  { &Settings::display_uppercase,           CTLSTR(DISPLAY_UPPERCASE          )  },
+  { &Settings::look_for_sumfiles,           CTLSTR(LOOK_FOR_SUMFILES          )  },
+  { &Settings::sumfile_uppercase,           CTLSTR(SUMFILE_UPPERCASE          )  },
+  { &Settings::sumfile_unix_endings,        CTLSTR(SUMFILE_UNIX_ENDINGS       )  },
+  { &Settings::sumfile_use_double_space,    CTLSTR(SUMFILE_USE_DOUBLE_SPACE   )  },
+  { &Settings::sumfile_forward_slashes,     CTLSTR(SUMFILE_FORWARD_SLASHES    )  },
+  { &Settings::sumfile_dot_hash_compatible, CTLSTR(SUMFILE_DOT_HASH_COMPATIBLE)  },
+  { &Settings::sumfile_banner,              CTLSTR(SUMFILE_BANNER             )  },
+  { &Settings::sumfile_banner_date,         CTLSTR(SUMFILE_BANNER_DATE        )  },
+};
+
+#undef CTLSTR
+
 INT_PTR SettingsDialog::DlgProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   const auto pnmhdr = (LPNMHDR)lParam;
@@ -48,17 +72,33 @@ INT_PTR SettingsDialog::DlgProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
       ListView_SetItemText(list, item, 0, const_cast<LPWSTR>(name.c_str()));
       ListView_SetCheckState(list, item, _settings->algorithms[algorithm.Idx()]);
     }
+
+    for (const auto& ctl : s_boxes)
+    {
+      const auto ctl_hwnd = GetDlgItem(_hwnd, ctl.control_id);
+      Button_SetCheck(ctl_hwnd, _settings->*ctl.setting);
+      SetWindowTextW(ctl_hwnd, utl::GetString(ctl.string_id).c_str());
+    }
+
     _done_setup = true;
     return FALSE; // do not select default control
   }
 
   case WM_COMMAND:
-    if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
+  {
+    const auto id = LOWORD(wParam);
+    const auto code = HIWORD(wParam);
+    if (code == BN_CLICKED && (id == IDOK || id == IDCANCEL))
     {
       EndDialog(_hwnd, LOWORD(wParam));
       return TRUE;
     }
+    if (code == BN_CLICKED)
+      for (const auto& ctl : s_boxes)
+        if (id == ctl.control_id)
+          (_settings->*ctl.setting).Set(Button_GetCheck(GetDlgItem(_hwnd, ctl.control_id)));
     break;
+  }
 
   case WM_NOTIFY:
     if(pnmhdr->idFrom == IDC_ALGORITHM_LIST && pnmhdr->code == LVN_ITEMCHANGED && _done_setup)

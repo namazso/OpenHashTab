@@ -83,4 +83,5 @@ struct Settings
   RegistrySetting<bool> sumfile_forward_slashes{ "SumfileForwardSlash", true };
   RegistrySetting<bool> sumfile_dot_hash_compatible{ "SumfileDotHashCompat", true };
   RegistrySetting<bool> sumfile_banner{ "SumfileBanner", true };
+  RegistrySetting<bool> sumfile_banner_date{ "SumfileBannerDate", false };
 };

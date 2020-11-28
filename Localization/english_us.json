@@ -16,6 +16,15 @@
 		"CLIPBOARD":           "To clipboard",
 		"NOMATCH":             "No match found.",
 		"ERROR":               "Error",
-		"CANCEL":              "Cancel"
+		"CANCEL":              "Cancel",
+		"DISPLAY_UPPERCASE":            "Display hashes in uppercase",
+		"LOOK_FOR_SUMFILES":            "Look for sumfiles next to files being hashed",
+		"SUMFILE_UPPERCASE":            "Export hashes in uppercase",
+		"SUMFILE_UNIX_ENDINGS":         "Export files with Unix line endings",
+		"SUMFILE_USE_DOUBLE_SPACE":     "Export sumfiles with double space instead of space-asterisk",
+		"SUMFILE_FORWARD_SLASHES":      "Use forward slash paths in exported files",
+		"SUMFILE_DOT_HASH_COMPATIBLE":  "Export sumfiles in corz .hash compatible format",
+		"SUMFILE_BANNER":               "Add banner to exported files",
+		"SUMFILE_BANNER_DATE":          "Add date to banner"
 	}
 }
