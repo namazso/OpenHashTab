@@ -279,7 +279,9 @@ static const char* const sha224_exts[] = { "sha224", "sha224sum", nullptr };
 static const char* const sha256_exts[] = { "sha256", "sha256sum", "sha256sums", nullptr };
 static const char* const sha384_exts[] = { "sha384", nullptr };
 static const char* const sha512_exts[] = { "sha512", "sha512sum", "sha512sums", nullptr };
-static const char* const sha3_512_exts[] = { "sha3", nullptr };
+static const char* const sha3_256_exts[] = { "sha3-256", nullptr };
+static const char* const sha3_384_exts[] = { "sha3-384", nullptr };
+static const char* const sha3_512_exts[] = { "sha3", "sha3-512",nullptr };
 
 constexpr HashAlgorithm HashAlgorithm::g_hashers[] =
 {
@@ -294,8 +296,8 @@ constexpr HashAlgorithm HashAlgorithm::g_hashers[] =
   { "SHA-384", 48, sha384_exts, hash_context_factory<Sha384HashContext>, true },
   { "SHA-512", 64, sha512_exts, hash_context_factory<Sha512HashContext>, true },
   { "Blake2sp", 32, no_exts, hash_context_factory<Blake2SpHashContext>, true },
-  { "SHA3-256", 32, no_exts, hash_context_factory<Sha3_256HashContext>, true },
-  { "SHA3-384", 48, no_exts, hash_context_factory<Sha3_384HashContext>, true },
+  { "SHA3-256", 32, sha3_256_exts, hash_context_factory<Sha3_256HashContext>, true },
+  { "SHA3-384", 48, sha3_384_exts, hash_context_factory<Sha3_384HashContext>, true },
   { "SHA3-512", 64, sha3_512_exts, hash_context_factory<Sha3_512HashContext>, true },
   { "BLAKE3", 32, no_exts, hash_context_factory<Blake3HashContext>, true },
 };

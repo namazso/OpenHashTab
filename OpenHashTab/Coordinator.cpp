@@ -151,7 +151,7 @@ void Coordinator::FileProgressCallback(uint64_t size_progress)
 
 std::pair<std::wstring, std::wstring> Coordinator::GetSumfileDefaultSavePathAndBaseName()
 {
-  std::wstring name{};
+  std::wstring name{ L"checksums" };
   if(_files.files.size() == 1)
   {
     const auto& file = _files.files.begin()->first;
