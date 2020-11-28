@@ -67,6 +67,7 @@
 #include <array>
 #include <mutex>
 #include <sstream>
+#include <utility>
 
 // concurrentqueue
 #include <blockingconcurrentqueue.h>

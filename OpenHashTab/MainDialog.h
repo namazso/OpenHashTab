@@ -18,6 +18,7 @@
 #include "utl.h"
 #include "wnd.h"
 
+class Exporter;
 class FileHashTask;
 class Coordinator;
 
@@ -61,7 +62,7 @@ class MainDialog
 
   static INT_PTR CustomDrawListView(LPARAM lparam, HWND list);
 
-  std::string GetSumfileAsString(size_t hasher, bool rn);
+  std::string GetSumfileAsString(const Exporter* exporter, bool for_clipboard);
   void SetTempStatus(LPCWSTR status, UINT time);
   void UpdateDefaultStatus(bool force_reset = false);
 

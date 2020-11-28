@@ -96,6 +96,9 @@ Root: HKCR; Subkey: ".sha3"; ValueType: string; ValueName: ""; ValueData: "{#MyA
 ; corz checksum that we accidentally support
 Root: HKCR; Subkey: ".hash"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
 
+; our default export extension when there is no known for a given algorithm
+Root: HKCR; Subkey: ".sums"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+
 [Code]
 function InstallArch(Arch: String): Boolean;
 begin

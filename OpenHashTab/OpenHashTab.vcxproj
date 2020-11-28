@@ -133,6 +133,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="Exporter.cpp" />
     <ClCompile Include="FileHashTask.cpp" />
     <ClCompile Include="path.cpp" />
     <ClCompile Include="Settings.cpp" />
@@ -154,6 +155,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dllmain.h" />
+    <ClInclude Include="Exporter.h" />
     <ClInclude Include="FileHashTask.h" />
     <ClInclude Include="path.h" />
     <ClInclude Include="Settings.h" />

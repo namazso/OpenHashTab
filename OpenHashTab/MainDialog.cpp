@@ -17,6 +17,7 @@
 
 #include "MainDialog.h"
 #include "Coordinator.h"
+#include "Exporter.h"
 #include "Settings.h"
 #include "utl.h"
 #include "SettingsDialog.h"
@@ -87,15 +88,18 @@ static void SetTextFromTable(HWND hwnd, UINT string_id)
   SetWindowTextW(hwnd, utl::GetString(string_id).c_str());
 }
 
-static int ComboBoxGetSelectedAlgorithmIdx(HWND combo)
+static const Exporter* GetSelectedExporter(HWND combo)
 {
   const auto sel = ComboBox_GetCurSel(combo);
   const auto len = ComboBox_GetLBTextLen(combo, sel);
-  std::wstring name;
-  name.resize(len);
-  ComboBox_GetLBText(combo, sel, name.data());
-  const auto idx = HashAlgorithm::IdxByName(utl::TStringToUTF8(name.c_str()));
-  return idx;
+  std::wstring wname;
+  wname.resize(len);
+  ComboBox_GetLBText(combo, sel, wname.data());
+  const auto name = utl::TStringToUTF8(wname.c_str());
+  for (const auto exporter : Exporter::k_exporters)
+    if (name == exporter->GetName())
+      return exporter;
+  return nullptr;
 }
 
 MainDialog::MainDialog(HWND hwnd, void* prop_page)
@@ -238,11 +242,11 @@ INT_PTR MainDialog::DlgProc(UINT msg, WPARAM wparam, LPARAM lparam)
     case IDC_BUTTON_CLIPBOARD:
       if (code == BN_CLICKED)
       {
-        const auto idx = ComboBoxGetSelectedAlgorithmIdx(_hwnd_COMBO_EXPORT);
-        if (idx >= 0)
+        const auto exporter = GetSelectedExporter(_hwnd_COMBO_EXPORT);
+        if (!_prop_page->GetFiles().empty() && exporter)
         {
-          const auto wstr = utl::UTF8ToTString(GetSumfileAsString(static_cast<size_t>(idx), true).c_str());
-          utl::SetClipboardText(_hwnd, wstr.c_str());
+          const auto str = GetSumfileAsString(exporter, true);
+          utl::SetClipboardText(_hwnd, utl::UTF8ToTString(str.c_str()).c_str());
         }
       }
       break;
@@ -338,9 +342,9 @@ void MainDialog::InitDialog()
 
   _prop_page->AddFiles();
 
-  for (const auto& algorithm : HashAlgorithm::g_hashers)
-    if (_prop_page->settings.algorithms[algorithm.Idx()])
-      ComboBox_AddString(_hwnd_COMBO_EXPORT, utl::UTF8ToTString(algorithm.GetName()).c_str());
+  for (const auto& exporter : Exporter::k_exporters)
+    if (exporter->IsEnabled(&_prop_page->settings))
+      ComboBox_AddString(_hwnd_COMBO_EXPORT, utl::UTF8ToTString(exporter->GetName()).c_str());
 
   ComboBox_SetCurSel(_hwnd_COMBO_EXPORT, 0);
 
@@ -447,17 +451,16 @@ void MainDialog::OnAllFilesFinished()
 
 void MainDialog::OnExportClicked()
 {
-  const auto idx = ComboBoxGetSelectedAlgorithmIdx(_hwnd_COMBO_EXPORT);
-  if (idx >= 0 && !_prop_page->GetFiles().empty())
+  const auto exporter = GetSelectedExporter(_hwnd_COMBO_EXPORT);
+  if (exporter && !_prop_page->GetFiles().empty())
   {
-    const auto exts = HashAlgorithm::g_hashers[idx].GetExtensions();
-    const auto ext = *exts ? std::wstring{ L"." } +utl::UTF8ToTString(*exts) : std::wstring{};
+    const auto ext = utl::UTF8ToTString(exporter->GetExtension());
     const auto path_and_basename = _prop_page->GetSumfileDefaultSavePathAndBaseName();
     const auto name = path_and_basename.second + ext;
-    const auto content = GetSumfileAsString(static_cast<size_t>(idx), false);
     const auto sumfile_path = utl::SaveDialog(_hwnd, path_and_basename.first.c_str(), name.c_str());
     if (!sumfile_path.empty())
     {
+      const auto content = GetSumfileAsString(exporter, false);
       const auto err = utl::SaveMemoryAsFile(sumfile_path.c_str(), content.c_str(), content.size());
       if (err != ERROR_SUCCESS)
         utl::FormattedMessageBox(
@@ -543,32 +546,12 @@ void MainDialog::OnListRightClick(bool dblclick)
   SetTempStatus(utl::GetString(IDS_COPIED).c_str(), 1000);
 }
 
-std::string MainDialog::GetSumfileAsString(size_t hasher, bool rn)
+std::string MainDialog::GetSumfileAsString(const Exporter* exporter, bool for_clipboard)
 {
-  std::stringstream str;
+  std::list<FileHashTask*> files;
   for (const auto& file : _prop_page->GetFiles())
-  {
-    const auto& hash = file->GetHashResult()[hasher];
-    char hash_str[HashAlgorithm::k_max_size * 2 + 1];
-    const auto size = HashAlgorithm::g_hashers[hasher].GetSize();
-    if (hash.empty())
-    {
-      std::fill_n(hash_str, size * 2, '0');
-      hash_str[size * 2] = 0;
-    }
-    else
-    {
-      utl::HashBytesToString(hash_str, hash);
-    }
-
-    auto name = file->GetDisplayName();
-    // flip slashes to conform sumfile format
-    std::replace(begin(name), end(name), '\\', '/');
-
-    // force \r\n because clipboard expects that
-    str << hash_str << " *" << utl::TStringToUTF8(name.c_str()) << (rn ? "\r\n" : "\n");
-  }
-  return str.str();
+    files.push_back(file.get());
+  return exporter->GetExportString(&_prop_page->settings, for_clipboard, files);
 }
 
 void MainDialog::SetTempStatus(LPCWSTR status, UINT time)

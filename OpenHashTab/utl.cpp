@@ -64,46 +64,6 @@ std::wstring utl::MakePathLongCompatible(std::wstring file)
   return file;
 }
 
-std::wstring utl::CanonicalizePath(const std::wstring& path)
-{
-  // PathCanonicalize doesn't support long paths, and pathcch.h isn't backward compatible, PathCch*
-  // functions are only available on Windows 8+, so since I really don't feel like reimplementing it
-  // myself long paths are only supported on Windows 8+
-
-  using tPathAllocCanonicalize = decltype(&PathAllocCanonicalize);
-  static const auto pPathAllocCanonicalize = []
-  {
-    if (const auto kernelbase = GetModuleHandleW(L"kernelbase"))
-      if (const auto fn = GetProcAddress(kernelbase, "PathAllocCanonicalize"))
-        return reinterpret_cast<tPathAllocCanonicalize>(fn);
-    return static_cast<tPathAllocCanonicalize>(nullptr);
-  } ();
-
-  if (pPathAllocCanonicalize)
-  {
-    PWSTR outpath;
-    const auto ret = pPathAllocCanonicalize(
-      path.c_str(),
-      PATHCCH_ALLOW_LONG_PATHS | PATHCCH_FORCE_ENABLE_LONG_NAME_PROCESS,
-      &outpath
-    );
-    if (ret == S_OK)
-    {
-      auto result = std::wstring{ outpath };
-      LocalFree(outpath);
-      return result;
-    }
-
-    // fall through if PathAllocCanonicalize didn't work out
-  }
-
-
-  wchar_t canonical[MAX_PATH + 1];
-  if(PathCanonicalizeW(canonical, path.c_str()))
-    return { canonical };
-  return {};
-}
-
 HANDLE utl::OpenForRead(const std::wstring& file, bool async)
 {
   return CreateFileW(

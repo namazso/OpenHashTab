@@ -139,11 +139,11 @@ namespace utl
   }
 
   template <typename Char>
-  Char hex(uint8_t n)
+  Char hex(uint8_t n, bool upper = true)
   {
     if (n < 0xA)
       return Char('0') + n;
-    return Char('A') + (n - 0xA);
+    return Char(upper ? 'A' : 'a') + (n - 0xA);
   };
 
   template <typename Char>
@@ -167,12 +167,12 @@ namespace utl
   };
 
   template <typename Char>
-  void HashBytesToString(Char* str, const std::vector<uint8_t>& hash)
+  void HashBytesToString(Char* str, const std::vector<uint8_t>& hash, bool upper = true)
   {
     for (auto b : hash)
     {
-      *str++ = utl::hex<Char>(b >> 4);
-      *str++ = utl::hex<Char>(b & 0xF);
+      *str++ = utl::hex<Char>(b >> 4, upper);
+      *str++ = utl::hex<Char>(b & 0xF, upper);
     }
     *str = Char(0);
   }
@@ -237,8 +237,6 @@ namespace utl
   bool AreFilesTheSame(HANDLE a, HANDLE b);
 
   std::wstring MakePathLongCompatible(std::wstring file);
-
-  std::wstring CanonicalizePath(const std::wstring& path);
 
   HANDLE OpenForRead(const std::wstring& file, bool async = false);
 
