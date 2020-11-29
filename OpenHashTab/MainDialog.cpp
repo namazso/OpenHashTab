@@ -404,7 +404,7 @@ void MainDialog::OnFileFinished(FileHashTask* file)
       if (!result.empty())
       {
         wchar_t hash_str[HashAlgorithm::k_max_size * 2 + 1];
-        utl::HashBytesToString(hash_str, result);
+        utl::HashBytesToString(hash_str, result, _prop_page->settings.display_uppercase);
         const auto tname = utl::UTF8ToTString(HashAlgorithm::g_hashers[i].GetName());
         add_item(file->GetDisplayName().c_str(), tname.c_str(), hash_str, file->ToLparam(i));
       }
