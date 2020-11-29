@@ -67,6 +67,9 @@
     <ClCompile Include="Exporter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="https.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -118,6 +121,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Exporter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="stringencrypt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="https.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -135,6 +135,7 @@
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="Exporter.cpp" />
     <ClCompile Include="FileHashTask.cpp" />
+    <ClCompile Include="https.cpp" />
     <ClCompile Include="path.cpp" />
     <ClCompile Include="Settings.cpp" />
     <ClCompile Include="OpenHashTab.cpp" />
@@ -157,6 +158,7 @@
     <ClInclude Include="dllmain.h" />
     <ClInclude Include="Exporter.h" />
     <ClInclude Include="FileHashTask.h" />
+    <ClInclude Include="https.h" />
     <ClInclude Include="path.h" />
     <ClInclude Include="Settings.h" />
     <ClInclude Include="OpenHashTabShlExt.h" />
@@ -167,6 +169,7 @@
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SettingsDialog.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="stringencrypt.h" />
     <ClInclude Include="SumFileParser.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="utl.h" />
