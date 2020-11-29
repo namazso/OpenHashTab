@@ -76,7 +76,7 @@ struct Settings
   RegistrySetting<bool> algorithms[HashAlgorithm::k_count]{};
 
   RegistrySetting<bool> display_uppercase{ "DisplayUppercase", true };
-  RegistrySetting<bool> look_for_sumfiles{ "LookForSumfiles", true };
+  RegistrySetting<bool> look_for_sumfiles{ "LookForSumfiles", false };
   RegistrySetting<bool> sumfile_uppercase{ "SumfileUppercase", true };
   RegistrySetting<bool> sumfile_unix_endings{ "SumfileLF", true };
   RegistrySetting<bool> sumfile_use_double_space{ "SumfileDoubleSpace", false };
