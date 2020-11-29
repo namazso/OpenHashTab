@@ -234,6 +234,8 @@ namespace utl
     return { p.get() };
   }
 
+  long ClampIconSize(long size);
+
   bool AreFilesTheSame(HANDLE a, HANDLE b);
 
   std::wstring MakePathLongCompatible(std::wstring file);

@@ -309,6 +309,22 @@ void MainDialog::InitDialog()
     reinterpret_cast<LONG_PTR>(LoadIconW(utl::GetInstance(), MAKEINTRESOURCEW(IDI_ICON1)))
   );
 
+  RECT vtr{};
+  GetWindowRect(_hwnd_BUTTON_VT, &vtr);
+  const auto vt_max_raw = std::min(vtr.right - vtr.left, vtr.bottom - vtr.top);
+  const auto vt_max = utl::ClampIconSize(vt_max_raw * 3 / 4);
+
+  const auto vt_icon = LoadImageW(
+    utl::GetInstance(),
+    MAKEINTRESOURCEW(IDI_ICON_VT),
+    IMAGE_ICON,
+    vt_max,
+    vt_max,
+    LR_DEFAULTCOLOR
+  );
+
+  SendMessageW(_hwnd_BUTTON_VT, BM_SETIMAGE, (WPARAM)IMAGE_ICON, (LPARAM)vt_icon);
+
   SetTextFromTable(_hwnd_STATIC_CHECK_AGAINST, IDS_CHECK_AGAINST);
   SetTextFromTable(_hwnd_STATIC_EXPORT_TO, IDS_EXPORT_TO);
   SetTextFromTable(_hwnd_BUTTON_EXPORT, IDS_EXPORT_BTN);
@@ -433,6 +449,7 @@ void MainDialog::OnAllFilesFinished()
   Button_Enable(_hwnd_BUTTON_SETTINGS, true);
   Button_Enable(_hwnd_BUTTON_EXPORT, true);
   Button_Enable(_hwnd_BUTTON_CLIPBOARD, true);
+  Button_Enable(_hwnd_BUTTON_VT, true);
   Edit_Enable(_hwnd_EDIT_HASH, true);
 
   ShowWindow(_hwnd_PROGRESS, 0);
