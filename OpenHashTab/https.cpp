@@ -118,44 +118,50 @@ HTTPResult DoHTTPS(const HTTPRequest& r)
 
               if (ret)
               {
-                DWORD bytes_available = 0;
-                ret = fn.WinHttpQueryDataAvailable(
-                  request,
-                  &bytes_available
-                );
-
-                if (ret)
+                DWORD bytes_available;
+                std::string out;
+                do
                 {
-                  std::string out;
-                  DWORD bytes_read = 0;
-                  out.resize(bytes_available);
-                  ret = fn.WinHttpReadData(
+                  bytes_available = 0;
+                  ret = fn.WinHttpQueryDataAvailable(
                     request,
-                    (LPVOID)out.data(),
-                    static_cast<DWORD>(out.size()),
-                    &bytes_read
+                    &bytes_available
                   );
-
-                  if (ret)
+                  if (!ret)
                   {
-                    out.resize(bytes_read);
+                    result.error_location = 8;
+                    break;
+                  }
+
+                  if (bytes_available == 0)
+                  {
                     result.error_code = 0;
                     result.http_code = http_code;
                     result.body = std::move(out);
+                    goto success;
                   }
-                  else
+
+                  DWORD bytes_read = 0;
+                  const auto old_size = out.size();
+                  out.resize(old_size + bytes_available);
+                  ret = fn.WinHttpReadData(
+                    request,
+                    (LPVOID)(out.data() + old_size),
+                    bytes_available,
+                    &bytes_read
+                  );
+                  if(!ret)
                   {
-                    result.error_code = GetLastError();
-                    result.error_location = 9;
+                    result.error_location = 8;
+                    break;
                   }
+                  out.resize(old_size + bytes_read);
+                } while (true);
 
-                }
-                else
-                {
-                  result.error_code = GetLastError();
-                  result.error_location = 8;
-                }
+                result.error_code = GetLastError();
 
+                success:
+                ;
               }
               else
               {
