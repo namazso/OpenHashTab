@@ -64,7 +64,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <IgnoreImportLibrary>true</IgnoreImportLibrary>
-    <IncludePath>$(SolutionDir)concurrentqueue;$(SolutionDir)phnt;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)concurrentqueue;$(SolutionDir)phnt;$(SolutionDir)tiny-json;$(IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)bin\$(Configuration)\$(Platform)\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup>
@@ -132,9 +132,13 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\tiny-json\tiny-json.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="Exporter.cpp" />
     <ClCompile Include="FileHashTask.cpp" />
+    <ClCompile Include="https.cpp" />
     <ClCompile Include="path.cpp" />
     <ClCompile Include="Settings.cpp" />
     <ClCompile Include="OpenHashTab.cpp" />
@@ -152,11 +156,14 @@
     </ClCompile>
     <ClCompile Include="SumFileParser.cpp" />
     <ClCompile Include="utl.cpp" />
+    <ClCompile Include="virustotal.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\tiny-json\tiny-json.h" />
     <ClInclude Include="dllmain.h" />
     <ClInclude Include="Exporter.h" />
     <ClInclude Include="FileHashTask.h" />
+    <ClInclude Include="https.h" />
     <ClInclude Include="path.h" />
     <ClInclude Include="Settings.h" />
     <ClInclude Include="OpenHashTabShlExt.h" />
@@ -167,9 +174,11 @@
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SettingsDialog.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="stringencrypt.h" />
     <ClInclude Include="SumFileParser.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="utl.h" />
+    <ClInclude Include="virustotal.h" />
     <ClInclude Include="wnd.h" />
   </ItemGroup>
   <ItemGroup>
@@ -186,7 +195,9 @@
     <Midl Include="OpenHashTab.idl" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="cog.ico" />
     <Image Include="icon.ico" />
+    <Image Include="virustotal_icon.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

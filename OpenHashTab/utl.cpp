@@ -17,6 +17,18 @@
 
 #include "utl.h"
 
+long utl::ClampIconSize(long size)
+{
+  constexpr static long icon_sizes[] = { 256, 192, 128, 96, 64, 48, 40, 32, 24, 16 };
+  for (auto v : icon_sizes)
+    if (size >= v)
+    {
+      size = v;
+      break;
+    }
+  return size;
+}
+
 bool utl::AreFilesTheSame(HANDLE a, HANDLE b)
 {
   if (IsWindows8OrGreater())

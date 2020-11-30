@@ -44,6 +44,7 @@ class MainDialog
   MAKE_IDC_MEMBER(_hwnd, BUTTON_CANCEL);
   MAKE_IDC_MEMBER(_hwnd, ALGORITHM_LIST);
   MAKE_IDC_MEMBER(_hwnd, PROGRESS);
+  MAKE_IDC_MEMBER(_hwnd, BUTTON_VT);
 
   unsigned _count_error{};
   unsigned _count_match{};
@@ -63,6 +64,7 @@ class MainDialog
   static INT_PTR CustomDrawListView(LPARAM lparam, HWND list);
 
   std::string GetSumfileAsString(const Exporter* exporter, bool for_clipboard);
+  void AddItemToFileList(LPCWSTR filename, LPCWSTR algorithm, LPCWSTR hash, LPARAM lparam);
   void SetTempStatus(LPCWSTR status, UINT time);
   void UpdateDefaultStatus(bool force_reset = false);
 

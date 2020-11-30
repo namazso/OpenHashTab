@@ -23,6 +23,7 @@
 #include "SettingsDialog.h"
 #include "FileHashTask.h"
 #include "wnd.h"
+#include "virustotal.h"
 
 enum class HashColorType
 {
@@ -139,6 +140,8 @@ INT_PTR MainDialog::CustomDrawListView(LPARAM lparam, HWND list)
         static_cast<int>(lplvcd->nmcd.dwItemSpec)
       };
       ListView_GetItem(list, &lvitem);
+      if (lvitem.lParam < 0 || lvitem.lParam > HashAlgorithm::k_count) // virustotal shit
+        break;
       const auto file_hash = FileHashTask::FromLparam(lvitem.lParam);
       const auto file = file_hash.first;
       const auto hasher = file_hash.second;
@@ -278,6 +281,52 @@ INT_PTR MainDialog::DlgProc(UINT msg, WPARAM wparam, LPARAM lparam)
       break;
     }
 
+    case IDC_BUTTON_VT:
+      if(vt::CheckForToS(&_prop_page->settings, _hwnd))
+      {
+        const int algos[] = {
+          HashAlgorithm::IdxByName("SHA-256"),
+          HashAlgorithm::IdxByName("SHA-1"),
+          HashAlgorithm::IdxByName("MD5")
+        };
+        const auto algo = std::find_if(std::begin(algos), std::end(algos), [&](const int& v)
+          {
+            return _prop_page->settings.algorithms[v];
+          });
+        if(algo == std::end(algos))
+        {
+          MessageBoxW(_hwnd, L"No compatible algorithm", L"Error", MB_ICONERROR | MB_OK);
+        }
+        else
+        {
+          std::list<FileHashTask*> l;
+          for (const auto& f : _prop_page->GetFiles())
+            if (!f->GetError())
+              l.push_back(f.get());
+          try
+          {
+            const auto result = vt::Query(l, *algo);
+            for (const auto& r : result)
+              AddItemToFileList(
+                r.file->GetDisplayName().c_str(),
+                L"VT",
+                r.found ? utl::FormatString(L"%d/%d", r.positives, r.total).c_str() : L"Not found",
+                (LPARAM)-1
+              );
+          }
+          catch(const std::runtime_error& e)
+          {
+            MessageBoxW(
+              _hwnd,
+              utl::UTF8ToTString(e.what()).c_str(),
+              L"Runtime error",
+              MB_ICONERROR | MB_OK
+            );
+          }
+        }
+      }
+      break;
+
     default:
       break;
     }
@@ -309,15 +358,44 @@ void MainDialog::InitDialog()
     reinterpret_cast<LONG_PTR>(LoadIconW(utl::GetInstance(), MAKEINTRESOURCEW(IDI_ICON1)))
   );
 
+  RECT vt_rect{};
+  GetWindowRect(_hwnd_BUTTON_VT, &vt_rect);
+  const auto vt_max_raw = std::min(vt_rect.right - vt_rect.left, vt_rect.bottom - vt_rect.top);
+  const auto vt_max = utl::ClampIconSize(vt_max_raw * 3 / 4);
+
+  const auto vt_icon = LoadImageW(
+    utl::GetInstance(),
+    MAKEINTRESOURCEW(IDI_ICON_VT),
+    IMAGE_ICON,
+    vt_max,
+    vt_max,
+    LR_DEFAULTCOLOR
+  );
+
+  SendMessageW(_hwnd_BUTTON_VT, BM_SETIMAGE, (WPARAM)IMAGE_ICON, (LPARAM)vt_icon);
+
+  RECT cog_rect{};
+  GetWindowRect(_hwnd_BUTTON_SETTINGS, &cog_rect);
+  const auto cog_max_raw = std::min(cog_rect.right - cog_rect.left, cog_rect.bottom - cog_rect.top);
+  const auto cog_max = utl::ClampIconSize(cog_max_raw * 3 / 4);
+
+  const auto cog_icon = LoadImageW(
+    utl::GetInstance(),
+    MAKEINTRESOURCEW(IDI_ICON_COG),
+    IMAGE_ICON,
+    cog_max,
+    cog_max,
+    LR_DEFAULTCOLOR
+  );
+
+  SendMessageW(_hwnd_BUTTON_SETTINGS, BM_SETIMAGE, (WPARAM)IMAGE_ICON, (LPARAM)cog_icon);
+
   SetTextFromTable(_hwnd_STATIC_CHECK_AGAINST, IDS_CHECK_AGAINST);
   SetTextFromTable(_hwnd_STATIC_EXPORT_TO, IDS_EXPORT_TO);
   SetTextFromTable(_hwnd_BUTTON_EXPORT, IDS_EXPORT_BTN);
   SetTextFromTable(_hwnd_STATIC_PROCESSING, IDS_PROCESSING);
   SetTextFromTable(_hwnd_BUTTON_CLIPBOARD, IDS_CLIPBOARD);
   SetTextFromTable(_hwnd_BUTTON_CANCEL, IDS_CANCEL);
-
-  if (IsWindows8OrGreater())
-    SetWindowTextW(_hwnd_BUTTON_SETTINGS, L"\u2699");
 
   SendMessageW(_hwnd_HASH_LIST, LVM_SETTEXTBKCOLOR, 0, CLR_NONE);
   SendMessageW(_hwnd_HASH_LIST, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, LVS_EX_FULLROWSELECT);
@@ -357,29 +435,29 @@ void MainDialog::InitDialog()
   _prop_page->ProcessFiles();
 }
 
-void MainDialog::OnFileFinished(FileHashTask* file)
+void MainDialog::AddItemToFileList(LPCWSTR filename, LPCWSTR algorithm, LPCWSTR hash, LPARAM lparam)
 {
   const auto list = _hwnd_HASH_LIST;
-  if (!list)
-    return;
-
-  const auto add_item = [list](LPCWSTR filename, LPCWSTR algorithm, LPCWSTR hash, LPARAM lparam)
+  LVITEMW lvitem
   {
-    LVITEMW lvitem
-    {
-      LVIF_PARAM,
-      INT_MAX,
-      0,
-      0,
-      0,
-      const_cast<LPWSTR>(L"")
-    };
-    lvitem.lParam = lparam;
-    const auto item = ListView_InsertItem(list, &lvitem);
-    ListView_SetItemText(list, item, ColIndex_Filename, const_cast<LPWSTR>(filename));
-    ListView_SetItemText(list, item, ColIndex_Algorithm, const_cast<LPWSTR>(algorithm));
-    ListView_SetItemText(list, item, ColIndex_Hash, const_cast<LPWSTR>(hash));
+    LVIF_PARAM,
+    INT_MAX,
+    0,
+    0,
+    0,
+    const_cast<LPWSTR>(L"")
   };
+  lvitem.lParam = lparam;
+  const auto item = ListView_InsertItem(list, &lvitem);
+  ListView_SetItemText(list, item, ColIndex_Filename, const_cast<LPWSTR>(filename));
+  ListView_SetItemText(list, item, ColIndex_Algorithm, const_cast<LPWSTR>(algorithm));
+  ListView_SetItemText(list, item, ColIndex_Hash, const_cast<LPWSTR>(hash));
+}
+
+void MainDialog::OnFileFinished(FileHashTask* file)
+{
+  if (!_hwnd_HASH_LIST)
+    return;
 
   if (const auto error = file->GetError(); error == ERROR_SUCCESS)
   {
@@ -406,14 +484,14 @@ void MainDialog::OnFileFinished(FileHashTask* file)
         wchar_t hash_str[HashAlgorithm::k_max_size * 2 + 1];
         utl::HashBytesToString(hash_str, result, _prop_page->settings.display_uppercase);
         const auto tname = utl::UTF8ToTString(HashAlgorithm::g_hashers[i].GetName());
-        add_item(file->GetDisplayName().c_str(), tname.c_str(), hash_str, file->ToLparam(i));
+        AddItemToFileList(file->GetDisplayName().c_str(), tname.c_str(), hash_str, file->ToLparam(i));
       }
     }
   }
   else
   {
     ++_count_error;
-    add_item(
+    AddItemToFileList(
       file->GetDisplayName().c_str(),
       utl::GetString(IDS_ERROR).c_str(),
       utl::ErrorToString(error).c_str(),
@@ -433,6 +511,7 @@ void MainDialog::OnAllFilesFinished()
   Button_Enable(_hwnd_BUTTON_SETTINGS, true);
   Button_Enable(_hwnd_BUTTON_EXPORT, true);
   Button_Enable(_hwnd_BUTTON_CLIPBOARD, true);
+  Button_Enable(_hwnd_BUTTON_VT, true);
   Edit_Enable(_hwnd_EDIT_HASH, true);
 
   ShowWindow(_hwnd_PROGRESS, 0);
@@ -456,7 +535,7 @@ void MainDialog::OnExportClicked()
   {
     const auto ext = utl::UTF8ToTString(exporter->GetExtension());
     const auto path_and_basename = _prop_page->GetSumfileDefaultSavePathAndBaseName();
-    const auto name = path_and_basename.second + ext;
+    const auto name = path_and_basename.second + L"." + ext;
     const auto sumfile_path = utl::SaveDialog(_hwnd, path_and_basename.first.c_str(), name.c_str());
     if (!sumfile_path.empty())
     {

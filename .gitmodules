@@ -10,3 +10,6 @@
 [submodule "phnt"]
 	path = phnt
 	url = https://github.com/processhacker/phnt.git
+[submodule "tiny-json"]
+	path = tiny-json
+	url = https://github.com/rafagafe/tiny-json.git
