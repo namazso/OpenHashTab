@@ -189,6 +189,7 @@
     <Midl Include="OpenHashTab.idl" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="cog.ico" />
     <Image Include="icon.ico" />
     <Image Include="virustotal_icon.ico" />
   </ItemGroup>

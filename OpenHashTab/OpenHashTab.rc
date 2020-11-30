@@ -43,7 +43,7 @@ BEGIN
     LTEXT           "",IDC_STATIC_SUMFILE,7,152,98,10
     RTEXT           "IDS_PROCESSING",IDC_STATIC_PROCESSING,108,152,72,10
     PUSHBUTTON      "IDS_CLIPBOARD",IDC_BUTTON_CLIPBOARD,102,216,54,15,WS_DISABLED
-    PUSHBUTTON      "*",IDC_BUTTON_SETTINGS,204,150,16,14,WS_DISABLED
+    PUSHBUTTON      "*",IDC_BUTTON_SETTINGS,204,150,16,14,BS_ICON | WS_DISABLED
     CONTROL         "",IDC_PROGRESS,"msctls_progress32",WS_BORDER,6,233,150,14
     PUSHBUTTON      "IDS_CANCEL",IDC_BUTTON_CANCEL,162,234,54,12
     PUSHBUTTON      "v",IDC_BUTTON_VT,186,150,16,14,BS_ICON | WS_DISABLED
@@ -192,6 +192,8 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 IDI_ICON1               ICON                    "icon.ico"
 
 IDI_ICON_VT             ICON                    "virustotal_icon.ico"
+
+IDI_ICON_COG            ICON                    "cog.ico"
 
 #endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////

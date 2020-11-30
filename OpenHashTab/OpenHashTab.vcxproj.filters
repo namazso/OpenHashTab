@@ -164,5 +164,8 @@
     <Image Include="virustotal_icon.ico">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="cog.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

@@ -309,9 +309,9 @@ void MainDialog::InitDialog()
     reinterpret_cast<LONG_PTR>(LoadIconW(utl::GetInstance(), MAKEINTRESOURCEW(IDI_ICON1)))
   );
 
-  RECT vtr{};
-  GetWindowRect(_hwnd_BUTTON_VT, &vtr);
-  const auto vt_max_raw = std::min(vtr.right - vtr.left, vtr.bottom - vtr.top);
+  RECT vt_rect{};
+  GetWindowRect(_hwnd_BUTTON_VT, &vt_rect);
+  const auto vt_max_raw = std::min(vt_rect.right - vt_rect.left, vt_rect.bottom - vt_rect.top);
   const auto vt_max = utl::ClampIconSize(vt_max_raw * 3 / 4);
 
   const auto vt_icon = LoadImageW(
@@ -325,15 +325,28 @@ void MainDialog::InitDialog()
 
   SendMessageW(_hwnd_BUTTON_VT, BM_SETIMAGE, (WPARAM)IMAGE_ICON, (LPARAM)vt_icon);
 
+  RECT cog_rect{};
+  GetWindowRect(_hwnd_BUTTON_SETTINGS, &cog_rect);
+  const auto cog_max_raw = std::min(cog_rect.right - cog_rect.left, cog_rect.bottom - cog_rect.top);
+  const auto cog_max = utl::ClampIconSize(cog_max_raw * 3 / 4);
+
+  const auto cog_icon = LoadImageW(
+    utl::GetInstance(),
+    MAKEINTRESOURCEW(IDI_ICON_COG),
+    IMAGE_ICON,
+    cog_max,
+    cog_max,
+    LR_DEFAULTCOLOR
+  );
+
+  SendMessageW(_hwnd_BUTTON_SETTINGS, BM_SETIMAGE, (WPARAM)IMAGE_ICON, (LPARAM)cog_icon);
+
   SetTextFromTable(_hwnd_STATIC_CHECK_AGAINST, IDS_CHECK_AGAINST);
   SetTextFromTable(_hwnd_STATIC_EXPORT_TO, IDS_EXPORT_TO);
   SetTextFromTable(_hwnd_BUTTON_EXPORT, IDS_EXPORT_BTN);
   SetTextFromTable(_hwnd_STATIC_PROCESSING, IDS_PROCESSING);
   SetTextFromTable(_hwnd_BUTTON_CLIPBOARD, IDS_CLIPBOARD);
   SetTextFromTable(_hwnd_BUTTON_CANCEL, IDS_CANCEL);
-
-  if (IsWindows8OrGreater())
-    SetWindowTextW(_hwnd_BUTTON_SETTINGS, L"\u2699");
 
   SendMessageW(_hwnd_HASH_LIST, LVM_SETTEXTBKCOLOR, 0, CLR_NONE);
   SendMessageW(_hwnd_HASH_LIST, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, LVS_EX_FULLROWSELECT);
@@ -473,7 +486,7 @@ void MainDialog::OnExportClicked()
   {
     const auto ext = utl::UTF8ToTString(exporter->GetExtension());
     const auto path_and_basename = _prop_page->GetSumfileDefaultSavePathAndBaseName();
-    const auto name = path_and_basename.second + ext;
+    const auto name = path_and_basename.second + L"." + ext;
     const auto sumfile_path = utl::SaveDialog(_hwnd, path_and_basename.first.c_str(), name.c_str());
     if (!sumfile_path.empty())
     {
