@@ -84,4 +84,5 @@ struct Settings
   RegistrySetting<bool> sumfile_dot_hash_compatible{ "SumfileDotHashCompat", true };
   RegistrySetting<bool> sumfile_banner{ "SumfileBanner", true };
   RegistrySetting<bool> sumfile_banner_date{ "SumfileBannerDate", false };
+  RegistrySetting<bool> virustotal_tos{ "VTToS", false };
 };

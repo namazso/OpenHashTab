@@ -17,6 +17,9 @@
       <UniqueIdentifier>{fa7990bc-29fb-49c8-b7d6-6e370e7dd3b1}</UniqueIdentifier>
       <SourceControlFiles>False</SourceControlFiles>
     </Filter>
+    <Filter Include="tiny-json">
+      <UniqueIdentifier>{b6d693b5-2c53-469e-ac3f-c52e60292565}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -69,6 +72,12 @@
     </ClCompile>
     <ClCompile Include="https.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="virustotal.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\tiny-json\tiny-json.c">
+      <Filter>tiny-json</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -128,6 +137,12 @@
     </ClInclude>
     <ClInclude Include="https.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="virustotal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\tiny-json\tiny-json.h">
+      <Filter>tiny-json</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -64,7 +64,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <IgnoreImportLibrary>true</IgnoreImportLibrary>
-    <IncludePath>$(SolutionDir)concurrentqueue;$(SolutionDir)phnt;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)concurrentqueue;$(SolutionDir)phnt;$(SolutionDir)tiny-json;$(IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)bin\$(Configuration)\$(Platform)\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup>
@@ -132,6 +132,9 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\tiny-json\tiny-json.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="Exporter.cpp" />
     <ClCompile Include="FileHashTask.cpp" />
@@ -153,8 +156,10 @@
     </ClCompile>
     <ClCompile Include="SumFileParser.cpp" />
     <ClCompile Include="utl.cpp" />
+    <ClCompile Include="virustotal.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\tiny-json\tiny-json.h" />
     <ClInclude Include="dllmain.h" />
     <ClInclude Include="Exporter.h" />
     <ClInclude Include="FileHashTask.h" />
@@ -173,6 +178,7 @@
     <ClInclude Include="SumFileParser.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="utl.h" />
+    <ClInclude Include="virustotal.h" />
     <ClInclude Include="wnd.h" />
   </ItemGroup>
   <ItemGroup>

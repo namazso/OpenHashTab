@@ -204,7 +204,41 @@ namespace utl
     return res;
   }
 
-  inline int FormattedMessageBox(HWND hwnd, LPCWSTR caption, UINT type, LPCWSTR fmt, ...)
+  template <typename Char>
+  auto FormatString(_In_z_ _Printf_format_string_ const Char* fmt, ...) -> std::basic_string<Char>
+  {
+    using cfn_t = int(*)(const Char*, va_list);
+    using fn_t = int(*)(Char*, size_t, const Char*, va_list);
+    cfn_t cfn;
+    fn_t fn;
+    if constexpr (std::is_same_v<Char, char>)
+    {
+      cfn = &_vscprintf;
+      fn = &vsprintf_s;
+    }
+    else
+    {
+      cfn = &_vscwprintf;
+      fn = &vswprintf_s;
+    }
+
+    std::basic_string<Char> str;
+
+    va_list args;
+    va_start(args, fmt);
+    int len = cfn(fmt, args);
+    va_end(args);
+
+    str.resize(len);
+
+    va_start(args, fmt);
+    fn(str.data(), str.size() + 1, fmt, args);
+    va_end(args);
+
+    return str;
+  }
+
+  inline int FormattedMessageBox(HWND hwnd, LPCWSTR caption, UINT type, _In_z_ _Printf_format_string_ LPCWSTR fmt, ...)
   {
     va_list args;
     va_start(args, fmt);

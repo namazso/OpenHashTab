@@ -68,6 +68,7 @@
 #include <mutex>
 #include <sstream>
 #include <utility>
+#include <exception>
 
 // concurrentqueue
 #include <blockingconcurrentqueue.h>
