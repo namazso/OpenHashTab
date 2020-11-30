@@ -64,6 +64,7 @@ class MainDialog
   static INT_PTR CustomDrawListView(LPARAM lparam, HWND list);
 
   std::string GetSumfileAsString(const Exporter* exporter, bool for_clipboard);
+  void AddItemToFileList(LPCWSTR filename, LPCWSTR algorithm, LPCWSTR hash, LPARAM lparam);
   void SetTempStatus(LPCWSTR status, UINT time);
   void UpdateDefaultStatus(bool force_reset = false);
 
