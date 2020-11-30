@@ -313,6 +313,7 @@ INT_PTR MainDialog::DlgProc(UINT msg, WPARAM wparam, LPARAM lparam)
                 r.found ? utl::FormatString(L"%d/%d", r.positives, r.total).c_str() : L"Not found",
                 (LPARAM)-1
               );
+            Button_Enable(_hwnd_BUTTON_VT, false);
           }
           catch(const std::runtime_error& e)
           {
