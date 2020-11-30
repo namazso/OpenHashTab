@@ -309,8 +309,8 @@ INT_PTR MainDialog::DlgProc(UINT msg, WPARAM wparam, LPARAM lparam)
             for (const auto& r : result)
               AddItemToFileList(
                 r.file->GetDisplayName().c_str(),
-                r.found ? utl::FormatString(L"VT (%d/%d)", r.positives, r.total).c_str() : L"Not found",
-                utl::UTF8ToTString(r.permalink.c_str()).c_str(),
+                r.found ? utl::FormatString(L"VT (%d/%d)", r.positives, r.total).c_str() : L"VT",
+                r.found ? utl::UTF8ToTString(r.permalink.c_str()).c_str() : L"Not found",
                 (LPARAM)-1
               );
             Button_Enable(_hwnd_BUTTON_VT, false);
