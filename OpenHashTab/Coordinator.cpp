@@ -82,7 +82,13 @@ void Coordinator::AddFile(const std::wstring& path, const ProcessedFileList::Fil
 void Coordinator::AddFiles()
 {
   _files = ProcessEverything(_files_raw);
-
+  const auto type = _files.sumfile_type;
+  if(type != -2)
+  {
+    _is_sumfile = true;
+    if (type != -1)
+      settings.algorithms[type].SetNoSave(true); // enable algorithm the sumfile is made with
+  }
   for (const auto& file : _files.files)
     AddFile(file.first, file.second);
 }

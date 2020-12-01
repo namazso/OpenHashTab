@@ -419,6 +419,7 @@ void MainDialog::InitDialog()
 
   SendMessageW(_hwnd_PROGRESS, PBM_SETRANGE32, 0, Coordinator::k_progress_resolution);
 
+  // !!! enabled algorithms MAY BE CHANGED by this call, if a sumfile is not in a enabled format according to extension
   _prop_page->AddFiles();
 
   for (const auto& exporter : Exporter::k_exporters)

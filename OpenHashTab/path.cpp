@@ -182,6 +182,7 @@ ProcessedFileList ProcessEverything(std::list<std::wstring> list)
     if (handle != INVALID_HANDLE_VALUE)
     {
       FileSumList fsl;
+      // we ignore the error returned, result will just be empty
       TryParseSumFile(handle, fsl);
       CloseHandle(handle);
       if (!fsl.empty())
