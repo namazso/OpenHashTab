@@ -168,6 +168,28 @@ namespace utl
   std::wstring ErrorToString(DWORD error);
 
   std::pair<const char*, size_t> GetResource(LPCWSTR name, LPCWSTR type);
+
+  struct Version
+  {
+    uint16_t major{};
+    uint16_t minor{};
+    uint16_t patch{};
+
+    constexpr Version(uint16_t major, uint16_t minor, uint16_t patch)
+      : major(major)
+      , minor(minor)
+      , patch(patch) {}
+
+    constexpr Version() = default;
+
+    constexpr uint64_t AsNumber() const { return ((uint64_t)major << 32) | ((uint64_t)minor << 16) | patch; }
+
+    constexpr bool operator==(const Version& rhs) const { return AsNumber() == rhs.AsNumber(); }
+    constexpr bool operator<(const Version& rhs) const { return AsNumber() < rhs.AsNumber(); }
+    constexpr bool operator>(const Version& rhs) const { return AsNumber() > rhs.AsNumber(); }
+  };
+
+  Version GetLatestVersion();
 }
 
 #define MAKE_IDC_MEMBER(hwnd, name) HWND _hwnd_ ## name = GetDlgItem(hwnd, IDC_ ## name)
