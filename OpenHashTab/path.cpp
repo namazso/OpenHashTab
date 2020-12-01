@@ -21,6 +21,8 @@
 #include "SumFileParser.h"
 #include "utl.h"
 
+#include <algorithm>
+
 
 /*static std::wstring QuerySymbolicLink(std::wstring_view path)
 {
@@ -77,7 +79,7 @@
     auto sumfile_path = path + L".";
     auto handle = INVALID_HANDLE_VALUE;
     for (auto it = hasher.GetExtensions(); handle == INVALID_HANDLE_VALUE && *it; ++it)
-      handle = utl::OpenForRead(sumfile_path + utl::UTF8ToTString(*it));
+      handle = utl::OpenForRead(sumfile_path + utl::UTF8ToWide(*it));
 
     if (handle != INVALID_HANDLE_VALUE)
     {
@@ -96,7 +98,7 @@
         }
         else
         {
-          const auto file_sum_path = base_path + utl::UTF8ToTString(file_sum.first.c_str());
+          const auto file_sum_path = base_path + utl::UTF8ToWide(file_sum.first.c_str());
           const auto sum_handle = utl::OpenForRead(file_sum_path);
           if (sum_handle != INVALID_HANDLE_VALUE)
           {
@@ -192,7 +194,7 @@ ProcessedFileList ProcessEverything(std::list<std::wstring> list)
         if (*extension == L'.')
         {
           ++extension;
-          const auto ext_char = utl::TStringToUTF8(extension);
+          const auto ext_char = utl::WideToUTF8(extension);
           for(const auto& algo : HashAlgorithm::g_hashers)
             for(auto ext = algo.GetExtensions(); *ext; ++ext)
               if (0 == strcmp(*ext, ext_char.c_str()))
@@ -205,7 +207,7 @@ ProcessedFileList ProcessEverything(std::list<std::wstring> list)
           if (filesum.first.empty())
             continue;
 
-          const auto path = sumfile_base_path + utl::UTF8ToTString(filesum.first.c_str());
+          const auto path = sumfile_base_path + utl::UTF8ToWide(filesum.first.c_str());
 
           // absolutize paths we found in the sumfile
           fsl_absolute.emplace_back(path, std::move(filesum.second));

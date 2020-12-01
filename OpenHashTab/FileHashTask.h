@@ -16,6 +16,10 @@
 #pragma once
 #include "Settings.h"
 
+#include <atomic>
+#include <memory>
+#include <array>
+
 class Coordinator;
 
 class FileHashTask

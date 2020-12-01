@@ -16,10 +16,13 @@
 #include "stdafx.h"
 
 #include "OpenHashTabShlExt.h"
+
 #include "dllmain.h"
 #include "utl.h"
 #include "Coordinator.h"
 #include "MainDialog.h"
+
+#include <cassert>
 
 // COpenHashTabShlExt
 
@@ -119,7 +122,7 @@ HRESULT STDMETHODCALLTYPE COpenHashTabShlExt::AddPages(
   psp.pszTitle = tab_name.c_str();
   psp.pcRefParent = reinterpret_cast<UINT*>(&_AtlModule.m_nLockCnt);
 
-  const auto hpage = utl::MakePropPage<PropPageCoordinator, MainDialog>(psp, _files_raw);
+  const auto hpage = wnd::MakePropPage<PropPageCoordinator, MainDialog>(psp, _files_raw);
 
   if (hpage)
   {

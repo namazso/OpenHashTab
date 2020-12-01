@@ -15,9 +15,10 @@
 //    along with OpenHashTab.  If not, see <https://www.gnu.org/licenses/>.
 #include "stdafx.h"
 
-#include "resource.h"
 #include "OpenHashTab_i.h"
 #include "dllmain.h"
+
+#include <xutility>
 
 static constexpr auto k_approved_reg_path = L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Shell Extensions\\Approved";
 static constexpr auto k_extension_name = L"OpenHashTab Shell Extension";

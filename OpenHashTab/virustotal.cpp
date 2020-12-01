@@ -17,15 +17,16 @@
 
 #include "virustotal.h"
 
-#include <tiny-json.h>
-#include <unordered_map>
-
-
 #include "FileHashTask.h"
 #include "Settings.h"
 #include "stringencrypt.h"
 #include "utl.h"
 #include "https.h"
+
+#include <unordered_map>
+#include <sstream>
+
+#include <tiny-json.h>
 
 class json_parser : jsonPool_t
 {

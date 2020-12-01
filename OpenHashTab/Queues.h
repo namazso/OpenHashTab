@@ -15,6 +15,8 @@
 //    along with OpenHashTab.  If not, see <https://www.gnu.org/licenses/>.
 #pragma once
 
+#include <blockingconcurrentqueue.h>
+
 class FileHashTask;
 
 extern moodycamel::ConcurrentQueue<FileHashTask*> g_read_queue;

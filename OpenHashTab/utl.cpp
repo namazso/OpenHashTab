@@ -17,7 +17,38 @@
 
 #include "utl.h"
 
-long utl::ClampIconSize(long size)
+#include <memory>
+
+int utl::FormattedMessageBox(HWND hwnd, LPCWSTR caption, UINT type, LPCWSTR fmt, ...)
+{
+  va_list args;
+  va_start(args, fmt);
+  const auto str = FormatStringV(fmt, args);
+  va_end(args);
+  return MessageBoxW(hwnd, str.c_str(), caption, type);
+}
+
+std::wstring utl::GetString(UINT uID)
+{
+  LPCWSTR v = nullptr;
+  const auto len = LoadStringW(GetInstance(), uID, reinterpret_cast<LPWSTR>(&v), 0);
+  return {v, v + len};
+}
+
+std::wstring utl::GetWindowTextString(HWND hwnd)
+{
+  SetLastError(0);
+  // GetWindowTextLength may return more than actual length, so we can't use a std::wstring directly
+  const auto len = GetWindowTextLengthW(hwnd);
+  // if text is 0 long, GetWindowTextLength returns 0, same as when error happened
+  if (len == 0 && GetLastError() != 0)
+    return {};
+  const auto p = std::make_unique<wchar_t[]>(len + 1);
+  GetWindowTextW(hwnd, p.get(), len + 1);
+  return {p.get()};
+}
+
+long utl::FloorIconSize(long size)
 {
   constexpr static long icon_sizes[] = { 256, 192, 128, 96, 64, 48, 40, 32, 24, 16 };
   for (auto v : icon_sizes)
@@ -89,7 +120,7 @@ HANDLE utl::OpenForRead(const std::wstring& file, bool async)
   );
 }
 
-DWORD utl::SetClipboardText(HWND hwnd, LPCWSTR text)
+DWORD utl::SetClipboardText(HWND hwnd, std::wstring_view text)
 {
   DWORD error;
 
@@ -97,16 +128,16 @@ DWORD utl::SetClipboardText(HWND hwnd, LPCWSTR text)
   {
     EmptyClipboard();
 
-    const auto len = wcslen(text);
+    const auto len = text.length();
 
     if (const auto cb = GlobalAlloc(GMEM_MOVEABLE, (len + 1) * sizeof(wchar_t)))
     {
       // Lock the handle and copy the text to the buffer. 
       if (const auto lcb = static_cast<LPWSTR>(GlobalLock(cb)))
       {
-        memcpy(lcb, text, (len + 1) * sizeof(wchar_t));
+        memcpy(lcb, text.data(), (len + 1) * sizeof(wchar_t));
         const auto ref = GlobalUnlock(cb);
-        error          = GetLastError();
+        error = GetLastError();
         if (ref != 0 || error == ERROR_SUCCESS)
         {
           // Place the handle on the clipboard.
@@ -151,7 +182,7 @@ std::wstring utl::GetClipboardText(HWND hwnd)
   return wstr;
 }
 
-std::wstring utl::SaveDialog(HWND hwnd, LPCWSTR defpath, LPCWSTR defname)
+std::wstring utl::SaveDialog(HWND hwnd, const wchar_t* defpath, const wchar_t* defname)
 {
   wchar_t name[PATHCCH_MAX_CCH];
   wcscpy_s(name, defname);
@@ -166,7 +197,7 @@ std::wstring utl::SaveDialog(HWND hwnd, LPCWSTR defpath, LPCWSTR defname)
     const auto error = CommDlgExtendedError();
     // if error is 0 the user just cancelled the action
     if (error)
-      utl::FormattedMessageBox(
+      FormattedMessageBox(
         hwnd,
         L"Error",
         MB_ICONERROR | MB_OK,
@@ -180,7 +211,7 @@ std::wstring utl::SaveDialog(HWND hwnd, LPCWSTR defpath, LPCWSTR defname)
   return { name };
 }
 
-DWORD utl::SaveMemoryAsFile(LPCWSTR path, const void* p, DWORD size)
+DWORD utl::SaveMemoryAsFile(const wchar_t* path, const void* p, DWORD size)
 {
   const auto h = CreateFileW(
     MakePathLongCompatible(path).c_str(),
@@ -208,7 +239,7 @@ DWORD utl::SaveMemoryAsFile(LPCWSTR path, const void* p, DWORD size)
   return error;
 }
 
-std::wstring utl::UTF8ToTString(const char* p)
+std::wstring utl::UTF8ToWide(const char* p)
 {
   const auto wsize = MultiByteToWideChar(
     CP_UTF8,
@@ -235,7 +266,7 @@ std::wstring utl::UTF8ToTString(const char* p)
   return wstr;
 }
 
-std::string utl::TStringToUTF8(LPCWSTR p)
+std::string utl::WideToUTF8(const wchar_t* p)
 {
   const auto size = WideCharToMultiByte(
     CP_UTF8,
@@ -268,18 +299,21 @@ std::string utl::TStringToUTF8(LPCWSTR p)
 
 std::wstring utl::ErrorToString(DWORD error)
 {
-  wchar_t buf[0x1000];
+  std::wstring wstr{};
 
-  FormatMessageW(
+  // FormatMessageW: "This buffer cannot be larger than 64K bytes."
+  wstr.resize(64 * 1024 / sizeof(wchar_t));
+
+  const auto size = FormatMessageW(
     FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
     nullptr,
     error,
     MAKELANGID(LANG_USER_DEFAULT, SUBLANG_DEFAULT),
-    buf,
-    static_cast<DWORD>(std::size(buf)),
+    wstr.data(),
+    static_cast<DWORD>(wstr.size()),
     nullptr
   );
-  std::wstring wstr{ buf };
+  wstr.resize(size);
   const auto pos = wstr.find_last_not_of(L"\r\n");
   if (pos != std::wstring::npos)
     wstr.resize(pos);

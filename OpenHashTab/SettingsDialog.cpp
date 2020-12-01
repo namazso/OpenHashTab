@@ -16,6 +16,7 @@
 #include "stdafx.h"
 
 #include "SettingsDialog.h"
+
 #include "Settings.h"
 #include "utl.h"
 
@@ -57,7 +58,7 @@ INT_PTR SettingsDialog::DlgProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
     ListView_SetExtendedListViewStyleEx(list, LVS_EX_CHECKBOXES, LVS_EX_CHECKBOXES);
     for (const auto& algorithm : HashAlgorithm::g_hashers)
     {
-      const auto name = utl::UTF8ToTString(algorithm.GetName());
+      const auto name = utl::UTF8ToWide(algorithm.GetName());
       LVITEMW lvitem
       {
         LVIF_PARAM,

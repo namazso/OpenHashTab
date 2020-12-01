@@ -16,6 +16,8 @@
 #pragma once
 #include "utl.h"
 
+#include <algorithm>
+
 namespace wnd
 {
   // apparently you can get random WM_USER messages from malfunctioning other apps
@@ -106,4 +108,111 @@ namespace wnd
       EndDeferWindowPos(hdwp);
     }
   };
+
+
+  // T should be a class handling a dialog, having implemented these:
+  //   T(HWND hDlg, void* user_param)
+  //     hDlg: the HWND of the dialog, guaranteed to be valid for the lifetime of the object
+  //     user_param: parameter passed to the function creating the dialog
+  //   INT_PTR DlgProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
+  template <typename T>
+  INT_PTR CALLBACK DlgProcClassBinder(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+  {
+    T* p;
+    if (uMsg == WM_INITDIALOG)
+    {
+      p = new T(hDlg, (void*)lParam);
+      SetWindowLongPtrW(hDlg, GWLP_USERDATA, (LONG_PTR)p);
+    }
+    else
+    {
+      p = (T*)GetWindowLongPtrW(hDlg, GWLP_USERDATA);
+    }
+    // there are some unimportant messages sent before WM_INITDIALOG
+    const INT_PTR ret = p ? p->DlgProc(uMsg, wParam, lParam) : (INT_PTR)FALSE;
+    if (uMsg == WM_NCDESTROY)
+    {
+      delete p;
+      // even if we were to somehow receive messages after WM_NCDESTROY make sure we dont call invalid ptr
+      SetWindowLongPtrW(hDlg, GWLP_USERDATA, 0);
+    }
+    return ret;
+  }
+
+  namespace detail
+  {
+    template <typename Dialog>
+    INT_PTR CALLBACK DlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+    {
+      if (uMsg == WM_INITDIALOG)
+        lParam = ((LPPROPSHEETPAGEW)lParam)->lParam;
+      return DlgProcClassBinder<Dialog>(hDlg, uMsg, wParam, lParam);
+    };
+
+    template <typename PropPage>
+    UINT CALLBACK Callback(HWND hwnd, UINT msg, LPPROPSHEETPAGEW ppsp)
+    {
+      const auto object = (PropPage*)ppsp->lParam;
+      UINT ret = 1;
+
+      static const char* const msgname[] = { "ADDREF", "RELEASE", "CREATE" };
+      DebugMsg("%s %p object %p ppsp %p\n", msgname[msg], hwnd, object, ppsp->lParam);
+
+      switch (msg)
+      {
+      case PSPCB_ADDREF:
+        object->AddRef(hwnd, ppsp);
+        break;
+      case PSPCB_RELEASE:
+        object->Release(hwnd, ppsp);
+        break;
+      case PSPCB_CREATE:
+        ret = object->Create(hwnd, ppsp);
+        break;
+      default:
+        break;
+      }
+
+      return ret;
+    };
+  }
+
+  // PropPage should have the following functions:
+  //   PropPage(args...)
+  //   AddRef(HWND hwnd, LPPROPSHEETPAGE ppsp);
+  //   Release(HWND hwnd, LPPROPSHEETPAGE ppsp);
+  //   Create(HWND hwnd, LPPROPSHEETPAGE ppsp);
+  //
+  // Dialog should have the functions described in DlgProcClassBinder. Additionally, dialog receives a Coordinator*
+  //   as lParam in it's constructor. A dialog may or may not get created for a property sheet during lifetime.
+  template <typename PropPage, typename Dialog, typename... Args>
+  HPROPSHEETPAGE MakePropPage(PROPSHEETPAGEW psp, Args&&... args)
+  {
+    // Things are generally called in the following order:
+    // name           dlg   when
+    // -----------------------------------------------
+    // ADDREF         no    on opening properties
+    // CREATE         no    on opening properties
+    // *WM_INITDIALOG yes   on first click on sheet
+    // *WM_*          yes   window messages
+    // *WM_NCDESTROY  yes   on closing properties
+    // RELEASE        no    after properties closed
+    //
+    // Ones marked with * won't get called when the user never selects our prop sheet page
+
+    const auto object = new PropPage(std::forward<Args>(args)...);
+
+    psp.pfnDlgProc = &detail::DlgProc<Dialog>;
+    psp.pfnCallback = &detail::Callback<PropPage>;
+
+    psp.lParam = (LPARAM)object;
+
+    const auto page = CreatePropertySheetPageW(&psp);
+
+    if (!page)
+      delete object;
+
+    return page;
+  }
+
 }

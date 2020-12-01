@@ -16,6 +16,7 @@
 #include "stdafx.h"
 
 #include "SumFileParser.h"
+
 #include "Settings.h"
 #include "utl.h"
 

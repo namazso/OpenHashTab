@@ -54,21 +54,3 @@
 #include <CommCtrl.h>
 #include <VersionHelpers.h>
 #include <pathcch.h>
-
-// STL
-#include <cstdint>
-#include <cassert>
-#include <list>
-#include <string>
-#include <vector>
-#include <memory>
-#include <atomic>
-#include <algorithm>
-#include <array>
-#include <mutex>
-#include <sstream>
-#include <utility>
-#include <exception>
-
-// concurrentqueue
-#include <blockingconcurrentqueue.h>

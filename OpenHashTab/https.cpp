@@ -17,9 +17,9 @@
 
 #include "https.h"
 
-#include <winhttp.h>
-
 #include "stringencrypt.h"
+
+#include <winhttp.h>
 
 struct WinHTTPFunctions
 {

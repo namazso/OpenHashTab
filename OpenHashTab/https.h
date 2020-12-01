@@ -15,6 +15,8 @@
 //    along with OpenHashTab.  If not, see <https://www.gnu.org/licenses/>.
 #pragma once
 
+#include <string>
+
 struct HTTPRequest
 {
   const wchar_t* user_agent;

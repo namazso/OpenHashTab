@@ -16,6 +16,7 @@
 #include "stdafx.h"
 
 #include "MainDialog.h"
+
 #include "Coordinator.h"
 #include "Exporter.h"
 #include "Settings.h"
@@ -24,6 +25,8 @@
 #include "FileHashTask.h"
 #include "wnd.h"
 #include "virustotal.h"
+
+#include <sstream>
 
 enum class HashColorType
 {
@@ -96,7 +99,7 @@ static const Exporter* GetSelectedExporter(HWND combo)
   std::wstring wname;
   wname.resize(len);
   ComboBox_GetLBText(combo, sel, wname.data());
-  const auto name = utl::TStringToUTF8(wname.c_str());
+  const auto name = utl::WideToUTF8(wname.c_str());
   for (const auto exporter : Exporter::k_exporters)
     if (name == exporter->GetName())
       return exporter;
@@ -249,7 +252,7 @@ INT_PTR MainDialog::DlgProc(UINT msg, WPARAM wparam, LPARAM lparam)
         if (!_prop_page->GetFiles().empty() && exporter)
         {
           const auto str = GetSumfileAsString(exporter, true);
-          utl::SetClipboardText(_hwnd, utl::UTF8ToTString(str.c_str()).c_str());
+          utl::SetClipboardText(_hwnd, utl::UTF8ToWide(str.c_str()).c_str());
         }
       }
       break;
@@ -261,7 +264,7 @@ INT_PTR MainDialog::DlgProc(UINT msg, WPARAM wparam, LPARAM lparam)
           ATL::_AtlBaseModule.GetResourceInstance(),
           MAKEINTRESOURCEW(IDD_SETTINGS),
           _hwnd,
-          &utl::DlgProcClassBinder<SettingsDialog>,
+          &wnd::DlgProcClassBinder<SettingsDialog>,
           reinterpret_cast<LPARAM>(&_prop_page->settings)
         );
       break;
@@ -310,7 +313,7 @@ INT_PTR MainDialog::DlgProc(UINT msg, WPARAM wparam, LPARAM lparam)
               AddItemToFileList(
                 r.file->GetDisplayName().c_str(),
                 r.found ? utl::FormatString(L"VT (%d/%d)", r.positives, r.total).c_str() : L"VT",
-                r.found ? utl::UTF8ToTString(r.permalink.c_str()).c_str() : L"Not found",
+                r.found ? utl::UTF8ToWide(r.permalink.c_str()).c_str() : L"Not found",
                 (LPARAM)-1
               );
             Button_Enable(_hwnd_BUTTON_VT, false);
@@ -319,7 +322,7 @@ INT_PTR MainDialog::DlgProc(UINT msg, WPARAM wparam, LPARAM lparam)
           {
             MessageBoxW(
               _hwnd,
-              utl::UTF8ToTString(e.what()).c_str(),
+              utl::UTF8ToWide(e.what()).c_str(),
               L"Runtime error",
               MB_ICONERROR | MB_OK
             );
@@ -351,6 +354,26 @@ INT_PTR MainDialog::DlgProc(UINT msg, WPARAM wparam, LPARAM lparam)
   return ret;
 }
 
+static HICON SetIconButton(HWND button, int resource)
+{
+  RECT rect{};
+  GetWindowRect(button, &rect);
+  const auto max_raw = std::min(rect.right - rect.left, rect.bottom - rect.top);
+  const auto max = utl::FloorIconSize(max_raw * 3 / 4);
+
+  const auto icon = LoadImageW(
+    utl::GetInstance(),
+    MAKEINTRESOURCEW(resource),
+    IMAGE_ICON,
+    max,
+    max,
+    LR_DEFAULTCOLOR
+  );
+  
+  SendMessageW(button, BM_SETIMAGE, (WPARAM)IMAGE_ICON, (LPARAM)icon);
+  return (HICON)icon;
+}
+
 void MainDialog::InitDialog()
 {
   SetClassLongPtrW(
@@ -359,37 +382,8 @@ void MainDialog::InitDialog()
     reinterpret_cast<LONG_PTR>(LoadIconW(utl::GetInstance(), MAKEINTRESOURCEW(IDI_ICON1)))
   );
 
-  RECT vt_rect{};
-  GetWindowRect(_hwnd_BUTTON_VT, &vt_rect);
-  const auto vt_max_raw = std::min(vt_rect.right - vt_rect.left, vt_rect.bottom - vt_rect.top);
-  const auto vt_max = utl::ClampIconSize(vt_max_raw * 3 / 4);
-
-  const auto vt_icon = LoadImageW(
-    utl::GetInstance(),
-    MAKEINTRESOURCEW(IDI_ICON_VT),
-    IMAGE_ICON,
-    vt_max,
-    vt_max,
-    LR_DEFAULTCOLOR
-  );
-
-  SendMessageW(_hwnd_BUTTON_VT, BM_SETIMAGE, (WPARAM)IMAGE_ICON, (LPARAM)vt_icon);
-
-  RECT cog_rect{};
-  GetWindowRect(_hwnd_BUTTON_SETTINGS, &cog_rect);
-  const auto cog_max_raw = std::min(cog_rect.right - cog_rect.left, cog_rect.bottom - cog_rect.top);
-  const auto cog_max = utl::ClampIconSize(cog_max_raw * 3 / 4);
-
-  const auto cog_icon = LoadImageW(
-    utl::GetInstance(),
-    MAKEINTRESOURCEW(IDI_ICON_COG),
-    IMAGE_ICON,
-    cog_max,
-    cog_max,
-    LR_DEFAULTCOLOR
-  );
-
-  SendMessageW(_hwnd_BUTTON_SETTINGS, BM_SETIMAGE, (WPARAM)IMAGE_ICON, (LPARAM)cog_icon);
+  SetIconButton(_hwnd_BUTTON_VT, IDI_ICON_VT);
+  SetIconButton(_hwnd_BUTTON_SETTINGS, IDI_ICON_COG);
 
   SetTextFromTable(_hwnd_STATIC_CHECK_AGAINST, IDS_CHECK_AGAINST);
   SetTextFromTable(_hwnd_STATIC_EXPORT_TO, IDS_EXPORT_TO);
@@ -424,7 +418,7 @@ void MainDialog::InitDialog()
 
   for (const auto& exporter : Exporter::k_exporters)
     if (exporter->IsEnabled(&_prop_page->settings))
-      ComboBox_AddString(_hwnd_COMBO_EXPORT, utl::UTF8ToTString(exporter->GetName()).c_str());
+      ComboBox_AddString(_hwnd_COMBO_EXPORT, utl::UTF8ToWide(exporter->GetName()).c_str());
 
   ComboBox_SetCurSel(_hwnd_COMBO_EXPORT, 0);
 
@@ -485,7 +479,7 @@ void MainDialog::OnFileFinished(FileHashTask* file)
       {
         wchar_t hash_str[HashAlgorithm::k_max_size * 2 + 1];
         utl::HashBytesToString(hash_str, result, _prop_page->settings.display_uppercase);
-        const auto tname = utl::UTF8ToTString(HashAlgorithm::g_hashers[i].GetName());
+        const auto tname = utl::UTF8ToWide(HashAlgorithm::g_hashers[i].GetName());
         AddItemToFileList(file->GetDisplayName().c_str(), tname.c_str(), hash_str, file->ToLparam(i));
       }
     }
@@ -535,7 +529,7 @@ void MainDialog::OnExportClicked()
   const auto exporter = GetSelectedExporter(_hwnd_COMBO_EXPORT);
   if (exporter && !_prop_page->GetFiles().empty())
   {
-    const auto ext = utl::UTF8ToTString(exporter->GetExtension());
+    const auto ext = utl::UTF8ToWide(exporter->GetExtension());
     const auto path_and_basename = _prop_page->GetSumfileDefaultSavePathAndBaseName();
     const auto name = path_and_basename.second + L"." + ext;
     const auto sumfile_path = utl::SaveDialog(_hwnd, path_and_basename.first.c_str(), name.c_str());
@@ -567,7 +561,7 @@ void MainDialog::OnHashEditChanged()
       if (!result[i].empty() && result[i] == find_hash)
       {
         found = true;
-        const auto algorithm_name = utl::UTF8ToTString(HashAlgorithm::g_hashers[i].GetName());
+        const auto algorithm_name = utl::UTF8ToWide(HashAlgorithm::g_hashers[i].GetName());
         const auto txt = algorithm_name + L" / " + file->GetDisplayName();
         SetWindowTextW(_hwnd_STATIC_CHECK_RESULT, txt.c_str());
         break;
@@ -607,7 +601,7 @@ void MainDialog::OnListRightClick(bool dblclick)
   if (!count)
     return;
   const auto buf = std::make_unique<std::array<wchar_t, PATHCCH_MAX_CCH>>();
-  std::basic_stringstream<wchar_t> clipboard;
+  std::wstringstream clipboard;
   const auto list_get_text = [&](int idx, int subitem)
   {
     ListView_GetItemText(list, idx, subitem, buf->data(), static_cast<int>(buf->size()));

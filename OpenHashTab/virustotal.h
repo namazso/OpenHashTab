@@ -15,6 +15,9 @@
 //    along with OpenHashTab.  If not, see <https://www.gnu.org/licenses/>.
 #pragma once
 
+#include <list>
+#include <string>
+
 class FileHashTask;
 struct Settings;
 

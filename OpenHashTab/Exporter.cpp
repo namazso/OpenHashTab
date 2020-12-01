@@ -17,10 +17,12 @@
 
 #include "Exporter.h"
 
-
 #include "FileHashTask.h"
 #include "Settings.h"
 #include "utl.h"
+
+#include <sstream>
+#include <algorithm>
 
 static std::string TimeISO8601()
 {
@@ -92,7 +94,7 @@ std::string SFVExporter::GetExportString(
   {
     if (file->GetError())
       continue;
-    auto filename = utl::TStringToUTF8(file->GetDisplayName().c_str());
+    auto filename = utl::WideToUTF8(file->GetDisplayName().c_str());
     if (settings->sumfile_forward_slashes)
       std::replace(begin(filename), end(filename), '\\', '/');
     char hash[HashAlgorithm::k_max_size * 2 + 1];
@@ -143,7 +145,7 @@ std::string GetExportStringSumfile(
     if (file->GetError())
       continue;
 
-    auto filename_original = utl::TStringToUTF8(file->GetDisplayName().c_str());
+    auto filename_original = utl::WideToUTF8(file->GetDisplayName().c_str());
     auto filename = filename_original;
     if (forward_slashes)
       std::replace(begin(filename), end(filename), '\\', '/');

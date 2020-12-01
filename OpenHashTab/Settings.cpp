@@ -16,6 +16,7 @@
 #include "stdafx.h"
 
 #include "Settings.h"
+
 #include "utl.h"
 
 constexpr static auto k_reg_path = L"Software\\OpenHashTab";
@@ -27,7 +28,7 @@ DWORD detail::GetSettingDWORD(const char* name, DWORD default_value)
   const auto status = RegGetValueW(
     HKEY_CURRENT_USER,
     k_reg_path,
-    utl::UTF8ToTString(name).c_str(),
+    utl::UTF8ToWide(name).c_str(),
     RRF_RT_REG_DWORD,
     nullptr,
     &value,
@@ -41,7 +42,7 @@ void detail::SetSettingDWORD(const char* name, DWORD new_value)
   RegSetKeyValueW(
     HKEY_CURRENT_USER,
     k_reg_path,
-    utl::UTF8ToTString(name).c_str(),
+    utl::UTF8ToWide(name).c_str(),
     REG_DWORD,
     &new_value,
     sizeof(new_value)

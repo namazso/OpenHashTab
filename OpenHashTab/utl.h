@@ -15,6 +15,9 @@
 //    along with OpenHashTab.  If not, see <https://www.gnu.org/licenses/>.
 #pragma once
 
+#include <string>
+#include <vector>
+
 #ifdef _DEBUG
 inline void DebugMsg(PCSTR fmt, ...)
 {
@@ -32,111 +35,6 @@ inline void DebugMsg(PCSTR fmt, ...) { }
 namespace utl
 {
   inline HINSTANCE GetInstance() { return (HINSTANCE)&__ImageBase; }
-
-  // T should be a class handling a dialog, having implemented these:
-  //   T(HWND hDlg, void* user_param)
-  //     hDlg: the HWND of the dialog, guaranteed to be valid for the lifetime of the object
-  //     user_param: parameter passed to the function creating the dialog
-  //   INT_PTR DlgProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
-  template <typename T>
-  INT_PTR CALLBACK DlgProcClassBinder(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
-  {
-    T* p;
-    if (uMsg == WM_INITDIALOG)
-    {
-      p = new T(hDlg, (void*)lParam);
-      SetWindowLongPtrW(hDlg, GWLP_USERDATA, (LONG_PTR)p);
-    }
-    else
-    {
-      p = (T*)GetWindowLongPtrW(hDlg, GWLP_USERDATA);
-    }
-    // there are some unimportant messages sent before WM_INITDIALOG
-    const INT_PTR ret = p ? p->DlgProc(uMsg, wParam, lParam) : (INT_PTR)FALSE;
-    if (uMsg == WM_NCDESTROY)
-    {
-      delete p;
-      // even if we were to somehow receive messages after WM_NCDESTROY make sure we dont call invalid ptr
-      SetWindowLongPtrW(hDlg, GWLP_USERDATA, 0);
-    }
-    return ret;
-  }
-
-  namespace detail
-  {
-    template <typename Dialog>
-    INT_PTR CALLBACK DlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
-    {
-      if (uMsg == WM_INITDIALOG)
-        lParam = ((LPPROPSHEETPAGEW)lParam)->lParam;
-      return DlgProcClassBinder<Dialog>(hDlg, uMsg, wParam, lParam);
-    };
-
-    template <typename PropPage>
-    UINT CALLBACK Callback(HWND hwnd, UINT msg, LPPROPSHEETPAGEW ppsp)
-    {
-      const auto object = (PropPage*)ppsp->lParam;
-      UINT ret = 1;
-
-      static const char* const msgname[] = { "ADDREF", "RELEASE", "CREATE" };
-      DebugMsg("%s %p object %p ppsp %p\n", msgname[msg], hwnd, object, ppsp->lParam);
-
-      switch (msg)
-      {
-      case PSPCB_ADDREF:
-        object->AddRef(hwnd, ppsp);
-        break;
-      case PSPCB_RELEASE:
-        object->Release(hwnd, ppsp);
-        break;
-      case PSPCB_CREATE:
-        ret = object->Create(hwnd, ppsp);
-        break;
-      default:
-        break;
-      }
-
-      return ret;
-    };
-  }
-
-  // PropPage should have the following functions:
-  //   PropPage(args...)
-  //   AddRef(HWND hwnd, LPPROPSHEETPAGE ppsp);
-  //   Release(HWND hwnd, LPPROPSHEETPAGE ppsp);
-  //   Create(HWND hwnd, LPPROPSHEETPAGE ppsp);
-  //
-  // Dialog should have the functions described in DlgProcClassBinder. Additionally, dialog receives a Coordinator*
-  //   as lParam in it's constructor. A dialog may or may not get created for a property sheet during lifetime.
-  template <typename PropPage, typename Dialog, typename... Args>
-  HPROPSHEETPAGE MakePropPage(PROPSHEETPAGEW psp, Args&&... args)
-  {
-    // Things are generally called in the following order:
-    // name           dlg   when
-    // -----------------------------------------------
-    // ADDREF         no    on opening properties
-    // CREATE         no    on opening properties
-    // *WM_INITDIALOG yes   on first click on sheet
-    // *WM_*          yes   window messages
-    // *WM_NCDESTROY  yes   on closing properties
-    // RELEASE        no    after properties closed
-    //
-    // Ones marked with * won't get called when the user never selects our prop sheet page
-
-    const auto object = new PropPage(std::forward<Args>(args)...);
-
-    psp.pfnDlgProc = &detail::DlgProc<Dialog>;
-    psp.pfnCallback = &detail::Callback<PropPage>;
-
-    psp.lParam = (LPARAM)object;
-
-    const auto page = CreatePropertySheetPageW(&psp);
-
-    if (!page)
-      delete object;
-
-    return page;
-  }
 
   template <typename Char>
   Char hex(uint8_t n, bool upper = true)
@@ -204,8 +102,9 @@ namespace utl
     return res;
   }
 
+
   template <typename Char>
-  auto FormatString(_In_z_ _Printf_format_string_ const Char* fmt, ...) -> std::basic_string<Char>
+  auto FormatStringV(_In_z_ _Printf_format_string_ const Char* fmt, va_list va) -> std::basic_string<Char>
   {
     using cfn_t = int(*)(const Char*, va_list);
     using fn_t = int(*)(Char*, size_t, const Char*, va_list);
@@ -224,51 +123,30 @@ namespace utl
 
     std::basic_string<Char> str;
 
-    va_list args;
-    va_start(args, fmt);
-    int len = cfn(fmt, args);
-    va_end(args);
-
+    int len = cfn(fmt, va);
     str.resize(len);
-
-    va_start(args, fmt);
-    fn(str.data(), str.size() + 1, fmt, args);
-    va_end(args);
+    fn(str.data(), str.size() + 1, fmt, va);
 
     return str;
   }
 
-  inline int FormattedMessageBox(HWND hwnd, LPCWSTR caption, UINT type, _In_z_ _Printf_format_string_ LPCWSTR fmt, ...)
+  template <typename Char>
+  auto FormatString(_In_z_ _Printf_format_string_ const Char* fmt, ...) -> std::basic_string<Char>
   {
     va_list args;
     va_start(args, fmt);
-    wchar_t text[4096];
-    vswprintf_s(text, fmt, args);
+    auto str = FormatStringV(fmt, args);
     va_end(args);
-    return MessageBoxW(hwnd, text, caption, type);
+    return str;
   }
 
-  inline std::wstring GetString(UINT uID)
-  {
-    LPCWSTR v = nullptr;
-    const auto len = LoadStringW(utl::GetInstance(), uID, (LPWSTR)&v, 0);
-    return {v, v + len};
-  }
+  int FormattedMessageBox(HWND hwnd, LPCWSTR caption, UINT type, _In_z_ _Printf_format_string_ LPCWSTR fmt, ...);
 
-  inline std::wstring GetWindowTextString(HWND hwnd)
-  {
-    SetLastError(0);
-    // GetWindowTextLength may return more than actual length, so we can't use a std::wstring directly
-    const auto len = GetWindowTextLengthW(hwnd);
-    // if text is 0 long, GetWindowTextLength returns 0, same as when error happened
-    if (len == 0 && GetLastError() != 0)
-      return {};
-    const auto p = std::make_unique<wchar_t[]>(len + 1);
-    GetWindowTextW(hwnd, p.get(), len + 1);
-    return { p.get() };
-  }
+  std::wstring GetString(UINT uID);
 
-  long ClampIconSize(long size);
+  std::wstring GetWindowTextString(HWND hwnd);
+
+  long FloorIconSize(long size);
 
   bool AreFilesTheSame(HANDLE a, HANDLE b);
 
@@ -276,16 +154,16 @@ namespace utl
 
   HANDLE OpenForRead(const std::wstring& file, bool async = false);
 
-  DWORD SetClipboardText(HWND hwnd, LPCWSTR text);
+  DWORD SetClipboardText(HWND hwnd, std::wstring_view text);
 
   std::wstring GetClipboardText(HWND hwnd);
 
-  std::wstring SaveDialog(HWND hwnd, LPCWSTR defpath, LPCWSTR defname);
+  std::wstring SaveDialog(HWND hwnd, const wchar_t* defpath, const wchar_t* defname);
 
-  DWORD SaveMemoryAsFile(LPCWSTR path, const void* p, DWORD size);
+  DWORD SaveMemoryAsFile(const wchar_t* path, const void* p, DWORD size);
 
-  std::wstring UTF8ToTString(const char* p);
-  std::string TStringToUTF8(LPCWSTR p);
+  std::wstring UTF8ToWide(const char* p);
+  std::string WideToUTF8(const wchar_t* p);
 
   std::wstring ErrorToString(DWORD error);
 

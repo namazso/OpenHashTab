@@ -16,6 +16,7 @@
 #include "stdafx.h"
 
 #include "FileHashTask.h"
+
 #include "Coordinator.h"
 #include "Queues.h"
 #include "utl.h"

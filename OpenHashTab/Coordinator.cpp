@@ -16,10 +16,13 @@
 #include "stdafx.h"
 
 #include "Coordinator.h"
+
 #include "utl.h"
 #include "wnd.h"
 #include "Settings.h"
 #include "FileHashTask.h"
+
+#include <cassert>
 
 Coordinator::Coordinator(std::list<std::wstring> files)
   : _files_raw(std::move(files)) {}

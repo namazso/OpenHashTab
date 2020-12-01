@@ -15,6 +15,11 @@
 //    along with OpenHashTab.  If not, see <https://www.gnu.org/licenses/>.
 #pragma once
 
+#include <list>
+#include <string>
+#include <utility>
+#include <vector>
+
 using FileSum = std::pair<std::string, std::vector<uint8_t>>;
 using FileSumList = std::list<FileSum>;
 DWORD TryParseSumFile(HANDLE h, FileSumList& output);
