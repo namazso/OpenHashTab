@@ -20,6 +20,8 @@
 #include "Settings.h"
 #include "utl.h"
 
+#include <stdexcept>
+
 struct SettingCheckbox
 {
   RegistrySetting<bool> Settings::* setting;
@@ -93,6 +95,50 @@ INT_PTR SettingsDialog::DlgProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
     {
       EndDialog(_hwnd, LOWORD(wParam));
       return TRUE;
+    }
+    if (code == BN_CLICKED && id == IDC_BUTTON_CHECK_FOR_UPDATES)
+    {
+      try
+      {
+        constexpr static auto current = utl::Version{ CI_VERSION_MAJOR, CI_VERSION_MINOR, CI_VERSION_PATCH };
+        if constexpr (current.AsNumber() == 0)
+        {
+          MessageBoxW(
+            _hwnd,
+            L"Unavailable in development builds",
+            L"Error",
+            MB_OK | MB_ICONERROR
+          );
+        }
+        else if (const auto v = utl::GetLatestVersion(); v > current)
+          utl::FormattedMessageBox(
+            _hwnd,
+            L"Update available",
+            MB_OK | MB_ICONINFORMATION,
+            L"New version %hu.%hu.%hu available",
+            v.major,
+            v.minor,
+            v.patch
+          );
+        else
+          MessageBoxW(
+            _hwnd,
+            L"You are already on the latest version",
+            L"Congratulations",
+            MB_OK
+          );
+
+      }
+      catch (const std::runtime_error& e)
+      {
+        MessageBoxW(
+          _hwnd,
+          utl::UTF8ToWide(e.what()).c_str(),
+          L"Runtime error",
+          MB_ICONERROR | MB_OK
+        );
+      }
+      break;
     }
     if (code == BN_CLICKED)
       for (const auto& ctl : s_boxes)

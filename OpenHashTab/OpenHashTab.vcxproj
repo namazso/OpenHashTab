@@ -155,6 +155,7 @@
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="SumFileParser.cpp" />
+    <ClCompile Include="updatecheck.cpp" />
     <ClCompile Include="utl.cpp" />
     <ClCompile Include="virustotal.cpp" />
   </ItemGroup>
@@ -164,6 +165,7 @@
     <ClInclude Include="Exporter.h" />
     <ClInclude Include="FileHashTask.h" />
     <ClInclude Include="https.h" />
+    <ClInclude Include="json.h" />
     <ClInclude Include="path.h" />
     <ClInclude Include="Settings.h" />
     <ClInclude Include="OpenHashTabShlExt.h" />

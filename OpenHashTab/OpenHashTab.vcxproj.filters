@@ -79,6 +79,9 @@
     <ClCompile Include="..\tiny-json\tiny-json.c">
       <Filter>tiny-json</Filter>
     </ClCompile>
+    <ClCompile Include="updatecheck.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -143,6 +146,9 @@
     </ClInclude>
     <ClInclude Include="..\tiny-json\tiny-json.h">
       <Filter>tiny-json</Filter>
+    </ClInclude>
+    <ClInclude Include="json.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
