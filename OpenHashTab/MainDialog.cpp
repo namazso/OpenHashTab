@@ -87,11 +87,6 @@ static HashColorType HashColorTypeForFile(FileHashTask* file, size_t hasher)
   return HashColorType::Unknown;
 }
 
-static void SetTextFromTable(HWND hwnd, UINT string_id)
-{
-  SetWindowTextW(hwnd, utl::GetString(string_id).c_str());
-}
-
 static const Exporter* GetSelectedExporter(HWND combo)
 {
   const auto sel = ComboBox_GetCurSel(combo);
@@ -164,7 +159,6 @@ INT_PTR MainDialog::CustomDrawListView(LPARAM lparam, HWND list)
   }
   return CDRF_DODEFAULT;
 }
-
 
 INT_PTR MainDialog::DlgProc(UINT msg, WPARAM wparam, LPARAM lparam)
 {
@@ -354,26 +348,6 @@ INT_PTR MainDialog::DlgProc(UINT msg, WPARAM wparam, LPARAM lparam)
   return ret;
 }
 
-static HICON SetIconButton(HWND button, int resource)
-{
-  RECT rect{};
-  GetWindowRect(button, &rect);
-  const auto max_raw = std::min(rect.right - rect.left, rect.bottom - rect.top);
-  const auto max = utl::FloorIconSize(max_raw * 3 / 4);
-
-  const auto icon = LoadImageW(
-    utl::GetInstance(),
-    MAKEINTRESOURCEW(resource),
-    IMAGE_ICON,
-    max,
-    max,
-    LR_DEFAULTCOLOR
-  );
-  
-  SendMessageW(button, BM_SETIMAGE, (WPARAM)IMAGE_ICON, (LPARAM)icon);
-  return (HICON)icon;
-}
-
 void MainDialog::InitDialog()
 {
   SetClassLongPtrW(
@@ -382,15 +356,15 @@ void MainDialog::InitDialog()
     reinterpret_cast<LONG_PTR>(LoadIconW(utl::GetInstance(), MAKEINTRESOURCEW(IDI_ICON1)))
   );
 
-  SetIconButton(_hwnd_BUTTON_VT, IDI_ICON_VT);
-  SetIconButton(_hwnd_BUTTON_SETTINGS, IDI_ICON_COG);
+  utl::SetIconButton(_hwnd_BUTTON_VT, IDI_ICON_VT);
+  utl::SetIconButton(_hwnd_BUTTON_SETTINGS, IDI_ICON_COG);
 
-  SetTextFromTable(_hwnd_STATIC_CHECK_AGAINST, IDS_CHECK_AGAINST);
-  SetTextFromTable(_hwnd_STATIC_EXPORT_TO, IDS_EXPORT_TO);
-  SetTextFromTable(_hwnd_BUTTON_EXPORT, IDS_EXPORT_BTN);
-  SetTextFromTable(_hwnd_STATIC_PROCESSING, IDS_PROCESSING);
-  SetTextFromTable(_hwnd_BUTTON_CLIPBOARD, IDS_CLIPBOARD);
-  SetTextFromTable(_hwnd_BUTTON_CANCEL, IDS_CANCEL);
+  utl::SetWindowTextStringFromTable(_hwnd_STATIC_CHECK_AGAINST, IDS_CHECK_AGAINST);
+  utl::SetWindowTextStringFromTable(_hwnd_STATIC_EXPORT_TO, IDS_EXPORT_TO);
+  utl::SetWindowTextStringFromTable(_hwnd_BUTTON_EXPORT, IDS_EXPORT_BTN);
+  utl::SetWindowTextStringFromTable(_hwnd_STATIC_PROCESSING, IDS_PROCESSING);
+  utl::SetWindowTextStringFromTable(_hwnd_BUTTON_CLIPBOARD, IDS_CLIPBOARD);
+  utl::SetWindowTextStringFromTable(_hwnd_BUTTON_CANCEL, IDS_CANCEL);
 
   SendMessageW(_hwnd_HASH_LIST, LVM_SETTEXTBKCOLOR, 0, CLR_NONE);
   SendMessageW(_hwnd_HASH_LIST, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, LVS_EX_FULLROWSELECT);
@@ -423,7 +397,7 @@ void MainDialog::InitDialog()
   ComboBox_SetCurSel(_hwnd_COMBO_EXPORT, 0);
 
   if (_prop_page->IsSumfile())
-    SetTextFromTable(_hwnd_STATIC_SUMFILE, IDS_SUMFILE);
+    utl::SetWindowTextStringFromTable(_hwnd_STATIC_SUMFILE, IDS_SUMFILE);
 
   if (_prop_page->GetFiles().size() == 1)
     ListView_SetColumnWidth(_hwnd_HASH_LIST, ColIndex_Filename, 0);

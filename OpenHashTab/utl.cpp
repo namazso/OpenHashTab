@@ -28,10 +28,10 @@ int utl::FormattedMessageBox(HWND hwnd, LPCWSTR caption, UINT type, LPCWSTR fmt,
   return MessageBoxW(hwnd, str.c_str(), caption, type);
 }
 
-std::wstring utl::GetString(UINT uID)
+std::wstring utl::GetString(UINT id)
 {
   LPCWSTR v = nullptr;
-  const auto len = LoadStringW(GetInstance(), uID, reinterpret_cast<LPWSTR>(&v), 0);
+  const auto len = LoadStringW(GetInstance(), id, reinterpret_cast<LPWSTR>(&v), 0);
   return {v, v + len};
 }
 
@@ -48,6 +48,11 @@ std::wstring utl::GetWindowTextString(HWND hwnd)
   return {p.get()};
 }
 
+void utl::SetWindowTextStringFromTable(HWND hwnd, UINT id)
+{
+  SetWindowTextW(hwnd, utl::GetString(id).c_str());
+}
+
 long utl::FloorIconSize(long size)
 {
   constexpr static long icon_sizes[] = { 256, 192, 128, 96, 64, 48, 40, 32, 24, 16 };
@@ -58,6 +63,26 @@ long utl::FloorIconSize(long size)
       break;
     }
   return size;
+}
+
+HICON utl::SetIconButton(HWND button, int resource)
+{
+  RECT rect{};
+  GetWindowRect(button, &rect);
+  const auto max_raw = std::min(rect.right - rect.left, rect.bottom - rect.top);
+  const auto max = FloorIconSize(max_raw * 3 / 4);
+
+  const auto icon = LoadImageW(
+    GetInstance(),
+    MAKEINTRESOURCEW(resource),
+    IMAGE_ICON,
+    max,
+    max,
+    LR_DEFAULTCOLOR
+  );
+
+  SendMessageW(button, BM_SETIMAGE, (WPARAM)IMAGE_ICON, (LPARAM)icon);
+  return (HICON)icon;
 }
 
 bool utl::AreFilesTheSame(HANDLE a, HANDLE b)

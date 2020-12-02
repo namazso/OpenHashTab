@@ -142,11 +142,15 @@ namespace utl
 
   int FormattedMessageBox(HWND hwnd, LPCWSTR caption, UINT type, _In_z_ _Printf_format_string_ LPCWSTR fmt, ...);
 
-  std::wstring GetString(UINT uID);
+  std::wstring GetString(UINT id);
 
   std::wstring GetWindowTextString(HWND hwnd);
 
+  void SetWindowTextStringFromTable(HWND hwnd, UINT id);
+
   long FloorIconSize(long size);
+
+  HICON SetIconButton(HWND button, int resource);
 
   bool AreFilesTheSame(HANDLE a, HANDLE b);
 
