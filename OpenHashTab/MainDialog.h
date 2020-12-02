@@ -66,19 +66,30 @@ class MainDialog
   void AddItemToFileList(LPCWSTR filename, LPCWSTR algorithm, LPCWSTR hash, LPARAM lparam);
   void SetTempStatus(LPCWSTR status, UINT time);
   void UpdateDefaultStatus(bool force_reset = false);
-
-  void InitDialog();
-
-  void OnFileFinished(FileHashTask* file);
-  void OnAllFilesFinished();
-  void OnExportClicked();
-  void OnHashEditChanged();
-  void OnListDoubleClick(int item, int subitem);
-  void OnListRightClick(bool dblclick = false);
+  
+  void ListDoubleClick(int item, int subitem);
+  void ListRightClick(bool dblclick = false);
 
 public:
   MainDialog(HWND hwnd, void* prop_page);
   ~MainDialog();
 
   INT_PTR DlgProc(UINT msg, WPARAM wparam, LPARAM lparam);
+
+private:
+  INT_PTR OnInitDialog(UINT, WPARAM, LPARAM);
+  INT_PTR OnFileFinished(UINT, WPARAM, LPARAM lparam);
+  INT_PTR OnAllFilesFinished(UINT, WPARAM, LPARAM);
+  INT_PTR OnFileProgress(UINT, WPARAM, LPARAM lparam);
+  INT_PTR OnStatusUpdateTimer(UINT, WPARAM, LPARAM);
+  INT_PTR OnHashListNotify(UINT, WPARAM, LPARAM lparam);
+  INT_PTR OnExportClicked(UINT, WPARAM, LPARAM);
+  INT_PTR OnCancelClicked(UINT, WPARAM, LPARAM);
+  INT_PTR OnVTClicked(UINT, WPARAM, LPARAM);
+  INT_PTR OnClose(UINT, WPARAM, LPARAM);
+  INT_PTR OnNeedAdjust(UINT, WPARAM, LPARAM);
+  INT_PTR OnHashEditChanged(UINT, WPARAM, LPARAM);
+  INT_PTR OnClipboardClicked(UINT, WPARAM, LPARAM);
+  INT_PTR OnSettingsClicked(UINT, WPARAM, LPARAM);
 };
+

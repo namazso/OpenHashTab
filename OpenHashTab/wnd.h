@@ -215,19 +215,25 @@ namespace wnd
     return page;
   }
 
+  enum Match : UINT
+  {
+    Match_l = 1 << 0,
+    Match_w = 1 << 1,
+    Match_wl = 1 << 2,
+    Match_wh = 1 << 3,
+
+    Match_wlh = Match_wl | Match_wh,
+    Match_lw = Match_l | Match_w,
+    Match_lwl = Match_l | Match_wl,
+    Match_lwh = Match_l | Match_wh,
+    Match_lwlh = Match_l | Match_wlh
+  };
+
   template <typename T>
   class MessageMatcher
   {
-    using fn_t = UINT_PTR(T::*)(UINT message, WPARAM wparam, LPARAM lparam);
-  public:
-    enum Conditions : UINT
-    {
-      wParam        = 1 << 0, // wparam is actually UINT_PTR so the previous two don't imply exact match
-      lParam        = 1 << 1,
-      wParamLoWord  = 1 << 2,
-      wParamHiWord  = 1 << 3,
-    };
-  private:
+    using fn_t = INT_PTR(T::*)(UINT message, WPARAM wparam, LPARAM lparam);
+
     fn_t _fn;
     LPARAM _lparam;
     WPARAM _wparam;
@@ -241,32 +247,35 @@ namespace wnd
       , _message(message)
       , _conditions(conditions) {}
 
-    bool TryRoute(T* c, UINT message, WPARAM wparam, LPARAM lparam, UINT_PTR& ret) const
+    bool TryRoute(T* c, UINT message, WPARAM wparam, LPARAM lparam, INT_PTR& ret) const
     {
       if (message != _message)
         return false;
       if (message == WM_NOTIFY)
-        wparam = ((LPNMHDR)lparam)->idFrom; // this is stupid, but WM_NOTIFY docs say this wParam cannot be trusted
-      if (_conditions & wParam && wparam != _wparam)
+        wparam = reinterpret_cast<LPNMHDR>(lparam)->idFrom; // this is stupid, but WM_NOTIFY docs say this wParam cannot be trusted
+      if (_conditions & Match_l && lparam != _lparam)
         return false;
-      if (_conditions & lParam && lparam != _lparam)
+      if (_conditions & Match_wl && LOWORD(wparam) != LOWORD(_wparam))
         return false;
-      if (_conditions & wParamLoWord && LOWORD(wparam) != LOWORD(_wparam))
+      if (_conditions & Match_wh && HIWORD(wparam) != HIWORD(_wparam))
         return false;
-      if (_conditions & wParamHiWord && HIWORD(wparam) != HIWORD(_wparam))
+      if (_conditions & Match_w && wparam != _wparam) // on 64 bit lo+hi doesnt mean exact match
         return false;
-      ret = c->*_fn(message, wparam, lparam);
+      ret = (c->*_fn)(message, wparam, lparam);
       return true;
     }
 
   };
   template <typename T, typename It>
-  bool RouteMessage(T* c, It begin, It end, UINT message, WPARAM wparam, LPARAM lparam, UINT_PTR& ret)
+  FORCEINLINE bool RouteMessage(T* c, It begin, It end, UINT message, WPARAM wparam, LPARAM lparam, INT_PTR& ret)
   {
-    const auto match = std::find_if(begin, end, [&](const MessageMatcher<T>& matcher)
-      {
-        return matcher.TryRoute(c, message, wparam, lparam, ret);
-      });
-    return match != end;
+    // this with the if ladders might look like terrible performance, but in reality as long as the table is constexpr
+    // the loop will unroll and the compiler will do compiler magic
+
+#pragma unroll
+    for (; begin != end; ++begin)
+      if (begin->TryRoute(c, message, wparam, lparam, ret))
+        return true;
+    return false;
   }
 }

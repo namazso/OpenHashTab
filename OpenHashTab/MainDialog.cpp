@@ -160,251 +160,6 @@ INT_PTR MainDialog::CustomDrawListView(LPARAM lparam, HWND list)
   return CDRF_DODEFAULT;
 }
 
-INT_PTR MainDialog::DlgProc(UINT msg, WPARAM wparam, LPARAM lparam)
-{
-  auto ret = FALSE;
-  DebugMsg("WndProc uMsg: %04X wParam: %08X lParam: %016X\n", msg, wparam, lparam);
-  switch (msg)
-  {
-  case WM_INITDIALOG:
-    InitDialog();
-    break;
-
-  case wnd::WM_USER_FILE_FINISHED:
-    if (wparam == wnd::k_user_magic_wparam)
-      OnFileFinished(reinterpret_cast<FileHashTask*>(lparam));
-    break;
-
-  case wnd::WM_USER_ALL_FILES_FINISHED:
-    if (wparam == wnd::k_user_magic_wparam)
-      OnAllFilesFinished();
-    break;
-
-  case wnd::WM_USER_FILE_PROGRESS:
-    if (wparam == wnd::k_user_magic_wparam)
-      SendMessageW(_hwnd_PROGRESS, PBM_SETPOS, lparam, 0);
-    break;
-
-  case WM_TIMER:
-    if (wparam == k_status_update_timer_id)
-      UpdateDefaultStatus(true);
-    break;
-
-  case WM_NOTIFY:
-  {
-    const auto phdr = reinterpret_cast<LPNMHDR>(lparam);
-    const auto list = phdr->hwndFrom;
-    switch (phdr->idFrom)
-    {
-    case IDC_HASH_LIST:
-      switch (phdr->code)
-      {
-      case NM_CUSTOMDRAW:
-        SetWindowLongPtrW(_hwnd, DWLP_MSGRESULT, CustomDrawListView(lparam, list));
-        return TRUE;
-
-      case NM_DBLCLK:
-      {
-        const auto lpnmia = reinterpret_cast<LPNMITEMACTIVATE>(lparam);
-        LVHITTESTINFO lvhtinfo = { lpnmia->ptAction };
-        ListView_SubItemHitTest(list, &lvhtinfo);
-        OnListDoubleClick(lvhtinfo.iItem, lvhtinfo.iSubItem);
-        break;
-      }
-      case NM_RCLICK:
-        OnListRightClick(false);
-        break;
-
-      case NM_RDBLCLK:
-        OnListRightClick(true);
-        break;
-
-      default:
-        break;
-      }
-      break;
-    default:
-      break;
-    }
-    break;
-  }
-  case WM_COMMAND:
-  {
-    const auto code = HIWORD(wparam);
-    const auto ctlid = LOWORD(wparam);
-    switch (ctlid)
-    {
-    case IDC_EDIT_HASH:
-      if (code == EN_CHANGE)
-        OnHashEditChanged();
-      break;
-
-    case IDC_BUTTON_CLIPBOARD:
-      if (code == BN_CLICKED)
-      {
-        const auto exporter = GetSelectedExporter(_hwnd_COMBO_EXPORT);
-        if (!_prop_page->GetFiles().empty() && exporter)
-        {
-          const auto str = GetSumfileAsString(exporter, true);
-          utl::SetClipboardText(_hwnd, utl::UTF8ToWide(str.c_str()).c_str());
-        }
-      }
-      break;
-
-    case IDC_BUTTON_SETTINGS:
-    {
-      if (code == BN_CLICKED)
-        DialogBoxParamW(
-          ATL::_AtlBaseModule.GetResourceInstance(),
-          MAKEINTRESOURCEW(IDD_SETTINGS),
-          _hwnd,
-          &wnd::DlgProcClassBinder<SettingsDialog>,
-          reinterpret_cast<LPARAM>(&_prop_page->settings)
-        );
-      break;
-    }
-
-    case IDC_BUTTON_EXPORT:
-    {
-      if (code == BN_CLICKED)
-        OnExportClicked();
-      break;
-    }
-
-    case IDC_BUTTON_CANCEL:
-    {
-      if (code == BN_CLICKED)
-        _prop_page->Cancel(true);
-      break;
-    }
-
-    case IDC_BUTTON_VT:
-      if(vt::CheckForToS(&_prop_page->settings, _hwnd))
-      {
-        const int algos[] = {
-          HashAlgorithm::IdxByName("SHA-256"),
-          HashAlgorithm::IdxByName("SHA-1"),
-          HashAlgorithm::IdxByName("MD5")
-        };
-        const auto algo = std::find_if(std::begin(algos), std::end(algos), [&](const int& v)
-          {
-            return _prop_page->settings.algorithms[v];
-          });
-        if(algo == std::end(algos))
-        {
-          MessageBoxW(_hwnd, L"No compatible algorithm", L"Error", MB_ICONERROR | MB_OK);
-        }
-        else
-        {
-          std::list<FileHashTask*> l;
-          for (const auto& f : _prop_page->GetFiles())
-            if (!f->GetError())
-              l.push_back(f.get());
-          try
-          {
-            const auto result = vt::Query(l, *algo);
-            for (const auto& r : result)
-              AddItemToFileList(
-                r.file->GetDisplayName().c_str(),
-                r.found ? utl::FormatString(L"VT (%d/%d)", r.positives, r.total).c_str() : L"VT",
-                r.found ? utl::UTF8ToWide(r.permalink.c_str()).c_str() : L"Not found",
-                (LPARAM)-1
-              );
-            Button_Enable(_hwnd_BUTTON_VT, false);
-          }
-          catch(const std::runtime_error& e)
-          {
-            MessageBoxW(
-              _hwnd,
-              utl::UTF8ToWide(e.what()).c_str(),
-              L"Runtime error",
-              MB_ICONERROR | MB_OK
-            );
-          }
-        }
-      }
-      break;
-
-    default:
-      break;
-    }
-    break;
-  }
-
-  // we should never ever receive WM_CLOSE when running as a property sheet, so DestroyWindow is safe here
-  case WM_CLOSE:
-    DestroyWindow(_hwnd);
-    break;
-
-  case WM_WINDOWPOSCHANGING:
-  case WM_WINDOWPOSCHANGED:
-    _adapter.Adjust();
-    break;
-
-  default:
-    break;
-  }
-
-  return ret;
-}
-
-void MainDialog::InitDialog()
-{
-  SetClassLongPtrW(
-    _hwnd,
-    GCLP_HICON,
-    reinterpret_cast<LONG_PTR>(LoadIconW(utl::GetInstance(), MAKEINTRESOURCEW(IDI_ICON1)))
-  );
-
-  utl::SetIconButton(_hwnd_BUTTON_VT, IDI_ICON_VT);
-  utl::SetIconButton(_hwnd_BUTTON_SETTINGS, IDI_ICON_COG);
-
-  utl::SetWindowTextStringFromTable(_hwnd_STATIC_CHECK_AGAINST, IDS_CHECK_AGAINST);
-  utl::SetWindowTextStringFromTable(_hwnd_STATIC_EXPORT_TO, IDS_EXPORT_TO);
-  utl::SetWindowTextStringFromTable(_hwnd_BUTTON_EXPORT, IDS_EXPORT_BTN);
-  utl::SetWindowTextStringFromTable(_hwnd_STATIC_PROCESSING, IDS_PROCESSING);
-  utl::SetWindowTextStringFromTable(_hwnd_BUTTON_CLIPBOARD, IDS_CLIPBOARD);
-  utl::SetWindowTextStringFromTable(_hwnd_BUTTON_CANCEL, IDS_CANCEL);
-
-  SendMessageW(_hwnd_HASH_LIST, LVM_SETTEXTBKCOLOR, 0, CLR_NONE);
-  SendMessageW(_hwnd_HASH_LIST, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, LVS_EX_FULLROWSELECT);
-
-  // we put the string table ID in the text length field, to fix it up later
-  LVCOLUMN cols[] =
-  {
-    {LVCF_FMT | LVCF_WIDTH | LVCF_TEXT, LVCFMT_LEFT, 140,   nullptr, IDS_FILENAME},
-    {LVCF_FMT | LVCF_WIDTH | LVCF_TEXT, LVCFMT_LEFT, 70,    nullptr, IDS_ALGORITHM},
-    {LVCF_FMT | LVCF_WIDTH | LVCF_TEXT, LVCFMT_LEFT, 1100,  nullptr, IDS_HASH},
-  };
-
-  for (auto i = 0u; i < std::size(cols); ++i)
-  {
-    auto& col = cols[i];
-    const auto wstr = utl::GetString(col.cchTextMax);
-    col.pszText = const_cast<LPWSTR>(wstr.c_str());
-    ListView_InsertColumn(_hwnd_HASH_LIST, i, &cols[i]);
-  }
-
-  SendMessageW(_hwnd_PROGRESS, PBM_SETRANGE32, 0, Coordinator::k_progress_resolution);
-
-  // !!! enabled algorithms MAY BE CHANGED by this call, if a sumfile is not in a enabled format according to extension
-  _prop_page->AddFiles();
-
-  for (const auto& exporter : Exporter::k_exporters)
-    if (exporter->IsEnabled(&_prop_page->settings))
-      ComboBox_AddString(_hwnd_COMBO_EXPORT, utl::UTF8ToWide(exporter->GetName()).c_str());
-
-  ComboBox_SetCurSel(_hwnd_COMBO_EXPORT, 0);
-
-  if (_prop_page->IsSumfile())
-    utl::SetWindowTextStringFromTable(_hwnd_STATIC_SUMFILE, IDS_SUMFILE);
-
-  if (_prop_page->GetFiles().size() == 1)
-    ListView_SetColumnWidth(_hwnd_HASH_LIST, ColIndex_Filename, 0);
-
-  _prop_page->ProcessFiles();
-}
-
 void MainDialog::AddItemToFileList(LPCWSTR filename, LPCWSTR algorithm, LPCWSTR hash, LPARAM lparam)
 {
   const auto list = _hwnd_HASH_LIST;
@@ -424,131 +179,7 @@ void MainDialog::AddItemToFileList(LPCWSTR filename, LPCWSTR algorithm, LPCWSTR 
   ListView_SetItemText(list, item, ColIndex_Hash, const_cast<LPWSTR>(hash));
 }
 
-void MainDialog::OnFileFinished(FileHashTask* file)
-{
-  if (!_hwnd_HASH_LIST)
-    return;
-
-  if (const auto error = file->GetError(); error == ERROR_SUCCESS)
-  {
-    switch (file->GetMatchState())
-    {
-    case FileHashTask::MatchState_None:
-      ++_count_unknown;
-      break;
-    case FileHashTask::MatchState_Mismatch:
-      ++_count_mismatch;
-      break;
-    default:
-      ++_count_match;
-      break;
-    }
-
-    const auto& results = file->GetHashResult();
-
-    for (auto i = 0u; i < HashAlgorithm::k_count; ++i)
-    {
-      auto& result = results[i];
-      if (!result.empty())
-      {
-        wchar_t hash_str[HashAlgorithm::k_max_size * 2 + 1];
-        utl::HashBytesToString(hash_str, result, _prop_page->settings.display_uppercase);
-        const auto tname = utl::UTF8ToWide(HashAlgorithm::g_hashers[i].GetName());
-        AddItemToFileList(file->GetDisplayName().c_str(), tname.c_str(), hash_str, file->ToLparam(i));
-      }
-    }
-  }
-  else
-  {
-    ++_count_error;
-    AddItemToFileList(
-      file->GetDisplayName().c_str(),
-      utl::GetString(IDS_ERROR).c_str(),
-      utl::ErrorToString(error).c_str(),
-      file->ToLparam(0)
-    );
-  }
-
-  UpdateDefaultStatus();
-}
-
-void MainDialog::OnAllFilesFinished()
-{
-  _finished = true;
-
-  // We only enable settings button after processing is done because changing enabled algorithms could result
-  // in much more problems
-  Button_Enable(_hwnd_BUTTON_SETTINGS, true);
-  Button_Enable(_hwnd_BUTTON_EXPORT, true);
-  Button_Enable(_hwnd_BUTTON_CLIPBOARD, true);
-  Button_Enable(_hwnd_BUTTON_VT, true);
-  Edit_Enable(_hwnd_EDIT_HASH, true);
-
-  ShowWindow(_hwnd_PROGRESS, 0);
-  ShowWindow(_hwnd_BUTTON_CANCEL, 0);
-
-  UpdateDefaultStatus();
-
-  const auto clip = utl::GetClipboardText(_hwnd);
-  const auto find_hash = utl::HashStringToBytes(clip.c_str());
-  if (find_hash.size() >= 4) // at least 4 bytes for a valid hash
-  {
-    SetWindowTextW(_hwnd_EDIT_HASH, (clip.c_str()));
-    OnHashEditChanged(); // fake a change as if the user pasted it
-  }
-}
-
-void MainDialog::OnExportClicked()
-{
-  const auto exporter = GetSelectedExporter(_hwnd_COMBO_EXPORT);
-  if (exporter && !_prop_page->GetFiles().empty())
-  {
-    const auto ext = utl::UTF8ToWide(exporter->GetExtension());
-    const auto path_and_basename = _prop_page->GetSumfileDefaultSavePathAndBaseName();
-    const auto name = path_and_basename.second + L"." + ext;
-    const auto sumfile_path = utl::SaveDialog(_hwnd, path_and_basename.first.c_str(), name.c_str());
-    if (!sumfile_path.empty())
-    {
-      const auto content = GetSumfileAsString(exporter, false);
-      const auto err = utl::SaveMemoryAsFile(sumfile_path.c_str(), content.c_str(), content.size());
-      if (err != ERROR_SUCCESS)
-        utl::FormattedMessageBox(
-          _hwnd,
-          L"Error",
-          MB_ICONERROR | MB_OK,
-          L"utl::SaveMemoryAsFile returned with error: %08X",
-          err
-        );
-    }
-  }
-}
-
-void MainDialog::OnHashEditChanged()
-{
-  const auto find_hash = utl::HashStringToBytes(utl::GetWindowTextString(_hwnd_EDIT_HASH).c_str());
-  auto found = false;
-  for (const auto& file : _prop_page->GetFiles())
-  {
-    const auto& result = file->GetHashResult();
-    for (auto i = 0; i < HashAlgorithm::k_count; ++i)
-    {
-      if (!result[i].empty() && result[i] == find_hash)
-      {
-        found = true;
-        const auto algorithm_name = utl::UTF8ToWide(HashAlgorithm::g_hashers[i].GetName());
-        const auto txt = algorithm_name + L" / " + file->GetDisplayName();
-        SetWindowTextW(_hwnd_STATIC_CHECK_RESULT, txt.c_str());
-        break;
-      }
-    }
-    if (found)
-      break;
-  }
-  if (!found)
-    SetWindowTextW(_hwnd_STATIC_CHECK_RESULT, utl::GetString(IDS_NOMATCH).c_str());
-}
-
-void MainDialog::OnListDoubleClick(int item, int subitem)
+void MainDialog::ListDoubleClick(int item, int subitem)
 {
   if (item == -1)
     return;
@@ -563,12 +194,12 @@ void MainDialog::OnListDoubleClick(int item, int subitem)
   {
     const auto name = std::make_unique<std::array<wchar_t, PATHCCH_MAX_CCH>>();
     ListView_GetItemText(list, item, ColIndex_Filename, name->data(), static_cast<int>(name->size()));
-    utl::SetClipboardText(_hwnd, (std::wstring{ hash } +L" *" + name->data()).c_str());
+    utl::SetClipboardText(_hwnd, (std::wstring{ hash } + L" *" + name->data()).c_str());
   }
   SetTempStatus(utl::GetString(IDS_COPIED).c_str(), 1000);
 }
 
-void MainDialog::OnListRightClick(bool dblclick)
+void MainDialog::ListRightClick(bool dblclick)
 {
   const auto list = _hwnd_HASH_LIST;
   const auto count = ListView_GetItemCount(list);
@@ -630,4 +261,363 @@ void MainDialog::UpdateDefaultStatus(bool force_reset)
     );
     SetWindowTextW(_hwnd_STATIC_PROCESSING, done);
   }
+}
+
+INT_PTR MainDialog::DlgProc(UINT msg, WPARAM wparam, LPARAM lparam)
+{
+  DebugMsg("DlgProc uMsg: %04X wParam: %08X lParam: %016X\n", msg, wparam, lparam);
+
+  constexpr static wnd::MessageMatcher<MainDialog> matchers[] = {
+    { &MainDialog::OnInitDialog,        WM_INITDIALOG },
+    { &MainDialog::OnClose,             WM_CLOSE },
+    { &MainDialog::OnNeedAdjust,        WM_WINDOWPOSCHANGING },
+    { &MainDialog::OnNeedAdjust,        WM_WINDOWPOSCHANGED },
+    { &MainDialog::OnFileFinished,      wnd::WM_USER_FILE_FINISHED, wnd::Match_w, wnd::k_user_magic_wparam },
+    { &MainDialog::OnAllFilesFinished,  wnd::WM_USER_ALL_FILES_FINISHED, wnd::Match_w, wnd::k_user_magic_wparam },
+    { &MainDialog::OnFileProgress,      wnd::WM_USER_FILE_PROGRESS, wnd::Match_w, wnd::k_user_magic_wparam },
+    { &MainDialog::OnStatusUpdateTimer, WM_TIMER,   wnd::Match_w,   k_status_update_timer_id },
+    { &MainDialog::OnHashListNotify,    WM_NOTIFY,  wnd::Match_w,   IDC_HASH_LIST },
+    { &MainDialog::OnHashEditChanged,   WM_COMMAND, wnd::Match_wlh, MAKELONG(IDC_EDIT_HASH, EN_CHANGE) },
+    { &MainDialog::OnClipboardClicked,  WM_COMMAND, wnd::Match_wlh, MAKELONG(IDC_BUTTON_CLIPBOARD, BN_CLICKED) },
+    { &MainDialog::OnSettingsClicked,   WM_COMMAND, wnd::Match_wlh, MAKELONG(IDC_BUTTON_SETTINGS, BN_CLICKED) },
+    { &MainDialog::OnExportClicked,     WM_COMMAND, wnd::Match_wlh, MAKELONG(IDC_BUTTON_EXPORT, BN_CLICKED) },
+    { &MainDialog::OnCancelClicked,     WM_COMMAND, wnd::Match_wlh, MAKELONG(IDC_BUTTON_CANCEL, BN_CLICKED) },
+    { &MainDialog::OnVTClicked,         WM_COMMAND, wnd::Match_wlh, MAKELONG(IDC_BUTTON_VT, BN_CLICKED) }
+  };
+
+  INT_PTR ret = FALSE;
+  if (RouteMessage(this, std::begin(matchers), std::end(matchers), msg, wparam, lparam, ret))
+    return ret;
+
+  return FALSE;
+}
+
+INT_PTR MainDialog::OnInitDialog(UINT, WPARAM, LPARAM)
+{
+  SetClassLongPtrW(
+    _hwnd,
+    GCLP_HICON,
+    reinterpret_cast<LONG_PTR>(LoadIconW(utl::GetInstance(), MAKEINTRESOURCEW(IDI_ICON1)))
+  );
+
+  utl::SetIconButton(_hwnd_BUTTON_VT, IDI_ICON_VT);
+  utl::SetIconButton(_hwnd_BUTTON_SETTINGS, IDI_ICON_COG);
+
+  utl::SetWindowTextStringFromTable(_hwnd_STATIC_CHECK_AGAINST, IDS_CHECK_AGAINST);
+  utl::SetWindowTextStringFromTable(_hwnd_STATIC_EXPORT_TO, IDS_EXPORT_TO);
+  utl::SetWindowTextStringFromTable(_hwnd_BUTTON_EXPORT, IDS_EXPORT_BTN);
+  utl::SetWindowTextStringFromTable(_hwnd_STATIC_PROCESSING, IDS_PROCESSING);
+  utl::SetWindowTextStringFromTable(_hwnd_BUTTON_CLIPBOARD, IDS_CLIPBOARD);
+  utl::SetWindowTextStringFromTable(_hwnd_BUTTON_CANCEL, IDS_CANCEL);
+
+  SendMessageW(_hwnd_HASH_LIST, LVM_SETTEXTBKCOLOR, 0, CLR_NONE);
+  SendMessageW(_hwnd_HASH_LIST, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, LVS_EX_FULLROWSELECT);
+
+  // we put the string table ID in the text length field, to fix it up later
+  LVCOLUMN cols[] =
+  {
+    {LVCF_FMT | LVCF_WIDTH | LVCF_TEXT, LVCFMT_LEFT, 140,   nullptr, IDS_FILENAME},
+    {LVCF_FMT | LVCF_WIDTH | LVCF_TEXT, LVCFMT_LEFT, 70,    nullptr, IDS_ALGORITHM},
+    {LVCF_FMT | LVCF_WIDTH | LVCF_TEXT, LVCFMT_LEFT, 1100,  nullptr, IDS_HASH},
+  };
+
+  for (auto i = 0u; i < std::size(cols); ++i)
+  {
+    auto& col = cols[i];
+    const auto wstr = utl::GetString(col.cchTextMax);
+    col.pszText = const_cast<LPWSTR>(wstr.c_str());
+    ListView_InsertColumn(_hwnd_HASH_LIST, i, &cols[i]);
+  }
+
+  SendMessageW(_hwnd_PROGRESS, PBM_SETRANGE32, 0, Coordinator::k_progress_resolution);
+
+  // !!! enabled algorithms MAY BE CHANGED by this call, if a sumfile is not in a enabled format according to extension
+  _prop_page->AddFiles();
+
+  for (const auto& exporter : Exporter::k_exporters)
+    if (exporter->IsEnabled(&_prop_page->settings))
+      ComboBox_AddString(_hwnd_COMBO_EXPORT, utl::UTF8ToWide(exporter->GetName()).c_str());
+
+  ComboBox_SetCurSel(_hwnd_COMBO_EXPORT, 0);
+
+  if (_prop_page->IsSumfile())
+    utl::SetWindowTextStringFromTable(_hwnd_STATIC_SUMFILE, IDS_SUMFILE);
+
+  if (_prop_page->GetFiles().size() == 1)
+    ListView_SetColumnWidth(_hwnd_HASH_LIST, ColIndex_Filename, 0);
+
+  _prop_page->ProcessFiles();
+
+  return FALSE;
+}
+
+INT_PTR MainDialog::OnFileFinished(UINT, WPARAM, LPARAM lparam)
+{
+  const auto file = reinterpret_cast<FileHashTask*>(lparam);
+
+  if (const auto error = file->GetError(); error == ERROR_SUCCESS)
+  {
+    switch (file->GetMatchState())
+    {
+    case FileHashTask::MatchState_None:
+      ++_count_unknown;
+      break;
+    case FileHashTask::MatchState_Mismatch:
+      ++_count_mismatch;
+      break;
+    default:
+      ++_count_match;
+      break;
+    }
+
+    const auto& results = file->GetHashResult();
+
+    for (auto i = 0u; i < HashAlgorithm::k_count; ++i)
+    {
+      auto& result = results[i];
+      if (!result.empty())
+      {
+        wchar_t hash_str[HashAlgorithm::k_max_size * 2 + 1];
+        utl::HashBytesToString(hash_str, result, _prop_page->settings.display_uppercase);
+        const auto tname = utl::UTF8ToWide(HashAlgorithm::g_hashers[i].GetName());
+        AddItemToFileList(file->GetDisplayName().c_str(), tname.c_str(), hash_str, file->ToLparam(i));
+      }
+    }
+  }
+  else
+  {
+    ++_count_error;
+    AddItemToFileList(
+      file->GetDisplayName().c_str(),
+      utl::GetString(IDS_ERROR).c_str(),
+      utl::ErrorToString(error).c_str(),
+      file->ToLparam(0)
+    );
+  }
+
+  UpdateDefaultStatus();
+
+  return FALSE;
+}
+
+INT_PTR MainDialog::OnAllFilesFinished(UINT, WPARAM, LPARAM)
+{
+  _finished = true;
+
+  // We only enable settings button after processing is done because changing enabled algorithms could result
+  // in much more problems
+  Button_Enable(_hwnd_BUTTON_SETTINGS, true);
+  Button_Enable(_hwnd_BUTTON_EXPORT, true);
+  Button_Enable(_hwnd_BUTTON_CLIPBOARD, true);
+  Button_Enable(_hwnd_BUTTON_VT, true);
+  Edit_Enable(_hwnd_EDIT_HASH, true);
+
+  ShowWindow(_hwnd_PROGRESS, 0);
+  ShowWindow(_hwnd_BUTTON_CANCEL, 0);
+
+  UpdateDefaultStatus();
+
+  const auto clip = utl::GetClipboardText(_hwnd);
+  const auto find_hash = utl::HashStringToBytes(clip.c_str());
+  if (find_hash.size() >= 4) // at least 4 bytes for a valid hash
+  {
+    SetWindowTextW(_hwnd_EDIT_HASH, (clip.c_str()));
+    OnHashEditChanged(0, 0, 0); // fake a change as if the user pasted it
+  }
+
+  return FALSE;
+}
+
+INT_PTR MainDialog::OnFileProgress(UINT, WPARAM, LPARAM lparam)
+{
+  SendMessageW(_hwnd_PROGRESS, PBM_SETPOS, lparam, 0);
+  return FALSE;
+}
+
+INT_PTR MainDialog::OnStatusUpdateTimer(UINT, WPARAM, LPARAM)
+{
+  UpdateDefaultStatus(true);
+  return FALSE;
+}
+
+INT_PTR MainDialog::OnHashListNotify(UINT, WPARAM, LPARAM lparam)
+{
+  const auto phdr = reinterpret_cast<LPNMHDR>(lparam);
+  switch (phdr->code)
+  {
+  case NM_CUSTOMDRAW:
+    SetWindowLongPtrW(_hwnd, DWLP_MSGRESULT, CustomDrawListView(lparam, _hwnd_HASH_LIST));
+    return TRUE;
+
+  case NM_DBLCLK:
+  {
+    const auto lpnmia = reinterpret_cast<LPNMITEMACTIVATE>(lparam);
+    LVHITTESTINFO lvhtinfo = { lpnmia->ptAction };
+    ListView_SubItemHitTest(_hwnd_HASH_LIST, &lvhtinfo);
+    ListDoubleClick(lvhtinfo.iItem, lvhtinfo.iSubItem);
+    break;
+  }
+  case NM_RCLICK:
+    ListRightClick(false);
+    break;
+
+  case NM_RDBLCLK:
+    ListRightClick(true);
+    break;
+
+  default:
+    break;
+  }
+  return FALSE;
+}
+
+INT_PTR MainDialog::OnExportClicked(UINT, WPARAM, LPARAM)
+{
+  const auto exporter = GetSelectedExporter(_hwnd_COMBO_EXPORT);
+  if (exporter && !_prop_page->GetFiles().empty())
+  {
+    const auto ext = utl::UTF8ToWide(exporter->GetExtension());
+    const auto path_and_basename = _prop_page->GetSumfileDefaultSavePathAndBaseName();
+    const auto name = path_and_basename.second + L"." + ext;
+    const auto sumfile_path = utl::SaveDialog(_hwnd, path_and_basename.first.c_str(), name.c_str());
+    if (!sumfile_path.empty())
+    {
+      const auto content = GetSumfileAsString(exporter, false);
+      const auto err = utl::SaveMemoryAsFile(sumfile_path.c_str(), content.c_str(), content.size());
+      if (err != ERROR_SUCCESS)
+        utl::FormattedMessageBox(
+          _hwnd,
+          L"Error",
+          MB_ICONERROR | MB_OK,
+          L"utl::SaveMemoryAsFile returned with error: %08X",
+          err
+        );
+    }
+  }
+
+  return FALSE;
+}
+
+INT_PTR MainDialog::OnCancelClicked(UINT, WPARAM, LPARAM)
+{
+  _prop_page->Cancel(true);
+
+  return FALSE;
+}
+
+INT_PTR MainDialog::OnVTClicked(UINT, WPARAM, LPARAM)
+{
+  if (vt::CheckForToS(&_prop_page->settings, _hwnd))
+  {
+    const int algos[] = {
+      HashAlgorithm::IdxByName("SHA-256"),
+      HashAlgorithm::IdxByName("SHA-1"),
+      HashAlgorithm::IdxByName("MD5")
+    };
+    const auto algo = std::find_if(std::begin(algos), std::end(algos), [&](const int& v)
+      {
+        return _prop_page->settings.algorithms[v];
+      });
+    if (algo == std::end(algos))
+    {
+      MessageBoxW(_hwnd, L"No compatible algorithm", L"Error", MB_ICONERROR | MB_OK);
+    }
+    else
+    {
+      std::list<FileHashTask*> l;
+      for (const auto& f : _prop_page->GetFiles())
+        if (!f->GetError())
+          l.push_back(f.get());
+      try
+      {
+        const auto result = vt::Query(l, *algo);
+        for (const auto& r : result)
+          AddItemToFileList(
+            r.file->GetDisplayName().c_str(),
+            r.found ? utl::FormatString(L"VT (%d/%d)", r.positives, r.total).c_str() : L"VT",
+            r.found ? utl::UTF8ToWide(r.permalink.c_str()).c_str() : L"Not found",
+            (LPARAM)-1
+          );
+        Button_Enable(_hwnd_BUTTON_VT, false);
+      }
+      catch (const std::runtime_error& e)
+      {
+        MessageBoxW(
+          _hwnd,
+          utl::UTF8ToWide(e.what()).c_str(),
+          L"Runtime error",
+          MB_ICONERROR | MB_OK
+        );
+      }
+    }
+  }
+
+  return FALSE;
+}
+
+INT_PTR MainDialog::OnClose(UINT, WPARAM, LPARAM)
+{
+  // we should never ever receive WM_CLOSE when running as a property sheet, so DestroyWindow is safe here
+  DestroyWindow(_hwnd);
+  
+  return FALSE;
+}
+
+INT_PTR MainDialog::OnNeedAdjust(UINT, WPARAM, LPARAM)
+{
+  _adapter.Adjust();
+
+  return FALSE;
+}
+
+INT_PTR MainDialog::OnHashEditChanged(UINT, WPARAM, LPARAM)
+{
+  const auto find_hash = utl::HashStringToBytes(utl::GetWindowTextString(_hwnd_EDIT_HASH).c_str());
+  auto found = false;
+  for (const auto& file : _prop_page->GetFiles())
+  {
+    const auto& result = file->GetHashResult();
+    for (auto i = 0; i < HashAlgorithm::k_count; ++i)
+    {
+      if (!result[i].empty() && result[i] == find_hash)
+      {
+        found = true;
+        const auto algorithm_name = utl::UTF8ToWide(HashAlgorithm::g_hashers[i].GetName());
+        const auto txt = algorithm_name + L" / " + file->GetDisplayName();
+        SetWindowTextW(_hwnd_STATIC_CHECK_RESULT, txt.c_str());
+        break;
+      }
+    }
+    if (found)
+      break;
+  }
+  if (!found)
+    SetWindowTextW(_hwnd_STATIC_CHECK_RESULT, utl::GetString(IDS_NOMATCH).c_str());
+
+  return FALSE;
+}
+
+INT_PTR MainDialog::OnClipboardClicked(UINT, WPARAM, LPARAM)
+{
+  const auto exporter = GetSelectedExporter(_hwnd_COMBO_EXPORT);
+  if (!_prop_page->GetFiles().empty() && exporter)
+  {
+    const auto str = GetSumfileAsString(exporter, true);
+    utl::SetClipboardText(_hwnd, utl::UTF8ToWide(str.c_str()).c_str());
+  }
+
+  return FALSE;
+}
+
+INT_PTR MainDialog::OnSettingsClicked(UINT, WPARAM, LPARAM)
+{
+  DialogBoxParamW(
+    ATL::_AtlBaseModule.GetResourceInstance(),
+    MAKEINTRESOURCEW(IDD_SETTINGS),
+    _hwnd,
+    &wnd::DlgProcClassBinder<SettingsDialog>,
+    reinterpret_cast<LPARAM>(&_prop_page->settings)
+  );
+
+  return FALSE;
 }
