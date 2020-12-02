@@ -102,7 +102,7 @@ namespace wnd
       const auto new_h = rect.bottom - rect.top;
       const auto delta_x = new_w - original_w;
       const auto delta_y = new_h - original_h;
-      HDWP hdwp = BeginDeferWindowPos(_info.size());
+      const auto hdwp = BeginDeferWindowPos(_info.size());
       for (const auto& it : _info)
         it.Adjust(hdwp, delta_x, delta_y);
       EndDeferWindowPos(hdwp);
@@ -215,4 +215,58 @@ namespace wnd
     return page;
   }
 
+  template <typename T>
+  class MessageMatcher
+  {
+    using fn_t = UINT_PTR(T::*)(UINT message, WPARAM wparam, LPARAM lparam);
+  public:
+    enum Conditions : UINT
+    {
+      wParam        = 1 << 0, // wparam is actually UINT_PTR so the previous two don't imply exact match
+      lParam        = 1 << 1,
+      wParamLoWord  = 1 << 2,
+      wParamHiWord  = 1 << 3,
+    };
+  private:
+    fn_t _fn;
+    LPARAM _lparam;
+    WPARAM _wparam;
+    UINT _message;
+    UINT _conditions;
+  public:
+    constexpr MessageMatcher(fn_t fn, UINT message, UINT conditions = 0, WPARAM wparam = 0, LPARAM lparam = 0)
+      : _fn(fn)
+      , _lparam(lparam)
+      , _wparam(wparam)
+      , _message(message)
+      , _conditions(conditions) {}
+
+    bool TryRoute(T* c, UINT message, WPARAM wparam, LPARAM lparam, UINT_PTR& ret) const
+    {
+      if (message != _message)
+        return false;
+      if (message == WM_NOTIFY)
+        wparam = ((LPNMHDR)lparam)->idFrom; // this is stupid, but WM_NOTIFY docs say this wParam cannot be trusted
+      if (_conditions & wParam && wparam != _wparam)
+        return false;
+      if (_conditions & lParam && lparam != _lparam)
+        return false;
+      if (_conditions & wParamLoWord && LOWORD(wparam) != LOWORD(_wparam))
+        return false;
+      if (_conditions & wParamHiWord && HIWORD(wparam) != HIWORD(_wparam))
+        return false;
+      ret = c->*_fn(message, wparam, lparam);
+      return true;
+    }
+
+  };
+  template <typename T, typename It>
+  bool RouteMessage(T* c, It begin, It end, UINT message, WPARAM wparam, LPARAM lparam, UINT_PTR& ret)
+  {
+    const auto match = std::find_if(begin, end, [&](const MessageMatcher<T>& matcher)
+      {
+        return matcher.TryRoute(c, message, wparam, lparam, ret);
+      });
+    return match != end;
+  }
 }
