@@ -81,9 +81,9 @@ HWND CreateDialogFromChildDialogResourceParam(
               pexStyle = &pTemplate->dwExtendedStyle;
             }
 
-            // I have NO IDEA what 0x48 mean, but apparently stuff works with this
-            *pStyle = WS_POPUPWINDOW | WS_CAPTION | 0x00000048 | WS_THICKFRAME;
-            *pexStyle = WS_EX_WINDOWEDGE;
+            // I have NO IDEA what 0x48 means, but without at least 0x40 the window just doesn't show.
+            *pStyle = WS_POPUPWINDOW | WS_CAPTION | WS_THICKFRAME | 0x40;// | 0x8;
+            *pexStyle = WS_EX_OVERLAPPEDWINDOW | WS_EX_APPWINDOW;
 
             hwnd = CreateDialogIndirectParamW(hInstance, pTemplate, hWndParent, lpDialogFunc, dwInitParam);
 
