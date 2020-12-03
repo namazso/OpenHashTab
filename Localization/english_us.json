@@ -26,6 +26,10 @@
 		"SUMFILE_DOT_HASH_COMPATIBLE":  "Export sumfiles in corz .hash compatible format",
 		"SUMFILE_BANNER":               "Add banner to exported files",
 		"SUMFILE_BANNER_DATE":          "Add date to banner",
-		"CHECK_FOR_UPDATES":            "Check for updates"
+		"CHECK_FOR_UPDATES":            "Check for updates",
+		"COPY_HASH":           "Copy hash",
+		"COPY_LINE":           "Copy line",
+		"COPY_FILE":           "Copy file name",
+		"COPY_EVERYTHING":     "Copy everything"
 	}
 }

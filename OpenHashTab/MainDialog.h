@@ -68,7 +68,7 @@ class MainDialog
   void UpdateDefaultStatus(bool force_reset = false);
   
   void ListDoubleClick(int item, int subitem);
-  void ListRightClick(bool dblclick = false);
+  void ListPopupMenu(POINT pt);
 
 public:
   MainDialog(HWND hwnd, void* prop_page);

@@ -101,6 +101,14 @@ static const Exporter* GetSelectedExporter(HWND combo)
   return nullptr;
 }
 
+static std::wstring ListView_GetItemTextStr(HWND hwnd, int item, int subitem)
+{
+  wchar_t name[PATHCCH_MAX_CCH];
+  name[0] = 0;
+  ListView_GetItemText(hwnd, item, subitem, name, std::size(name));
+  return name;
+}
+
 MainDialog::MainDialog(HWND hwnd, void* prop_page)
   : _hwnd(hwnd)
   , _prop_page(static_cast<Coordinator*>(prop_page))
@@ -184,45 +192,84 @@ void MainDialog::ListDoubleClick(int item, int subitem)
   if (item == -1)
     return;
   const auto list = _hwnd_HASH_LIST;
-  wchar_t hash[4096]; // It's possible it will hold an error message
-  ListView_GetItemText(list, item, ColIndex_Hash, hash, static_cast<int>(std::size(hash)));
+  // It's possible it will hold an error message
+  const auto hash = ListView_GetItemTextStr(list, item, ColIndex_Hash);
   if (subitem == ColIndex_Hash)
   {
     utl::SetClipboardText(_hwnd, hash);
   }
   else
   {
-    const auto name = std::make_unique<std::array<wchar_t, PATHCCH_MAX_CCH>>();
-    ListView_GetItemText(list, item, ColIndex_Filename, name->data(), static_cast<int>(name->size()));
-    utl::SetClipboardText(_hwnd, (std::wstring{ hash } + L" *" + name->data()).c_str());
+    const auto name = ListView_GetItemTextStr(list, item, ColIndex_Filename);
+    utl::SetClipboardText(_hwnd, (std::wstring{ hash } + L" *" + name).c_str());
   }
   SetTempStatus(utl::GetString(IDS_COPIED).c_str(), 1000);
 }
 
-void MainDialog::ListRightClick(bool dblclick)
+void MainDialog::ListPopupMenu(POINT pt)
 {
   const auto list = _hwnd_HASH_LIST;
+
   const auto count = ListView_GetItemCount(list);
   if (!count)
     return;
-  const auto buf = std::make_unique<std::array<wchar_t, PATHCCH_MAX_CCH>>();
-  std::wstringstream clipboard;
-  const auto list_get_text = [&](int idx, int subitem)
-  {
-    ListView_GetItemText(list, idx, subitem, buf->data(), static_cast<int>(buf->size()));
-    return buf->data();
-  };
-  for (auto i = 0; i < count; ++i)
-  {
-    if (!dblclick && !ListView_GetItemState(list, i, LVIS_SELECTED))
-      continue;
 
-    clipboard
-      << list_get_text(i, ColIndex_Filename) << L"\t"
-      << list_get_text(i, ColIndex_Algorithm) << L"\t"
-      << list_get_text(i, ColIndex_Hash) << L"\r\n";
+  LVHITTESTINFO lvhtinfo = { pt };
+  const auto item = ListView_HitTest(list, &lvhtinfo);
+
+  MapWindowPoints(list, HWND_DESKTOP, &pt, 2);
+  const auto menu = CreatePopupMenu();
+
+#define CTLSTR(name) IDM_ ## name, utl::GetString(IDS_ ## name).c_str()
+
+  AppendMenuW(menu, 0, CTLSTR(COPY_HASH));
+  AppendMenuW(menu, 0, CTLSTR(COPY_LINE));
+  AppendMenuW(menu, 0, CTLSTR(COPY_FILE));
+  AppendMenuW(menu, 0, CTLSTR(COPY_EVERYTHING));
+
+#undef CTLSTR
+
+  const auto selection = (int)TrackPopupMenuEx(
+    menu,
+    TPM_LEFTALIGN | TPM_TOPALIGN | TPM_RETURNCMD,
+    pt.x,
+    pt.y,
+    _hwnd,
+    nullptr
+  );
+
+  if (!selection)
+    return;
+
+  if (selection != IDM_COPY_EVERYTHING && item == -1)
+    return;
+
+  if (selection == IDM_COPY_HASH || selection == IDM_COPY_FILE)
+  {
+    const auto col = selection == IDM_COPY_HASH ? ColIndex_Hash : ColIndex_Filename;
+    utl::SetClipboardText(_hwnd, ListView_GetItemTextStr(list, item, col));
   }
-  utl::SetClipboardText(_hwnd, clipboard.str().c_str());
+  else if (selection == IDM_COPY_LINE)
+  {
+    const auto str = ListView_GetItemTextStr(list, item, ColIndex_Filename)
+      + L"\t" + ListView_GetItemTextStr(list, item, ColIndex_Algorithm)
+      + L"\t" + ListView_GetItemTextStr(list, item, ColIndex_Hash);
+    utl::SetClipboardText(_hwnd, str);
+    return;
+  }
+  else
+  {
+    std::wstringstream clipboard;
+    for (auto i = 0; i < count; ++i)
+    {
+      clipboard
+        << ListView_GetItemTextStr(list, i, ColIndex_Filename) << L"\t"
+        << ListView_GetItemTextStr(list, i, ColIndex_Algorithm) << L"\t"
+        << ListView_GetItemTextStr(list, i, ColIndex_Hash) << L"\r\n";
+    }
+    utl::SetClipboardText(_hwnd, clipboard.str());
+  }
+
   SetTempStatus(utl::GetString(IDS_COPIED).c_str(), 1000);
 }
 
@@ -457,12 +504,9 @@ INT_PTR MainDialog::OnHashListNotify(UINT, WPARAM, LPARAM lparam)
     ListDoubleClick(lvhtinfo.iItem, lvhtinfo.iSubItem);
     break;
   }
-  case NM_RCLICK:
-    ListRightClick(false);
-    break;
 
-  case NM_RDBLCLK:
-    ListRightClick(true);
+  case NM_RCLICK:
+    ListPopupMenu(reinterpret_cast<LPNMITEMACTIVATE>(lparam)->ptAction);
     break;
 
   default:

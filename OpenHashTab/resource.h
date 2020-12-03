@@ -6,6 +6,10 @@
 #define IDR_OPENHASHTAB                 101
 #define IDR_OPENHASHTABSHLEXT           106
 #define IDD_OPENHASHTAB_PROPPAGE        107
+#define IDM_COPY_HASH                   107
+#define IDM_COPY_LINE                   108
+#define IDM_COPY_FILE                   109
+#define IDM_COPY_EVERYTHING             110
 #define IDS_FILENAME                    202
 #define IDC_HASH_LIST                   203
 #define IDS_ALGORITHM                   203
@@ -60,14 +64,18 @@
 #define IDI_ICON2                       232
 #define IDI_ICON_COG                    232
 #define IDS_CHECK_FOR_UPDATES           233
+#define IDS_COPY_HASH           		234
+#define IDS_COPY_LINE           		235
+#define IDS_COPY_FILE           		236
+#define IDS_COPY_EVERYTHING           	237
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        234
+#define _APS_NEXT_RESOURCE_VALUE        238
 #define _APS_NEXT_COMMAND_VALUE         32768
 #define _APS_NEXT_CONTROL_VALUE         228
-#define _APS_NEXT_SYMED_VALUE           107
+#define _APS_NEXT_SYMED_VALUE           111
 #endif
 #endif
