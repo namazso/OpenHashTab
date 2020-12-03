@@ -15,11 +15,17 @@
 //    along with OpenHashTab.  If not, see <https://www.gnu.org/licenses/>.
 #pragma once
 
+#include "wnd.h"
+
 struct Settings;
 
 class SettingsDialog
 {
   HWND _hwnd;
+
+  MAKE_IDC_MEMBER(_hwnd, BUTTON_CHECK_FOR_UPDATES);
+  MAKE_IDC_MEMBER(_hwnd, ALGORITHM_LIST);
+
   bool _done_setup = false;
   Settings* _settings;
 

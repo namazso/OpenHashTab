@@ -59,12 +59,13 @@
 #define IDI_ICON_VT                     231
 #define IDI_ICON2                       232
 #define IDI_ICON_COG                    232
+#define IDS_CHECK_FOR_UPDATES           233
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        233
+#define _APS_NEXT_RESOURCE_VALUE        234
 #define _APS_NEXT_COMMAND_VALUE         32768
 #define _APS_NEXT_CONTROL_VALUE         228
 #define _APS_NEXT_SYMED_VALUE           107

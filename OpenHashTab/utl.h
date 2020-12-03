@@ -195,5 +195,3 @@ namespace utl
 
   Version GetLatestVersion();
 }
-
-#define MAKE_IDC_MEMBER(hwnd, name) HWND _hwnd_ ## name = GetDlgItem(hwnd, IDC_ ## name)

@@ -25,6 +25,7 @@
 		"SUMFILE_FORWARD_SLASHES":      "Use forward slash paths in exported files",
 		"SUMFILE_DOT_HASH_COMPATIBLE":  "Export sumfiles in corz .hash compatible format",
 		"SUMFILE_BANNER":               "Add banner to exported files",
-		"SUMFILE_BANNER_DATE":          "Add date to banner"
+		"SUMFILE_BANNER_DATE":          "Add date to banner",
+		"CHECK_FOR_UPDATES":            "Check for updates"
 	}
 }

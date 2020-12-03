@@ -30,6 +30,8 @@ namespace wnd
     WM_USER_FILE_PROGRESS
   };
 
+#define MAKE_IDC_MEMBER(hwnd, name) HWND _hwnd_ ## name = GetDlgItem(hwnd, IDC_ ## name)
+
   class WindowLayoutAdapter
   {
     struct ItemInfo

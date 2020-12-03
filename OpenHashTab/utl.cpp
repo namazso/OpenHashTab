@@ -87,28 +87,25 @@ HICON utl::SetIconButton(HWND button, int resource)
 
 bool utl::AreFilesTheSame(HANDLE a, HANDLE b)
 {
-  if (IsWindows8OrGreater())
+  if (const auto kernel32 = GetModuleHandleW(L"kernel32"))
   {
-    if (const auto kernel32 = GetModuleHandleW(L"kernel32"))
+    using fn_t = decltype(GetFileInformationByHandleEx);
+    if (const auto pfn = reinterpret_cast<fn_t*>(GetProcAddress(kernel32, "GetFileInformationByHandleEx")))
     {
-      using fn_t = decltype(GetFileInformationByHandleEx);
-      if (const auto pfn = reinterpret_cast<fn_t*>(GetProcAddress(kernel32, "GetFileInformationByHandleEx")))
+      struct xFILE_ID_INFO {
+        ULONGLONG VolumeSerialNumber;
+        FILE_ID_128 FileId;
+      };
+      constexpr static auto FileIdInfo = static_cast<FILE_INFO_BY_HANDLE_CLASS>(18);
+
+      xFILE_ID_INFO fiia{}, fiib{};
+
+      if (pfn(a, FileIdInfo, &fiia, sizeof(fiia)) && pfn(b, FileIdInfo, &fiib, sizeof(fiib)))
       {
-        struct xFILE_ID_INFO {
-          ULONGLONG VolumeSerialNumber;
-          FILE_ID_128 FileId;
-        };
-        constexpr static auto FileIdInfo = static_cast<FILE_INFO_BY_HANDLE_CLASS>(18);
-
-        xFILE_ID_INFO fiia{}, fiib{};
-
-        if(pfn(a, FileIdInfo, &fiia, sizeof(fiia)) && pfn(b, FileIdInfo, &fiib, sizeof(fiib)))
-        {
-          const auto& ida = fiia.FileId.Identifier;
-          const auto& idb = fiib.FileId.Identifier;
-          return fiia.VolumeSerialNumber == fiib.VolumeSerialNumber
-            && std::equal(std::begin(ida), std::end(ida), std::begin(idb));
-        }
+        const auto& ida = fiia.FileId.Identifier;
+        const auto& idb = fiib.FileId.Identifier;
+        return fiia.VolumeSerialNumber == fiib.VolumeSerialNumber
+          && std::equal(std::begin(ida), std::end(ida), std::begin(idb));
       }
     }
   }
