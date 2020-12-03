@@ -138,7 +138,7 @@ INT_PTR MainDialog::CustomDrawListView(LPARAM lparam, HWND list)
         static_cast<int>(lplvcd->nmcd.dwItemSpec)
       };
       ListView_GetItem(list, &lvitem);
-      if (lvitem.lParam < 0 || lvitem.lParam > HashAlgorithm::k_count) // virustotal shit
+      if (!lvitem.lParam) // TODO: handle virustotal shit better
         break;
       const auto file_hash = FileHashTask::FromLparam(lvitem.lParam);
       const auto file = file_hash.first;
@@ -536,7 +536,7 @@ INT_PTR MainDialog::OnVTClicked(UINT, WPARAM, LPARAM)
             r.file->GetDisplayName().c_str(),
             r.found ? utl::FormatString(L"VT (%d/%d)", r.positives, r.total).c_str() : L"VT",
             r.found ? utl::UTF8ToWide(r.permalink.c_str()).c_str() : L"Not found",
-            (LPARAM)-1
+            (LPARAM)0
           );
         Button_Enable(_hwnd_BUTTON_VT, false);
       }
