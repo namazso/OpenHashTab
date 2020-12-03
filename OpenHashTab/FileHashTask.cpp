@@ -105,11 +105,10 @@ void FileHashTask::ProcessReadQueue(uint8_t* reuse_block)
     BlockFree(reuse_block);
 }
 
-FileHashTask::FileHashTask(const std::wstring& path, Coordinator* prop_page, std::wstring display_name, std::vector<uint8_t> expected_hash)
+FileHashTask::FileHashTask(Coordinator* prop_page, const std::wstring& path, const ProcessedFileList::FileInfo& file_info)
   : _hash_contexts{}
   , _prop_page{ prop_page }
-  , _display_name{ std::move(display_name) }
-  , _expected_hash { std::move(expected_hash) }
+  , _file_info{ file_info }
 {
   // Instead of exception, set _error because a failed file is still a finished
   // file task. Finish mechanism will trigger on first block read
@@ -323,7 +322,7 @@ void FileHashTask::Finish()
   if (!_error)
   {
     // If we expect a hash but none match, write no match to all algos
-    _match_state = _expected_hash.empty() ? MatchState_None : MatchState_Mismatch;
+    _match_state = _file_info.expected_hashes.empty() ? MatchState_None : MatchState_Mismatch;
 
     for (auto i = 0u; i < HashAlgorithm::k_count; ++i)
     {
@@ -331,8 +330,15 @@ void FileHashTask::Finish()
       const auto it_ctx = _hash_contexts[i].get();
       if(it_ctx)
         it_result = it_ctx->Finish();
-      if (_match_state == MatchState_Mismatch && it_result == _expected_hash)
-        _match_state = i;
+
+      // TODO: O(n^2) BABY HERE WE GO
+      for(const auto& expected : _file_info.expected_hashes)
+      if (_match_state != MatchState_None && it_result == expected)
+      {
+        // secure algorithms trump insecure ones
+        if(_match_state == MatchState_Mismatch || !HashAlgorithm::g_hashers[_match_state].IsSecure())
+        _match_state = i; // TODO: store all matches somehow
+      }
     }
   }
 

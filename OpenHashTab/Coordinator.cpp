@@ -67,17 +67,9 @@ unsigned Coordinator::Dereference()
   return references;
 }
 
-void Coordinator::AddFile(const std::wstring& path, const ProcessedFileList::FileData& fd)
+void Coordinator::AddFile(const std::wstring& path, const ProcessedFileList::FileInfo& fi)
 {
-  // BUG: we ignore what kind of hash we're looking for for now
-  const auto expected = !fd.expected_unknown_hash.empty()
-    ? fd.expected_unknown_hash
-    : *std::max_element(begin(fd.expected_hashes), end(fd.expected_hashes), [] (const auto& a, const auto& b)
-      {
-        return a.size() < b.size();
-      });
-
-  const auto task = new FileHashTask(path, this, fd.relative_path, expected);
+  const auto task = new FileHashTask(this, path, fi);
   _size_total += task->GetSize();
   _file_tasks.emplace_back(task);
 }

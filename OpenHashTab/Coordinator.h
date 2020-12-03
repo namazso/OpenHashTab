@@ -38,7 +38,7 @@ private:
   std::atomic<unsigned> _files_not_finished{};
   bool _is_sumfile{};
 
-  void AddFile(const std::wstring& path, const ProcessedFileList::FileData& fd);
+  void AddFile(const std::wstring& path, const ProcessedFileList::FileInfo& fi);
 
 public:
   Coordinator(std::list<std::wstring> files);

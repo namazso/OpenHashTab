@@ -247,21 +247,23 @@ ProcessedFileList ProcessEverything(std::list<std::wstring> list)
   {
     const auto normalized = NormalizePath(entry.first);
 
-    ProcessedFileList::FileData fd;
+    std::wstring relative_path;
 
     if (normalized.rfind(pfl.base_path, 0) == 0)
-      fd.relative_path = normalized.substr(pfl.base_path.size());
+      relative_path = normalized.substr(pfl.base_path.size());
     else
-      fd.relative_path = normalized;
-
-    if (pfl.sumfile_type == -1)
-      fd.expected_unknown_hash = entry.second;
-    else
-      fd.expected_hashes[pfl.sumfile_type] = entry.second;
+      relative_path = normalized;
 
     const auto exist = pfl.files.find(normalized);
-    if (exist == pfl.files.end())
-      pfl.files[normalized] = fd;
+    if (exist != pfl.files.end())
+      exist->second.expected_hashes.emplace_back(entry.second);
+    else
+    {
+      ProcessedFileList::FileInfo fi;
+      fi.relative_path = std::move(relative_path);
+      fi.expected_hashes.emplace_back(entry.second);
+      pfl.files[normalized] = fi;
+    }
   }
 
   for(const auto& file : list)
@@ -307,16 +309,16 @@ ProcessedFileList ProcessEverything(std::list<std::wstring> list)
 
       // TODO: look for sumfile
 
-      ProcessedFileList::FileData fd;
+      ProcessedFileList::FileInfo fi;
 
       if (normalized.rfind(pfl.base_path, 0) == 0)
-        fd.relative_path = normalized.substr(pfl.base_path.size());
+        fi.relative_path = normalized.substr(pfl.base_path.size());
       else
-        fd.relative_path = normalized;
+        fi.relative_path = normalized;
 
       const auto exist = pfl.files.find(normalized);
       if (exist == pfl.files.end())
-        pfl.files[normalized] = fd;
+        pfl.files[normalized] = fi;
     }
 
   }

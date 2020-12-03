@@ -17,7 +17,7 @@
 #include "../Algorithms/Hasher.h"
 
 #include <unordered_map>
-#include <array>
+#include <list>
 
 struct ProcessedFileList
 {
@@ -31,20 +31,17 @@ struct ProcessedFileList
   // A Win32 path to a directory that supposedly contains all files hashed. Ends with a slash.
   std::wstring base_path;
 
-  struct FileData
+  struct FileInfo
   {
     // Path relative to base_path, absolute if base_path is not root for the file
     std::wstring relative_path;
 
-    // Expected hashes indexed by algorithm idx
-    std::array<std::vector<uint8_t>, HashAlgorithm::k_count> expected_hashes;
-
-    // Unknown algorithm. This can only happen when opening a badly named sumfile
-    std::vector<uint8_t> expected_unknown_hash;
+    // Expected hashes. We'll try to figure out which belongs to what algorithm
+    std::list<std::vector<uint8_t>> expected_hashes;
   };
 
-  // Files to hash, keyed by NT path
-  std::unordered_map<std::wstring, FileData> files;
+  // Files to hash, keyed by normalized path
+  std::unordered_map<std::wstring, FileInfo> files;
 };
 
 ProcessedFileList ProcessEverything(std::list<std::wstring> list);
