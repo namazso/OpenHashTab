@@ -19,6 +19,8 @@
 #include <unordered_map>
 #include <list>
 
+#include "Settings.h"
+
 struct ProcessedFileList
 {
   // -2: not sumfile
@@ -44,4 +46,4 @@ struct ProcessedFileList
   std::unordered_map<std::wstring, FileInfo> files;
 };
 
-ProcessedFileList ProcessEverything(std::list<std::wstring> list);
+ProcessedFileList ProcessEverything(std::list<std::wstring> list, const Settings* settings);

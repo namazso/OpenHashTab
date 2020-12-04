@@ -23,105 +23,6 @@
 
 #include <algorithm>
 
-
-/*static std::wstring QuerySymbolicLink(std::wstring_view path)
-{
-  UNICODE_STRING name{
-    (USHORT)(path.size() * sizeof(wchar_t)),
-    (USHORT)(path.size() * sizeof(wchar_t)),
-    (PWCH)path.data()
-  };
-
-  OBJECT_ATTRIBUTES attr;
-  InitializeObjectAttributes(
-    &attr,
-    &name,
-    OBJ_CASE_INSENSITIVE,
-    NULL,
-    NULL
-  );
-  HANDLE handle{};
-  auto status = NtOpenSymbolicLinkObject(
-    &handle,
-    SYMBOLIC_LINK_QUERY,
-    &attr
-  );
-  if (!NT_SUCCESS(status))
-    return {}; // probably not a symlink
-
-  wchar_t buf[0x10000 / 2];
-  UNICODE_STRING result{ USHRT_MAX, USHRT_MAX, buf };
-  status = NtQuerySymbolicLinkObject(handle, &result, nullptr);
-  NtClose(handle);
-  if (NT_SUCCESS(status))
-    return { result.Buffer, result.Buffer + (result.Length / sizeof(wchar_t)) };
-  return {};
-}*/
-
-
-/*static std::vector<uint8_t> TryGetExpectedSumForFile(const std::wstring& path)
-{
-  std::vector<uint8_t> hash{};
-
-  const auto file = utl::OpenForRead(path);
-  if (file == INVALID_HANDLE_VALUE)
-    return hash;
-
-  const auto file_path = path.c_str();
-  const auto file_name = (LPCWSTR)PathFindFileNameW(file_path);
-  const auto base_path = std::wstring{ file_path, file_name };
-
-  for (const auto& hasher : HashAlgorithm::g_hashers)
-  {
-    if (!Settings::instance.IsHashEnabled(&hasher))
-      continue;
-
-    auto sumfile_path = path + L".";
-    auto handle = INVALID_HANDLE_VALUE;
-    for (auto it = hasher.GetExtensions(); handle == INVALID_HANDLE_VALUE && *it; ++it)
-      handle = utl::OpenForRead(sumfile_path + utl::UTF8ToWide(*it));
-
-    if (handle != INVALID_HANDLE_VALUE)
-    {
-      FileSumList fsl;
-      TryParseSumFile(handle, fsl);
-      CloseHandle(handle);
-      if (fsl.size() == 1)
-      {
-        const auto& file_sum = *fsl.begin();
-
-        auto valid = false;
-
-        if (file_sum.first.empty())
-        {
-          valid = true;
-        }
-        else
-        {
-          const auto file_sum_path = base_path + utl::UTF8ToWide(file_sum.first.c_str());
-          const auto sum_handle = utl::OpenForRead(file_sum_path);
-          if (sum_handle != INVALID_HANDLE_VALUE)
-          {
-            const auto same = utl::AreFilesTheSame(sum_handle, file);
-            CloseHandle(sum_handle);
-            if (same)
-              valid = true;
-          }
-        }
-
-        if (valid)
-        {
-          hash = file_sum.second;
-          break;
-        }
-      }
-    }
-  }
-
-  CloseHandle(file);
-  return hash;
-}*/
-
 // This function will normalize and un-shorten a path.
 // Unfortunately unshortening a path with GetLongPathNameW requires that all directories in the way exist. This might
 // not be the case for us, for example we might receive `C:\FOLDER~1\SUBFOL~1` where first exists and second doesn't.
@@ -162,7 +63,7 @@ static std::wstring NormalizePath(std::wstring_view path)
   }
 }
 
-ProcessedFileList ProcessEverything(std::list<std::wstring> list)
+ProcessedFileList ProcessEverything(std::list<std::wstring> list, const Settings* settings)
 {
   ProcessedFileList pfl;
 
@@ -299,7 +200,8 @@ ProcessedFileList ProcessEverything(std::list<std::wstring> list)
           error = GetLastError();
         }
       }
-      // BUG: We just leave it in as file if we can't open so some random error message will be displayed
+      // BUG: We just handle it as file if we can't list so some error message will be displayed.
+      //   This may or may not be the actual error, but gets basic ones like no perms right.
       if (error && error != ERROR_NO_MORE_FILES)
         goto not_a_directory;  // NOLINT(cppcoreguidelines-avoid-goto, hicpp-avoid-goto)
     }
@@ -307,9 +209,32 @@ ProcessedFileList ProcessEverything(std::list<std::wstring> list)
     {
       not_a_directory:
 
-      // TODO: look for sumfile
-
       ProcessedFileList::FileInfo fi;
+
+      // Look for sumfile for this file. If we're already processing a sumfile, don't look for one for security.
+      if (pfl.sumfile_type == -2 && settings->look_for_sumfiles)
+      {
+        for (auto i = 0u; i < HashAlgorithm::k_count; ++i)
+        {
+          if (!settings->algorithms[i])
+            continue;
+
+          for (auto ext = HashAlgorithm::g_hashers[i].GetExtensions(); *ext; ++ext)
+          {
+            const auto sumfile_path = normalized + L"." + utl::UTF8ToWide(*ext);
+            const auto handle = utl::OpenForRead(sumfile_path);
+            if (handle != INVALID_HANDLE_VALUE)
+            {
+              FileSumList fsl;
+              // we ignore the error returned, result will just be empty
+              TryParseSumFile(handle, fsl);
+              CloseHandle(handle);
+              for (const auto& sum : fsl)
+                fi.expected_hashes.push_back(sum.second);
+            }
+          }
+        }
+      }
 
       if (normalized.rfind(pfl.base_path, 0) == 0)
         fi.relative_path = normalized.substr(pfl.base_path.size());

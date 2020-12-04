@@ -76,7 +76,7 @@ void Coordinator::AddFile(const std::wstring& path, const ProcessedFileList::Fil
 
 void Coordinator::AddFiles()
 {
-  _files = ProcessEverything(_files_raw);
+  _files = ProcessEverything(_files_raw, &settings);
   const auto type = _files.sumfile_type;
   if(type != -2)
   {
