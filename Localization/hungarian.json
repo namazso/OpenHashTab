@@ -15,6 +15,21 @@
 		"HASHES":              "Hashek",
 		"CLIPBOARD":           "Vágólapra",
 		"NOMATCH":             "Nincs egyezés.",
-		"ERROR":               "Hiba"
+		"ERROR":               "Hiba",
+		"CANCEL":              "Cancel",
+		"DISPLAY_UPPERCASE":            "Hashek megjelenítése nagybetűvel",
+		"LOOK_FOR_SUMFILES":            "Sum-fájlok keresése a fájlok mellett",
+		"SUMFILE_UPPERCASE":            "Hashek exportálása nagybetűvel",
+		"SUMFILE_UNIX_ENDINGS":         "Exportálás Unix sorvégződésekkel",
+		"SUMFILE_USE_DOUBLE_SPACE":     "Exportálás dupla space-szel, space-csillag helyett",
+		"SUMFILE_FORWARD_SLASHES":      "Exportálás perjeles utakkal",
+		"SUMFILE_DOT_HASH_COMPATIBLE":  "Exportálás corz .hash kompatibilis formában",
+		"SUMFILE_BANNER":               "Banner használata az exportált fájlokban",
+		"SUMFILE_BANNER_DATE":          "Dátum hozzáadása a bannerhez",
+		"CHECK_FOR_UPDATES":            "Frissítés ellenőrzés",
+		"COPY_HASH":           "Hash másolása",
+		"COPY_LINE":           "Sor másolása",
+		"COPY_FILE":           "Fájlnév másolása",
+		"COPY_EVERYTHING":     "Minden másolása"
 	}
 }
