@@ -568,7 +568,12 @@ INT_PTR MainDialog::OnVTClicked(UINT, WPARAM, LPARAM)
       });
     if (algo == std::end(algos))
     {
-      MessageBoxW(_hwnd, L"No compatible algorithm", L"Error", MB_ICONERROR | MB_OK);
+      MessageBoxW(
+        _hwnd,
+        utl::GetString(IDS_VT_NO_COMPATIBLE).c_str(),
+        utl::GetString(IDS_ERROR).c_str(),
+        MB_ICONERROR | MB_OK
+      );
     }
     else
     {
@@ -583,7 +588,7 @@ INT_PTR MainDialog::OnVTClicked(UINT, WPARAM, LPARAM)
           AddItemToFileList(
             r.file->GetDisplayName().c_str(),
             r.found ? utl::FormatString(L"VT (%d/%d)", r.positives, r.total).c_str() : L"VT",
-            r.found ? utl::UTF8ToWide(r.permalink.c_str()).c_str() : L"Not found",
+            r.found ? utl::UTF8ToWide(r.permalink.c_str()).c_str() : utl::GetString(IDS_VT_NOT_FOUND).c_str(),
             (LPARAM)0
           );
         Button_Enable(_hwnd_BUTTON_VT, false);

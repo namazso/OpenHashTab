@@ -103,17 +103,17 @@ INT_PTR SettingsDialog::DlgProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
         {
           MessageBoxW(
             _hwnd,
-            L"Unavailable in development builds",
-            L"Error",
+            utl::GetString(IDS_UPDATE_DISABLED_IN_DEV_BUILD).c_str(),
+            utl::GetString(IDS_ERROR).c_str(),
             MB_OK | MB_ICONERROR
           );
         }
         else if (const auto v = utl::GetLatestVersion(); v > current)
           utl::FormattedMessageBox(
             _hwnd,
-            L"Update available",
+            utl::GetString(IDS_UPDATE_AVAILABLE_TITLE).c_str(),
             MB_OK | MB_ICONINFORMATION,
-            L"New version %hu.%hu.%hu available",
+            utl::GetString(IDS_UPDATE_AVAILABLE_TEXT).c_str(),
             v.major,
             v.minor,
             v.patch
@@ -121,8 +121,8 @@ INT_PTR SettingsDialog::DlgProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
         else
           MessageBoxW(
             _hwnd,
-            L"You are already on the latest version",
-            L"Congratulations",
+            utl::GetString(IDS_UPDATE_NEWEST_TEXT).c_str(),
+            utl::GetString(IDS_UPDATE_NEWEST_TITLE).c_str(),
             MB_OK
           );
 

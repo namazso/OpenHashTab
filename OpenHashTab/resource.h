@@ -69,12 +69,19 @@
 #define IDS_COPY_FILE           		236
 #define IDS_COPY_EVERYTHING           	237
 #define IDS_FONT           	            238
+#define IDS_VT_NO_COMPATIBLE            239
+#define IDS_VT_NOT_FOUND           	    240
+#define IDS_UPDATE_DISABLED_IN_DEV_BUILD 241
+#define IDS_UPDATE_AVAILABLE_TITLE      242
+#define IDS_UPDATE_AVAILABLE_TEXT       243
+#define IDS_UPDATE_NEWEST_TITLE         244
+#define IDS_UPDATE_NEWEST_TEXT          245
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        239
+#define _APS_NEXT_RESOURCE_VALUE        246
 #define _APS_NEXT_COMMAND_VALUE         32768
 #define _APS_NEXT_CONTROL_VALUE         228
 #define _APS_NEXT_SYMED_VALUE           111
