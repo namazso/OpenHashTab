@@ -68,12 +68,13 @@
 #define IDS_COPY_LINE           		235
 #define IDS_COPY_FILE           		236
 #define IDS_COPY_EVERYTHING           	237
+#define IDS_FONT           	            238
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        238
+#define _APS_NEXT_RESOURCE_VALUE        239
 #define _APS_NEXT_COMMAND_VALUE         32768
 #define _APS_NEXT_CONTROL_VALUE         228
 #define _APS_NEXT_SYMED_VALUE           111

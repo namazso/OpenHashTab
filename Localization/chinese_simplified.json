@@ -2,6 +2,7 @@
 	"langid":              "LANG_CHINESE",
 	"sublangid":           "SUBLANG_CHINESE_SIMPLIFIED",
 	"strings": {
+	    "FONT":                "Microsoft YaHei UI",
 		"FILENAME":            "文件名",
 		"ALGORITHM":           "算法",
 		"COPIED":              "✔ 已复制",

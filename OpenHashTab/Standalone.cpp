@@ -110,6 +110,9 @@ extern "C" __declspec(dllexport) void CALLBACK StandaloneEntryW(
 
   //utl::FormattedMessageBox(nullptr, L"lpCmdLine", MB_OK, L"%s", lpCmdLine);
 
+  // TODO: Support per monitor / v2 DPI awareness too
+  SetProcessDPIAware();
+
   INITCOMMONCONTROLSEX iccex
   {
     sizeof(INITCOMMONCONTROLSEX),

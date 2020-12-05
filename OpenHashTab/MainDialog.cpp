@@ -347,6 +347,10 @@ INT_PTR MainDialog::OnInitDialog(UINT, WPARAM, LPARAM)
     reinterpret_cast<LONG_PTR>(LoadIconW(utl::GetInstance(), MAKEINTRESOURCEW(IDI_ICON1)))
   );
 
+  const auto hfont = utl::GetDPIScaledFont(_hwnd, 8);
+  for (auto wnd = GetWindow(_hwnd, GW_CHILD); wnd; wnd = GetWindow(wnd, GW_HWNDNEXT))
+    SetWindowFont(wnd, hfont, TRUE);
+
   utl::SetIconButton(_hwnd_BUTTON_VT, IDI_ICON_VT);
   utl::SetIconButton(_hwnd_BUTTON_SETTINGS, IDI_ICON_COG);
 
@@ -363,9 +367,9 @@ INT_PTR MainDialog::OnInitDialog(UINT, WPARAM, LPARAM)
   // we put the string table ID in the text length field, to fix it up later
   LVCOLUMN cols[] =
   {
-    {LVCF_FMT | LVCF_WIDTH | LVCF_TEXT, LVCFMT_LEFT, 140,   nullptr, IDS_FILENAME},
-    {LVCF_FMT | LVCF_WIDTH | LVCF_TEXT, LVCFMT_LEFT, 70,    nullptr, IDS_ALGORITHM},
-    {LVCF_FMT | LVCF_WIDTH | LVCF_TEXT, LVCFMT_LEFT, 1100,  nullptr, IDS_HASH},
+    {LVCF_FMT | LVCF_WIDTH | LVCF_TEXT, LVCFMT_LEFT, utl::GetDPIScaledPixels(_hwnd, 140),   nullptr, IDS_FILENAME},
+    {LVCF_FMT | LVCF_WIDTH | LVCF_TEXT, LVCFMT_LEFT, utl::GetDPIScaledPixels(_hwnd, 70),    nullptr, IDS_ALGORITHM},
+    {LVCF_FMT | LVCF_WIDTH | LVCF_TEXT, LVCFMT_LEFT, utl::GetDPIScaledPixels(_hwnd, 1100),  nullptr, IDS_HASH},
   };
 
   for (auto i = 0u; i < std::size(cols); ++i)
