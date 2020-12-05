@@ -63,6 +63,14 @@ This software is provided completely free of charge to you, however I spent time
 * Bitcoin: 1N6UzYgzn3sLV33hB2iS3FvYLzD1G4CuS2
 * Monero: 83sJ6GoeKf1U47vD9Tk6y2MEKJKxPJkECG3Ms7yzVGeiBYg2uYhBAUAZKNDH8VnAPGhwhZeqBnofDPgw9PiVtTgk95k53Rd
 
+## Translation
+
+Translate the project at [Weblate](https://hosted.weblate.org/projects/openhashtab/main/)
+
+### Pre-weblate translation contributors
+
+**xprism**, **[@NieLnchn](https://github.com/NieLnchn)** (Simplified Chinese), **Niccolò Zanichelli** (Italian), **[@vmcall](https://github.com/vmcall/)** (Danish), **[@wvxwxvw](https://github.com/wvxwxvw/)** (Russian), **[@Janaue](https://github.com/Janaue)** (French)
+
 ## Building
 
 ### Requirements
@@ -74,14 +82,6 @@ This software is provided completely free of charge to you, however I spent time
 
 1. Build OpenHashTab.sln for x86, x64, ARM64
 2. Use Inno Setup Compiler to compile installer.iss to get the installer
-
-## Translation
-
-Translate the project at [Weblate](https://hosted.weblate.org/projects/openhashtab/main/)
-
-### Pre-weblate ranslation contributors
-
-**xprism**, **[@NieLnchn](https://github.com/NieLnchn)** (Simplified Chinese), **Niccolò Zanichelli** (Italian), **[@vmcall](https://github.com/vmcall/)** (Danish), **[@wvxwxvw](https://github.com/wvxwxvw/)** (Russian), **[@Janaue](https://github.com/Janaue)** (French)
 
 ## Relationship to HashTab
 
