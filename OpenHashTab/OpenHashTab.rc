@@ -1,5 +1,7 @@
 // Microsoft Visual C++ generated resource script.
 //
+#pragma code_page(65001)
+
 #include "resource.h"
 
 #define APSTUDIO_READONLY_SYMBOLS
@@ -21,7 +23,69 @@
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_NEUD)
 LANGUAGE LANG_NEUTRAL, SUBLANG_DEFAULT
-#pragma code_page(1252)
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#ifndef APSTUDIO_INVOKED\r\n"
+    "#include ""targetver.h""\r\n"
+    "#endif\r\n"
+    "#include ""winres.h""\r\n"
+    "#include ""verrsrc.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "1 TYPELIB ""OpenHashTab.tlb""\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// REGISTRY
+//
+
+IDR_OPENHASHTAB         REGISTRY                "OpenHashTab.rgs"
+
+IDR_OPENHASHTABSHLEXT   REGISTRY                "OpenHashTabShlExt.rgs"
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_ICON1               ICON                    "icon.ico"
+
+IDI_ICON_VT             ICON                    "virustotal_icon.ico"
+
+IDI_ICON_COG            ICON                    "cog.ico"
+
+#endif    // Neutral (Default) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// English (United States) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -33,20 +97,20 @@ STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
 CAPTION "OpenHashTab"
 FONT 8, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
-    LTEXT           "IDS_CHECK_AGAINST",IDC_STATIC_CHECK_AGAINST,7,164,211,8
+    LTEXT           "Check against:",IDC_STATIC_CHECK_AGAINST,7,164,211,8
     CONTROL         "",IDC_HASH_LIST,"SysListView32",LVS_REPORT | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,7,7,211,142
     EDITTEXT        IDC_EDIT_HASH,7,175,211,13,ES_AUTOHSCROLL | WS_DISABLED
     COMBOBOX        IDC_COMBO_EXPORT,7,216,89,30,CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
-    LTEXT           "IDS_EXPORT_TO",IDC_STATIC_EXPORT_TO,7,207,211,8
-    PUSHBUTTON      "IDS_EXPORT_BTN",IDC_BUTTON_EXPORT,162,216,56,15,WS_DISABLED
+    LTEXT           "Export to sumfile:",IDC_STATIC_EXPORT_TO,7,207,211,8
+    PUSHBUTTON      "Export…",IDC_BUTTON_EXPORT,162,216,56,15,WS_DISABLED
     LTEXT           "",IDC_STATIC_CHECK_RESULT,7,191,211,8
     LTEXT           "",IDC_STATIC_SUMFILE,7,152,98,10
-    RTEXT           "IDS_PROCESSING",IDC_STATIC_PROCESSING,108,152,72,10
-    PUSHBUTTON      "IDS_CLIPBOARD",IDC_BUTTON_CLIPBOARD,102,216,54,15,WS_DISABLED
-    PUSHBUTTON      "*",IDC_BUTTON_SETTINGS,202,150,16,16,BS_ICON | WS_DISABLED
+    RTEXT           "Processing…",IDC_STATIC_PROCESSING,108,152,72,10
+    PUSHBUTTON      "To clipboard",IDC_BUTTON_CLIPBOARD,102,216,54,15,WS_DISABLED
+    PUSHBUTTON      "",IDC_BUTTON_SETTINGS,202,150,16,16,BS_ICON | WS_DISABLED
     CONTROL         "",IDC_PROGRESS,"msctls_progress32",WS_BORDER,7,233,149,14
-    PUSHBUTTON      "IDS_CANCEL",IDC_BUTTON_CANCEL,162,234,56,12
-    PUSHBUTTON      "v",IDC_BUTTON_VT,184,150,16,16,BS_ICON | WS_DISABLED
+    PUSHBUTTON      "Cancel",IDC_BUTTON_CANCEL,162,234,56,12
+    PUSHBUTTON      "",IDC_BUTTON_VT,184,150,16,16,BS_ICON | WS_DISABLED
 END
 
 IDD_SETTINGS DIALOGEX 0, 0, 345, 178
@@ -55,24 +119,25 @@ CAPTION "*"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         "",IDC_ALGORITHM_LIST,"SysListView32",LVS_LIST | LVS_ALIGNLEFT | LVS_NOCOLUMNHEADER | WS_BORDER | WS_TABSTOP,6,6,113,164
-    CONTROL         "IDS_DISPLAY_UPPERCASE",IDC_CHECK_DISPLAY_UPPERCASE,
+    CONTROL         "Display hashes in uppercase",IDC_CHECK_DISPLAY_UPPERCASE,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,126,6,210,10
-    CONTROL         "IDS_LOOK_FOR_SUMFILES",IDC_CHECK_LOOK_FOR_SUMFILES,
+    CONTROL         "Look for sumfiles next to files being hashed",IDC_CHECK_LOOK_FOR_SUMFILES,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,126,18,210,10
-    CONTROL         "IDS_SUMFILE_UPPERCASE",IDC_CHECK_SUMFILE_UPPERCASE,
+    CONTROL         "Export hashes in uppercase",IDC_CHECK_SUMFILE_UPPERCASE,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,126,30,210,10
-    CONTROL         "IDS_SUMFILE_UNIX_ENDINGS",IDC_CHECK_SUMFILE_UNIX_ENDINGS,
+    CONTROL         "Export files with Unix line endings",IDC_CHECK_SUMFILE_UNIX_ENDINGS,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,126,42,210,10
-    CONTROL         "IDS_SUMFILE_USE_DOUBLE_SPACE",IDC_CHECK_SUMFILE_USE_DOUBLE_SPACE,
+    CONTROL         "Export sumfiles with double space instead of space-asterisk",IDC_CHECK_SUMFILE_USE_DOUBLE_SPACE,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,126,54,210,10
-    CONTROL         "IDS_SUMFILE_FORWARD_SLASHES",IDC_CHECK_SUMFILE_FORWARD_SLASHES,
+    CONTROL         "Use forward slash paths in exported files",IDC_CHECK_SUMFILE_FORWARD_SLASHES,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,126,66,210,10
-    CONTROL         "IDS_SUMFILE_DOT_HASH_COMPATIBLE",IDC_CHECK_SUMFILE_DOT_HASH_COMPATIBLE,
+    CONTROL         "Export sumfiles in corz .hash compatible format",IDC_CHECK_SUMFILE_DOT_HASH_COMPATIBLE,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,126,78,210,10
-    CONTROL         "IDS_SUMFILE_BANNER",IDC_CHECK_SUMFILE_BANNER,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,126,90,210,10
-    CONTROL         "IDS_SUMFILE_BANNER_DATE",IDC_CHECK_SUMFILE_BANNER_DATE,
+    CONTROL         "Add banner to exported files",IDC_CHECK_SUMFILE_BANNER,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,126,90,210,10
+    CONTROL         "Add date to banner",IDC_CHECK_SUMFILE_BANNER_DATE,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,126,102,210,10
-    PUSHBUTTON      "IDS_CHECK_FOR_UPDATES",IDC_BUTTON_CHECK_FOR_UPDATES,240,156,98,14
+    PUSHBUTTON      "Check for updates",IDC_BUTTON_CHECK_FOR_UPDATES,240,156,98,14
 END
 
 
@@ -133,68 +198,35 @@ BEGIN
 END
 
 
-#ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
 //
-// TEXTINCLUDE
+// String Table
 //
 
-1 TEXTINCLUDE 
+STRINGTABLE
 BEGIN
-    "resource.h\0"
+    IDS_FILENAME            "Name"
+    IDS_ALGORITHM           "Algorithm"
+    IDS_COPIED              "✔ Copied"
+    IDS_HASH                "Hash"
 END
 
-2 TEXTINCLUDE 
+STRINGTABLE
 BEGIN
-    "#ifndef APSTUDIO_INVOKED\r\n"
-    "#include ""targetver.h""\r\n"
-    "#endif\r\n"
-    "#include ""winres.h""\r\n"
-    "#include ""verrsrc.h""\r\n"
-    "\0"
+    IDS_COPY_HASH           "Copy hash"
+    IDS_COPY_LINE           "Copy line"
+    IDS_COPY_FILE           "Copy file name"
+    IDS_COPY_EVERYTHING     "Copy everything"
 END
 
-3 TEXTINCLUDE 
+STRINGTABLE
 BEGIN
-    "1 TYPELIB ""OpenHashTab.tlb""\r\n"
-    "\0"
+    IDS_SUMFILE             "Interpreted as sumfile."
+    IDS_DONE                "Done!"
+    IDS_HASHES              "Hashes"
+    IDS_NOMATCH             "No match found."
+    IDS_ERROR               "Error"
 END
-
-#endif    // APSTUDIO_INVOKED
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// REGISTRY
-//
-
-IDR_OPENHASHTAB         REGISTRY                "OpenHashTab.rgs"
-
-IDR_OPENHASHTABSHLEXT   REGISTRY                "OpenHashTabShlExt.rgs"
-
-#endif    // Neutral (Default) resources
-/////////////////////////////////////////////////////////////////////////////
-
-
-/////////////////////////////////////////////////////////////////////////////
-// English (United States) resources
-
-#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
-LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
-#pragma code_page(1252)
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Icon
-//
-
-// Icon with lowest ID value placed first to ensure application icon
-// remains consistent on all systems.
-IDI_ICON1               ICON                    "icon.ico"
-
-IDI_ICON_VT             ICON                    "virustotal_icon.ico"
-
-IDI_ICON_COG            ICON                    "cog.ico"
 
 #endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////
