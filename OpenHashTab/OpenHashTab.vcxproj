@@ -98,7 +98,7 @@
       <AdditionalDependencies>$(SolutionDir)bin\$(Configuration)\$(Platform)\Algorithms.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
-      <Command>powershell -ExecutionPolicy Bypass $(SolutionDir)langcomp\langcomp.ps1 $(SolutionDir)Localization $(ProjectDir)localization.rc</Command>
+      <Command>powershell -ExecutionPolicy Bypass $(SolutionDir)langcomp\langcomp.ps1 $(SolutionDir)Localization $(SolutionDir)Localization\en-us.json $(ProjectDir)localization.rc</Command>
     </PreBuildEvent>
     <PreBuildEvent>
       <Message>Compiling localization</Message>
