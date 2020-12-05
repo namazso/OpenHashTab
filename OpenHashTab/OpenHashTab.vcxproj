@@ -97,9 +97,6 @@
       <AdditionalOptions>/PDBALTPATH:%_PDB% /Brepro %(AdditionalOptions)</AdditionalOptions>
       <AdditionalDependencies>$(SolutionDir)bin\$(Configuration)\$(Platform)\Algorithms.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
-    <Manifest>
-      <AdditionalManifestFiles>additional.manifest</AdditionalManifestFiles>
-    </Manifest>
     <PreBuildEvent>
       <Command>powershell -ExecutionPolicy Bypass $(SolutionDir)langcomp\langcomp.ps1 $(SolutionDir)Localization $(ProjectDir)localization.rc</Command>
     </PreBuildEvent>
@@ -200,6 +197,9 @@
     <Image Include="cog.ico" />
     <Image Include="icon.ico" />
     <Image Include="virustotal_icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="additional.manifest" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
