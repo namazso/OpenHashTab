@@ -77,9 +77,9 @@ This software is provided completely free of charge to you, however I spent time
 
 ## Translation
 
-Look into the `Localization` folder, figuring out what to translate should be trivial. If you have enough development knowledge send a PR, otherwise post an Issue. Thanks for making OpenHashTab better.
+Translate the project at [Weblate](https://hosted.weblate.org/projects/openhashtab/main/)
 
-### Translation contributors
+### Pre-weblate ranslation contributors
 
 **xprism**, **[@NieLnchn](https://github.com/NieLnchn)** (Simplified Chinese), **Niccolò Zanichelli** (Italian), **[@vmcall](https://github.com/vmcall/)** (Danish), **[@wvxwxvw](https://github.com/wvxwxvw/)** (Russian), **[@Janaue](https://github.com/Janaue)** (French)
 
