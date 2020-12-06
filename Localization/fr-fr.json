@@ -22,7 +22,7 @@
         "FONT": "MS Shell Dlg",
         "COPY_EVERYTHING": "Tout copier",
         "COPY_FILE": "Copier le nom du fichier",
-        "COPY_LINE": "Copier le lien",
+        "COPY_LINE": "Copier la ligne",
         "COPY_HASH": "Copier le hachage",
         "CHECK_FOR_UPDATES": "Vérifier les mises à jour",
         "SUMFILE_BANNER_DATE": "Ajouter une date à la bannière",
@@ -30,6 +30,14 @@
         "SUMFILE_UPPERCASE": "Exporter les hachages en majuscules",
         "DISPLAY_UPPERCASE": "Afficher les hachages en majuscules",
         "CANCEL": "Annuler",
-        "SUMFILE_FORWARD_SLASHES": "Utiliser des chemins avec des barres obliques dans les fichiers exportés"
+        "SUMFILE_FORWARD_SLASHES": "Utiliser des chemins avec des barres obliques dans les fichiers exportés",
+        "SUMFILE_DOT_HASH_COMPATIBLE": "Export les fichiers de sommes dans un format corz .hash compatible",
+        "UPDATE_NEWEST_TITLE": "Félicitations",
+        "UPDATE_AVAILABLE_TEXT": "Nouvelle version %hu.%hu.%hu disponible",
+        "UPDATE_AVAILABLE_TITLE": "Mise à jour disponible",
+        "UPDATE_NEWEST_TEXT": "Vous avez déjà la dernière version",
+        "UPDATE_DISABLED_IN_DEV_BUILD": "Indisponible dans les versions de développement",
+        "VT_NOT_FOUND": "Non trouvé dans la base de données",
+        "VT_NO_COMPATIBLE": "Aucun algorithme compatible activé"
     }
 }
