@@ -1,20 +1,21 @@
 {
-	"langid":              "LANG_ITALIAN",
-	"sublangid":           "SUBLANG_ITALIAN",
-	"strings": {
-		"FILENAME":            "Nome del file",
-		"ALGORITHM":           "Algoritmo",
-		"COPIED":              "✔ Copiato",
-		"HASH":                "Hash",
-		"CHECK_AGAINST":       "Confronta con:",
-		"EXPORT_TO":           "Esporta a file di checksum",
-		"EXPORT_BTN":          "Esporta...",
-		"SUMFILE":             "Interpretato come file di checksum.",
-		"DONE":                "Fatto!",
-		"PROCESSING":          "Elaborazione...",
-		"HASHES":              "Hash",
-		"CLIPBOARD":           "Copia negli appunti",
-		"NOMATCH":             "Nessun corrispondenza trovata.",
-		"ERROR":               "Errore"
-	}
+    "langid": "LANG_ITALIAN",
+    "sublangid": "SUBLANG_ITALIAN",
+    "strings": {
+        "FILENAME": "Nome del file",
+        "ALGORITHM": "Algoritmo",
+        "COPIED": "✔ Copiato",
+        "HASH": "Hash",
+        "CHECK_AGAINST": "Confronta con:",
+        "EXPORT_TO": "Esporta a file di checksum:",
+        "EXPORT_BTN": "Esporta…",
+        "SUMFILE": "Interpretato come file di checksum.",
+        "DONE": "Fatto!",
+        "PROCESSING": "Elaborazione…",
+        "HASHES": "Hash",
+        "CLIPBOARD": "Copia negli appunti",
+        "NOMATCH": "Nessun corrispondenza trovata.",
+        "ERROR": "Errore",
+        "FONT": "MS Shell Dlg"
+    }
 }
