@@ -1,20 +1,21 @@
 {
-	"langid":              "LANG_SPANISH",
-	"sublangid":           "SUBLANG_SPANISH",
-	"strings": {
-		"FILENAME":            "Nombre",
-		"ALGORITHM":           "Algoritmo",
-		"COPIED":              "✔ Copiado",
-		"HASH":                "Hash",
-		"CHECK_AGAINST":       "Comparar con:",
-		"EXPORT_TO":           "Exportar como archivo de checksum:",
-		"EXPORT_BTN":          "Exportar...",
-		"SUMFILE":             "Interpretado como un archivo de checksum.",
-		"DONE":                "¡Listo!",
-		"PROCESSING":          "En proceso...",
-		"HASHES":              "Hashes",
-		"CLIPBOARD":           "Al Portapapeles",
-		"NOMATCH":             "No se encontraron coincidencias.",
-		"ERROR":               "Error"
-	}
+    "langid": "LANG_SPANISH",
+    "sublangid": "SUBLANG_SPANISH",
+    "strings": {
+        "FILENAME": "Nombre",
+        "ALGORITHM": "Algoritmo",
+        "COPIED": "✔ Copiado",
+        "HASH": "Hash",
+        "CHECK_AGAINST": "Comparar con:",
+        "EXPORT_TO": "Exportar como archivo de checksum:",
+        "EXPORT_BTN": "Exportar…",
+        "SUMFILE": "Interpretado como un archivo de checksum.",
+        "DONE": "¡Listo!",
+        "PROCESSING": "En proceso…",
+        "HASHES": "Hashes",
+        "CLIPBOARD": "Al Portapapeles",
+        "NOMATCH": "No se encontraron coincidencias.",
+        "ERROR": "Error",
+        "FONT": "MS Shell Dlg"
+    }
 }
