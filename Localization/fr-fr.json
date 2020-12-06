@@ -29,6 +29,7 @@
         "SUMFILE_UNIX_ENDINGS": "Exporter des fichiers avec des fins de ligne Unix",
         "SUMFILE_UPPERCASE": "Exporter les hachages en majuscules",
         "DISPLAY_UPPERCASE": "Afficher les hachages en majuscules",
-        "CANCEL": "Annuler"
+        "CANCEL": "Annuler",
+        "SUMFILE_FORWARD_SLASHES": "Utiliser des chemins avec des barres obliques dans les fichiers exportés"
     }
 }
