@@ -16,6 +16,18 @@
         "CLIPBOARD": "Copia negli appunti",
         "NOMATCH": "Nessun corrispondenza trovata.",
         "ERROR": "Errore",
-        "FONT": "MS Shell Dlg"
+        "FONT": "MS Shell Dlg",
+        "UPDATE_NEWEST_TEXT": "Hai già l'ultima versione",
+        "UPDATE_NEWEST_TITLE": "Congratulazioni",
+        "UPDATE_AVAILABLE_TEXT": "Nuova versione %hu.%hu.%hu disponibile",
+        "UPDATE_AVAILABLE_TITLE": "Aggiornamento disponibile",
+        "UPDATE_DISABLED_IN_DEV_BUILD": "Non disponibile nelle versioni di sviluppo",
+        "VT_NOT_FOUND": "Non trovato nella base di dati",
+        "VT_NO_COMPATIBLE": "Nessun algoritmo compatibile abilitato",
+        "COPY_EVERYTHING": "Copia tutto",
+        "COPY_FILE": "Copia il nome del file",
+        "COPY_LINE": "Copia la riga",
+        "CHECK_FOR_UPDATES": "Controlla gli aggiornamenti",
+        "CANCEL": "Annulla"
     }
 }
