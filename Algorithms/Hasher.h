@@ -35,7 +35,10 @@ public:
   virtual ~HashContext() = default;
   virtual void Clear() = 0;
   virtual void Update(const void* data, size_t size) = 0;
-  virtual std::vector<uint8_t> Finish() = 0;
+  virtual void Finish(uint8_t* out) = 0;
+
+  std::vector<uint8_t> Finish();
+
   const HashAlgorithm* GetAlgorithm() const { return _algorithm; }
 };
 
@@ -94,3 +97,12 @@ public:
   constexpr const char* const* GetExtensions() const { return _extensions; }
   constexpr HashContext* MakeContext() const { return _factory_fn(this); }
 };
+
+inline std::vector<uint8_t> HashContext::Finish()
+{
+  std::vector<uint8_t> vec;
+  vec.resize(HashAlgorithm::k_max_size);
+  Finish(vec.data());
+  vec.resize(GetAlgorithm()->GetSize());
+  return vec;
+}

@@ -74,14 +74,9 @@ public:
     UpdateRet(&ctx, (const unsigned char*)data, size);
   }
 
-  std::vector<uint8_t> Finish() override
+  void Finish(uint8_t* out) override
   {
-    std::vector<uint8_t> result;
-    // mbedTLS says this should be 32 for SHA224 so we can't just use Size
-    result.resize(MBEDTLS_MD_MAX_SIZE);
-    FinishRet(&ctx, result.data());
-    result.resize(Size);
-    return result;
+    FinishRet(&ctx, out);
   }
 };
 
@@ -166,12 +161,9 @@ public:
     Blake2sp_Update(&ctx, (const unsigned char*)data, size);
   }
 
-  std::vector<uint8_t> Finish() override
+  void Finish(uint8_t* out) override
   {
-    std::vector<uint8_t> result;
-    result.resize(BLAKE2S_DIGEST_SIZE);
-    Blake2sp_Final(&ctx, result.data());
-    return result;
+    Blake2sp_Final(&ctx, out);
   }
 };
 
@@ -199,11 +191,10 @@ public:
     sha3_Update(&ctx, data, size);
   }
 
-  std::vector<uint8_t> Finish() override
+  void Finish(uint8_t* out) override
   {
     const auto begin = (const uint8_t*)sha3_Finalize(&ctx);
-    std::vector<uint8_t> result{ begin, begin + Size };
-    return result;
+    memcpy(out, begin, Size);
   }
 };
 
@@ -232,15 +223,12 @@ public:
     crc = Crc32_ComputeBuf(crc, data, size);
   }
 
-  std::vector<uint8_t> Finish() override
+  void Finish(uint8_t* out) override
   {
-    std::vector<uint8_t> result;
-    result.resize(4);
-    result[0] = 0xFF & (crc >> 24);
-    result[1] = 0xFF & (crc >> 16);
-    result[2] = 0xFF & (crc >> 8);
-    result[3] = 0xFF & (crc >> 0);
-    return result;
+    out[0] = 0xFF & (crc >> 24);
+    out[1] = 0xFF & (crc >> 16);
+    out[2] = 0xFF & (crc >> 8);
+    out[3] = 0xFF & (crc >> 0);
   }
 };
 
@@ -267,12 +255,9 @@ public:
     blake3_hasher_update(&ctx, data, size);
   }
 
-  std::vector<uint8_t> Finish() override
+  void Finish(uint8_t* out) override
   {
-    std::vector<uint8_t> result;
-    result.resize(BLAKE3_OUT_LEN);
-    blake3_hasher_finalize(&ctx, result.data(), BLAKE3_OUT_LEN);
-    return result;
+    blake3_hasher_finalize(&ctx, out, BLAKE3_OUT_LEN);
   }
 };
 
@@ -406,16 +391,13 @@ public:
     update(&ctx, data, size);
   }
 
-  std::vector<uint8_t> Finish() override
+  void Finish(uint8_t* out) override
   {
     const auto xxh32 = digest(&ctx);
-    std::vector<uint8_t> result;
-    result.resize(4);
-    result[0] = 0xFF & (xxh32 >> 24);
-    result[1] = 0xFF & (xxh32 >> 16);
-    result[2] = 0xFF & (xxh32 >> 8);
-    result[3] = 0xFF & (xxh32 >> 0);
-    return result;
+    out[0] = 0xFF & (xxh32 >> 24);
+    out[1] = 0xFF & (xxh32 >> 16);
+    out[2] = 0xFF & (xxh32 >> 8);
+    out[3] = 0xFF & (xxh32 >> 0);
   }
 };
 
@@ -443,20 +425,17 @@ public:
     update(&ctx, data, size);
   }
 
-  std::vector<uint8_t> Finish() override
+  void Finish(uint8_t* out) override
   {
     const auto xxh64 = digest(&ctx);
-    std::vector<uint8_t> result;
-    result.resize(8);
-    result[0] = 0xFF & (xxh64 >> 56);
-    result[1] = 0xFF & (xxh64 >> 48);
-    result[2] = 0xFF & (xxh64 >> 40);
-    result[3] = 0xFF & (xxh64 >> 32);
-    result[4] = 0xFF & (xxh64 >> 24);
-    result[5] = 0xFF & (xxh64 >> 16);
-    result[6] = 0xFF & (xxh64 >> 8);
-    result[7] = 0xFF & (xxh64 >> 0);
-    return result;
+    out[0] = 0xFF & (xxh64 >> 56);
+    out[1] = 0xFF & (xxh64 >> 48);
+    out[2] = 0xFF & (xxh64 >> 40);
+    out[3] = 0xFF & (xxh64 >> 32);
+    out[4] = 0xFF & (xxh64 >> 24);
+    out[5] = 0xFF & (xxh64 >> 16);
+    out[6] = 0xFF & (xxh64 >> 8);
+    out[7] = 0xFF & (xxh64 >> 0);
   }
 };
 
@@ -484,20 +463,17 @@ public:
     update(&ctx, data, size);
   }
 
-  std::vector<uint8_t> Finish() override
+  void Finish(uint8_t* out) override
   {
     const auto xxh64 = digest(&ctx);
-    std::vector<uint8_t> result;
-    result.resize(8);
-    result[0] = 0xFF & (xxh64 >> 56);
-    result[1] = 0xFF & (xxh64 >> 48);
-    result[2] = 0xFF & (xxh64 >> 40);
-    result[3] = 0xFF & (xxh64 >> 32);
-    result[4] = 0xFF & (xxh64 >> 24);
-    result[5] = 0xFF & (xxh64 >> 16);
-    result[6] = 0xFF & (xxh64 >> 8);
-    result[7] = 0xFF & (xxh64 >> 0);
-    return result;
+    out[0] = 0xFF & (xxh64 >> 56);
+    out[1] = 0xFF & (xxh64 >> 48);
+    out[2] = 0xFF & (xxh64 >> 40);
+    out[3] = 0xFF & (xxh64 >> 32);
+    out[4] = 0xFF & (xxh64 >> 24);
+    out[5] = 0xFF & (xxh64 >> 16);
+    out[6] = 0xFF & (xxh64 >> 8);
+    out[7] = 0xFF & (xxh64 >> 0);
   }
 };
 
@@ -525,28 +501,25 @@ public:
     update(&ctx, data, size);
   }
 
-  std::vector<uint8_t> Finish() override
+  void Finish(uint8_t* out) override
   {
     const auto xxh128 = digest(&ctx);
-    std::vector<uint8_t> result;
-    result.resize(8);
-    result[0] = 0xFF & (xxh128.high64 >> 56);
-    result[1] = 0xFF & (xxh128.high64 >> 48);
-    result[2] = 0xFF & (xxh128.high64 >> 40);
-    result[3] = 0xFF & (xxh128.high64 >> 32);
-    result[4] = 0xFF & (xxh128.high64 >> 24);
-    result[5] = 0xFF & (xxh128.high64 >> 16);
-    result[6] = 0xFF & (xxh128.high64 >> 8);
-    result[7] = 0xFF & (xxh128.high64 >> 0);
-    result[8] = 0xFF & (xxh128.low64 >> 56);
-    result[9] = 0xFF & (xxh128.low64 >> 48);
-    result[10] = 0xFF & (xxh128.low64 >> 40);
-    result[11] = 0xFF & (xxh128.low64 >> 32);
-    result[12] = 0xFF & (xxh128.low64 >> 24);
-    result[13] = 0xFF & (xxh128.low64 >> 16);
-    result[14] = 0xFF & (xxh128.low64 >> 8);
-    result[15] = 0xFF & (xxh128.low64 >> 0);
-    return result;
+    out[0] = 0xFF & (xxh128.high64 >> 56);
+    out[1] = 0xFF & (xxh128.high64 >> 48);
+    out[2] = 0xFF & (xxh128.high64 >> 40);
+    out[3] = 0xFF & (xxh128.high64 >> 32);
+    out[4] = 0xFF & (xxh128.high64 >> 24);
+    out[5] = 0xFF & (xxh128.high64 >> 16);
+    out[6] = 0xFF & (xxh128.high64 >> 8);
+    out[7] = 0xFF & (xxh128.high64 >> 0);
+    out[8] = 0xFF & (xxh128.low64 >> 56);
+    out[9] = 0xFF & (xxh128.low64 >> 48);
+    out[10] = 0xFF & (xxh128.low64 >> 40);
+    out[11] = 0xFF & (xxh128.low64 >> 32);
+    out[12] = 0xFF & (xxh128.low64 >> 24);
+    out[13] = 0xFF & (xxh128.low64 >> 16);
+    out[14] = 0xFF & (xxh128.low64 >> 8);
+    out[15] = 0xFF & (xxh128.low64 >> 0);
   }
 };
 
