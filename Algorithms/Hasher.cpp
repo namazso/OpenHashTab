@@ -28,6 +28,14 @@
 #include "crc32.h"
 #include "blake3.h"
 
+#define XXH_STATIC_LINKING_ONLY
+
+#include "../xxHash/xxhash.h"
+
+
+template <typename T> HashContext* hash_context_factory(const HashAlgorithm* algorithm) { return new T(algorithm); }
+
+
 template <
   typename Ctx,
   size_t Size,
@@ -268,7 +276,317 @@ public:
   }
 };
 
-template <typename T> HashContext* hash_context_factory(const HashAlgorithm* algorithm) { return new T(algorithm); }
+
+
+#define SSE2_CPUID_MASK (1 << 26)
+#define OSXSAVE_CPUID_MASK ((1 << 26) | (1 << 27))
+#define AVX2_CPUID_MASK (1 << 5)
+#define AVX2_XGETBV_MASK ((1 << 2) | (1 << 1))
+#define AVX512F_CPUID_MASK (1 << 16)
+#define AVX512F_XGETBV_MASK ((7 << 5) | (1 << 2) | (1 << 1))
+
+enum CPUFeatureLevel
+{
+  CPU_None,
+  CPU_SSE2,
+  CPU_AVX2,
+  CPU_AVX512,
+  CPU_NEON,
+
+  CPU_MAX
+};
+
+/* Returns the best XXH3 implementation */
+static CPUFeatureLevel get_cpu_level()
+{
+  auto best = CPU_None;
+#if defined(_M_IX86) || defined(_M_X64)
+  int abcd[4];
+  // Check how many CPUID pages we have
+  __cpuidex(abcd, 0, 0);
+  const auto max_leaves = abcd[0];
+
+  // Shouldn't happen on hardware, but happens on some QEMU configs.
+  if (max_leaves == 0)
+    return best;
+
+  // Check for SSE2, OSXSAVE and xgetbv
+  __cpuidex(abcd, 1, 0);
+
+  // Test for SSE2. The check is redundant on x86_64, but it doesn't hurt.
+  if ((abcd[3] & SSE2_CPUID_MASK) != SSE2_CPUID_MASK)
+    return best;
+
+  best = CPU_SSE2;
+  // Make sure we have enough leaves
+  if (max_leaves < 7)
+    return best;
+
+  // Test for OSXSAVE and XGETBV
+  if ((abcd[2] & OSXSAVE_CPUID_MASK) != OSXSAVE_CPUID_MASK)
+    return best;
+
+  // CPUID check for AVX features
+  __cpuidex(abcd, 7, 0);
+
+  const auto xgetbv_val = _xgetbv(0);
+  // Validate that AVX2 is supported by the CPU
+  if ((abcd[1] & AVX2_CPUID_MASK) != AVX2_CPUID_MASK)
+    return best;
+
+  // Validate that the OS supports YMM registers
+  if ((xgetbv_val & AVX2_XGETBV_MASK) != AVX2_XGETBV_MASK)
+    return best;
+
+  // AVX2 supported
+  best = CPU_AVX2;
+
+  // Check if AVX512F is supported by the CPU
+  if ((abcd[1] & AVX512F_CPUID_MASK) != AVX512F_CPUID_MASK)
+    return best;
+
+  // Validate that the OS supports ZMM registers
+  if ((xgetbv_val & AVX512F_XGETBV_MASK) != AVX512F_XGETBV_MASK)
+    return best;
+
+  // AVX512F supported
+  best = CPU_AVX512;
+#endif
+#ifdef _M_ARM64
+  best = CPU_NEON;
+#endif
+  return best;
+}
+
+
+#define DEFINE_XXH_FOR_EXT_NAMESPACE(n) \
+XXH_PUBLIC_API extern "C" XXH_errorcode n ## _XXH32_reset(XXH32_state_t* statePtr, XXH32_hash_t seed);\
+XXH_PUBLIC_API extern "C" XXH_errorcode n ## _XXH32_update(XXH32_state_t* statePtr, const void* input, size_t length);\
+XXH_PUBLIC_API extern "C" XXH32_hash_t  n ## _XXH32_digest(const XXH32_state_t* statePtr);\
+\
+XXH_PUBLIC_API extern "C" XXH_errorcode n ## _XXH64_reset(XXH64_state_t* statePtr, XXH64_hash_t seed);\
+XXH_PUBLIC_API extern "C" XXH_errorcode n ## _XXH64_update(XXH64_state_t* statePtr, const void* input, size_t length);\
+XXH_PUBLIC_API extern "C" XXH64_hash_t  n ## _XXH64_digest(const XXH64_state_t* statePtr);\
+\
+XXH_PUBLIC_API extern "C" XXH_errorcode n ## _XXH3_64bits_reset(XXH3_state_t* statePtr);\
+XXH_PUBLIC_API extern "C" XXH_errorcode n ## _XXH3_64bits_update(XXH3_state_t* statePtr, const void* input, size_t length);\
+XXH_PUBLIC_API extern "C" XXH64_hash_t  n ## _XXH3_64bits_digest(const XXH3_state_t* statePtr);\
+\
+XXH_PUBLIC_API extern "C" XXH_errorcode n ## _XXH3_128bits_reset(XXH3_state_t* statePtr);\
+XXH_PUBLIC_API extern "C" XXH_errorcode n ## _XXH3_128bits_update(XXH3_state_t* statePtr, const void* input, size_t length);\
+XXH_PUBLIC_API extern "C" XXH128_hash_t n ## _XXH3_128bits_digest(const XXH3_state_t* statePtr);\
+
+DEFINE_XXH_FOR_EXT_NAMESPACE(scalar);
+DEFINE_XXH_FOR_EXT_NAMESPACE(sse2);
+DEFINE_XXH_FOR_EXT_NAMESPACE(avx2);
+DEFINE_XXH_FOR_EXT_NAMESPACE(avx512);
+DEFINE_XXH_FOR_EXT_NAMESPACE(neon);
+
+template <decltype(&XXH32_reset) reset, decltype(&XXH32_update) update, decltype(&XXH32_digest) digest>
+class XXH32HashContext : HashContext
+{
+  template <typename T> friend HashContext* hash_context_factory(const HashAlgorithm* algorithm);
+
+  XXH32_state_t ctx{};
+
+public:
+  XXH32HashContext(const HashAlgorithm* algorithm) : HashContext(algorithm)
+  {
+    reset(&ctx, 0);
+  }
+  ~XXH32HashContext() = default;
+
+  void Clear() override
+  {
+    reset(&ctx, 0);
+  }
+
+  void Update(const void* data, size_t size) override
+  {
+    update(&ctx, data, size);
+  }
+
+  std::vector<uint8_t> Finish() override
+  {
+    const auto xxh32 = digest(&ctx);
+    std::vector<uint8_t> result;
+    result.resize(4);
+    result[0] = 0xFF & (xxh32 >> 24);
+    result[1] = 0xFF & (xxh32 >> 16);
+    result[2] = 0xFF & (xxh32 >> 8);
+    result[3] = 0xFF & (xxh32 >> 0);
+    return result;
+  }
+};
+
+template <decltype(&XXH64_reset) reset, decltype(&XXH64_update) update, decltype(&XXH64_digest) digest>
+class XXH64HashContext : HashContext
+{
+  template <typename T> friend HashContext* hash_context_factory(const HashAlgorithm* algorithm);
+
+  XXH64_state_t ctx{};
+
+public:
+  XXH64HashContext(const HashAlgorithm* algorithm) : HashContext(algorithm)
+  {
+    reset(&ctx, 0);
+  }
+  ~XXH64HashContext() = default;
+
+  void Clear() override
+  {
+    reset(&ctx, 0);
+  }
+
+  void Update(const void* data, size_t size) override
+  {
+    update(&ctx, data, size);
+  }
+
+  std::vector<uint8_t> Finish() override
+  {
+    const auto xxh64 = digest(&ctx);
+    std::vector<uint8_t> result;
+    result.resize(8);
+    result[0] = 0xFF & (xxh64 >> 56);
+    result[1] = 0xFF & (xxh64 >> 48);
+    result[2] = 0xFF & (xxh64 >> 40);
+    result[3] = 0xFF & (xxh64 >> 32);
+    result[4] = 0xFF & (xxh64 >> 24);
+    result[5] = 0xFF & (xxh64 >> 16);
+    result[6] = 0xFF & (xxh64 >> 8);
+    result[7] = 0xFF & (xxh64 >> 0);
+    return result;
+  }
+};
+
+template <decltype(&XXH3_64bits_reset) reset, decltype(&XXH3_64bits_update) update, decltype(&XXH3_64bits_digest) digest>
+class XXH3_64bitsHashContext : HashContext
+{
+  template <typename T> friend HashContext* hash_context_factory(const HashAlgorithm* algorithm);
+
+  XXH3_state_t ctx{};
+
+public:
+  XXH3_64bitsHashContext(const HashAlgorithm* algorithm) : HashContext(algorithm)
+  {
+    reset(&ctx);
+  }
+  ~XXH3_64bitsHashContext() = default;
+
+  void Clear() override
+  {
+    reset(&ctx);
+  }
+
+  void Update(const void* data, size_t size) override
+  {
+    update(&ctx, data, size);
+  }
+
+  std::vector<uint8_t> Finish() override
+  {
+    const auto xxh64 = digest(&ctx);
+    std::vector<uint8_t> result;
+    result.resize(8);
+    result[0] = 0xFF & (xxh64 >> 56);
+    result[1] = 0xFF & (xxh64 >> 48);
+    result[2] = 0xFF & (xxh64 >> 40);
+    result[3] = 0xFF & (xxh64 >> 32);
+    result[4] = 0xFF & (xxh64 >> 24);
+    result[5] = 0xFF & (xxh64 >> 16);
+    result[6] = 0xFF & (xxh64 >> 8);
+    result[7] = 0xFF & (xxh64 >> 0);
+    return result;
+  }
+};
+
+template <decltype(&XXH3_128bits_reset) reset, decltype(&XXH3_128bits_update) update, decltype(&XXH3_128bits_digest) digest>
+class XXH3_128bitsHashContext : HashContext
+{
+  template <typename T> friend HashContext* hash_context_factory(const HashAlgorithm* algorithm);
+
+  XXH3_state_t ctx{};
+
+public:
+  XXH3_128bitsHashContext(const HashAlgorithm* algorithm) : HashContext(algorithm)
+  {
+    reset(&ctx);
+  }
+  ~XXH3_128bitsHashContext() = default;
+
+  void Clear() override
+  {
+    reset(&ctx);
+  }
+
+  void Update(const void* data, size_t size) override
+  {
+    update(&ctx, data, size);
+  }
+
+  std::vector<uint8_t> Finish() override
+  {
+    const auto xxh128 = digest(&ctx);
+    std::vector<uint8_t> result;
+    result.resize(8);
+    result[0] = 0xFF & (xxh128.high64 >> 56);
+    result[1] = 0xFF & (xxh128.high64 >> 48);
+    result[2] = 0xFF & (xxh128.high64 >> 40);
+    result[3] = 0xFF & (xxh128.high64 >> 32);
+    result[4] = 0xFF & (xxh128.high64 >> 24);
+    result[5] = 0xFF & (xxh128.high64 >> 16);
+    result[6] = 0xFF & (xxh128.high64 >> 8);
+    result[7] = 0xFF & (xxh128.high64 >> 0);
+    result[8] = 0xFF & (xxh128.low64 >> 56);
+    result[9] = 0xFF & (xxh128.low64 >> 48);
+    result[10] = 0xFF & (xxh128.low64 >> 40);
+    result[11] = 0xFF & (xxh128.low64 >> 32);
+    result[12] = 0xFF & (xxh128.low64 >> 24);
+    result[13] = 0xFF & (xxh128.low64 >> 16);
+    result[14] = 0xFF & (xxh128.low64 >> 8);
+    result[15] = 0xFF & (xxh128.low64 >> 0);
+    return result;
+  }
+};
+
+#define XXH_HashContext(cpu, algo) algo ## HashContext<cpu ## _ ## algo ## _reset, cpu ## _ ## algo ## _update, cpu ## _ ## algo ## _digest>
+#define XXH_HashContextAll(cpu) \
+  hash_context_factory<XXH_HashContext(cpu, XXH32)>,\
+  hash_context_factory<XXH_HashContext(cpu, XXH64)>,\
+  hash_context_factory<XXH_HashContext(cpu, XXH3_64bits)>,\
+  hash_context_factory<XXH_HashContext(cpu, XXH3_128bits)>
+
+static constexpr HashAlgorithm::FactoryFn* xxh_factories[CPU_MAX][4] = {
+#if !(defined(_M_X64) || defined(_M_ARM64))
+  { XXH_HashContextAll(scalar) },   // None
+#else
+  { nullptr, nullptr, nullptr, nullptr },
+#endif
+#if defined(_M_IX86) || defined(_M_X64)
+  { XXH_HashContextAll(sse2) },   // SSE2
+  { XXH_HashContextAll(avx2) },   // AVX2
+  { XXH_HashContextAll(avx512) }, // AVX512
+#else
+  { nullptr, nullptr, nullptr, nullptr },
+  { nullptr, nullptr, nullptr, nullptr },
+  { nullptr, nullptr, nullptr, nullptr },
+#endif
+#ifdef _M_ARM64
+  { XXH_HashContextAll(neon) },   // NEON
+#else
+  { nullptr, nullptr, nullptr, nullptr },
+#endif
+};
+
+template <size_t Idx>
+HashContext* xxh_context_factory(const HashAlgorithm* algorithm)
+{
+  static HashAlgorithm::FactoryFn* fn = nullptr;
+  if (!fn)
+    fn = xxh_factories[get_cpu_level()][Idx];
+  return fn(algorithm);
+}
 
 // these are what I found with a quick FTP search
 static const char* const no_exts[] = { nullptr };
@@ -286,6 +604,10 @@ static const char* const sha3_512_exts[] = { "sha3", "sha3-512",nullptr };
 constexpr HashAlgorithm HashAlgorithm::g_hashers[] =
 {
   { "CRC32", 4, no_exts, hash_context_factory<Crc32HashContext>, false },
+  { "XXH32", 4, no_exts, xxh_context_factory<0>, false },
+  { "XXH64", 8, no_exts, xxh_context_factory<1>, false },
+  { "XXH3-64", 8, no_exts, xxh_context_factory<2>, false },
+  { "XXH3-128", 16, no_exts, xxh_context_factory<3>, false },
   { "MD2", 16, no_exts, hash_context_factory<Md2HashContext>, false },
   { "MD4", 16, no_exts, hash_context_factory<Md4HashContext>, false },
   { "MD5", 16, md5_exts, hash_context_factory<Md5HashContext>, false },

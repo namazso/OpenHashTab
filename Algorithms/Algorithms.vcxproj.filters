@@ -16,6 +16,9 @@
     <Filter Include="BLAKE2sp">
       <UniqueIdentifier>{c3b8912b-6327-4b90-93fd-ea11c204f3c8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="xxHash">
+      <UniqueIdentifier>{7501b82c-80aa-44e4-84f6-5bea0edb449a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\mbedtls\library\md2.c">
@@ -67,6 +70,21 @@
       <Filter>BLAKE2sp</Filter>
     </ClCompile>
     <ClCompile Include="Hasher.cpp" />
+    <ClCompile Include="xxh_avx2.c">
+      <Filter>xxHash</Filter>
+    </ClCompile>
+    <ClCompile Include="xxh_sse2.c">
+      <Filter>xxHash</Filter>
+    </ClCompile>
+    <ClCompile Include="xxh_scalar.c">
+      <Filter>xxHash</Filter>
+    </ClCompile>
+    <ClCompile Include="xxh_avx512.c">
+      <Filter>xxHash</Filter>
+    </ClCompile>
+    <ClCompile Include="xxh_neon.c">
+      <Filter>xxHash</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="sha3.h">
@@ -88,6 +106,9 @@
       <Filter>BLAKE2sp</Filter>
     </ClInclude>
     <ClInclude Include="Hasher.h" />
+    <ClInclude Include="..\xxHash\xxhash.h">
+      <Filter>xxHash</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <MASM Include="blake3_avx2_x86-64_windows_msvc.asm">
