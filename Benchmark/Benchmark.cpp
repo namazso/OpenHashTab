@@ -53,7 +53,7 @@ int main()
   {
     for (auto i = 0u; i < HashAlgorithm::k_count; ++i)
     {
-      auto& h = HashAlgorithm::g_hashers[i];
+      auto& h = HashAlgorithm::Algorithms()[i];
       const auto ctx = h.MakeContext();
 
       LARGE_INTEGER begin{}, end{};
@@ -73,7 +73,7 @@ int main()
 
   for (auto i = 0u; i < HashAlgorithm::k_count; ++i)
   {
-    auto& h = HashAlgorithm::g_hashers[i];
+    auto& h = HashAlgorithm::Algorithms()[i];
 
     printf("%s\t", h.GetName());
 

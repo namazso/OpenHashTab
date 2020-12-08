@@ -42,10 +42,10 @@ public:
   constexpr SumfileExporter(size_t idx) : idx(idx) {}
   bool IsEnabled(Settings* settings) const override { return settings->algorithms[idx]; }
   std::string GetExportString(Settings* settings, bool for_clipboard, const std::list<FileHashTask*>& files) const override;
-  const char* GetName() const override { return HashAlgorithm::g_hashers[idx].GetName(); }
+  const char* GetName() const override { return HashAlgorithm::Algorithms()[idx].GetName(); }
   const char* GetExtension() const override
   {
-    const auto v = HashAlgorithm::g_hashers[idx].GetExtensions()[0];
+    const auto v = HashAlgorithm::Algorithms()[idx].GetExtensions()[0];
     return v ? v : ".sums";
   }
 };
@@ -134,7 +134,7 @@ std::string GetExportStringSumfile(
   std::string hash_name_dothash[HashAlgorithm::k_count];
   for(auto i = 0u; i < HashAlgorithm::k_count; ++i)
   {
-    std::string name = HashAlgorithm::g_hashers[i].GetName();
+    std::string name = HashAlgorithm::Algorithms()[i].GetName();
     std::transform(begin(name), end(name), begin(name), tolower);
     name.erase(std::remove(begin(name), end(name), '-'), end(name));
     hash_name_dothash[i] = std::move(name);

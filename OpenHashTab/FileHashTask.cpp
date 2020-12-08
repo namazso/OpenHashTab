@@ -117,7 +117,7 @@ FileHashTask::FileHashTask(Coordinator* prop_page, const std::wstring& path, con
   {
     _lparam_idx[i] = static_cast<uint8_t>(i);
     if (_prop_page->settings.algorithms[i])
-      _hash_contexts[i].reset(HashAlgorithm::g_hashers[i].MakeContext());
+      _hash_contexts[i].reset(HashAlgorithm::Algorithms()[i].MakeContext());
   }
 
   _handle = utl::OpenForRead(path, true);
@@ -336,7 +336,7 @@ void FileHashTask::Finish()
       if (_match_state != MatchState_None && it_result == expected)
       {
         // secure algorithms trump insecure ones
-        if(_match_state == MatchState_Mismatch || !HashAlgorithm::g_hashers[_match_state].IsSecure())
+        if(_match_state == MatchState_Mismatch || !HashAlgorithm::Algorithms()[_match_state].IsSecure())
         _match_state = i; // TODO: store all matches somehow
       }
     }

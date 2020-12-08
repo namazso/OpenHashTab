@@ -56,7 +56,7 @@ INT_PTR SettingsDialog::DlgProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
     utl::SetWindowTextStringFromTable(_hwnd_BUTTON_CHECK_FOR_UPDATES, IDS_CHECK_FOR_UPDATES);
     const auto list = _hwnd_ALGORITHM_LIST;
     ListView_SetExtendedListViewStyleEx(list, LVS_EX_CHECKBOXES, LVS_EX_CHECKBOXES);
-    for (const auto& algorithm : HashAlgorithm::g_hashers)
+    for (const auto& algorithm : HashAlgorithm::Algorithms())
     {
       const auto name = utl::UTF8ToWide(algorithm.GetName());
       LVITEMW lvitem

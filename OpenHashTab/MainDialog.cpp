@@ -79,7 +79,7 @@ static HashColorType HashColorTypeForFile(FileHashTask* file, size_t hasher)
 
   if (match != FileHashTask::MatchState_None && static_cast<size_t>(match) == hasher)
   {
-    if (HashAlgorithm::g_hashers[hasher].IsSecure())
+    if (HashAlgorithm::Algorithms()[hasher].IsSecure())
       return HashColorType::Match;
     
     return HashColorType::Insecure;
@@ -430,7 +430,7 @@ INT_PTR MainDialog::OnFileFinished(UINT, WPARAM, LPARAM lparam)
       {
         wchar_t hash_str[HashAlgorithm::k_max_size * 2 + 1];
         utl::HashBytesToString(hash_str, result, _prop_page->settings.display_uppercase);
-        const auto tname = utl::UTF8ToWide(HashAlgorithm::g_hashers[i].GetName());
+        const auto tname = utl::UTF8ToWide(HashAlgorithm::Algorithms()[i].GetName());
         AddItemToFileList(file->GetDisplayName().c_str(), tname.c_str(), hash_str, file->ToLparam(i));
       }
     }
@@ -635,7 +635,7 @@ INT_PTR MainDialog::OnHashEditChanged(UINT, WPARAM, LPARAM)
       if (!result[i].empty() && result[i] == find_hash)
       {
         found = true;
-        const auto algorithm_name = utl::UTF8ToWide(HashAlgorithm::g_hashers[i].GetName());
+        const auto algorithm_name = utl::UTF8ToWide(HashAlgorithm::Algorithms()[i].GetName());
         const auto txt = algorithm_name + L" / " + file->GetDisplayName();
         SetWindowTextW(_hwnd_STATIC_CHECK_RESULT, txt.c_str());
         break;

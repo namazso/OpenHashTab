@@ -96,7 +96,7 @@ ProcessedFileList ProcessEverything(std::list<std::wstring> list, const Settings
         {
           ++extension;
           const auto ext_char = utl::WideToUTF8(extension);
-          for(const auto& algo : HashAlgorithm::g_hashers)
+          for(const auto& algo : HashAlgorithm::Algorithms())
             for(auto ext = algo.GetExtensions(); *ext; ++ext)
               if (0 == strcmp(*ext, ext_char.c_str()))
                 pfl.sumfile_type = algo.Idx();
@@ -219,7 +219,7 @@ ProcessedFileList ProcessEverything(std::list<std::wstring> list, const Settings
           if (!settings->algorithms[i])
             continue;
 
-          for (auto ext = HashAlgorithm::g_hashers[i].GetExtensions(); *ext; ++ext)
+          for (auto ext = HashAlgorithm::Algorithms()[i].GetExtensions(); *ext; ++ext)
           {
             const auto sumfile_path = normalized + L"." + utl::UTF8ToWide(*ext);
             const auto handle = utl::OpenForRead(sumfile_path);

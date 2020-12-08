@@ -17,6 +17,7 @@
 #include <cstdint>
 #include <vector>
 #include <string_view>
+#include <array>
 
 class HashAlgorithm;
 
@@ -48,17 +49,20 @@ public:
   using FactoryFn = HashContext* (const HashAlgorithm* algorithm);
   constexpr static auto k_count = 19;
   constexpr static auto k_max_size = 64;
-  static const HashAlgorithm g_hashers[k_count];
+private:
+  static const HashAlgorithm k_algorithms[k_count];
+public:
+  static constexpr decltype(k_algorithms)& Algorithms() { return k_algorithms; }
   static constexpr const HashAlgorithm* ByName(std::string_view name)
   {
-    for (const auto& algo : g_hashers)
+    for (const auto& algo : k_algorithms)
       if (algo.GetName() == name)
         return &algo;
     return nullptr;
   }
   static constexpr int Idx(const HashAlgorithm* algorithm)
   {
-    return algorithm ? algorithm - std::begin(g_hashers) : -1;
+    return algorithm ? algorithm - std::begin(k_algorithms) : -1;
   }
   static constexpr int IdxByName(std::string_view name)
   {

@@ -574,7 +574,7 @@ static const char* const sha3_256_exts[] = { "sha3-256", nullptr };
 static const char* const sha3_384_exts[] = { "sha3-384", nullptr };
 static const char* const sha3_512_exts[] = { "sha3", "sha3-512",nullptr };
 
-constexpr HashAlgorithm HashAlgorithm::g_hashers[] =
+constexpr HashAlgorithm HashAlgorithm::k_algorithms[] =
 {
   { "CRC32", 4, no_exts, hash_context_factory<Crc32HashContext>, false },
   { "XXH32", 4, no_exts, xxh_context_factory<0>, false },
