@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug-neon|ARM64">
+      <Configuration>Debug-neon</Configuration>
+      <Platform>ARM64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug-sse2|x64">
+      <Configuration>Debug-sse2</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug-avx|x64">
+      <Configuration>Debug-avx</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug-avx2|x64">
+      <Configuration>Debug-avx2</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug-avx512|x64">
+      <Configuration>Debug-avx512</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug-sse2|Win32">
+      <Configuration>Debug-sse2</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug-avx|Win32">
+      <Configuration>Debug-avx</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug-avx2|Win32">
+      <Configuration>Debug-avx2</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug-avx512|Win32">
+      <Configuration>Debug-avx512</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release-neon|ARM64">
+      <Configuration>Release-neon</Configuration>
+      <Platform>ARM64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release-sse2|x64">
+      <Configuration>Release-sse2</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release-avx|x64">
+      <Configuration>Release-avx</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release-avx2|x64">
+      <Configuration>Release-avx2</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release-avx512|x64">
+      <Configuration>Release-avx512</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release-sse2|Win32">
+      <Configuration>Release-sse2</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release-avx|Win32">
+      <Configuration>Release-avx</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release-avx2|Win32">
+      <Configuration>Release-avx2</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release-avx512|Win32">
+      <Configuration>Release-avx512</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Condition="'$(Configuration)'=='Release-neon'">
+    <ConfigurationReal>Release</ConfigurationReal>
+    <Flavor>neon</Flavor>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)'=='Release-sse2'">
+    <ConfigurationReal>Release</ConfigurationReal>
+    <Flavor>sse2</Flavor>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)'=='Release-avx'">
+    <ConfigurationReal>Release</ConfigurationReal>
+    <Flavor>avx</Flavor>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)'=='Release-avx2'">
+    <ConfigurationReal>Release</ConfigurationReal>
+    <Flavor>avx2</Flavor>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)'=='Release-avx512'">
+    <ConfigurationReal>Release</ConfigurationReal>
+    <Flavor>avx512</Flavor>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)'=='Debug-neon'">
+    <ConfigurationReal>Debug</ConfigurationReal>
+    <Flavor>neon</Flavor>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)'=='Debug-sse2'">
+    <ConfigurationReal>Debug</ConfigurationReal>
+    <Flavor>sse2</Flavor>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)'=='Debug-avx'">
+    <ConfigurationReal>Debug</ConfigurationReal>
+    <Flavor>avx</Flavor>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)'=='Debug-avx2'">
+    <ConfigurationReal>Debug</ConfigurationReal>
+    <Flavor>avx2</Flavor>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)'=='Debug-avx512'">
+    <ConfigurationReal>Debug</ConfigurationReal>
+    <Flavor>avx512</Flavor>
+  </PropertyGroup>
+  <ItemGroup>
+    <ClCompile Include="Source.cpp" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{12b1fb3e-a5e8-4778-82c2-b456049c4cf6}</ProjectGuid>
+    <RootNamespace>AlgorithmsDll</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <PlatformToolset>ClangCL</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(ConfigurationReal)'=='Debug'" Label="Configuration">
+    <UseDebugLibraries>true</UseDebugLibraries>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(ConfigurationReal)'=='Release'" Label="Configuration">
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\masm.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Condition="'$(ConfigurationReal)'=='Debug'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(ConfigurationReal)'=='Release'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OutDir>$(SolutionDir)bin\$(ConfigurationReal)\</OutDir>
+    <TargetName>$(ProjectName)-$(Platform)-$(Flavor)</TargetName>
+    <IntDir>$(SolutionDir)obj\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>ALGORITHMSDLL_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableUAC>false</EnableUAC>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(ConfigurationReal)'=='Release'">
+    <ClCompile>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(ConfigurationReal)'=='Debug'">
+    <ClCompile>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\masm.targets" />
+  </ImportGroup>
+</Project>
