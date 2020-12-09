@@ -27,78 +27,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\mbedtls\library\md2.c" />
-    <ClCompile Include="..\mbedtls\library\md4.c" />
-    <ClCompile Include="..\mbedtls\library\md5.c" />
-    <ClCompile Include="..\mbedtls\library\platform_util.c" />
-    <ClCompile Include="..\mbedtls\library\ripemd160.c" />
-    <ClCompile Include="..\mbedtls\library\sha1.c" />
-    <ClCompile Include="..\mbedtls\library\sha256.c" />
-    <ClCompile Include="..\mbedtls\library\sha512.c" />
-    <ClCompile Include="blake2sp.c" />
-    <ClCompile Include="blake3.c" />
-    <ClCompile Include="blake3_avx2.c">
-      <ExcludedFromBuild Condition="'$(Platform)'=='ARM64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
-      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
-    </ClCompile>
-    <ClCompile Include="blake3_avx512.c">
-      <ExcludedFromBuild Condition="'$(Platform)'=='ARM64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
-      <EnableEnhancedInstructionSet>AdvancedVectorExtensions512</EnableEnhancedInstructionSet>
-    </ClCompile>
-    <ClCompile Include="blake3_dispatch.c" />
-    <ClCompile Include="blake3_portable.c" />
-    <ClCompile Include="crc32.c" />
-    <ClCompile Include="Hasher.cpp" />
-    <ClCompile Include="sha3.c" />
-    <ClCompile Include="xxh_avx2.c">
-      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
-      <ExcludedFromBuild Condition="'$(Platform)'=='ARM64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="xxh_avx512.c">
-      <EnableEnhancedInstructionSet>AdvancedVectorExtensions512</EnableEnhancedInstructionSet>
-      <ExcludedFromBuild Condition="'$(Platform)'=='ARM64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="xxh_neon.c">
-      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="xxh_scalar.c">
-      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Platform)'=='ARM64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="xxh_sse2.c">
-      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
-      <ExcludedFromBuild Condition="'$(Platform)'=='ARM64'">true</ExcludedFromBuild>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\xxHash\xxhash.h" />
-    <ClInclude Include="blake2sp.h" />
-    <ClInclude Include="blake3.h" />
-    <ClInclude Include="blake3_impl.h" />
-    <ClInclude Include="crc32.h" />
     <ClInclude Include="Hasher.h" />
-    <ClInclude Include="sha3.h" />
-    <ClInclude Include="mbedtls_config.h" />
   </ItemGroup>
   <ItemGroup>
-    <MASM Include="blake3_avx2_x86-64_windows_msvc.asm">
-      <ExcludedFromBuild Condition="'$(Platform)'=='ARM64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
-      <FileType>Document</FileType>
-    </MASM>
-    <MASM Include="blake3_avx512_x86-64_windows_msvc.asm">
-      <ExcludedFromBuild Condition="'$(Platform)'=='ARM64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
-      <FileType>Document</FileType>
-    </MASM>
-    <MASM Include="blake3_sse41_x86-64_windows_msvc.asm">
-      <ExcludedFromBuild Condition="'$(Platform)'=='ARM64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
-      <FileType>Document</FileType>
-    </MASM>
+    <ClCompile Include="HasherLoader.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

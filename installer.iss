@@ -62,9 +62,12 @@ Name: "turkish"; MessagesFile: "compiler:Languages\Turkish.isl"
 Name: "ukrainian"; MessagesFile: "compiler:Languages\Ukrainian.isl"
 
 [Files]
-Source: "bin\Release\x64\{#DLLName}";   DestDir: "{sys}"; Flags: ignoreversion restartreplace regserver solidbreak 64bit; Check: InstallArch('x64')
-Source: "bin\Release\ARM64\{#DLLName}"; DestDir: "{sys}"; Flags: ignoreversion restartreplace regserver solidbreak 64bit; Check: InstallArch('arm64') 
-Source: "bin\Release\Win32\{#DLLName}"; DestDir: "{sys}"; Flags: ignoreversion restartreplace regserver solidbreak 32bit
+Source: "bin\Release\Win32\{#DLLName}";         DestDir: "{sys}"; Flags: ignoreversion restartreplace regserver 32bit
+Source: "bin\Release\Win32\AlgorithmsDll*.dll"; DestDir: "{sys}"; Flags: ignoreversion restartreplace 32bit
+Source: "bin\Release\x64\{#DLLName}";           DestDir: "{sys}"; Flags: ignoreversion restartreplace regserver solidbreak 64bit; Check: InstallArch('x64')
+Source: "bin\Release\x64\AlgorithmsDll*.dll";   DestDir: "{sys}"; Flags: ignoreversion restartreplace 64bit; Check: InstallArch('x64')
+Source: "bin\Release\ARM64\{#DLLName}";         DestDir: "{sys}"; Flags: ignoreversion restartreplace regserver solidbreak 64bit; Check: InstallArch('arm64') 
+Source: "bin\Release\ARM64\AlgorithmsDll*.dll"; DestDir: "{sys}"; Flags: ignoreversion restartreplace 64bit; Check: InstallArch('arm64') 
 
 [Tasks]
 Name: myAssociation; Description: "Associate with known sumfile formats"; GroupDescription: File extensions:

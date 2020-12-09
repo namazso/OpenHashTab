@@ -1,0 +1,124 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="mbedTLS">
+      <UniqueIdentifier>{c45949b8-d6c0-462c-bec0-92504e39e4c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="xxHash">
+      <UniqueIdentifier>{5d55c3f6-a2a0-47aa-8ee4-a617fc1473d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Blake2sp">
+      <UniqueIdentifier>{66f0a0ef-450b-40eb-aed2-90523bd0f678}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Blake3">
+      <UniqueIdentifier>{402b6c58-bf2b-4664-9630-4fab7d16894a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CRC32">
+      <UniqueIdentifier>{e8de2202-489c-4331-90cf-a66bc00736b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SHA3">
+      <UniqueIdentifier>{e96ad624-fb1f-4b8f-b46c-decbf5ce6b6b}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\mbedtls\library\sha512.c">
+      <Filter>mbedTLS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mbedtls\library\sha256.c">
+      <Filter>mbedTLS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mbedtls\library\sha1.c">
+      <Filter>mbedTLS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mbedtls\library\ripemd160.c">
+      <Filter>mbedTLS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mbedtls\library\platform_util.c">
+      <Filter>mbedTLS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mbedtls\library\md5.c">
+      <Filter>mbedTLS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mbedtls\library\md4.c">
+      <Filter>mbedTLS</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mbedtls\library\md2.c">
+      <Filter>mbedTLS</Filter>
+    </ClCompile>
+    <ClCompile Include="xxhash.c">
+      <Filter>xxHash</Filter>
+    </ClCompile>
+    <ClCompile Include="blake2sp.c">
+      <Filter>Blake2sp</Filter>
+    </ClCompile>
+    <ClCompile Include="crc32.c">
+      <Filter>CRC32</Filter>
+    </ClCompile>
+    <ClCompile Include="sha3.c">
+      <Filter>SHA3</Filter>
+    </ClCompile>
+    <ClCompile Include="Hasher.cpp" />
+    <ClCompile Include="blake3.c">
+      <Filter>Blake3</Filter>
+    </ClCompile>
+    <ClCompile Include="blake3_avx2.c">
+      <Filter>Blake3</Filter>
+    </ClCompile>
+    <ClCompile Include="blake3_avx512.c">
+      <Filter>Blake3</Filter>
+    </ClCompile>
+    <ClCompile Include="blake3_dispatch.c">
+      <Filter>Blake3</Filter>
+    </ClCompile>
+    <ClCompile Include="blake3_neon.c">
+      <Filter>Blake3</Filter>
+    </ClCompile>
+    <ClCompile Include="blake3_portable.c">
+      <Filter>Blake3</Filter>
+    </ClCompile>
+    <ClCompile Include="blake3_sse2.c">
+      <Filter>Blake3</Filter>
+    </ClCompile>
+    <ClCompile Include="blake3_sse41.c">
+      <Filter>Blake3</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="mbedtls_config.h">
+      <Filter>mbedTLS</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xxHash\xxhash.h">
+      <Filter>xxHash</Filter>
+    </ClInclude>
+    <ClInclude Include="blake2sp.h">
+      <Filter>Blake2sp</Filter>
+    </ClInclude>
+    <ClInclude Include="crc32.h">
+      <Filter>CRC32</Filter>
+    </ClInclude>
+    <ClInclude Include="sha3.h">
+      <Filter>SHA3</Filter>
+    </ClInclude>
+    <ClInclude Include="Hasher.h" />
+    <ClInclude Include="blake3.h">
+      <Filter>Blake3</Filter>
+    </ClInclude>
+    <ClInclude Include="blake3_impl.h">
+      <Filter>Blake3</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <MASM Include="blake3_avx2_x86-64_windows_msvc.asm">
+      <Filter>Blake3</Filter>
+    </MASM>
+    <MASM Include="blake3_avx512_x86-64_windows_msvc.asm">
+      <Filter>Blake3</Filter>
+    </MASM>
+    <MASM Include="blake3_sse2_x86-64_windows_msvc.asm">
+      <Filter>Blake3</Filter>
+    </MASM>
+    <MASM Include="blake3_sse41_x86-64_windows_msvc.asm">
+      <Filter>Blake3</Filter>
+    </MASM>
+  </ItemGroup>
+</Project>

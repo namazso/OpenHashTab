@@ -43,6 +43,51 @@ jobs:
     - name: Set up MSBuild
       uses: microsoft/setup-msbuild@v1
       
+    - name: Build Algorithms (ARM64 NEON)
+      run: |
+        cd ${{ github.workspace }}
+        msbuild AlgorithmsDll.sln /p:Configuration=Release /p:Platform=a64-neon
+      
+    - name: Build Algorithms (x86 SSE2)
+      run: |
+        cd ${{ github.workspace }}
+        msbuild AlgorithmsDll.sln /p:Configuration=Release /p:Platform=x86-sse2
+      
+    - name: Build Algorithms (x86 AVX)
+      run: |
+        cd ${{ github.workspace }}
+        msbuild AlgorithmsDll.sln /p:Configuration=Release /p:Platform=x86-avx
+      
+    - name: Build Algorithms (x86 AVX2)
+      run: |
+        cd ${{ github.workspace }}
+        msbuild AlgorithmsDll.sln /p:Configuration=Release /p:Platform=x86-avx2
+      
+    - name: Build Algorithms (x86 AVX512)
+      run: |
+        cd ${{ github.workspace }}
+        msbuild AlgorithmsDll.sln /p:Configuration=Release /p:Platform=x86-avx512
+      
+    - name: Build Algorithms (x64 SSE2)
+      run: |
+        cd ${{ github.workspace }}
+        msbuild AlgorithmsDll.sln /p:Configuration=Release /p:Platform=x64-sse2
+      
+    - name: Build Algorithms (x64 AVX)
+      run: |
+        cd ${{ github.workspace }}
+        msbuild AlgorithmsDll.sln /p:Configuration=Release /p:Platform=x64-avx
+      
+    - name: Build Algorithms (x64 AVX2)
+      run: |
+        cd ${{ github.workspace }}
+        msbuild AlgorithmsDll.sln /p:Configuration=Release /p:Platform=x64-avx2
+      
+    - name: Build Algorithms (x64 AVX512)
+      run: |
+        cd ${{ github.workspace }}
+        msbuild AlgorithmsDll.sln /p:Configuration=Release /p:Platform=x64-avx512
+
     - name: Build Solution (Win32)
       run: |
         cd ${{ github.workspace }}
