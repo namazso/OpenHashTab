@@ -53,8 +53,6 @@ public:
 #define ALGORITHMSDLL_NO(...) __VA_ARGS__
 #endif
 
-#define ALGORITHM_EXPORT ALGORITHMSDLL_YES(__declspec(dllexport))
-
 class HashAlgorithm
 {
 public:
@@ -62,22 +60,22 @@ public:
   constexpr static auto k_count = 19;
   constexpr static auto k_max_size = 64;
 private:
-  static ALGORITHM_EXPORT const HashAlgorithm k_algorithms[k_count];
+  static const HashAlgorithm k_algorithms[k_count];
 public:
   static ALGORITHMSDLL_YES(constexpr) decltype(k_algorithms)& Algorithms() ALGORITHMSDLL_YES({ return k_algorithms; });
 
-  static constexpr const HashAlgorithm* ByName(std::string_view name)
+  static ALGORITHMSDLL_YES(constexpr) const HashAlgorithm* ByName(std::string_view name)
   {
     for (const auto& algo : Algorithms())
       if (algo.GetName() == name)
         return &algo;
     return nullptr;
   }
-  static constexpr int Idx(const HashAlgorithm* algorithm)
+  static ALGORITHMSDLL_YES(constexpr) int Idx(const HashAlgorithm* algorithm)
   {
     return algorithm ? algorithm - std::begin(Algorithms()) : -1;
   }
-  static constexpr int IdxByName(std::string_view name)
+  static ALGORITHMSDLL_YES(constexpr) int IdxByName(std::string_view name)
   {
     return Idx(ByName(name));
   }
@@ -105,7 +103,7 @@ public:
   HashAlgorithm(const HashAlgorithm&) = delete;
   HashAlgorithm(HashAlgorithm&&) = delete;
 
-  constexpr int Idx() const { return Idx(this); }
+  ALGORITHMSDLL_YES(constexpr) int Idx() const { return Idx(this); }
 
   constexpr bool IsSecure() const { return _is_secure; }
 

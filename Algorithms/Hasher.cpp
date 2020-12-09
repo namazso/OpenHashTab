@@ -508,7 +508,7 @@ static const char* const sha3_256_exts[] = { "sha3-256", nullptr };
 static const char* const sha3_384_exts[] = { "sha3-384", nullptr };
 static const char* const sha3_512_exts[] = { "sha3", "sha3-512",nullptr };
 
-constexpr ALGORITHM_EXPORT HashAlgorithm HashAlgorithm::k_algorithms[] =
+constexpr HashAlgorithm HashAlgorithm::k_algorithms[] =
 {
   { "CRC32", 4, no_exts, hash_context_factory<Crc32HashContext>, false },
   { "XXH32", 4, no_exts, hash_context_factory<XXH32HashContext>, false },
@@ -530,3 +530,8 @@ constexpr ALGORITHM_EXPORT HashAlgorithm HashAlgorithm::k_algorithms[] =
   { "SHA3-512", 64, sha3_512_exts, hash_context_factory<Sha3_512HashContext>, true },
   { "BLAKE3", 32, no_exts, hash_context_factory<Blake3HashContext>, true },
 };
+
+extern "C" __declspec(dllexport) const HashAlgorithm* Algorithms()
+{
+  return HashAlgorithm::Algorithms();
+}

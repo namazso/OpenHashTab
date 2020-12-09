@@ -204,7 +204,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <IncludePath>$(SolutionDir)mbedtls\include;$(IncludePath)</IncludePath>
-    <OutDir>$(SolutionDir)bin\$(ConfigurationReal)\</OutDir>
+    <OutDir>$(SolutionDir)bin\$(ConfigurationReal)\$(Platform)\</OutDir>
     <TargetName>$(ProjectName)-$(Platform)-$(Flavor)</TargetName>
     <IntDir>$(SolutionDir)obj\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
@@ -243,10 +243,12 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
+      <!--<NoEntryPoint>true</NoEntryPoint>-->
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(ConfigurationReal)'=='Release'">
     <ClCompile>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -258,6 +260,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(ConfigurationReal)'=='Debug'">
     <ClCompile>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
