@@ -1,5 +1,7 @@
 # OpenHashTab
 
+![License](https://img.shields.io/github/license/namazso/OpenHashTab) ![Weblate translation status](https://hosted.weblate.org/widgets/openhashtab/-/main/svg-badge.svg) ![Downloads](https://img.shields.io/github/downloads/namazso/OpenHashTab/total) ![GitHub Version](https://img.shields.io/github/v/release/namazso/OpenHashTab) ![Chocolatey Version](https://img.shields.io/chocolatey/v/openhashtab)
+
 ## About
 
 OpenHashTab is a shell extension for conveniently calculating and checking file hashes from file properties.
@@ -64,6 +66,8 @@ This software is provided completely free of charge to you, however I spent time
 * Monero: 83sJ6GoeKf1U47vD9Tk6y2MEKJKxPJkECG3Ms7yzVGeiBYg2uYhBAUAZKNDH8VnAPGhwhZeqBnofDPgw9PiVtTgk95k53Rd
 
 ## Translation
+
+![Weblate translation status](https://hosted.weblate.org/widgets/openhashtab/-/main/multi-auto.svg)
 
 Translate the project at [Weblate](https://hosted.weblate.org/projects/openhashtab/main/)
 
