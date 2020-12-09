@@ -43,6 +43,18 @@ public:
   const HashAlgorithm* GetAlgorithm() const { return _algorithm; }
 };
 
+#ifdef ALGORITHMSDLL_EXPORTS
+#define ALGORITHMSDLL_SWITCH(a, b) a
+#define ALGORITHMSDLL_YES(...) __VA_ARGS__
+#define ALGORITHMSDLL_NO(...)
+#else
+#define ALGORITHMSDLL_SWITCH(a, b) b
+#define ALGORITHMSDLL_YES(...) 
+#define ALGORITHMSDLL_NO(...) __VA_ARGS__
+#endif
+
+#define ALGORITHM_EXPORT ALGORITHMSDLL_YES(__declspec(dllexport))
+
 class HashAlgorithm
 {
 public:
@@ -50,19 +62,20 @@ public:
   constexpr static auto k_count = 19;
   constexpr static auto k_max_size = 64;
 private:
-  static const HashAlgorithm k_algorithms[k_count];
+  static ALGORITHM_EXPORT const HashAlgorithm k_algorithms[k_count];
 public:
-  static constexpr decltype(k_algorithms)& Algorithms() { return k_algorithms; }
+  static ALGORITHMSDLL_YES(constexpr) decltype(k_algorithms)& Algorithms() ALGORITHMSDLL_YES({ return k_algorithms; });
+
   static constexpr const HashAlgorithm* ByName(std::string_view name)
   {
-    for (const auto& algo : k_algorithms)
+    for (const auto& algo : Algorithms())
       if (algo.GetName() == name)
         return &algo;
     return nullptr;
   }
   static constexpr int Idx(const HashAlgorithm* algorithm)
   {
-    return algorithm ? algorithm - std::begin(k_algorithms) : -1;
+    return algorithm ? algorithm - std::begin(Algorithms()) : -1;
   }
   static constexpr int IdxByName(std::string_view name)
   {
