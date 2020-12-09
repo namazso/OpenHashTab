@@ -51,6 +51,13 @@
     <ClCompile Include="blake2sp.c">
       <Filter>Blake2sp</Filter>
     </ClCompile>
+    <ClCompile Include="crc32.c">
+      <Filter>CRC32</Filter>
+    </ClCompile>
+    <ClCompile Include="sha3.c">
+      <Filter>SHA3</Filter>
+    </ClCompile>
+    <ClCompile Include="Hasher.cpp" />
     <ClCompile Include="blake3.c">
       <Filter>Blake3</Filter>
     </ClCompile>
@@ -63,16 +70,18 @@
     <ClCompile Include="blake3_dispatch.c">
       <Filter>Blake3</Filter>
     </ClCompile>
+    <ClCompile Include="blake3_neon.c">
+      <Filter>Blake3</Filter>
+    </ClCompile>
     <ClCompile Include="blake3_portable.c">
       <Filter>Blake3</Filter>
     </ClCompile>
-    <ClCompile Include="crc32.c">
-      <Filter>CRC32</Filter>
+    <ClCompile Include="blake3_sse2.c">
+      <Filter>Blake3</Filter>
     </ClCompile>
-    <ClCompile Include="sha3.c">
-      <Filter>SHA3</Filter>
+    <ClCompile Include="blake3_sse41.c">
+      <Filter>Blake3</Filter>
     </ClCompile>
-    <ClCompile Include="Hasher.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="mbedtls_config.h">
@@ -84,12 +93,6 @@
     <ClInclude Include="blake2sp.h">
       <Filter>Blake2sp</Filter>
     </ClInclude>
-    <ClInclude Include="blake3_impl.h">
-      <Filter>Blake3</Filter>
-    </ClInclude>
-    <ClInclude Include="blake3.h">
-      <Filter>Blake3</Filter>
-    </ClInclude>
     <ClInclude Include="crc32.h">
       <Filter>CRC32</Filter>
     </ClInclude>
@@ -97,12 +100,21 @@
       <Filter>SHA3</Filter>
     </ClInclude>
     <ClInclude Include="Hasher.h" />
+    <ClInclude Include="blake3.h">
+      <Filter>Blake3</Filter>
+    </ClInclude>
+    <ClInclude Include="blake3_impl.h">
+      <Filter>Blake3</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <MASM Include="blake3_avx2_x86-64_windows_msvc.asm">
       <Filter>Blake3</Filter>
     </MASM>
     <MASM Include="blake3_avx512_x86-64_windows_msvc.asm">
+      <Filter>Blake3</Filter>
+    </MASM>
+    <MASM Include="blake3_sse2_x86-64_windows_msvc.asm">
       <Filter>Blake3</Filter>
     </MASM>
     <MASM Include="blake3_sse41_x86-64_windows_msvc.asm">

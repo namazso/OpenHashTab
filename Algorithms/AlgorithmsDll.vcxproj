@@ -125,17 +125,32 @@
     <ClCompile Include="..\mbedtls\library\sha512.c" />
     <ClCompile Include="blake2sp.c" />
     <ClCompile Include="blake3.c" />
+    <ClCompile Include="blake3_sse2.c">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Flavor)|$(Platform)'=='sse2|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Flavor)|$(Platform)'=='avx|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Flavor)|$(Platform)'=='avx2|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Flavor)|$(Platform)'=='avx512|Win32'">false</ExcludedFromBuild>
+	</ClCompile>
+    <ClCompile Include="blake3_sse41.c">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Flavor)|$(Platform)'=='avx|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Flavor)|$(Platform)'=='avx2|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Flavor)|$(Platform)'=='avx512|Win32'">false</ExcludedFromBuild>
+	</ClCompile>
     <ClCompile Include="blake3_avx2.c">
-      <ExcludedFromBuild Condition="'$(Platform)'=='ARM64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
-      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
-    </ClCompile>
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Flavor)|$(Platform)'=='avx2|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Flavor)|$(Platform)'=='avx512|Win32'">false</ExcludedFromBuild>
+	</ClCompile>
     <ClCompile Include="blake3_avx512.c">
-      <ExcludedFromBuild Condition="'$(Platform)'=='ARM64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Platform)'=='x64'">true</ExcludedFromBuild>
-      <EnableEnhancedInstructionSet>AdvancedVectorExtensions512</EnableEnhancedInstructionSet>
-    </ClCompile>
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Flavor)|$(Platform)'=='avx512|Win32'">false</ExcludedFromBuild>
+	</ClCompile>
     <ClCompile Include="blake3_dispatch.c" />
+    <ClCompile Include="blake3_neon.c">
+      <ExcludedFromBuild Condition="'$(Flavor)'!='neon'">true</ExcludedFromBuild>
+	</ClCompile>
     <ClCompile Include="blake3_portable.c" />
     <ClCompile Include="crc32.c" />
     <ClCompile Include="Hasher.cpp" />
@@ -153,21 +168,28 @@
     <ClInclude Include="mbedtls_config.h" />
   </ItemGroup>
   <ItemGroup>
-    <MASM Include="blake3_avx2_x86-64_windows_msvc.asm">
-      <ExcludedFromBuild Condition="'$(Platform)'=='ARM64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
-      <FileType>Document</FileType>
-    </MASM>
-    <MASM Include="blake3_avx512_x86-64_windows_msvc.asm">
-      <ExcludedFromBuild Condition="'$(Platform)'=='ARM64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
-      <FileType>Document</FileType>
-    </MASM>
+    <MASM Include="blake3_sse2_x86-64_windows_msvc.asm">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Flavor)|$(Platform)'=='sse2|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Flavor)|$(Platform)'=='avx|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Flavor)|$(Platform)'=='avx2|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Flavor)|$(Platform)'=='avx512|x64'">false</ExcludedFromBuild>
+	</MASM>
     <MASM Include="blake3_sse41_x86-64_windows_msvc.asm">
-      <ExcludedFromBuild Condition="'$(Platform)'=='ARM64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
-      <FileType>Document</FileType>
-    </MASM>
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Flavor)|$(Platform)'=='avx|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Flavor)|$(Platform)'=='avx2|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Flavor)|$(Platform)'=='avx512|x64'">false</ExcludedFromBuild>
+	</MASM>
+    <MASM Include="blake3_avx2_x86-64_windows_msvc.asm">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Flavor)|$(Platform)'=='avx2|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Flavor)|$(Platform)'=='avx512|x64'">false</ExcludedFromBuild>
+	</MASM>
+    <MASM Include="blake3_avx512_x86-64_windows_msvc.asm">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Flavor)|$(Platform)'=='avx512|x64'">false</ExcludedFromBuild>
+	</MASM>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
