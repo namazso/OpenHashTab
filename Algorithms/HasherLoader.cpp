@@ -8,7 +8,8 @@
 #define AVX2_CPUID_MASK (1 << 5)
 #define AVX_XGETBV_MASK ((1 << 2) | (1 << 1))
 #define AVX512F_CPUID_MASK (1 << 16)
-#define AVX512F_XGETBV_MASK ((7 << 5) | (1 << 2) | (1 << 1))
+#define AVX512VL_CPUID_MASK (1 << 31)
+#define AVX512_XGETBV_MASK ((7 << 5) | (1 << 2) | (1 << 1))
 
 enum CPUFeatureLevel
 {
@@ -80,8 +81,12 @@ static CPUFeatureLevel get_cpu_level()
   if ((abcd[1] & AVX512F_CPUID_MASK) != AVX512F_CPUID_MASK)
     return best;
 
+  // Check if AVX512VL is supported by the CPU
+  if ((abcd[1] & AVX512VL_CPUID_MASK) != AVX512VL_CPUID_MASK)
+    return best;
+
   // Validate that the OS supports ZMM registers
-  if ((xgetbv_val & AVX512F_XGETBV_MASK) != AVX512F_XGETBV_MASK)
+  if ((xgetbv_val & AVX512_XGETBV_MASK) != AVX512_XGETBV_MASK)
     return best;
 
   // AVX512F supported
