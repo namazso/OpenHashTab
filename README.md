@@ -1,6 +1,6 @@
 # OpenHashTab
 
-![License](https://img.shields.io/github/license/namazso/OpenHashTab) ![Weblate translation status](https://hosted.weblate.org/widgets/openhashtab/-/main/svg-badge.svg) ![Downloads](https://img.shields.io/github/downloads/namazso/OpenHashTab/total) ![GitHub Version](https://img.shields.io/github/v/release/namazso/OpenHashTab) ![Chocolatey Version](https://img.shields.io/chocolatey/v/openhashtab)
+![License](https://img.shields.io/github/license/namazso/OpenHashTab) ![Weblate translation status](https://hosted.weblate.org/widgets/openhashtab/-/main/svg-badge.svg) ![Downloads](https://img.shields.io/github/downloads/namazso/OpenHashTab/total) ![GitHub Version](https://img.shields.io/github/v/release/namazso/OpenHashTab) ![Chocolatey Version](https://img.shields.io/chocolatey/v/openhashtab) ![Commits since release](https://img.shields.io/github/commits-since/namazso/OpenHashTab/latest/master)
 
 ## About
 
@@ -8,16 +8,16 @@ OpenHashTab is a shell extension for conveniently calculating and checking file 
 
 ## Features
 
-* Support for 14 different selectable algorithms, see **Algorithms**
-* md5sum / sha1sum / sha256sum / etc.. compatibility for checking and exporting hashes
-* Easy to use checker and single-click sumfile export to clipboard or file
-* Select then 
+* Support for 19 different selectable algorithms, see **Algorithms**
 * High performance hash calculation
 * Native Windows looks
+* HiDPI  support
 * Long path support\*
-* Multilingual: English, German, Italian, Hungarian, Simplified Chinese, Spanish, Danish, Russian
+* Multilingual
+* Sumfile checking and export support (*sum program family, corz .hash, SFV (export only))
+* File associations and standalone mode for quick checking sumfiles
 
-\* On Windows 8 or later, to the extent Windows supports it.
+\* to the extent Windows and configuration supports it. [Enable long paths](https://www.tenforums.com/tutorials/51704-enable-disable-win32-long-paths-windows-10-a.html) on 1607+ for better support.
 
 ## System requirements
 
@@ -28,18 +28,19 @@ OpenHashTab is a shell extension for conveniently calculating and checking file 
 
 Most of the actions should be obvious. Some not-so-obvious features are listed here:
 
-* You can select multiple files or folders, all files will be hashed.
+* You can select multiple files or folders, all files will be hashed, directories traversed
 * Double click hash to copy it
 * Double click name or algorithm to copy the line in sumfile format
-* Select one or more lines then right click to copy all columns of the lines, separated by tabs
-* Double right click to copy everything, separated by tabs
+* Right click for popup menu: copy hash, copy filename, copy line, copy everything
 * The counters next to the status text is in the format `(match/mismatch/nothing to check against/error)`
 * Selecting the tab on a sumfile will interpret it as such and hash the files listed in it.
-* If a hashed file has a sumfile with same filename plus one of the [recognized sumfile extensions](https://github.com/namazso/OpenHashTab/blob/master/OpenHashTab/Hasher.cpp#L242-L251), the file hash is checked against it.
+* If a hashed file has a sumfile with same filename plus one of the recognized sumfile extensions and the option for it is enabled, the file hash is checked against it.
 
 ## Algorithms
 
 * CRC32
+* xxHash (XXH32, XXH64)
+* xxHash3 (64 and 128 bit variants)
 * MD2, MD4, MD5
 * RipeMD160
 * Blake2sp
@@ -71,9 +72,9 @@ This software is provided completely free of charge to you, however I spent time
 
 Translate the project at [Weblate](https://hosted.weblate.org/projects/openhashtab/main/)
 
-### Pre-weblate translation contributors
+### Translation contributors
 
-**xprism**, **[@NieLnchn](https://github.com/NieLnchn)** (Simplified Chinese), **Niccolò Zanichelli** (Italian), **[@vmcall](https://github.com/vmcall/)** (Danish), **[@wvxwxvw](https://github.com/wvxwxvw/)** (Russian), **[@Janaue](https://github.com/Janaue)** (French)
+In addition to contributors reported by git, some translations were also contributed by: **xprism**, **[@NieLnchn](https://github.com/NieLnchn)** (Simplified Chinese), **Niccolò Zanichelli** (Italian), **[@vmcall](https://github.com/vmcall/)** (Danish)
 
 ## Building
 
@@ -84,16 +85,19 @@ Translate the project at [Weblate](https://hosted.weblate.org/projects/openhasht
 
 ### Compiling
 
-1. Build OpenHashTab.sln for x86, x64, ARM64
-2. Use Inno Setup Compiler to compile installer.iss to get the installer
+1. Build AlgorithmsDll.sln for all Release targets
+2. Build OpenHashTab.sln for all Release targets
+3. Use Inno Setup Compiler to compile installer.iss
+
+More options and commands can be found in the [GitHub Actions workflow](.github/workflows/ci.yml)
 
 ## Relationship to HashTab
 
-HashTab is a similar purpose proprietary software. While this software has been inspired by it, I was never an user of HashTab and this software contains no code or anything related to it.
+HashTab is a similar purpose proprietary software. While this software has been inspired by it, I was never an user of HashTab and this software contains no code or resources related to it.
 
 ## License
 
-All files are licensed under the following license, unless explicitly stated otherwise in the file:
+All original code in this repo are licensed under the following license, unless explicitly stated otherwise in the file:
 
 	Copyright 2019-2020 namazso <admin@namazso.eu>
 	OpenHashTab - File hashing shell extension
@@ -110,3 +114,5 @@ All files are licensed under the following license, unless explicitly stated oth
 	
 	You should have received a copy of the GNU General Public License
 	along with OpenHashTab.  If not, see <https://www.gnu.org/licenses/>.
+
+This software also contains or uses code from various other sources, for a complete list see [license.installer.txt](license.installer.txt)
