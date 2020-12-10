@@ -66,7 +66,7 @@ int main()
 
       // copy into volatile to ensure Finish isnt optimized away
       volatile uint8_t hash_cpy[HashAlgorithm::k_max_size];
-      std::copy_n(std::begin(hash_cpy), std::begin(hash), std::size(hash));
+      std::copy_n(std::begin(hash), std::size(hash), std::begin(hash_cpy));
 
       QueryPerformanceCounter(&end);
 
