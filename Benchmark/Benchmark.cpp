@@ -61,7 +61,12 @@ int main()
       QueryPerformanceCounter(&begin);
 
       ctx->Update(p, k_size);
-      (void)ctx->Finish();
+      uint8_t hash[HashAlgorithm::k_max_size];
+      ctx->Finish(hash);
+
+      // copy into volatile to ensure Finish isnt optimized away
+      volatile uint8_t hash_cpy[HashAlgorithm::k_max_size];
+      std::copy_n(hash_cpy, hash, std::size(hash));
 
       QueryPerformanceCounter(&end);
 
