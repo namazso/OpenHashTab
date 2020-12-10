@@ -26,7 +26,7 @@
 #include "blake2sp.h"
 #include "sha3.h"
 #include "crc32.h"
-#include "blake3.h"
+#include "../BLAKE3/c/blake3.h"
 
 #define XXH_STATIC_LINKING_ONLY
 
