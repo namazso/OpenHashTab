@@ -1,20 +1,28 @@
 {
-	"langid":              "LANG_RUSSIAN",
-	"sublangid":           "SUBLANG_DEFAULT",
-	"strings": {
-		"FILENAME":            "Имя",
-		"ALGORITHM":           "Алгоритм",
-		"COPIED":              "✔ Скопирован",
-		"HASH":                "Хэш",
-		"CHECK_AGAINST":       "Сравнить c:",
-		"EXPORT_TO":           "Экспорт в хэш-файл:",
-		"EXPORT_BTN":          "Экспорт...",
-		"SUMFILE":             "Это хэш-файл.",
-		"DONE":                "Готово!",
-		"PROCESSING":          "Обработка...",
-		"HASHES":              "Хэши",
-		"CLIPBOARD":           "В буфер",
-		"NOMATCH":             "Совпадений не найдено.",
-		"ERROR":               "Ошибка"
-	}
+    "langid": "LANG_RUSSIAN",
+    "sublangid": "SUBLANG_DEFAULT",
+    "strings": {
+        "FILENAME": "Имя",
+        "ALGORITHM": "Алгоритм",
+        "COPIED": "✔ Скопирован",
+        "HASH": "Хэш",
+        "CHECK_AGAINST": "Сравнить c:",
+        "EXPORT_TO": "Экспорт в хэш-файл:",
+        "EXPORT_BTN": "Экспорт…",
+        "SUMFILE": "Это хэш-файл.",
+        "DONE": "Готово!",
+        "PROCESSING": "Обработка…",
+        "HASHES": "Хэши",
+        "CLIPBOARD": "В буфер",
+        "NOMATCH": "Совпадений не найдено.",
+        "ERROR": "Ошибка",
+        "COPY_EVERYTHING": "Копировать всё",
+        "COPY_FILE": "Копировать имя файла",
+        "COPY_LINE": "Копировать строку",
+        "COPY_HASH": "Копировать хэш",
+        "CHECK_FOR_UPDATES": "Проверить обновления",
+        "SUMFILE_BANNER_DATE": "Добавить дату к баннеру",
+        "CANCEL": "Отмена",
+        "FONT": "Segoe UI"
+    }
 }

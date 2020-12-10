@@ -2,7 +2,7 @@
     "langid": "LANG_ENGLISH",
     "sublangid": "SUBLANG_ENGLISH_US",
     "strings": {
-        "FONT": "MS Shell Dlg",
+        "FONT": "Segoe UI",
         "FILENAME": "Name",
         "ALGORITHM": "Algorithm",
         "COPIED": "✔ Copied",
@@ -32,12 +32,12 @@
         "COPY_LINE": "Copy line",
         "COPY_FILE": "Copy file name",
         "COPY_EVERYTHING": "Copy everything",
-		"VT_NO_COMPATIBLE": "No compatible algorithm enabled",
-		"VT_NOT_FOUND": "Not found in database",
-		"UPDATE_DISABLED_IN_DEV_BUILD": "Unavailable in development builds",
-		"UPDATE_AVAILABLE_TITLE": "Update available",
-		"UPDATE_AVAILABLE_TEXT": "New version %hu.%hu.%hu available",
-		"UPDATE_NEWEST_TITLE": "Congratulations",
-		"UPDATE_NEWEST_TEXT": "You are already on the latest version"
+        "VT_NO_COMPATIBLE": "No compatible algorithm enabled",
+        "VT_NOT_FOUND": "Not found in database",
+        "UPDATE_DISABLED_IN_DEV_BUILD": "Unavailable in development builds",
+        "UPDATE_AVAILABLE_TITLE": "Update available",
+        "UPDATE_AVAILABLE_TEXT": "New version %hu.%hu.%hu available",
+        "UPDATE_NEWEST_TITLE": "Congratulations",
+        "UPDATE_NEWEST_TEXT": "You are already on the latest version"
     }
 }
