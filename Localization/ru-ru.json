@@ -23,6 +23,15 @@
         "CHECK_FOR_UPDATES": "Проверить обновления",
         "SUMFILE_BANNER_DATE": "Добавить дату к баннеру",
         "CANCEL": "Отмена",
-        "FONT": "Segoe UI"
+        "FONT": "Segoe UI",
+        "UPDATE_NEWEST_TEXT": "Вы используете последнюю версию",
+        "UPDATE_NEWEST_TITLE": "Поздравляем",
+        "UPDATE_AVAILABLE_TEXT": "Доступна новая версия %hu.%hu.%hu",
+        "UPDATE_AVAILABLE_TITLE": "Доступно обновление",
+        "UPDATE_DISABLED_IN_DEV_BUILD": "Недоступно в тестовой сборке",
+        "VT_NOT_FOUND": "Не найдено в базе данных",
+        "SUMFILE_BANNER": "Добавить баннер в экспортированные файлы",
+        "SUMFILE_UPPERCASE": "Экспорт хешей в верхнем регистре",
+        "DISPLAY_UPPERCASE": "Отображение хэшей в верхнем регистре"
     }
 }
