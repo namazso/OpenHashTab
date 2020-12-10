@@ -15,16 +15,19 @@
 //    along with OpenHashTab.  If not, see <https://www.gnu.org/licenses/>.
 #include "Hasher.h"
 
-#include <windows.h>
+#include <Windows.h>
 
-#define SSE2_CPUID_MASK (1 << 26)
-#define OSXSAVE_CPUID_MASK ((1 << 26) | (1 << 27))
-#define AVX_CPUID_MASK (1 << 28)
-#define AVX2_CPUID_MASK (1 << 5)
-#define AVX_XGETBV_MASK ((1 << 2) | (1 << 1))
-#define AVX512F_CPUID_MASK (1 << 16)
-#define AVX512VL_CPUID_MASK (1 << 31)
-#define AVX512_XGETBV_MASK ((7 << 5) | (1 << 2) | (1 << 1))
+enum : uint32_t {
+  SSE2_CPUID_MASK       = 1u << 26,
+  OSXSAVE_CPUID_MASK    = (1u << 26) | (1u << 27),
+  AVX_CPUID_MASK        = 1u << 28,
+  AVX2_CPUID_MASK       = 1u << 5,
+  AVX512F_CPUID_MASK    = 1u << 16,
+  AVX512VL_CPUID_MASK   = 1u << 31,
+
+  AVX_XGETBV_MASK       = (1u << 2) | (1u << 1),
+  AVX512_XGETBV_MASK    = (7u << 5) | (1u << 2) | (1u << 1)
+};
 
 enum CPUFeatureLevel
 {
@@ -104,16 +107,15 @@ static CPUFeatureLevel get_cpu_level()
   if ((xgetbv_val & AVX512_XGETBV_MASK) != AVX512_XGETBV_MASK)
     return best;
 
-  // AVX512F supported
+  // AVX512 supported
   best = CPU_AVX512;
-#endif
-#ifdef _M_ARM64
+#elif defined(_M_ARM64)
   best = CPU_NEON;
 #endif
   return best;
 }
 
-const wchar_t* get_cpu_level_wstr(CPUFeatureLevel level)
+static const wchar_t* get_cpu_level_wstr(CPUFeatureLevel level)
 {
   switch (level)
   {
@@ -138,7 +140,7 @@ static HMODULE g_hmodule{};
 
 decltype(HashAlgorithm::k_algorithms)& HashAlgorithm::Algorithms()
 {
-  static const HashAlgorithm* algorithms = []
+  static auto algorithms = []
   {
     wchar_t dll[64] = L"AlgorithmsDll-"
 #if defined(_M_IX86)
@@ -164,5 +166,5 @@ decltype(HashAlgorithm::k_algorithms)& HashAlgorithm::Algorithms()
     return fn();
   } ();
 
-  return *(decltype(&HashAlgorithm::k_algorithms))algorithms;
+  return *reinterpret_cast<decltype(&HashAlgorithm::k_algorithms)>(algorithms);
 }
