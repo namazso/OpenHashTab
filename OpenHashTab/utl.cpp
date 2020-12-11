@@ -355,27 +355,17 @@ std::pair<const char*, size_t> utl::GetResource(LPCWSTR name, LPCWSTR type)
   return { data, size };
 }
 
-HFONT utl::GetDPIScaledFont(HWND hwnd, int pt)
+HFONT utl::GetDPIScaledFont()
 {
-  const auto hdc = GetDC(hwnd);
-  const auto hf = CreateFontW(
-    -MulDiv(8, GetDeviceCaps(hdc, LOGPIXELSY), 72),
+  NONCLIENTMETRICS ncm;
+  ncm.cbSize = sizeof(ncm);
+  SystemParametersInfoW(
+    SPI_GETNONCLIENTMETRICS,
     0,
-    0,
-    0,
-    FW_NORMAL,
-    FALSE,
-    FALSE,
-    FALSE,
-    DEFAULT_CHARSET,
-    OUT_DEFAULT_PRECIS,
-    CLIP_DEFAULT_PRECIS,
-    PROOF_QUALITY,
-    FF_DONTCARE,
-    utl::GetString(IDS_FONT).c_str()
+    &ncm,
+    0
   );
-  ReleaseDC(hwnd, hdc);
-  return hf;
+  return CreateFontIndirectW(&ncm.lfStatusFont);
 }
 
 int utl::GetDPIScaledPixels(HWND hwnd, int px)

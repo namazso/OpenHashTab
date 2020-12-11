@@ -173,7 +173,7 @@ namespace utl
 
   std::pair<const char*, size_t> GetResource(LPCWSTR name, LPCWSTR type);
 
-  HFONT GetDPIScaledFont(HWND hwnd, int pt);
+  HFONT GetDPIScaledFont();
 
   int GetDPIScaledPixels(HWND hwnd, int px);
 

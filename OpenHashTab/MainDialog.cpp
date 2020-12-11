@@ -347,7 +347,7 @@ INT_PTR MainDialog::OnInitDialog(UINT, WPARAM, LPARAM)
     reinterpret_cast<LONG_PTR>(LoadIconW(utl::GetInstance(), MAKEINTRESOURCEW(IDI_ICON1)))
   );
 
-  const auto hfont = utl::GetDPIScaledFont(_hwnd, 8);
+  const auto hfont = utl::GetDPIScaledFont();
   for (auto wnd = GetWindow(_hwnd, GW_CHILD); wnd; wnd = GetWindow(wnd, GW_HWNDNEXT))
     SetWindowFont(wnd, hfont, TRUE);
 
