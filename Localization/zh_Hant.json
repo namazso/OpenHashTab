@@ -2,7 +2,6 @@
     "langid": "LANG_CHINESE",
     "sublangid": "LANG_CHINESE_TRADITIONAL",
     "strings": {
-        "FONT": "Microsoft JhengHei UI",
         "FILENAME": "檔案名",
         "ALGORITHM": "算法",
         "COPIED": "✔ 已複製",

@@ -68,7 +68,6 @@
 #define IDS_COPY_LINE           		235
 #define IDS_COPY_FILE           		236
 #define IDS_COPY_EVERYTHING           	237
-#define IDS_FONT           	            238
 #define IDS_VT_NO_COMPATIBLE            239
 #define IDS_VT_NOT_FOUND           	    240
 #define IDS_UPDATE_DISABLED_IN_DEV_BUILD 241

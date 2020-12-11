@@ -2,7 +2,6 @@
     "langid": "LANG_NORWEGIAN",
     "sublangid": "SUBLANG_NORWEGIAN_BOKMAL",
     "strings": {
-        "FONT": "MS Shell Dlg",
         "FILENAME": "Navn",
         "ALGORITHM": "Algoritme",
         "COPIED": "✔ Kopiert",

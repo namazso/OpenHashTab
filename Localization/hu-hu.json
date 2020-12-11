@@ -37,7 +37,6 @@
         "UPDATE_AVAILABLE_TITLE": "Frissítés elérhető",
         "UPDATE_DISABLED_IN_DEV_BUILD": "Nem elérhető fejlesztői buildben",
         "VT_NOT_FOUND": "Nem található az adatbázisban",
-        "VT_NO_COMPATIBLE": "Nincs kompatibilis algoritmus engedélyezve",
-        "FONT": "MS Shell Dlg"
+        "VT_NO_COMPATIBLE": "Nincs kompatibilis algoritmus engedélyezve"
     }
 }

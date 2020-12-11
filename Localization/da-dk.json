@@ -16,7 +16,6 @@
         "CLIPBOARD": "Til clipboard",
         "NOMATCH": "Intet match fundet.",
         "ERROR": "Fejl",
-        "CANCEL": "Annuller",
-        "FONT": "MS Shell Dlg"
+        "CANCEL": "Annuller"
     }
 }
