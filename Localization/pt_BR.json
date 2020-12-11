@@ -2,7 +2,7 @@
     "langid": "LANG_PORTUGUESE",
     "sublangid": "SUBLANG_PORTUGUESE_BRAZILIAN",
     "strings": {
-        "FONT": "Segoe UI",
+        "FONT": "MS Shell Dlg",
         "FILENAME": "Nome",
         "ALGORITHM": "Algoritmo",
         "COPIED": "✔ Copiado",

@@ -2,7 +2,7 @@
     "langid": "LANG_ENGLISH",
     "sublangid": "SUBLANG_ENGLISH_US",
     "strings": {
-        "FONT": "Segoe UI",
+        "FONT": "MS Shell Dlg",
         "FILENAME": "Name",
         "ALGORITHM": "Algorithm",
         "COPIED": "✔ Copied",
