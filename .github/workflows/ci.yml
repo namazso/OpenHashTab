@@ -46,7 +46,7 @@ jobs:
     - name: Build XKCP
       run: |
         cd ${{ github.workspace }}
-        cmd build-xkcp.bat
+        cmd /C build-xkcp.bat
       
     - name: Build Algorithms (ARM64 NEON)
       run: |
