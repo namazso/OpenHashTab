@@ -41,7 +41,7 @@ Most of the actions should be obvious. Some not-so-obvious features are listed h
 * CRC32
 * xxHash (XXH32, XXH64)
 * xxHash3 (64 and 128 bit variants)
-* MD2, MD4, MD5
+* MD4, MD5
 * RipeMD160
 * Blake2sp
 * SHA-1
