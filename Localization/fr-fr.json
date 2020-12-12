@@ -37,6 +37,9 @@
         "UPDATE_NEWEST_TEXT": "Vous avez déjà la dernière version",
         "UPDATE_DISABLED_IN_DEV_BUILD": "Indisponible dans les versions de développement",
         "VT_NOT_FOUND": "Non trouvé dans la base de données",
-        "VT_NO_COMPATIBLE": "Aucun algorithme compatible activé"
+        "VT_NO_COMPATIBLE": "Aucun algorithme compatible activé",
+        "CLIPBOARD_AUTOENABLE_EXCLUSIVE": "Désactiver tous les autres algorithmes",
+        "CLIPBOARD_AUTOENABLE_IF_NONE": "Uniquement si aucun algorithme de cette longueur n'est activé",
+        "CLIPBOARD_AUTOENABLE": "Si le presse-papiers contient un hachage, activer automatiquement les algorithmes de cette longueur pour l'exécution"
     }
 }
