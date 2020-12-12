@@ -49,6 +49,16 @@ static constexpr SettingCheckbox s_boxes[] =
 
 #undef CTLSTR
 
+void SettingsDialog::UpdateCheckboxAvailability()
+{
+  const auto banner = BST_CHECKED == Button_GetCheck(_hwnd_CHECK_SUMFILE_BANNER);
+  Button_Enable(_hwnd_CHECK_SUMFILE_BANNER_DATE, banner);
+
+  const auto clipboard = BST_CHECKED == Button_GetCheck(_hwnd_CHECK_CLIPBOARD_AUTOENABLE);
+  Button_Enable(_hwnd_CHECK_CLIPBOARD_AUTOENABLE_IF_NONE, clipboard);
+  Button_Enable(_hwnd_CHECK_CLIPBOARD_AUTOENABLE_EXCLUSIVE, clipboard);
+}
+
 INT_PTR SettingsDialog::DlgProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
   const auto pnmhdr = (LPNMHDR)lParam;
@@ -87,6 +97,8 @@ INT_PTR SettingsDialog::DlgProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
     const auto hfont = utl::GetDPIScaledFont();
     for (auto wnd = GetWindow(_hwnd, GW_CHILD); wnd; wnd = GetWindow(wnd, GW_HWNDNEXT))
       SetWindowFont(wnd, hfont, TRUE);
+
+    UpdateCheckboxAvailability();
 
     _done_setup = true;
     return FALSE; // do not select default control
@@ -146,9 +158,13 @@ INT_PTR SettingsDialog::DlgProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
       break;
     }
     if (code == BN_CLICKED)
+    {
       for (const auto& ctl : s_boxes)
         if (id == ctl.control_id)
-          (_settings->*ctl.setting).Set(Button_GetCheck(GetDlgItem(_hwnd, ctl.control_id)));
+          (_settings->*ctl.setting).Set(BST_CHECKED == Button_GetCheck(GetDlgItem(_hwnd, ctl.control_id)));
+
+      UpdateCheckboxAvailability();
+    }
     break;
   }
 

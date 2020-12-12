@@ -26,8 +26,17 @@ class SettingsDialog
   MAKE_IDC_MEMBER(_hwnd, BUTTON_CHECK_FOR_UPDATES);
   MAKE_IDC_MEMBER(_hwnd, ALGORITHM_LIST);
 
+  MAKE_IDC_MEMBER(_hwnd, CHECK_SUMFILE_BANNER);
+  MAKE_IDC_MEMBER(_hwnd, CHECK_SUMFILE_BANNER_DATE);
+
+  MAKE_IDC_MEMBER(_hwnd, CHECK_CLIPBOARD_AUTOENABLE);
+  MAKE_IDC_MEMBER(_hwnd, CHECK_CLIPBOARD_AUTOENABLE_IF_NONE);
+  MAKE_IDC_MEMBER(_hwnd, CHECK_CLIPBOARD_AUTOENABLE_EXCLUSIVE);
+
   bool _done_setup = false;
   Settings* _settings;
+
+  void UpdateCheckboxAvailability();
 
 public:
   SettingsDialog(HWND handle, void* settings) : _hwnd(handle), _settings((Settings*)settings) {}
