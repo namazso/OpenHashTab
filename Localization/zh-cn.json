@@ -13,7 +13,7 @@
         "DONE": "完成！",
         "PROCESSING": "正在处理…",
         "HASHES": "校验",
-        "CLIPBOARD": "到剪贴板",
+        "CLIPBOARD": "复制到剪贴板",
         "NOMATCH": "未找到匹配项。",
         "ERROR": "错误",
         "SUMFILE_BANNER_DATE": "在标语中加入日期",
@@ -28,7 +28,7 @@
         "COPY_EVERYTHING": "复制全部",
         "COPY_FILE": "复制文件名",
         "COPY_LINE": "复制整行",
-        "COPY_HASH": "复制校验值",
+        "COPY_HASH": "复制Hash",
         "CHECK_FOR_UPDATES": "检查更新",
         "SUMFILE_DOT_HASH_COMPATIBLE": "将 sumfiles 导出为 corz .hash 兼容性格式",
         "SUMFILE_FORWARD_SLASHES": "在导出的文件中使用正斜杠",
@@ -37,6 +37,9 @@
         "SUMFILE_UPPERCASE": "校验值导出为大写字母",
         "LOOK_FOR_SUMFILES": "寻找与被校验文件相邻的 sumfile",
         "DISPLAY_UPPERCASE": "校验值显示为大写字母",
-        "CANCEL": "取消"
+        "CANCEL": "取消",
+        "CLIPBOARD_AUTOENABLE_EXCLUSIVE": "禁用所有其他算法",
+        "CLIPBOARD_AUTOENABLE_IF_NONE": "当没有符合剪切板内容长度的Hash时启用的算法",
+        "CLIPBOARD_AUTOENABLE": "如果剪贴板包含Hash，则自动启用符合该Hash长度的算法"
     }
 }
