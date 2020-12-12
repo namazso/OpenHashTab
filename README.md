@@ -46,7 +46,7 @@ Most of the actions should be obvious. Some not-so-obvious features are listed h
 * Blake2sp
 * SHA-1
 * SHA-2 (SHA-224, SHA-256, SHA-384, SHA-512)
-* SHA-3 (SHA3-256, SHA3-384, SHA3-512)
+* SHA-3 (SHA3-224, SHA3-256, SHA3-384, SHA3-512)
 * BLAKE3
 
 ## Download
@@ -80,14 +80,16 @@ In addition to contributors reported by git, some translations were also contrib
 
 ### Requirements
 
+* MSYS2 with make
 * Visual Studio 2019 16.8+ (with ARM64 and clang-cl)
 * [InnoSetup](http://www.jrsoftware.org/isinfo.php)
 
 ### Compiling
 
-1. Build AlgorithmsDll.sln for all Release targets
-2. Build OpenHashTab.sln for all Release targets
-3. Use Inno Setup Compiler to compile installer.iss
+1. Run build-xkcp.bat
+2. Build AlgorithmsDll.sln for all Release targets
+3. Build OpenHashTab.sln for all Release targets
+4. Use Inno Setup Compiler to compile installer.iss
 
 More options and commands can be found in the [GitHub Actions workflow](.github/workflows/ci.yml)
 

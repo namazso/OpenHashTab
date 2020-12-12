@@ -131,30 +131,29 @@
       <ExcludedFromBuild Condition="'$(Flavor)|$(Platform)'=='avx|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Flavor)|$(Platform)'=='avx2|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Flavor)|$(Platform)'=='avx512|Win32'">false</ExcludedFromBuild>
-	</ClCompile>
+    </ClCompile>
     <ClCompile Include="..\BLAKE3\c\blake3_sse41.c">
       <ExcludedFromBuild>true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Flavor)|$(Platform)'=='avx|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Flavor)|$(Platform)'=='avx2|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Flavor)|$(Platform)'=='avx512|Win32'">false</ExcludedFromBuild>
-	</ClCompile>
+    </ClCompile>
     <ClCompile Include="..\BLAKE3\c\blake3_avx2.c">
       <ExcludedFromBuild>true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Flavor)|$(Platform)'=='avx2|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Flavor)|$(Platform)'=='avx512|Win32'">false</ExcludedFromBuild>
-	</ClCompile>
+    </ClCompile>
     <ClCompile Include="..\BLAKE3\c\blake3_avx512.c">
       <ExcludedFromBuild>true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Flavor)|$(Platform)'=='avx512|Win32'">false</ExcludedFromBuild>
-	</ClCompile>
+    </ClCompile>
     <ClCompile Include="blake3_dispatch.c" />
     <ClCompile Include="..\BLAKE3\c\blake3_neon.c">
       <ExcludedFromBuild Condition="'$(Flavor)'!='neon'">true</ExcludedFromBuild>
-	</ClCompile>
+    </ClCompile>
     <ClCompile Include="..\BLAKE3\c\blake3_portable.c" />
     <ClCompile Include="crc32.c" />
     <ClCompile Include="Hasher.cpp" />
-    <ClCompile Include="sha3.c" />
     <ClCompile Include="xxhash.c" />
   </ItemGroup>
   <ItemGroup>
@@ -162,9 +161,9 @@
     <ClInclude Include="blake2sp.h" />
     <ClInclude Include="..\BLAKE3\c\blake3.h" />
     <ClInclude Include="..\BLAKE3\c\blake3_impl.h" />
+    <ClInclude Include="XKCP\config.h" />
     <ClInclude Include="crc32.h" />
     <ClInclude Include="Hasher.h" />
-    <ClInclude Include="sha3.h" />
     <ClInclude Include="mbedtls_config.h" />
   </ItemGroup>
   <ItemGroup>
@@ -174,22 +173,22 @@
       <ExcludedFromBuild Condition="'$(Flavor)|$(Platform)'=='avx|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Flavor)|$(Platform)'=='avx2|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Flavor)|$(Platform)'=='avx512|x64'">false</ExcludedFromBuild>
-	</MASM>
+    </MASM>
     <MASM Include="..\BLAKE3\c\blake3_sse41_x86-64_windows_msvc.asm">
       <ExcludedFromBuild>true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Flavor)|$(Platform)'=='avx|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Flavor)|$(Platform)'=='avx2|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Flavor)|$(Platform)'=='avx512|x64'">false</ExcludedFromBuild>
-	</MASM>
+    </MASM>
     <MASM Include="..\BLAKE3\c\blake3_avx2_x86-64_windows_msvc.asm">
       <ExcludedFromBuild>true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Flavor)|$(Platform)'=='avx2|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Flavor)|$(Platform)'=='avx512|x64'">false</ExcludedFromBuild>
-	</MASM>
+    </MASM>
     <MASM Include="..\BLAKE3\c\blake3_avx512_x86-64_windows_msvc.asm">
       <ExcludedFromBuild>true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Flavor)|$(Platform)'=='avx512|x64'">false</ExcludedFromBuild>
-	</MASM>
+    </MASM>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -225,7 +224,7 @@
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup>
-    <IncludePath>$(SolutionDir)mbedtls\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)mbedtls\include;$(ProjectDir)XKCP;$(SolutionDir)XKCP\lib\high\Keccak\;$(SolutionDir)XKCP\lib\high\Keccak\FIPS202\;$(SolutionDir)XKCP\lib\high\Keccak\SP800-185\;$(SolutionDir)XKCP\lib\high\common\;$(SolutionDir)XKCP\lib\high\Keccak\PRG\;$(SolutionDir)XKCP\lib\high\Ketje\;$(SolutionDir)XKCP\lib\high\Keyak\;$(SolutionDir)XKCP\lib\high\KangarooTwelve\;$(SolutionDir)XKCP\lib\high\Kravatte\;$(SolutionDir)XKCP\lib\high\Xoofff\;$(SolutionDir)XKCP\lib\high\Xoodyak\;$(SolutionDir)XKCP\lib\common\;$(SolutionDir)XKCP\lib\low\KeccakP-200\ref\;$(SolutionDir)XKCP\lib\low\KeccakP-400\ref\;$(SolutionDir)XKCP\lib\low\KeccakP-800\plain\;$(SolutionDir)XKCP\lib\low\KeccakP-800\plain\lcua\;$(SolutionDir)XKCP\lib\low\KeccakP-1600\common\;$(SolutionDir)XKCP\lib\low\KeccakP-1600\plain-64bits\;$(SolutionDir)XKCP\lib\low\common\;$(SolutionDir)XKCP\lib\low\KeccakP-1600\plain-64bits\lcua-shld\;$(SolutionDir)XKCP\lib\low\KeccakP-1600-times2\SIMD128\;$(SolutionDir)XKCP\lib\low\KeccakP-1600-times2\SIMD128\SSSE3-ua\;$(SolutionDir)XKCP\lib\low\KeccakP-1600-times4\fallback-on2\;$(SolutionDir)XKCP\lib\low\KeccakP-1600-times8\fallback-on2\;$(SolutionDir)XKCP\lib\low\Xoodoo\;$(SolutionDir)XKCP\lib\low\Xoodoo\SSE2\;$(SolutionDir)XKCP\lib\low\Xoodoo-times4\SSSE3\;$(SolutionDir)XKCP\lib\low\Xoodoo-times8\fallback-on1\;$(SolutionDir)XKCP\lib\low\Xoodoo-times16\fallback-on1\;$(SolutionDir)XKCP\lib\low\Ketje\SnP-compliant\;$(IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)bin\$(ConfigurationReal)\$(Platform)\</OutDir>
     <TargetName>$(ProjectName)-$(Platform)-$(Flavor)</TargetName>
     <IntDir>$(SolutionDir)obj\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
@@ -267,6 +266,7 @@
       <EnableUAC>false</EnableUAC>
       <AdditionalOptions>/PDBALTPATH:%_PDB% /Brepro %(AdditionalOptions)</AdditionalOptions>
       <!--<NoEntryPoint>true</NoEntryPoint>-->
+      <AdditionalDependencies>$(SolutionDir)obj\libXKCP-$(Platform)-$(Flavor).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(ConfigurationReal)'=='Release'">

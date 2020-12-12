@@ -24,9 +24,13 @@
 #include <mbedtls/sha512.h>
 #include <mbedtls/ripemd160.h>
 #include "blake2sp.h"
-#include "sha3.h"
 #include "crc32.h"
 #include "../BLAKE3/c/blake3.h"
+extern "C" {
+#include "KeccakHash.h"
+#include "KangarooTwelve.h"
+#include "SP800-185.h"
+}
 
 #define XXH_STATIC_LINKING_ONLY
 
@@ -166,42 +170,6 @@ public:
     Blake2sp_Final(&ctx, out);
   }
 };
-
-template <void (*Init)(void*), size_t Size>
-class Sha3HashContext : HashContext
-{
-  template <typename T> friend HashContext* hash_context_factory(const HashAlgorithm* algorithm);
-
-  sha3_context ctx{};
-
-public:
-  Sha3HashContext(const HashAlgorithm* algorithm) : HashContext(algorithm)
-  {
-    Init(&ctx);
-  }
-  ~Sha3HashContext() = default;
-
-  void Clear() override
-  {
-    Init(&ctx);
-  }
-
-  void Update(const void* data, size_t size) override
-  {
-    sha3_Update(&ctx, data, size);
-  }
-
-  void Finish(uint8_t* out) override
-  {
-    const auto begin = (const uint8_t*)sha3_Finalize(&ctx);
-    memcpy(out, begin, Size);
-  }
-};
-
-using Sha3_256HashContext = Sha3HashContext<&sha3_Init256, 32>;
-using Sha3_384HashContext = Sha3HashContext<&sha3_Init384, 48>;
-using Sha3_512HashContext = Sha3HashContext<&sha3_Init512, 64>;
-
 
 class Crc32HashContext : HashContext
 {
@@ -413,6 +381,139 @@ public:
   }
 };
 
+template <unsigned Rate, unsigned Capacity, unsigned HashBitlen, unsigned char DelimitedSuffix>
+class KeccakHashContext : HashContext
+{
+  template <typename T> friend HashContext* hash_context_factory(const HashAlgorithm* algorithm);
+
+  Keccak_HashInstance ctx{};
+
+public:
+  KeccakHashContext(const HashAlgorithm* algorithm) : HashContext(algorithm)
+  {
+    Keccak_HashInitialize(&ctx, Rate, Capacity, HashBitlen, DelimitedSuffix);
+  }
+  ~KeccakHashContext() = default;
+
+  void Clear() override
+  {
+    Keccak_HashInitialize(&ctx, Rate, Capacity, HashBitlen, DelimitedSuffix);
+  }
+
+  void Update(const void* data, size_t size) override
+  {
+    Keccak_HashUpdate(&ctx, (const BitSequence*)data, size * 8);
+  }
+
+  void Finish(uint8_t* out) override
+  {
+    Keccak_HashFinal(&ctx, (BitSequence*)out);
+  }
+};
+
+//using SHAKE128HashContext = KeccakHashContext<1344,  256,   0, 0x1F>;
+//using SHAKE256HashContext = KeccakHashContext<1088,  512,   0, 0x1F>;
+using SHA3_224HashContext = KeccakHashContext<1152,  448, 224, 0x06>;
+using SHA3_256HashContext = KeccakHashContext<1088,  512, 256, 0x06>;
+using SHA3_384HashContext = KeccakHashContext< 832,  768, 384, 0x06>;
+using SHA3_512HashContext = KeccakHashContext< 576, 1024, 512, 0x06>;
+
+template <unsigned HashBitlen>
+class KangarooTwelveHashContext : HashContext
+{
+  template <typename T> friend HashContext* hash_context_factory(const HashAlgorithm* algorithm);
+
+  KangarooTwelve_Instance ctx{};
+
+public:
+  KangarooTwelveHashContext(const HashAlgorithm* algorithm) : HashContext(algorithm)
+  {
+    KangarooTwelve_Initialize(&ctx, HashBitlen / 8);
+  }
+  ~KangarooTwelveHashContext() = default;
+
+  void Clear() override
+  {
+    KangarooTwelve_Initialize(&ctx, HashBitlen / 8);
+  }
+
+  void Update(const void* data, size_t size) override
+  {
+    KangarooTwelve_Update(&ctx, (const unsigned char*)data, size);
+  }
+
+  void Finish(uint8_t* out) override
+  {
+    KangarooTwelve_Final(&ctx, out, (const unsigned char*)"", 0);
+  }
+};
+
+using K12_264HashContext = KangarooTwelveHashContext<264>;
+
+template <unsigned BlockByteLen, unsigned HashBitlen>
+class ParallelHash128HashContext : HashContext
+{
+  template <typename T> friend HashContext* hash_context_factory(const HashAlgorithm* algorithm);
+
+  ParallelHash_Instance ctx{};
+
+public:
+  ParallelHash128HashContext(const HashAlgorithm* algorithm) : HashContext(algorithm)
+  {
+    ParallelHash128_Initialize(&ctx, BlockByteLen, HashBitlen, (const unsigned char*)"", 0);
+  }
+  ~ParallelHash128HashContext() = default;
+
+  void Clear() override
+  {
+    ParallelHash128_Initialize(&ctx, BlockByteLen, HashBitlen, (const unsigned char*)"", 0);
+  }
+
+  void Update(const void* data, size_t size) override
+  {
+    ParallelHash128_Update(&ctx, (const unsigned char*)data, size);
+  }
+
+  void Finish(uint8_t* out) override
+  {
+    ParallelHash128_Final(&ctx, out);
+  }
+};
+
+using PH128_264HashContext = ParallelHash128HashContext<8192, 264>;
+
+template <unsigned BlockByteLen, unsigned HashBitlen>
+class ParallelHash256HashContext : HashContext
+{
+  template <typename T> friend HashContext* hash_context_factory(const HashAlgorithm* algorithm);
+
+  ParallelHash_Instance ctx{};
+
+public:
+  ParallelHash256HashContext(const HashAlgorithm* algorithm) : HashContext(algorithm)
+  {
+    ParallelHash256_Initialize(&ctx, BlockByteLen, HashBitlen, (const unsigned char*)"", 0);
+  }
+  ~ParallelHash256HashContext() = default;
+
+  void Clear() override
+  {
+    ParallelHash256_Initialize(&ctx, BlockByteLen, HashBitlen, (const unsigned char*)"", 0);
+  }
+
+  void Update(const void* data, size_t size) override
+  {
+    ParallelHash256_Update(&ctx, (const unsigned char*)data, size);
+  }
+
+  void Finish(uint8_t* out) override
+  {
+    ParallelHash256_Final(&ctx, out);
+  }
+};
+
+using PH256_528HashContext = ParallelHash256HashContext<8192, 528>;
+
 // these are what I found with a quick FTP search
 static const char* const no_exts[] = { nullptr };
 static const char* const md5_exts[] = { "md5", "md5sum", "md5sums", nullptr };
@@ -422,9 +523,13 @@ static const char* const sha224_exts[] = { "sha224", "sha224sum", nullptr };
 static const char* const sha256_exts[] = { "sha256", "sha256sum", "sha256sums", nullptr };
 static const char* const sha384_exts[] = { "sha384", nullptr };
 static const char* const sha512_exts[] = { "sha512", "sha512sum", "sha512sums", nullptr };
+static const char* const sha3_224_exts[] = { "sha3-224", nullptr };
 static const char* const sha3_256_exts[] = { "sha3-256", nullptr };
 static const char* const sha3_384_exts[] = { "sha3-384", nullptr };
 static const char* const sha3_512_exts[] = { "sha3", "sha3-512",nullptr };
+static const char* const k12_264_exts[] = { "k12-264", nullptr };
+static const char* const ph128_264_exts[] = { "ph128-264", nullptr };
+static const char* const ph256_528_exts[] = { "ph256-528", nullptr };
 
 constexpr HashAlgorithm HashAlgorithm::k_algorithms[] =
 {
@@ -443,9 +548,13 @@ constexpr HashAlgorithm HashAlgorithm::k_algorithms[] =
   { "SHA-384", 48, sha384_exts, hash_context_factory<Sha384HashContext>, true },
   { "SHA-512", 64, sha512_exts, hash_context_factory<Sha512HashContext>, true },
   { "Blake2sp", 32, no_exts, hash_context_factory<Blake2SpHashContext>, true },
-  { "SHA3-256", 32, sha3_256_exts, hash_context_factory<Sha3_256HashContext>, true },
-  { "SHA3-384", 48, sha3_384_exts, hash_context_factory<Sha3_384HashContext>, true },
-  { "SHA3-512", 64, sha3_512_exts, hash_context_factory<Sha3_512HashContext>, true },
+  { "SHA3-224", 28, sha3_224_exts, hash_context_factory<SHA3_224HashContext>, true },
+  { "SHA3-256", 32, sha3_256_exts, hash_context_factory<SHA3_256HashContext>, true },
+  { "SHA3-384", 48, sha3_384_exts, hash_context_factory<SHA3_384HashContext>, true },
+  { "SHA3-512", 64, sha3_512_exts, hash_context_factory<SHA3_512HashContext>, true },
+  { "K12-264", 33, k12_264_exts, hash_context_factory<K12_264HashContext>, true },
+  { "PH128-264", 33, ph128_264_exts, hash_context_factory<PH128_264HashContext>, true },
+  { "PH256-528", 66, ph256_528_exts, hash_context_factory<PH256_528HashContext>, true },
   { "BLAKE3", 32, no_exts, hash_context_factory<Blake3HashContext>, true },
 };
 

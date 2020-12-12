@@ -16,9 +16,6 @@
     <Filter Include="CRC32">
       <UniqueIdentifier>{e8de2202-489c-4331-90cf-a66bc00736b6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="SHA3">
-      <UniqueIdentifier>{e96ad624-fb1f-4b8f-b46c-decbf5ce6b6b}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\mbedtls\library\sha512.c">
@@ -53,9 +50,6 @@
     </ClCompile>
     <ClCompile Include="crc32.c">
       <Filter>CRC32</Filter>
-    </ClCompile>
-    <ClCompile Include="sha3.c">
-      <Filter>SHA3</Filter>
     </ClCompile>
     <ClCompile Include="Hasher.cpp" />
     <ClCompile Include="blake3_dispatch.c">
@@ -96,9 +90,6 @@
     <ClInclude Include="crc32.h">
       <Filter>CRC32</Filter>
     </ClInclude>
-    <ClInclude Include="sha3.h">
-      <Filter>SHA3</Filter>
-    </ClInclude>
     <ClInclude Include="Hasher.h" />
     <ClInclude Include="..\BLAKE3\c\blake3.h">
       <Filter>Blake3</Filter>
@@ -106,6 +97,7 @@
     <ClInclude Include="..\BLAKE3\c\blake3_impl.h">
       <Filter>Blake3</Filter>
     </ClInclude>
+    <ClInclude Include="XKCP\config.h" />
   </ItemGroup>
   <ItemGroup>
     <MASM Include="..\BLAKE3\c\blake3_avx2_x86-64_windows_msvc.asm">

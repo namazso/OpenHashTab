@@ -19,3 +19,6 @@
 [submodule "BLAKE3"]
 	path = BLAKE3
 	url = https://github.com/BLAKE3-team/BLAKE3.git
+[submodule "XKCP"]
+	path = XKCP
+	url = https://github.com/XKCP/XKCP.git
