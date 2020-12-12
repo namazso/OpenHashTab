@@ -37,6 +37,9 @@
         "UPDATE_AVAILABLE_TITLE": "Frissítés elérhető",
         "UPDATE_DISABLED_IN_DEV_BUILD": "Nem elérhető fejlesztői buildben",
         "VT_NOT_FOUND": "Nem található az adatbázisban",
-        "VT_NO_COMPATIBLE": "Nincs kompatibilis algoritmus engedélyezve"
+        "VT_NO_COMPATIBLE": "Nincs kompatibilis algoritmus engedélyezve",
+        "CLIPBOARD_AUTOENABLE_IF_NONE": "De csak ha nincs megfelelő hosszú már engedélyezve",
+        "CLIPBOARD_AUTOENABLE_EXCLUSIVE": "És az összes többi algoritmus letiltása",
+        "CLIPBOARD_AUTOENABLE": "Ha a vágólapon egy hash van, az olyan hosszúságú algorithmusok automatikus engedélyezése"
     }
 }
