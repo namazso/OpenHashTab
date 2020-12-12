@@ -33,15 +33,18 @@ struct SettingCheckbox
 
 static constexpr SettingCheckbox s_boxes[] =
 {
-  { &Settings::display_uppercase,           CTLSTR(DISPLAY_UPPERCASE          )  },
-  { &Settings::look_for_sumfiles,           CTLSTR(LOOK_FOR_SUMFILES          )  },
-  { &Settings::sumfile_uppercase,           CTLSTR(SUMFILE_UPPERCASE          )  },
-  { &Settings::sumfile_unix_endings,        CTLSTR(SUMFILE_UNIX_ENDINGS       )  },
-  { &Settings::sumfile_use_double_space,    CTLSTR(SUMFILE_USE_DOUBLE_SPACE   )  },
-  { &Settings::sumfile_forward_slashes,     CTLSTR(SUMFILE_FORWARD_SLASHES    )  },
-  { &Settings::sumfile_dot_hash_compatible, CTLSTR(SUMFILE_DOT_HASH_COMPATIBLE)  },
-  { &Settings::sumfile_banner,              CTLSTR(SUMFILE_BANNER             )  },
-  { &Settings::sumfile_banner_date,         CTLSTR(SUMFILE_BANNER_DATE        )  },
+  { &Settings::display_uppercase,               CTLSTR(DISPLAY_UPPERCASE              ) },
+  { &Settings::look_for_sumfiles,               CTLSTR(LOOK_FOR_SUMFILES              ) },
+  { &Settings::sumfile_uppercase,               CTLSTR(SUMFILE_UPPERCASE              ) },
+  { &Settings::sumfile_unix_endings,            CTLSTR(SUMFILE_UNIX_ENDINGS           ) },
+  { &Settings::sumfile_use_double_space,        CTLSTR(SUMFILE_USE_DOUBLE_SPACE       ) },
+  { &Settings::sumfile_forward_slashes,         CTLSTR(SUMFILE_FORWARD_SLASHES        ) },
+  { &Settings::sumfile_dot_hash_compatible,     CTLSTR(SUMFILE_DOT_HASH_COMPATIBLE    ) },
+  { &Settings::sumfile_banner,                  CTLSTR(SUMFILE_BANNER                 ) },
+  { &Settings::sumfile_banner_date,             CTLSTR(SUMFILE_BANNER_DATE            ) },
+  { &Settings::clipboard_autoenable,            CTLSTR(CLIPBOARD_AUTOENABLE           ) },
+  { &Settings::clipboard_autoenable_if_none,    CTLSTR(CLIPBOARD_AUTOENABLE_IF_NONE   ) },
+  { &Settings::clipboard_autoenable_exclusive,  CTLSTR(CLIPBOARD_AUTOENABLE_EXCLUSIVE ) },
 };
 
 #undef CTLSTR

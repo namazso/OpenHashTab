@@ -381,6 +381,28 @@ INT_PTR MainDialog::OnInitDialog(UINT, WPARAM, LPARAM)
   }
 
   SendMessageW(_hwnd_PROGRESS, PBM_SETRANGE32, 0, Coordinator::k_progress_resolution);
+  
+  if (_prop_page->settings.clipboard_autoenable)
+  {
+    const auto hash_size = utl::HashStringToBytes(utl::GetClipboardText(_hwnd).c_str()).size();
+    auto existing = 0u;
+    auto enabled = 0u;
+    for (const auto& algo : HashAlgorithm::Algorithms())
+      if (algo.GetSize() == hash_size)
+      {
+        ++existing;
+        enabled += _prop_page->settings.algorithms[algo.Idx()] ? 1 : 0;
+      }
+    if (existing != 0 && (!_prop_page->settings.clipboard_autoenable_if_none || enabled == 0))
+    {
+      if (_prop_page->settings.clipboard_autoenable_exclusive)
+        for (auto& setting : _prop_page->settings.algorithms)
+          setting.SetNoSave(false);
+      for (const auto& algo : HashAlgorithm::Algorithms())
+        if (algo.GetSize() == hash_size)
+          _prop_page->settings.algorithms[algo.Idx()].SetNoSave(true);
+    }
+  }
 
   // !!! enabled algorithms MAY BE CHANGED by this call, if a sumfile is not in a enabled format according to extension
   _prop_page->AddFiles();

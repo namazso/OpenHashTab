@@ -37,6 +37,9 @@
         "UPDATE_AVAILABLE_TITLE": "Update available",
         "UPDATE_AVAILABLE_TEXT": "New version %hu.%hu.%hu available",
         "UPDATE_NEWEST_TITLE": "Congratulations",
-        "UPDATE_NEWEST_TEXT": "You are already on the latest version"
+        "UPDATE_NEWEST_TEXT": "You are already on the latest version",
+        "CLIPBOARD_AUTOENABLE": "If clipboard contains a hash, automatically enable algorithms of that length for the run",
+        "CLIPBOARD_AUTOENABLE_IF_NONE": "Only if no algorithms of that length are enabled",
+        "CLIPBOARD_AUTOENABLE_EXCLUSIVE": "Disable all other algorithms"
     }
 }

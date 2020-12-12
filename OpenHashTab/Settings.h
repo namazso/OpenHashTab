@@ -84,4 +84,8 @@ struct Settings
   RegistrySetting<bool> sumfile_banner{ "SumfileBanner", true };
   RegistrySetting<bool> sumfile_banner_date{ "SumfileBannerDate", false };
   RegistrySetting<bool> virustotal_tos{ "VTToS", false };
+
+  RegistrySetting<bool> clipboard_autoenable{ "ClipboardAutoenable", true };
+  RegistrySetting<bool> clipboard_autoenable_if_none{ "ClipboardAutoenableIfNone", true };
+  RegistrySetting<bool> clipboard_autoenable_exclusive{ "ClipboardAutoenableExclusive", false };
 };

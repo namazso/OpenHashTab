@@ -55,32 +55,38 @@
 #define IDC_CHECK_SUMFILE_BANNER_DATE   225
 #define IDS_SUMFILE_UNIX_ENDINGS        225
 #define IDS_SUMFILE_USE_DOUBLE_SPACE    226
+#define IDC_CHECK_CLIPBOARD_AUTOENABLE  226
 #define IDS_SUMFILE_FORWARD_SLASHES     227
 #define IDC_BUTTON_CHECK_FOR_UPDATES    227
 #define IDS_SUMFILE_DOT_HASH_COMPATIBLE 228
+#define IDC_CHECK_CLIPBOARD_AUTOENABLE_IF_NONE 228
 #define IDS_SUMFILE_BANNER              229
+#define IDC_CHECK_CLIPBOARD_AUTOENABLE_EXCLUSIVE 229
 #define IDS_SUMFILE_BANNER_DATE         230
 #define IDI_ICON_VT                     231
 #define IDI_ICON2                       232
 #define IDI_ICON_COG                    232
 #define IDS_CHECK_FOR_UPDATES           233
-#define IDS_COPY_HASH           		234
-#define IDS_COPY_LINE           		235
-#define IDS_COPY_FILE           		236
-#define IDS_COPY_EVERYTHING           	237
+#define IDS_COPY_HASH                   234
+#define IDS_COPY_LINE                   235
+#define IDS_COPY_FILE                   236
+#define IDS_COPY_EVERYTHING             237
 #define IDS_VT_NO_COMPATIBLE            239
-#define IDS_VT_NOT_FOUND           	    240
+#define IDS_VT_NOT_FOUND                240
 #define IDS_UPDATE_DISABLED_IN_DEV_BUILD 241
 #define IDS_UPDATE_AVAILABLE_TITLE      242
 #define IDS_UPDATE_AVAILABLE_TEXT       243
 #define IDS_UPDATE_NEWEST_TITLE         244
 #define IDS_UPDATE_NEWEST_TEXT          245
+#define IDS_CLIPBOARD_AUTOENABLE        246
+#define IDS_CLIPBOARD_AUTOENABLE_IF_NONE 247
+#define IDS_CLIPBOARD_AUTOENABLE_EXCLUSIVE 248
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        246
+#define _APS_NEXT_RESOURCE_VALUE        249
 #define _APS_NEXT_COMMAND_VALUE         32768
 #define _APS_NEXT_CONTROL_VALUE         228
 #define _APS_NEXT_SYMED_VALUE           111
