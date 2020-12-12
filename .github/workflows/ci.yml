@@ -43,10 +43,6 @@ jobs:
     - name: Set up MSBuild
       uses: microsoft/setup-msbuild@v1
       
-    - name: Install make
-      run: |
-        c:\msys64\usr\bin\bash -l -e -c "pacman -Sy make"
-      
     - name: Build XKCP
       run: |
         cd ${{ github.workspace }}
