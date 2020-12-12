@@ -433,7 +433,7 @@ constexpr HashAlgorithm HashAlgorithm::k_algorithms[] =
   { "XXH64", 8, no_exts, hash_context_factory<XXH64HashContext>, false },
   { "XXH3-64", 8, no_exts, hash_context_factory<XXH3_64bitsHashContext>, false },
   { "XXH3-128", 16, no_exts, hash_context_factory<XXH3_128bitsHashContext>, false },
-  { "MD2", 16, no_exts, hash_context_factory<Md2HashContext>, false },
+//  { "MD2", 16, no_exts, hash_context_factory<Md2HashContext>, false },
   { "MD4", 16, no_exts, hash_context_factory<Md4HashContext>, false },
   { "MD5", 16, md5_exts, hash_context_factory<Md5HashContext>, false },
   { "RipeMD160", 20, ripemd160_exts, hash_context_factory<RipeMD160HashContext>, true },
