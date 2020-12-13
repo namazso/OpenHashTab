@@ -19,9 +19,6 @@ blake2sp implementation (public domain):
 crc32 implementation (public domain):
 version 2.0.0 by Craig Bruce
 
-sha3 implementation (public domain):
-by Andrey Jivsov, based on code from https://keccak.team/
-
 blake3 reference implementation (CC0):
 by Samuel Neves and Jack O'Connor
 
@@ -36,6 +33,14 @@ from https://github.com/rafagafe/tiny-json
 xxHash Library (licensed under BSD 2-Clause License):
 Copyright (c) 2012-2020 Yann Collet
 from https://github.com/Cyan4973/xxHash/
+
+XKCP (CC0 parts):
+by XKCP contributors
+from https://github.com/XKCP/XKCP
+
+brg_endian.h (from XKCP) (Licensed under BSD 3-Clause License):
+Copyright (c) 1998-2008 Brian Gladman, Worcester, UK. All rights reserved.
+from https://github.com/XKCP/XKCP/blob/master/lib/common/brg_endian.h
 
 langcomp (licensed under GPLv3+):
 Copyright (C) 2020  namazso
@@ -1391,3 +1396,18 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
 ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+Full text of BSD 3-Clause License:
+
+ The redistribution and use of this software (with or without changes)
+ is allowed without the payment of fees or royalties provided that:
+  1. source code distributions include the above copyright notice, this
+     list of conditions and the following disclaimer;
+  2. binary distributions include the above copyright notice, this list
+     of conditions and the following disclaimer in their documentation;
+  3. the name of the copyright holder is not used to endorse products
+     built using this software without specific written permission.
+ DISCLAIMER
+ This software is provided 'as is' with no explicit or implied warranties
+ in respect of its properties, including, but not limited to, correctness
+ and/or fitness for purpose.
