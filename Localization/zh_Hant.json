@@ -7,9 +7,9 @@
         "COPIED": "✔ 已複製",
         "HASH": "哈希",
         "CHECK_AGAINST": "核對：",
-        "EXPORT_TO": "匯出為 sumfile：",
+        "EXPORT_TO": "匯出為核對和檔案：",
         "EXPORT_BTN": "匯出…",
-        "SUMFILE": "已直譯為 sumfile。",
+        "SUMFILE": "已直譯為核對和檔案。",
         "DONE": "完成！",
         "PROCESSING": "處理中…",
         "HASHES": "哈希",
@@ -18,12 +18,12 @@
         "ERROR": "錯誤",
         "CANCEL": "取消",
         "DISPLAY_UPPERCASE": "哈希值顯示為大寫字母",
-        "LOOK_FOR_SUMFILES": "搜尋與被核對檔案相鄰的 sumfile",
+        "LOOK_FOR_SUMFILES": "搜尋與被核對檔案相鄰的核對和檔案",
         "SUMFILE_UPPERCASE": "哈希值匯出為大寫字母",
         "SUMFILE_UNIX_ENDINGS": "匯出檔案使用 Unix 行結尾",
-        "SUMFILE_USE_DOUBLE_SPACE": "匯出 sumfile 使用雙空格而非空格與星號",
+        "SUMFILE_USE_DOUBLE_SPACE": "匯出核對和檔案時使用雙空格而非空格與星號",
         "SUMFILE_FORWARD_SLASHES": "匯出檔案中使用正斜杠",
-        "SUMFILE_DOT_HASH_COMPATIBLE": "將 sumfile 匯出為 corz .hash 相容性檔案",
+        "SUMFILE_DOT_HASH_COMPATIBLE": "將核對和匯出為 corz .hash 相容性檔案",
         "SUMFILE_BANNER": "匯出檔案中加入標註",
         "SUMFILE_BANNER_DATE": "日期加入標註",
         "CHECK_FOR_UPDATES": "檢查更新",
@@ -37,6 +37,9 @@
         "UPDATE_AVAILABLE_TITLE": "更新可用",
         "UPDATE_AVAILABLE_TEXT": "新版本 %hu.%hu.%hu 可用",
         "UPDATE_NEWEST_TITLE": "恭喜",
-        "UPDATE_NEWEST_TEXT": "您已使用最新版"
+        "UPDATE_NEWEST_TEXT": "您已使用最新版",
+        "CLIPBOARD_AUTOENABLE_IF_NONE": "僅用於沒有啟用與該長度相符之算法時",
+        "CLIPBOARD_AUTOENABLE": "如果剪貼簿內含哈希值，對長度足以執行核對之值自動啟用算法",
+        "CLIPBOARD_AUTOENABLE_EXCLUSIVE": "停用所有其他算法"
     }
 }
