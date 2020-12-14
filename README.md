@@ -1,6 +1,6 @@
 # OpenHashTab
 
-![License](https://img.shields.io/github/license/namazso/OpenHashTab) ![Weblate translation status](https://hosted.weblate.org/widgets/openhashtab/-/main/svg-badge.svg) ![Downloads](https://img.shields.io/github/downloads/namazso/OpenHashTab/total) ![GitHub Version](https://img.shields.io/github/v/release/namazso/OpenHashTab) ![Chocolatey Version](https://img.shields.io/chocolatey/v/openhashtab) ![Commits since release](https://img.shields.io/github/commits-since/namazso/OpenHashTab/latest/master)
+[![License](https://img.shields.io/github/license/namazso/OpenHashTab)](COPYING) [![Weblate translation status](https://hosted.weblate.org/widgets/openhashtab/-/main/svg-badge.svg)](https://hosted.weblate.org/projects/openhashtab/main/) [![Downloads](https://img.shields.io/github/downloads/namazso/OpenHashTab/total)](https://github.com/namazso/OpenHashTab/releases/latest) [![GitHub Version](https://img.shields.io/github/v/release/namazso/OpenHashTab)](https://github.com/namazso/OpenHashTab/releases/latest) [![Chocolatey Version](https://img.shields.io/chocolatey/v/openhashtab)](https://chocolatey.org/packages/openhashtab/) ![Commits since release](https://img.shields.io/github/commits-since/namazso/OpenHashTab/latest/master)
 
 ## About
 
