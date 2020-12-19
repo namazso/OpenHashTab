@@ -8,7 +8,7 @@
         "HASH": "해시",
         "CHECK_AGAINST": "해시 비교:",
         "EXPORT_TO": "sumfile로 내보내기:",
-        "EXPORT_BTN": "내보내기…",
+        "EXPORT_BTN": "파일로",
         "SUMFILE": "sumfile을 불러왔습니다.",
         "DONE": "완료!",
         "PROCESSING": "처리 중…",
@@ -38,8 +38,8 @@
         "UPDATE_AVAILABLE_TEXT": "%hu.%hu.%hu 버전을 설치할 수 있습니다.",
         "UPDATE_NEWEST_TITLE": "축하합니다",
         "UPDATE_NEWEST_TEXT": "이미 최신 버전을 사용 중입니다.",
-        "CLIPBOARD_AUTOENABLE": "클립보드에 해시가 있을 경우 일치하는 길이의 알고리즘 자동 활성화",
-        "CLIPBOARD_AUTOENABLE_IF_NONE": "일치하는 길이의 알고리즘이 하나도 활성화되어 있지 않은 경우에만 활성화",
+        "CLIPBOARD_AUTOENABLE": "클립보드에 해시가 있을 경우 길이가 일치하는 알고리즘 자동 활성화",
+        "CLIPBOARD_AUTOENABLE_IF_NONE": "해당 길이의 알고리즘이 하나도 활성화되어 있지 않은 경우에만",
         "CLIPBOARD_AUTOENABLE_EXCLUSIVE": "다른 알고리즘 모두 비활성화"
     }
 }
