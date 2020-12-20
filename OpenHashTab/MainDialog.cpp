@@ -348,8 +348,7 @@ INT_PTR MainDialog::OnInitDialog(UINT, WPARAM, LPARAM)
   );
 
   const auto hfont = utl::GetDPIScaledFont();
-  for (auto wnd = GetWindow(_hwnd, GW_CHILD); wnd; wnd = GetWindow(wnd, GW_HWNDNEXT))
-    SetWindowFont(wnd, hfont, TRUE);
+  utl::SetFontForChildren(_hwnd, hfont);
 
   utl::SetIconButton(_hwnd_BUTTON_VT, IDI_ICON_VT);
   utl::SetIconButton(_hwnd_BUTTON_SETTINGS, IDI_ICON_COG);

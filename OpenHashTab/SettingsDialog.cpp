@@ -93,10 +93,9 @@ INT_PTR SettingsDialog::DlgProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
       Button_SetCheck(ctl_hwnd, _settings->*ctl.setting);
       SetWindowTextW(ctl_hwnd, utl::GetString(ctl.string_id).c_str());
     }
-    
+
     const auto hfont = utl::GetDPIScaledFont();
-    for (auto wnd = GetWindow(_hwnd, GW_CHILD); wnd; wnd = GetWindow(wnd, GW_HWNDNEXT))
-      SetWindowFont(wnd, hfont, TRUE);
+    utl::SetFontForChildren(_hwnd, hfont);
 
     UpdateCheckboxAvailability();
 

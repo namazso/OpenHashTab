@@ -272,7 +272,8 @@ namespace wnd
   FORCEINLINE bool RouteMessage(T* c, It begin, It end, UINT message, WPARAM wparam, LPARAM lparam, INT_PTR& ret)
   {
     // this with the if ladders might look like terrible performance, but in reality as long as the table is constexpr
-    // the loop will unroll and the compiler will do compiler magic
+    // the loop will unroll and the compiler will do compiler magic, to get us to a roughly log2(n) decision tree. Be
+    // sure to thank your compiler for it's hard work!
 
 #pragma unroll
     for (; begin != end; ++begin)

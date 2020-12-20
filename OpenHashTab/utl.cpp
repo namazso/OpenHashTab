@@ -368,6 +368,12 @@ HFONT utl::GetDPIScaledFont()
   return CreateFontIndirectW(&ncm.lfStatusFont);
 }
 
+void utl::SetFontForChildren(HWND hwnd, HFONT font)
+{
+  for (auto wnd = GetWindow(hwnd, GW_CHILD); wnd; wnd = GetWindow(wnd, GW_HWNDNEXT))
+    SetWindowFont(wnd, font, TRUE);
+}
+
 int utl::GetDPIScaledPixels(HWND hwnd, int px)
 {
   const auto hdc = GetDC(hwnd);

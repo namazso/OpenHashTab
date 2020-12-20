@@ -175,6 +175,8 @@ namespace utl
 
   HFONT GetDPIScaledFont();
 
+  void SetFontForChildren(HWND hwnd, HFONT font);
+
   int GetDPIScaledPixels(HWND hwnd, int px);
 
   struct Version
