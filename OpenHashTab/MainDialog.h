@@ -26,6 +26,7 @@ class MainDialog
   static constexpr auto k_status_update_timer_id = (UINT_PTR)0x7c253816f7ef92ea;
 
   HWND _hwnd{};
+  utl::UniqueFont _font { utl::GetDPIScaledFont() };
   Coordinator* _prop_page;
   wnd::WindowLayoutAdapter _adapter{ _hwnd, IDD_OPENHASHTAB_PROPPAGE };
 

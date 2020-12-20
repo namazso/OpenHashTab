@@ -15,6 +15,7 @@
 //    along with OpenHashTab.  If not, see <https://www.gnu.org/licenses/>.
 #pragma once
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -173,7 +174,14 @@ namespace utl
 
   std::pair<const char*, size_t> GetResource(LPCWSTR name, LPCWSTR type);
 
-  HFONT GetDPIScaledFont();
+  struct FontDeleter
+  {
+    void operator()(HFONT hfont) const { if(hfont) DeleteFont(hfont); }
+  };
+
+  using UniqueFont = std::unique_ptr<std::remove_pointer_t<HFONT>, FontDeleter>;
+
+  UniqueFont GetDPIScaledFont();
 
   void SetFontForChildren(HWND hwnd, HFONT font);
 

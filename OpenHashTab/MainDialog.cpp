@@ -346,9 +346,8 @@ INT_PTR MainDialog::OnInitDialog(UINT, WPARAM, LPARAM)
     GCLP_HICON,
     reinterpret_cast<LONG_PTR>(LoadIconW(utl::GetInstance(), MAKEINTRESOURCEW(IDI_ICON1)))
   );
-
-  const auto hfont = utl::GetDPIScaledFont();
-  utl::SetFontForChildren(_hwnd, hfont);
+  
+  utl::SetFontForChildren(_hwnd, _font.get());
 
   utl::SetIconButton(_hwnd_BUTTON_VT, IDI_ICON_VT);
   utl::SetIconButton(_hwnd_BUTTON_SETTINGS, IDI_ICON_COG);

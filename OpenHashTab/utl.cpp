@@ -355,7 +355,7 @@ std::pair<const char*, size_t> utl::GetResource(LPCWSTR name, LPCWSTR type)
   return { data, size };
 }
 
-HFONT utl::GetDPIScaledFont()
+utl::UniqueFont utl::GetDPIScaledFont()
 {
   NONCLIENTMETRICS ncm;
   ncm.cbSize = sizeof(ncm);
@@ -365,7 +365,7 @@ HFONT utl::GetDPIScaledFont()
     &ncm,
     0
   );
-  return CreateFontIndirectW(&ncm.lfStatusFont);
+  return { CreateFontIndirectW(&ncm.lfStatusFont), {} };
 }
 
 void utl::SetFontForChildren(HWND hwnd, HFONT font)
