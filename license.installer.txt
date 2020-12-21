@@ -1,11 +1,11 @@
-Copyright 2019-2020 namazso <admin@namazso.eu>
 OpenHashTab - File hashing shell extension
+Copyright 2019-2020 namazso <admin@namazso.eu>
 Licensed under GPLv3 or later.
 Code available at https://github.com/namazso/OpenHashTab
 
 This software contains code from the following projects:
 
-mbedTLS (licensed under Apache2):
+mbedTLS (licensed under Apache2 license):
 Copyright (C) 2006-2015, ARM Limited, All Rights Reserved
 https://github.com/ARMmbed/mbedtls/
 
@@ -24,23 +24,45 @@ by Samuel Neves and Jack O'Connor
 
 phnt (licensed under CC BY 4.0):
 by processhacker contributors
-from https://github.com/processhacker/phnt
+https://github.com/processhacker/phnt
 
 tiny-json (licensed under MIT license):
 Copyright (c) 2018 Rafa Garcia
-from https://github.com/rafagafe/tiny-json
+https://github.com/rafagafe/tiny-json
 
-xxHash Library (licensed under BSD 2-Clause License):
+xxHash Library (licensed under BSD 2-Clause license):
 Copyright (c) 2012-2020 Yann Collet
-from https://github.com/Cyan4973/xxHash/
+https://github.com/Cyan4973/xxHash/
 
 XKCP (CC0 parts):
 by XKCP contributors
-from https://github.com/XKCP/XKCP
+https://github.com/XKCP/XKCP
 
-brg_endian.h (from XKCP) (Licensed under BSD 3-Clause License):
+brg_endian.h (from XKCP) (licensed under BSD 3-Clause license):
 Copyright (c) 1998-2008 Brian Gladman, Worcester, UK. All rights reserved.
-from https://github.com/XKCP/XKCP/blob/master/lib/common/brg_endian.h
+https://github.com/XKCP/XKCP/blob/master/lib/common/brg_endian.h
+
+mCtrl: Additional Win32 controls (relicensed to GPLv3 under LGPLv2.1 clause 3)
+Copyright (c) 2015-2020 Martin Mitas
+https://github.com/mity/mctrl https://mctrl.org
+
+MD4C: Markdown parser for C (licensed under MIT license)
+Copyright (c) 2016-2020 Martin Mitas
+http://github.com/mity/md4c
+
+HSLuv-C: Human-friendly HSL (licensed under MIT license)
+Copyright (c) 2015 Alexei Boronine (original idea, JavaScript implementation)
+Copyright (c) 2015 Roger Tallada (Obj-C implementation)
+Copyright (c) 2017 Martin Mitas (C implementation, based on Obj-C implementation)
+http://github.com/hsluv/hsluv-c http://www.hsluv.org
+
+C-Win32 (licensed under MIT license)
+Copyright (c) 2017-2019 Martin Mitas
+http://github.com/mity/c-win32
+
+C Reusables (licensed under MIT license)
+Copyright (c) 2016-2017 Martin Mitas
+http://github.com/mity/c-reusables
 
 langcomp (licensed under GPLv3+):
 Copyright (C) 2020  namazso
