@@ -64,7 +64,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <IgnoreImportLibrary>true</IgnoreImportLibrary>
-    <IncludePath>$(SolutionDir)concurrentqueue;$(SolutionDir)phnt;$(SolutionDir)tiny-json;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)concurrentqueue;$(SolutionDir)phnt;$(SolutionDir)tiny-json;$(SolutionDir)mctrl\include;$(IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)bin\$(Configuration)\$(Platform)\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup>
@@ -95,7 +95,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalOptions>/PDBALTPATH:%_PDB% /Brepro %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalDependencies>$(SolutionDir)bin\$(Configuration)\$(Platform)\Algorithms.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)bin\$(Configuration)\$(Platform)\Algorithms.lib;$(SolutionDir)obj\mctrl\$(Platform)\$(Configuration)\mCtrl_static.lib;$(SolutionDir)obj\mctrl\$(Platform)\$(Configuration)\md4c-utf16.lib;$(SolutionDir)obj\mctrl\$(Platform)\$(Configuration)\hsluv-c.lib;UxTheme.lib;windowscodecs.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>powershell -ExecutionPolicy Bypass $(SolutionDir)langcomp\langcomp.ps1 $(SolutionDir)Localization $(SolutionDir)Localization\en-us.json $(ProjectDir)localization.rc</Command>

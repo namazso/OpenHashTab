@@ -76,7 +76,7 @@ END_COM_MAP()
 
   HRESULT FinalConstruct() { return S_OK; }
 
-  void FinalRelease() { }
+  void FinalRelease();
 };
 
 OBJECT_ENTRY_AUTO(__uuidof(OpenHashTabShlExt), COpenHashTabShlExt)

@@ -23,6 +23,7 @@
 #include "MainDialog.h"
 
 #include <cassert>
+#include <mCtrl/staticlib.h>
 
 // COpenHashTabShlExt
 
@@ -34,6 +35,8 @@ HRESULT STDMETHODCALLTYPE COpenHashTabShlExt::Initialize(
 {
   UNREFERENCED_PARAMETER(folder);
   UNREFERENCED_PARAMETER(prog_id);
+
+  mcInitialize(utl::GetInstance(), 0);
 
   // Init the common controls.
   INITCOMMONCONTROLSEX iccex
@@ -96,6 +99,13 @@ HRESULT STDMETHODCALLTYPE COpenHashTabShlExt::Initialize(
   // operation.
   return _files_raw.empty() ? E_FAIL : S_OK;
 }
+
+
+void COpenHashTabShlExt::FinalRelease()
+{
+  mcTerminate();
+}
+
 
 // IShellPropSheetExt
 
