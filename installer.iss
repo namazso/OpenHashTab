@@ -78,23 +78,37 @@ Root: HKCR; Subkey: "{#MyAppName}";                     ValueData: "Checksum fil
 Root: HKCR; Subkey: "{#MyAppName}\DefaultIcon";         ValueData: "{sys}\{#DLLName},0";                          ValueType: string; ValueName: ""
 Root: HKCR; Subkey: "{#MyAppName}\shell\open\command";  ValueData: "rundll32 {#DLLName},StandaloneEntry ""%1""";  ValueType: string; ValueName: ""
 
-Root: HKCR; Subkey: ".md5"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
-Root: HKCR; Subkey: ".md5sum"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
-Root: HKCR; Subkey: ".md5sums"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
-Root: HKCR; Subkey: ".ripemd160"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
-Root: HKCR; Subkey: ".sha1"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
-Root: HKCR; Subkey: ".sha1sum"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
-Root: HKCR; Subkey: ".sha1sums"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
-Root: HKCR; Subkey: ".sha224"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
-Root: HKCR; Subkey: ".sha224sum"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
-Root: HKCR; Subkey: ".sha256"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
-Root: HKCR; Subkey: ".sha256sum"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKCR; Subkey: ".md5";        ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKCR; Subkey: ".md5sum";     ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKCR; Subkey: ".md5sums";    ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKCR; Subkey: ".ripemd160";  ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKCR; Subkey: ".sha1";       ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKCR; Subkey: ".sha1sum";    ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKCR; Subkey: ".sha1sums";   ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKCR; Subkey: ".sha224";     ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKCR; Subkey: ".sha224sum";  ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKCR; Subkey: ".sha256";     ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKCR; Subkey: ".sha256sum";  ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
 Root: HKCR; Subkey: ".sha256sums"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
-Root: HKCR; Subkey: ".sha384"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
-Root: HKCR; Subkey: ".sha512"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
-Root: HKCR; Subkey: ".sha512sum"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKCR; Subkey: ".sha384";     ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKCR; Subkey: ".sha512";     ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKCR; Subkey: ".sha512sum";  ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
 Root: HKCR; Subkey: ".sha512sums"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
-Root: HKCR; Subkey: ".sha3"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKCR; Subkey: ".sha3";       ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKCR; Subkey: ".sha3-512";   ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKCR; Subkey: ".sha3-224";   ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKCR; Subkey: ".sha3-256";   ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKCR; Subkey: ".sha3-384";   ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKCR; Subkey: ".k12-264";    ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKCR; Subkey: ".ph128-264";  ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKCR; Subkey: ".ph256-528";  ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKCR; Subkey: ".blake3";     ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKCR; Subkey: ".blake2sp";   ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKCR; Subkey: ".xxh32";      ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKCR; Subkey: ".xxh64";      ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKCR; Subkey: ".xxh3-64";    ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKCR; Subkey: ".xxh3-128";   ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKCR; Subkey: ".md4";        ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
 
 ; corz checksum that we accidentally support
 Root: HKCR; Subkey: ".hash"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation

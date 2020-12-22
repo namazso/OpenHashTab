@@ -523,23 +523,32 @@ static const char* const sha224_exts[] = { "sha224", "sha224sum", nullptr };
 static const char* const sha256_exts[] = { "sha256", "sha256sum", "sha256sums", nullptr };
 static const char* const sha384_exts[] = { "sha384", nullptr };
 static const char* const sha512_exts[] = { "sha512", "sha512sum", "sha512sums", nullptr };
+static const char* const sha3_512_exts[] = { "sha3", "sha3-512",nullptr };
+
+// i made these up so people don't complain about default filenames
 static const char* const sha3_224_exts[] = { "sha3-224", nullptr };
 static const char* const sha3_256_exts[] = { "sha3-256", nullptr };
 static const char* const sha3_384_exts[] = { "sha3-384", nullptr };
-static const char* const sha3_512_exts[] = { "sha3", "sha3-512",nullptr };
 static const char* const k12_264_exts[] = { "k12-264", nullptr };
 static const char* const ph128_264_exts[] = { "ph128-264", nullptr };
 static const char* const ph256_528_exts[] = { "ph256-528", nullptr };
+static const char* const blake3_exts[] = { "blake3", nullptr };
+static const char* const blake2sp_exts[] = { "blake2sp", nullptr };
+static const char* const xxh32_exts[] = { "xxh32", nullptr };
+static const char* const xxh64_exts[] = { "xxh64", nullptr };
+static const char* const xxh3_64_exts[] = { "xxh3-64", nullptr };
+static const char* const xxh3_128_exts[] = { "xxh3-128", nullptr };
+static const char* const md4_exts[] = { "md4", nullptr };
 
 constexpr HashAlgorithm HashAlgorithm::k_algorithms[] =
 {
   { "CRC32", 4, no_exts, hash_context_factory<Crc32HashContext>, false },
-  { "XXH32", 4, no_exts, hash_context_factory<XXH32HashContext>, false },
-  { "XXH64", 8, no_exts, hash_context_factory<XXH64HashContext>, false },
-  { "XXH3-64", 8, no_exts, hash_context_factory<XXH3_64bitsHashContext>, false },
-  { "XXH3-128", 16, no_exts, hash_context_factory<XXH3_128bitsHashContext>, false },
+  { "XXH32", 4, xxh32_exts, hash_context_factory<XXH32HashContext>, false },
+  { "XXH64", 8, xxh64_exts, hash_context_factory<XXH64HashContext>, false },
+  { "XXH3-64", 8, xxh3_64_exts, hash_context_factory<XXH3_64bitsHashContext>, false },
+  { "XXH3-128", 16, xxh3_128_exts, hash_context_factory<XXH3_128bitsHashContext>, false },
 //  { "MD2", 16, no_exts, hash_context_factory<Md2HashContext>, false },
-  { "MD4", 16, no_exts, hash_context_factory<Md4HashContext>, false },
+  { "MD4", 16, md4_exts, hash_context_factory<Md4HashContext>, false },
   { "MD5", 16, md5_exts, hash_context_factory<Md5HashContext>, false },
   { "RipeMD160", 20, ripemd160_exts, hash_context_factory<RipeMD160HashContext>, true },
   { "SHA-1", 20, sha1_exts, hash_context_factory<Sha1HashContext>, true },
@@ -547,7 +556,7 @@ constexpr HashAlgorithm HashAlgorithm::k_algorithms[] =
   { "SHA-256", 32, sha256_exts, hash_context_factory<Sha256HashContext>, true },
   { "SHA-384", 48, sha384_exts, hash_context_factory<Sha384HashContext>, true },
   { "SHA-512", 64, sha512_exts, hash_context_factory<Sha512HashContext>, true },
-  { "Blake2sp", 32, no_exts, hash_context_factory<Blake2SpHashContext>, true },
+  { "Blake2sp", 32, blake2sp_exts, hash_context_factory<Blake2SpHashContext>, true },
   { "SHA3-224", 28, sha3_224_exts, hash_context_factory<SHA3_224HashContext>, true },
   { "SHA3-256", 32, sha3_256_exts, hash_context_factory<SHA3_256HashContext>, true },
   { "SHA3-384", 48, sha3_384_exts, hash_context_factory<SHA3_384HashContext>, true },
@@ -555,7 +564,7 @@ constexpr HashAlgorithm HashAlgorithm::k_algorithms[] =
   { "K12-264", 33, k12_264_exts, hash_context_factory<K12_264HashContext>, true },
   { "PH128-264", 33, ph128_264_exts, hash_context_factory<PH128_264HashContext>, true },
   { "PH256-528", 66, ph256_528_exts, hash_context_factory<PH256_528HashContext>, true },
-  { "BLAKE3", 32, no_exts, hash_context_factory<Blake3HashContext>, true },
+  { "BLAKE3", 32, blake3_exts, hash_context_factory<Blake3HashContext>, true },
 };
 
 extern "C" __declspec(dllexport) const HashAlgorithm* Algorithms()
