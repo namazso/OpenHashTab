@@ -24,6 +24,7 @@
 
 #include <cassert>
 #include <mCtrl/staticlib.h>
+#include <mCtrl/treelist.h>
 
 // COpenHashTabShlExt
 
@@ -36,8 +37,6 @@ HRESULT STDMETHODCALLTYPE COpenHashTabShlExt::Initialize(
   UNREFERENCED_PARAMETER(folder);
   UNREFERENCED_PARAMETER(prog_id);
 
-  mcInitialize(utl::GetInstance(), 0);
-
   // Init the common controls.
   INITCOMMONCONTROLSEX iccex
   {
@@ -45,6 +44,9 @@ HRESULT STDMETHODCALLTYPE COpenHashTabShlExt::Initialize(
     ICC_WIN95_CLASSES
   };
   InitCommonControlsEx(&iccex);
+
+  mcInitialize(utl::GetInstance(), 0);
+  mcTreeList_Initialize();
 
   // Read the list of folders from the data object. They're stored in HDROP
   // form, so just get the HDROP handle and then use the drag 'n' drop APIs
@@ -103,6 +105,7 @@ HRESULT STDMETHODCALLTYPE COpenHashTabShlExt::Initialize(
 
 void COpenHashTabShlExt::FinalRelease()
 {
+  mcTreeList_Terminate();
   mcTerminate();
 }
 

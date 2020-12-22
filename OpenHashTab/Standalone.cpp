@@ -20,6 +20,9 @@
 #include "path.h"
 #include "utl.h"
 
+#include <mCtrl/treelist.h>
+#include <mCtrl/staticlib.h>
+
 HWND CreateDialogFromChildDialogResourceParam(
   _In_opt_  HINSTANCE hInstance,
   _In_      LPCWSTR   lpTemplateName,
@@ -120,6 +123,9 @@ extern "C" __declspec(dllexport) void CALLBACK StandaloneEntryW(
   };
   InitCommonControlsEx(&iccex);
 
+  mcInitialize(utl::GetInstance(), 0);
+  mcTreeList_Initialize();
+
   auto argc = 0;
   const auto argv = CommandLineToArgvW(lpCmdLine, &argc);
   const std::list<std::wstring> files{argv, argv + argc};
@@ -150,6 +156,9 @@ extern "C" __declspec(dllexport) void CALLBACK StandaloneEntryW(
       DispatchMessageW(&msg);
     }
   }
+
+  mcTreeList_Terminate();
+  mcTerminate();
 
   // this will wait for hask tasks to gracefully terminate.
   // should we maybe just kill ourselves with ExitProcess
