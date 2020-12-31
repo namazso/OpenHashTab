@@ -160,3 +160,62 @@ HRESULT STDMETHODCALLTYPE COpenHashTabShlExt::ReplacePage(
 
   return E_NOTIMPL;
 }
+
+// IContextMenu
+
+HRESULT COpenHashTabShlExt::QueryContextMenu(HMENU hmenu, UINT indexMenu, UINT idCmdFirst, UINT idCmdLast, UINT uFlags)
+{
+  // If the flags include CMF_DEFAULTONLY then we shouldn't do anything.
+  if (uFlags & CMF_DEFAULTONLY)
+    return S_OK;
+
+  // If invoked on a shortcut, don't add options - the user probably doesn't want to hash the shortcut
+  if (uFlags & CMF_VERBSONLY)
+    return S_OK;
+
+  InsertMenuW(
+    hmenu,
+    indexMenu,
+    MF_BYPOSITION,
+    idCmdFirst,
+    utl::GetString(IDS_HASHES).c_str()
+  );
+
+  return MAKE_HRESULT(SEVERITY_SUCCESS, FACILITY_NULL, 1);
+}
+
+HRESULT COpenHashTabShlExt::InvokeCommand(CMINVOKECOMMANDINFO* pici)
+{
+  if(IS_INTRESOURCE(pici->lpVerb) && (UINT)(UINT_PTR)pici->lpVerb == 0)
+  {
+    const auto coordinator = new WindowedCoordinator(_files_raw);
+
+    const auto dialog = wnd::CreateDialogFromChildDialogResourceParam(
+      utl::GetInstance(),
+      MAKEINTRESOURCEW(IDD_OPENHASHTAB_PROPPAGE),
+      pici->hwnd,
+      &wnd::DlgProcClassBinder<MainDialog>,
+      reinterpret_cast<LPARAM>(coordinator)
+    );
+    ShowWindow(dialog, SW_SHOW);
+    
+    return S_OK;
+  }
+
+  return E_INVALIDARG;
+}
+
+HRESULT COpenHashTabShlExt::GetCommandString(UINT_PTR idCmd, UINT uType, UINT* pReserved, CHAR* pszName, UINT cchMax)
+{
+  // Check idCmd, it must be 0 since we have only one menu item.
+  if (0 != idCmd)
+    return E_INVALIDARG;
+  
+  if (uType == GCS_HELPTEXTW)
+  {
+    wcscpy_s((LPWSTR)pszName, cchMax, L"Is this even displayed anywhere??");
+    return S_OK;
+  }
+
+  return E_INVALIDARG;
+}

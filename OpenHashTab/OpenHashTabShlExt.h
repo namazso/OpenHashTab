@@ -36,7 +36,8 @@ class ATL_NO_VTABLE COpenHashTabShlExt :
   public CComObjectRootEx<CComSingleThreadModel>,
   public CComCoClass<COpenHashTabShlExt, &CLSID_OpenHashTabShlExt>,
   public IShellExtInit,
-  public IShellPropSheetExt
+  public IShellPropSheetExt,
+  public IContextMenu
 {
 protected:
   std::list<std::wstring> _files_raw;
@@ -62,6 +63,27 @@ public:
     _In_ LPFNSVADDPROPSHEETPAGE replace_with_proc,
     _In_ LPARAM                 lparam
   ) override;
+  
+  // IContextMenu
+  HRESULT STDMETHODCALLTYPE QueryContextMenu(
+    _In_  HMENU hmenu,
+    _In_  UINT indexMenu,
+    _In_  UINT idCmdFirst,
+    _In_  UINT idCmdLast,
+    _In_  UINT uFlags
+  ) override;
+
+  HRESULT STDMETHODCALLTYPE InvokeCommand(
+    _In_  CMINVOKECOMMANDINFO* pici
+  ) override;
+
+  HRESULT STDMETHODCALLTYPE GetCommandString(
+    _In_  UINT_PTR idCmd,
+    _In_  UINT uType,
+    _Reserved_  UINT* pReserved,
+    _Out_writes_bytes_((uType& GCS_UNICODE) ? (cchMax * sizeof(wchar_t)) : cchMax) _When_(!(uType& (GCS_VALIDATEA | GCS_VALIDATEW)), _Null_terminated_)  CHAR* pszName,
+    _In_  UINT cchMax
+  ) override;
 
 DECLARE_REGISTRY_RESOURCEID(IDR_OPENHASHTABSHLEXT)
 
@@ -70,6 +92,7 @@ DECLARE_NOT_AGGREGATABLE(COpenHashTabShlExt)
 BEGIN_COM_MAP(COpenHashTabShlExt)
   COM_INTERFACE_ENTRY(IShellExtInit)
   COM_INTERFACE_ENTRY(IShellPropSheetExt)
+  COM_INTERFACE_ENTRY(IContextMenu)
 END_COM_MAP()
 
   DECLARE_PROTECT_FINAL_CONSTRUCT()

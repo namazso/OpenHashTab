@@ -87,3 +87,16 @@ public:
     PostQuitMessage(0);
   }
 };
+
+class WindowedCoordinator : public Coordinator
+{
+public:
+  using Coordinator::Coordinator;
+  ~WindowedCoordinator() = default;
+
+  void UnregisterWindow() override
+  {
+    Coordinator::UnregisterWindow();
+    delete this;
+  }
+};
