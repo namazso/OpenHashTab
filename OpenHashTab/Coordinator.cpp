@@ -1,4 +1,4 @@
-//    Copyright 2019-2020 namazso <admin@namazso.eu>
+//    Copyright 2019-2021 namazso <admin@namazso.eu>
 //    This file is part of OpenHashTab.
 //
 //    OpenHashTab is free software: you can redistribute it and/or modify
