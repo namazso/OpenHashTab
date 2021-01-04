@@ -16,11 +16,11 @@ HKCR
         {
             NoRemove PropertySheetHandlers
             {
-                {23b5bdd4-7669-42b8-9cdc-beebc8a5baa9}
+                ForceRemove {23b5bdd4-7669-42b8-9cdc-beebc8a5baa9}
             }
             NoRemove ContextMenuHandlers
             {
-			    ForceRemove OpenHashTabShlExt = s '{23b5bdd4-7669-42b8-9cdc-beebc8a5baa9}'
+                ForceRemove {23b5bdd4-7669-42b8-9cdc-beebc8a5baa9}
             }
         }
     }
