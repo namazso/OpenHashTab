@@ -74,7 +74,7 @@ Translate the project at [Weblate](https://hosted.weblate.org/projects/openhasht
 
 ### Translation contributors
 
-In addition to contributors reported by git, some translations were also contributed by: **xprism**, **[@NieLnchn](https://github.com/NieLnchn)** (Simplified Chinese), **Niccolò Zanichelli** (Italian), **[@vmcall](https://github.com/vmcall/)** (Danish)
+In addition to contributors reported by git, some translations were also contributed by: **xprism**, **[@NieLnchn](https://github.com/NieLnchn)** (Simplified Chinese), **Niccolò Zanichelli** (Italian)
 
 ## Building
 
