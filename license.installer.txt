@@ -46,6 +46,28 @@ brg_endian.h (from XKCP) (licensed under BSD 3-Clause license):
 Copyright (c) 1998-2008 Brian Gladman, Worcester, UK. All rights reserved.
 https://github.com/XKCP/XKCP/blob/master/lib/common/brg_endian.h
 
+mCtrl: Additional Win32 controls (relicensed to GPLv3 under LGPLv2.1 clause 3)
+Copyright (c) 2015-2020 Martin Mitas
+https://github.com/mity/mctrl https://mctrl.org
+
+MD4C: Markdown parser for C (licensed under MIT license)
+Copyright (c) 2016-2020 Martin Mitas
+http://github.com/mity/md4c
+
+HSLuv-C: Human-friendly HSL (licensed under MIT license)
+Copyright (c) 2015 Alexei Boronine (original idea, JavaScript implementation)
+Copyright (c) 2015 Roger Tallada (Obj-C implementation)
+Copyright (c) 2017 Martin Mitas (C implementation, based on Obj-C implementation)
+http://github.com/hsluv/hsluv-c http://www.hsluv.org
+
+C-Win32 (licensed under MIT license)
+Copyright (c) 2017-2019 Martin Mitas
+http://github.com/mity/c-win32
+
+C Reusables (licensed under MIT license)
+Copyright (c) 2016-2017 Martin Mitas
+http://github.com/mity/c-reusables
+
 streebog (licensed under GPLv3, upgraded via GPLv2+ statement):
 Copyright (c) 2013, Alexey Degtyarev <alexey@renatasystems.org>.
 https://github.com/adegtyarev/streebog
