@@ -53,7 +53,7 @@ Most of the actions should be obvious. Some not-so-obvious features are listed h
 
 [Latest release](https://github.com/namazso/OpenHashTab/releases/latest/download/OpenHashTab_setup.exe)
 
-[Development builds](https://github.com/namazso/OpenHashTab/actions)
+[Development builds](https://github.com/namazso/OpenHashTab/actions?query=branch%3Amaster)
 
 ## Screenshot
 
