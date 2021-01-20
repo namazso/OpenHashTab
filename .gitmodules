@@ -22,6 +22,3 @@
 [submodule "XKCP"]
 	path = XKCP
 	url = https://github.com/XKCP/XKCP.git
-[submodule "mctrl"]
-	path = mctrl
-	url = https://github.com/mity/mctrl.git
