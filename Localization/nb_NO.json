@@ -37,6 +37,9 @@
         "UPDATE_NEWEST_TITLE": "Gratulerer",
         "UPDATE_AVAILABLE_TEXT": "Ny versjon %hu.%hu.%hu tilgjengelig",
         "UPDATE_AVAILABLE_TITLE": "Oppdatering tilgjengelig",
-        "UPDATE_DISABLED_IN_DEV_BUILD": "Utilgjengelig i utviklingsbygg"
+        "UPDATE_DISABLED_IN_DEV_BUILD": "Utilgjengelig i utviklingsbygg",
+        "CLIPBOARD_AUTOENABLE_IF_NONE": "Kun hvis ingen algoritmer av den lengden er påslått",
+        "CLIPBOARD_AUTOENABLE_EXCLUSIVE": "Skru av alle andre algoritmer",
+        "CLIPBOARD_AUTOENABLE": "Skru på algoritmer i under hele kjøringen vis utklippstavlen inneholder en sjekksum"
     }
 }
