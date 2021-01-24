@@ -46,7 +46,7 @@ public:
   const char* GetExtension() const override
   {
     const auto v = HashAlgorithm::Algorithms()[idx].GetExtensions()[0];
-    return v ? v : ".sums";
+    return v ? v : "sums";
   }
 };
 
@@ -57,7 +57,7 @@ public:
   const char* GetName() const override { return "SFV (CRC32)"; }
   bool IsEnabled(Settings* settings) const override { return settings->algorithms[HashAlgorithm::IdxByName("CRC32")]; }
   std::string GetExportString(Settings* settings, bool for_clipboard, const std::list<FileHashTask*>& files) const override;
-  const char* GetExtension() const override { return ".sfv"; }
+  const char* GetExtension() const override { return "sfv"; }
 };
 
 class DotHashExporter : public Exporter
@@ -67,7 +67,7 @@ public:
   const char* GetName() const override { return ".hash (corz)"; }
   bool IsEnabled(Settings* settings) const override { return true; }
   std::string GetExportString(Settings* settings, bool for_clipboard, const std::list<FileHashTask*>& files) const override;
-  const char* GetExtension() const override { return ".hash"; }
+  const char* GetExtension() const override { return "hash"; }
 };
 
 std::string SFVExporter::GetExportString(
