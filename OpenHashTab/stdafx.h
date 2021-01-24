@@ -23,6 +23,9 @@
 
 #define NOMINMAX
 
+// thanks, microsoft
+#define Unknown Unknown_FROM_WINDOWS
+
 #include "targetver.h"
 
 #define PHNT_VERSION PHNT_WIN7
@@ -53,4 +56,6 @@
 #include <WinUser.h>
 #include <CommCtrl.h>
 #include <VersionHelpers.h>
-#include <pathcch.h>
+#include <PathCch.h>
+
+#undef Unknown

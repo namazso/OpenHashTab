@@ -17,203 +17,127 @@
 
 #include "SumFileParser.h"
 
+#include <regex>
+#include <string_view>
+
+#include "base64.h"
 #include "Settings.h"
 #include "utl.h"
 
-class SumFileParser
+constexpr char k_regex_hex[] = R"(([0-9a-fA-F]{8,512}) [ \*](.+))";
+constexpr char k_regex_b64[] = R"(([0-9a-zA-Z=+\/,\-_]{6,512}) [ \*](.+))";
+constexpr char k_regex_sfv[] = R"((.+)\s+([0-9a-fA-F]{8}))";
+
+class SumFileParser2
 {
-  std::vector<uint8_t> _current_hash{};
-  std::string _current_filename{};
-  FileSumList _files{};
+  std::regex _hex{ k_regex_hex };
+  std::regex _b64{ k_regex_b64 };
+  std::regex _sfv{ k_regex_sfv };
 
-  uint8_t _half_byte{};
-
-  enum class State
+  enum class CommentStyle
   {
-    FileBegin,
-    Bom1,
-    Bom2,
-    LineBegin,
-    Comment,
-    Hash1,
-    Hash2,
-    Space,
-    SpaceOrStar,
-    FileName,
+    Unknown,
+    Semicolon,
+    Hash
+  } _comment{ CommentStyle::Unknown };
 
-    Invalid
-  };
-
-  State _state{ State::FileBegin };
-
+  enum class HashStyle
+  {
+    Unknown,
+    Hex,
+    Sfv,
+    Base64
+  } _hash{ HashStyle::Unknown };
 
 public:
-  const FileSumList& GetFiles() const { return _files; }
-  FileSumList& GetFiles() { return _files; }
+  FileSumList files{};
 
-  bool Process(int c)
+  bool ProcessLine(std::string_view sv)
   {
-    switch (_state)
+    using svmatch = std::match_results<std::string_view::iterator>;
+
+    if (sv.find_first_not_of("\r\n\t\f\v ") == std::string_view::npos)
+      return true; // empty line
+
+    if ((_comment == CommentStyle::Unknown || _comment == CommentStyle::Hash) && sv[0] == L'#')
     {
-    case State::FileBegin:
-      switch (c)
-      {
-      case '\xEF':
-        _state = State::Bom1;
-        break;
-      default:
-        _state = State::LineBegin;
-        Process(c);
-        break;
-      }
-      break;
-    case State::Bom1:
-      switch (c)
-      {
-      case '\xBB':
-        _state = State::Bom2;
-        break;
-      default:
-        _state = State::Invalid;
-        break;
-      }
-      break;
-    case State::Bom2:
-      switch (c)
-      {
-      case '\xBF':
-        _state = State::LineBegin;
-        break;
-      default:
-        _state = State::Invalid;
-        break;
-      }
-      break;
-    case State::LineBegin:
-      switch (c)
-      {
-      case '\r':
-      case '\n':
-      case EOF:
-        break;
-      case '#':
-        _state = State::Comment;
-        break;
-      default:
-        if (utl::unhex(c) != 0xFF)
-        {
-          _state = State::Hash1;
-          Process(c);
-        }
-        else
-        {
-          _state = State::Invalid;
-        }
-        break;
-      }
-      break;
-    case State::Comment:
-      switch (c)
-      {
-      case '\r':
-      case '\n':
-        _state = State::LineBegin;
-        break;
-      default:
-        break;
-      }
-      break;
-    case State::Hash1:
-    {
-      const auto hexchar = utl::unhex(c);
-      if (hexchar != 0xFF)
-      {
-        _half_byte = static_cast<uint8_t>(hexchar << 4);
-        _state = State::Hash2;
-      }
-      else
-      {
-        _state = State::Space;
-        Process(c);
-      }
-    }
-    break;
-    case State::Hash2:
-    {
-      const auto hexchar = utl::unhex(c);
-      if (hexchar != 0xFF)
-      {
-        _current_hash.push_back(hexchar | _half_byte);
-        if (_current_hash.size() > HashAlgorithm::k_max_size)
-          _state = State::Space;
-        else
-          _state = State::Hash1;
-      }
-      else
-      {
-        _state = State::Invalid;
-      }
-    }
-    break;
-    case State::Space:
-      switch(c)
-      {
-      case ' ':
-        _state = State::SpaceOrStar;
-        break;
-      // as a special exception allow no filename, to work with files containing a single hash
-      case '\r':
-      case '\n':
-      case EOF:
-        _state = State::FileName;
-        Process(c);
-        break;
-      default:
-        _state = State::Invalid;
-        break;
-      }
-      break;
-    case State::SpaceOrStar:
-      _state = (c == ' ' || c == '*') ? State::FileName : State::Invalid;
-      break;
-    case State::FileName:
-      switch (c)
-      {
-      case '\r':
-      case '\n':
-      case EOF:
-        _files.emplace_back(std::move(_current_filename), std::move(_current_hash));
-        _current_filename.clear();
-        _current_hash.clear();
-        _state = State::LineBegin;
-        break;
-      case '\0': // disallow filenames containing null
-        _state = State::Invalid;
-        break;
-      default:
-        _current_filename += static_cast<char>(c);
-        break;
-      }
-      break;
-    case State::Invalid:
-      break;
+      _comment = CommentStyle::Hash;
+      return true;
     }
 
-    return _state != State::Invalid;
+    if ((_comment == CommentStyle::Unknown || _comment == CommentStyle::Semicolon) && sv[0] == L';')
+    {
+      _comment = CommentStyle::Semicolon;
+      return true;
+    }
+
+    if ((_hash == HashStyle::Unknown || _hash == HashStyle::Sfv))
+    {
+      svmatch pieces;
+      if(std::regex_match(begin(sv), end(sv), pieces, _sfv))
+      {
+        _hash = HashStyle::Sfv;
+        auto file = pieces[1].str();
+        // According to wikipedia delimiter is always space.
+        const auto notspace = file.find_last_not_of(' ');
+        file.resize(notspace == std::string_view::npos ? 0 : notspace + 1);
+        auto hash = utl::HashStringToBytes(pieces[2].str().c_str());
+        if (!hash.empty())
+        {
+          files.emplace_back(std::move(file), std::move(hash));
+          return true;
+        }
+      }
+    }
+
+    if ((_hash == HashStyle::Unknown || _hash == HashStyle::Hex))
+    {
+      svmatch pieces;
+      if (std::regex_match(begin(sv), end(sv), pieces, _hex))
+      {
+        _hash = HashStyle::Hex;
+        auto hash = utl::HashStringToBytes(pieces[1].str().c_str());
+        if (!hash.empty())
+        {
+          files.emplace_back(pieces[2], std::move(hash));
+          return true;
+        }
+      }
+    }
+
+    if ((_hash == HashStyle::Unknown || _hash == HashStyle::Base64))
+    {
+      svmatch pieces;
+      if (std::regex_match(begin(sv), end(sv), pieces, _b64))
+      {
+        _hash = HashStyle::Base64;
+        const auto str = pieces[1].str();
+        auto hash = b64::decode(str.c_str(), str.size());
+        if (!hash.empty())
+        {
+          files.emplace_back(pieces[2], std::move(hash));
+          return true;
+        }
+      }
+    }
+
+    return false;
   }
 };
 
-// Returns error code if reading failed. If the file is not a sumfile or an empty one no error is returned, but output is empty
+// Returns error code if reading failed. If the file is not a sumfile or empty success is returned, but output is empty
 DWORD TryParseSumFile(HANDLE h, FileSumList& output)
 {
   static constexpr auto k_max_sumfile_size = 1u << 20; // 1 MB
+  static constexpr auto k_min_sumfile_size = 6; // 6 bytes for base64 CRC
+
   output.clear();
 
   BY_HANDLE_FILE_INFORMATION fi;
   if (!GetFileInformationByHandle(h, &fi))
     return GetLastError();
 
-  if (fi.nFileSizeHigh > 0 || fi.nFileSizeLow > k_max_sumfile_size || fi.nFileSizeLow == 0)
+  if (fi.nFileSizeHigh > 0 || fi.nFileSizeLow > k_max_sumfile_size || fi.nFileSizeLow < k_min_sumfile_size)
     return ERROR_SUCCESS;
 
   const auto size = static_cast<size_t>(fi.nFileSizeLow);
@@ -242,21 +166,39 @@ DWORD TryParseSumFile(HANDLE h, FileSumList& output)
     return error;
   }
 
-  SumFileParser sfp;
-  const auto first = static_cast<char*>(address);
+  auto first = static_cast<char*>(address);
   const auto last = first + size;
-  for (auto it = first; it != last; ++it)
-    if (!sfp.Process(*it))
+
+  if (0 == memcmp(first, "\xEF\xBB\xBF", 3))
+    first += 3; // file is at least 6 bytes so this is safe
+
+  SumFileParser2 sfp;
+  auto failed = false;
+  for (auto it = first; it != last;)
+  {
+    // for CRLF we just accidentally interpret an extra empty line, which is valid in all formats
+    const auto newline = std::find_if(it, last, [](char c) { return c == '\n' || c == '\r'; });
+    // skip empty line
+    if (newline == it)
+    {
+      ++it;
+      continue;
+    }
+
+    if (!sfp.ProcessLine({ it, (size_t)(newline - it) }))
+    {
+      failed = true;
       break;
+    }
+
+    it = newline;
+  }
 
   UnmapViewOfFile(address);
   CloseHandle(mapping);
 
-  if (sfp.Process(EOF))
-  {
-    output = std::move(sfp.GetFiles());
-    return ERROR_SUCCESS;
-  }
+  if (!failed)
+    output = std::move(sfp.files);
 
   return ERROR_SUCCESS;
 }
