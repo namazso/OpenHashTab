@@ -109,6 +109,31 @@ static std::wstring ListView_GetItemTextStr(HWND hwnd, int item, int subitem)
   return name;
 }
 
+static std::pair<FileHashTask*, size_t> TaskAlgPairFromLVIndex(HWND list_view, int index)
+{
+  LVITEMW lvitem
+  {
+    LVIF_PARAM,
+    index
+  };
+  ListView_GetItem(list_view, &lvitem);
+  if (!lvitem.lParam) // TODO: handle virustotal shit better
+    return { nullptr, 0 };
+  return FileHashTask::FromLparam(lvitem.lParam);
+}
+
+template <typename Fn>
+int CALLBACK ListView_SortItemsTemplate_Helper(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
+{
+  return (*(Fn*)lParamSort)((int)lParam1, (int)lParam2);
+}
+
+template <typename Fn>
+void ListView_SortItemsTemplate(HWND lv, Fn fn)
+{
+  ListView_SortItemsEx(lv, &ListView_SortItemsTemplate_Helper<Fn>, &fn);
+}
+
 MainDialog::MainDialog(HWND hwnd, void* prop_page)
   : _hwnd(hwnd)
   , _prop_page(static_cast<Coordinator*>(prop_page))
@@ -140,15 +165,10 @@ INT_PTR MainDialog::CustomDrawListView(LPARAM lparam, HWND list)
     {
     case ColIndex_Hash:
     {
-      LVITEMW lvitem
-      {
-        LVIF_PARAM,
-        static_cast<int>(lplvcd->nmcd.dwItemSpec)
-      };
-      ListView_GetItem(list, &lvitem);
-      if (!lvitem.lParam) // TODO: handle virustotal shit better
-        break;
-      const auto file_hash = FileHashTask::FromLparam(lvitem.lParam);
+      const auto index = static_cast<int>(lplvcd->nmcd.dwItemSpec);
+      const auto file_hash = TaskAlgPairFromLVIndex(list, index);
+      if (!file_hash.first)
+        break; // TODO: handle virustotal shit better
       const auto file = file_hash.first;
       const auto hasher = file_hash.second;
       const auto color_type = HashColorTypeForFile(file, hasher);
@@ -271,6 +291,67 @@ void MainDialog::ListPopupMenu(POINT pt)
   }
 
   SetTempStatus(utl::GetString(IDS_COPIED).c_str(), 1000);
+}
+
+void MainDialog::ListSort(ColIndex col, bool desc)
+{
+  /*
+  // Use with ListView_SortItems
+  // Sorting by hash value makes little sense, so we sort by the "color" if it. lParamSort controls asc or desc.
+  static int CALLBACK ListHashValueComparor(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
+  {
+    // VirusTotal lParam is 0, so we make it go on the bottom
+
+    int color1 = -1;
+    int color2 = -1;
+    if(lParam1)
+    {
+      const auto pair = FileHashTask::FromLparam(lParam1);
+      color1 = (int)HashColorTypeForFile(pair.first, pair.second);
+    }
+    if (lParam2)
+    {
+      const auto pair = FileHashTask::FromLparam(lParam2);
+      color2 = (int)HashColorTypeForFile(pair.first, pair.second);
+    }
+    return (color1 < color2 ? -1 : (color1 == color2 ? 0 : 1)) * (lParamSort ? 1 : -1);
+  }
+
+  // Use with ListView_SortItemsEx
+  // Sorts lexographically by Column. lParamSort should be HWND of ListView
+  template <int Column, bool Desc>
+  int CALLBACK ListGenericComparor(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
+  {
+    const auto lv = (HWND)lParamSort;
+    const auto str1 = ListView_GetItemTextStr(lv, lParam1, Column);
+    const auto str2 = ListView_GetItemTextStr(lv, lParam2, Column);
+    return str1.compare(str2) * (Desc ? -1 : 1);
+  }*/
+  const auto lv = _hwnd_HASH_LIST;
+  if (col == ColIndex_Hash)
+  {
+    ListView_SortItemsTemplate(lv, [lv, desc](int idx1, int idx2) -> int
+      {
+        int color1 = -1;
+        int color2 = -1;
+        const auto pair1 = TaskAlgPairFromLVIndex(lv, idx1);
+        const auto pair2 = TaskAlgPairFromLVIndex(lv, idx2);
+        if (pair1.first)
+          color1 = (int)HashColorTypeForFile(pair1.first, pair1.second);
+        if (pair2.first)
+          color2 = (int)HashColorTypeForFile(pair2.first, pair2.second);
+        return (color1 < color2 ? -1 : color1 == color2 ? 0 : 1) * (desc ? -1 : 1);
+      });
+  }
+  else
+  {
+    ListView_SortItemsTemplate(lv, [lv, col, desc](int idx1, int idx2) -> int
+      {
+        const auto str1 = ListView_GetItemTextStr(lv, idx1, col);
+        const auto str2 = ListView_GetItemTextStr(lv, idx2, col);
+        return str1.compare(str2) * (desc ? -1 : 1);
+      });
+  }
 }
 
 std::string MainDialog::GetSumfileAsString(const Exporter* exporter, bool for_clipboard)
@@ -497,6 +578,8 @@ INT_PTR MainDialog::OnAllFilesFinished(UINT, WPARAM, LPARAM)
     OnHashEditChanged(0, 0, 0); // fake a change as if the user pasted it
   }
 
+  ListSort(ColIndex_Filename, false);
+
   return FALSE;
 }
 
@@ -533,6 +616,18 @@ INT_PTR MainDialog::OnHashListNotify(UINT, WPARAM, LPARAM lparam)
   case NM_RCLICK:
     ListPopupMenu(reinterpret_cast<LPNMITEMACTIVATE>(lparam)->ptAction);
     break;
+
+  case LVN_COLUMNCLICK:
+  {
+    const auto plv = (LPNMLISTVIEW)lparam;
+    const auto col = (ColIndex)plv->iSubItem;
+    if (_last_sort_col != col)
+      _last_sort_asc = false; // when sorting by new column, always start with ascending
+    _last_sort_col = col;
+    _last_sort_asc ^= 1;
+    ListSort(col, _last_sort_asc);
+    break;
+  }
 
   default:
     break;

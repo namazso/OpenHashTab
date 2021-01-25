@@ -25,6 +25,13 @@ class MainDialog
 {
   static constexpr auto k_status_update_timer_id = (UINT_PTR)0x7c253816f7ef92ea;
 
+  enum ColIndex : int
+  {
+    ColIndex_Filename,
+    ColIndex_Algorithm,
+    ColIndex_Hash
+  };
+
   HWND _hwnd{};
   utl::UniqueFont _font { utl::GetDPIScaledFont() };
   Coordinator* _prop_page;
@@ -51,16 +58,12 @@ class MainDialog
   unsigned _count_mismatch{};
   unsigned _count_unknown{};
 
+  ColIndex _last_sort_col = ColIndex_Filename;
+  bool _last_sort_asc = false;
+
   bool _temporary_status{};
   bool _finished{};
-
-  enum ColIndex : int
-  {
-    ColIndex_Filename,
-    ColIndex_Algorithm,
-    ColIndex_Hash
-  };
-
+  
   static INT_PTR CustomDrawListView(LPARAM lparam, HWND list);
 
   std::string GetSumfileAsString(const Exporter* exporter, bool for_clipboard);
@@ -70,6 +73,7 @@ class MainDialog
   
   void ListDoubleClick(int item, int subitem);
   void ListPopupMenu(POINT pt);
+  void ListSort(ColIndex col, bool desc);
 
 public:
   MainDialog(HWND hwnd, void* prop_page);
