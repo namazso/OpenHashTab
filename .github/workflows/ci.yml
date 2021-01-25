@@ -133,7 +133,7 @@ jobs:
       if: ${{ steps.checktag.outputs.is_release == 'yes' }}
       run: |
         cd ${{ github.workspace }}
-        7z a symbols.7z .\bin\Release\*\OpenHashTab.pdb
+        7z a symbols.7z .\bin\Release\*\*.pdb
         
     - name: Upload release symbols
       if: ${{ steps.checktag.outputs.is_release == 'yes' }}
