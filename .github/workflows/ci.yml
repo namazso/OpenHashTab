@@ -124,7 +124,6 @@ jobs:
 
     - name: Upload release setup (User)
       if: ${{ steps.checktag.outputs.is_release == 'yes' }}
-      id: upload-release-binary
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -136,7 +135,6 @@ jobs:
 
     - name: Upload release setup (System)
       if: ${{ steps.checktag.outputs.is_release == 'yes' }}
-      id: upload-release-binary
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
