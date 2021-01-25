@@ -295,38 +295,6 @@ void MainDialog::ListPopupMenu(POINT pt)
 
 void MainDialog::ListSort(ColIndex col, bool desc)
 {
-  /*
-  // Use with ListView_SortItems
-  // Sorting by hash value makes little sense, so we sort by the "color" if it. lParamSort controls asc or desc.
-  static int CALLBACK ListHashValueComparor(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
-  {
-    // VirusTotal lParam is 0, so we make it go on the bottom
-
-    int color1 = -1;
-    int color2 = -1;
-    if(lParam1)
-    {
-      const auto pair = FileHashTask::FromLparam(lParam1);
-      color1 = (int)HashColorTypeForFile(pair.first, pair.second);
-    }
-    if (lParam2)
-    {
-      const auto pair = FileHashTask::FromLparam(lParam2);
-      color2 = (int)HashColorTypeForFile(pair.first, pair.second);
-    }
-    return (color1 < color2 ? -1 : (color1 == color2 ? 0 : 1)) * (lParamSort ? 1 : -1);
-  }
-
-  // Use with ListView_SortItemsEx
-  // Sorts lexographically by Column. lParamSort should be HWND of ListView
-  template <int Column, bool Desc>
-  int CALLBACK ListGenericComparor(LPARAM lParam1, LPARAM lParam2, LPARAM lParamSort)
-  {
-    const auto lv = (HWND)lParamSort;
-    const auto str1 = ListView_GetItemTextStr(lv, lParam1, Column);
-    const auto str2 = ListView_GetItemTextStr(lv, lParam2, Column);
-    return str1.compare(str2) * (Desc ? -1 : 1);
-  }*/
   const auto lv = _hwnd_HASH_LIST;
   if (col == ColIndex_Hash)
   {
