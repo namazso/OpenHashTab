@@ -53,42 +53,24 @@ jobs:
         cd ${{ github.workspace }}
         cmd /C build-mctrl.bat
       
-    - name: Build Algorithms (ARM64 NEON)
+    - name: Build Algorithms (ARM64)
       run: |
         msbuild AlgorithmsDll.sln /p:Configuration=Release /p:Platform=a64-neon
       
-    - name: Build Algorithms (x86 SSE2)
+    - name: Build Algorithms (x86)
       run: |
         msbuild AlgorithmsDll.sln /p:Configuration=Release /p:Platform=x86-sse2
-      
-    - name: Build Algorithms (x86 AVX)
-      run: |
         msbuild AlgorithmsDll.sln /p:Configuration=Release /p:Platform=x86-avx
-      
-    - name: Build Algorithms (x86 AVX2)
-      run: |
         msbuild AlgorithmsDll.sln /p:Configuration=Release /p:Platform=x86-avx2
-      
-    - name: Build Algorithms (x86 AVX512)
-      run: |
         msbuild AlgorithmsDll.sln /p:Configuration=Release /p:Platform=x86-avx512
       
-    - name: Build Algorithms (x64 SSE2)
+    - name: Build Algorithms (x64)
       run: |
         msbuild AlgorithmsDll.sln /p:Configuration=Release /p:Platform=x64-sse2
-      
-    - name: Build Algorithms (x64 AVX)
-      run: |
         msbuild AlgorithmsDll.sln /p:Configuration=Release /p:Platform=x64-avx
-      
-    - name: Build Algorithms (x64 AVX2)
-      run: |
         msbuild AlgorithmsDll.sln /p:Configuration=Release /p:Platform=x64-avx2
-      
-    - name: Build Algorithms (x64 AVX512)
-      run: |
         msbuild AlgorithmsDll.sln /p:Configuration=Release /p:Platform=x64-avx512
-
+      
     - name: Build Solution (Win32)
       run: |
         msbuild "-property:Configuration=Release;Platform=x86;CI_VERSION=${{ steps.checktag.outputs.version }};CI_VERSION_MAJOR=${{ steps.checktag.outputs.version_major }};CI_VERSION_MINOR=${{ steps.checktag.outputs.version_minor }};CI_VERSION_PATCH=${{ steps.checktag.outputs.version_patch }}" OpenHashTab.sln
