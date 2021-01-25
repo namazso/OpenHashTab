@@ -169,14 +169,8 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="OpenHashTab.rgs">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="OpenHashTab.def">
       <Filter>Source Files</Filter>
-    </None>
-    <None Include="OpenHashTabShlExt.rgs">
-      <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

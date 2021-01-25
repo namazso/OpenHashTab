@@ -91,7 +91,6 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <ModuleDefinitionFile>.\OpenHashTab.def</ModuleDefinitionFile>
-      <RegisterOutput>true</RegisterOutput>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalOptions>/PDBALTPATH:%_PDB% /Brepro %(AdditionalOptions)</AdditionalOptions>
@@ -189,8 +188,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="OpenHashTab.def" />
-    <None Include="OpenHashTab.rgs" />
-    <None Include="OpenHashTabShlExt.rgs" />
   </ItemGroup>
   <ItemGroup>
     <Midl Include="OpenHashTab.idl" />

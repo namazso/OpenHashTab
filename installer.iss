@@ -24,6 +24,7 @@
 #define MyAppURL        "https://github.com/namazso/OpenHashTab"
 #define MyCopyright     "(c) namazso. Licensed under GNU GPLv3 or (at your option) later."
 #define DLLName         "OpenHashTab.dll"
+#define DLLCLSID        "{{23b5bdd4-7669-42b8-9cdc-beebc8a5baa9}"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
@@ -37,12 +38,16 @@ AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
 AppCopyright={#MyCopyright}
-CreateAppDir=no
+CreateAppDir=yes
+DefaultDirName={autopf}\OpenHashTab
 LicenseFile=license.installer.txt
-; Uncomment the following line to run in non administrative install mode (install for current user only.)
-;PrivilegesRequired=lowest
+#ifndef SYSTEM
+PrivilegesRequired=lowest
+OutputBaseFilename=OpenHashTab_setup_user
+#else
+OutputBaseFilename=OpenHashTab_setup_system
+#endif
 OutputDir=.
-OutputBaseFilename=OpenHashTab_setup
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
@@ -77,59 +82,77 @@ Name: "turkish"; MessagesFile: "compiler:Languages\Turkish.isl"
 Name: "ukrainian"; MessagesFile: "compiler:Languages\Ukrainian.isl"
 
 [Files]
-Source: "bin\Release\Win32\{#DLLName}";         DestDir: "{sys}"; Flags: ignoreversion restartreplace regserver 32bit
-Source: "bin\Release\Win32\AlgorithmsDll*.dll"; DestDir: "{sys}"; Flags: ignoreversion restartreplace 32bit
-Source: "bin\Release\x64\{#DLLName}";           DestDir: "{sys}"; Flags: ignoreversion restartreplace regserver solidbreak 64bit; Check: InstallArch('x64')
-Source: "bin\Release\x64\AlgorithmsDll*.dll";   DestDir: "{sys}"; Flags: ignoreversion restartreplace 64bit; Check: InstallArch('x64')
-Source: "bin\Release\ARM64\{#DLLName}";         DestDir: "{sys}"; Flags: ignoreversion restartreplace regserver solidbreak 64bit; Check: InstallArch('arm64') 
-Source: "bin\Release\ARM64\AlgorithmsDll*.dll"; DestDir: "{sys}"; Flags: ignoreversion restartreplace 64bit; Check: InstallArch('arm64') 
+Source: "bin\Release\Win32\*.dll"; DestDir: "{app}"; Flags: ignoreversion solidbreak restartreplace 32bit; Check: InstallArch('x86')
+Source: "bin\Release\x64\*.dll";   DestDir: "{app}"; Flags: ignoreversion solidbreak restartreplace 64bit; Check: InstallArch('x64')
+Source: "bin\Release\ARM64\*.dll"; DestDir: "{app}"; Flags: ignoreversion solidbreak restartreplace 64bit; Check: InstallArch('arm64') 
 
 [Tasks]
-Name: myAssociation; Description: "Associate with known sumfile formats"; GroupDescription: File extensions:
-
+Name: myAssociation; Description: "Associate with known sumfile formats"; GroupDescription: "Optional features:"
+Name: myContextMenu; Description: "Add to context menu"; GroupDescription: "Optional features:"
 
 [Registry]
-Root: HKCR; Subkey: "{#MyAppName}";                     ValueData: "Checksum file";                               ValueType: string; ValueName: ""; Flags: uninsdeletekey;
-Root: HKCR; Subkey: "{#MyAppName}\DefaultIcon";         ValueData: "{sys}\{#DLLName},0";                          ValueType: string; ValueName: ""
-Root: HKCR; Subkey: "{#MyAppName}\shell\open\command";  ValueData: "rundll32 {#DLLName},StandaloneEntry ""%1""";  ValueType: string; ValueName: ""
+#ifdef SYSTEM
+Root: HKLM32; Subkey: "Software\Microsoft\Windows\CurrentVersion\Shell Extensions\Approved";  ValueName: "{#DLLCLSID}"; ValueData: "{#MyAppName} Shell Extension";  ValueType: string; Check: InstallArch('x86')
+Root: HKLM64; Subkey: "Software\Microsoft\Windows\CurrentVersion\Shell Extensions\Approved";  ValueName: "{#DLLCLSID}"; ValueData: "{#MyAppName} Shell Extension";  ValueType: string; Check: InstallArch('x64')
+Root: HKLM64; Subkey: "Software\Microsoft\Windows\CurrentVersion\Shell Extensions\Approved";  ValueName: "{#DLLCLSID}"; ValueData: "{#MyAppName} Shell Extension";  ValueType: string; Check: InstallArch('arm64')
+#endif
 
-Root: HKCR; Subkey: ".md5";        ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
-Root: HKCR; Subkey: ".md5sum";     ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
-Root: HKCR; Subkey: ".md5sums";    ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
-Root: HKCR; Subkey: ".ripemd160";  ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
-Root: HKCR; Subkey: ".sha1";       ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
-Root: HKCR; Subkey: ".sha1sum";    ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
-Root: HKCR; Subkey: ".sha1sums";   ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
-Root: HKCR; Subkey: ".sha224";     ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
-Root: HKCR; Subkey: ".sha224sum";  ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
-Root: HKCR; Subkey: ".sha256";     ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
-Root: HKCR; Subkey: ".sha256sum";  ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
-Root: HKCR; Subkey: ".sha256sums"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
-Root: HKCR; Subkey: ".sha384";     ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
-Root: HKCR; Subkey: ".sha512";     ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
-Root: HKCR; Subkey: ".sha512sum";  ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
-Root: HKCR; Subkey: ".sha512sums"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
-Root: HKCR; Subkey: ".sha3";       ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
-Root: HKCR; Subkey: ".sha3-512";   ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
-Root: HKCR; Subkey: ".sha3-224";   ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
-Root: HKCR; Subkey: ".sha3-256";   ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
-Root: HKCR; Subkey: ".sha3-384";   ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
-Root: HKCR; Subkey: ".k12-264";    ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
-Root: HKCR; Subkey: ".ph128-264";  ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
-Root: HKCR; Subkey: ".ph256-528";  ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
-Root: HKCR; Subkey: ".blake3";     ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
-Root: HKCR; Subkey: ".blake2sp";   ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
-Root: HKCR; Subkey: ".xxh32";      ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
-Root: HKCR; Subkey: ".xxh64";      ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
-Root: HKCR; Subkey: ".xxh3-64";    ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
-Root: HKCR; Subkey: ".xxh3-128";   ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
-Root: HKCR; Subkey: ".md4";        ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKA32; Subkey: "Software\Classes\CLSID\{#DLLCLSID}";  ValueName: ""; ValueData: "{#MyAppName} Shell Extension";  ValueType: string; Flags: uninsdeletekey; Check: InstallArch('x86')
+Root: HKA32; Subkey: "Software\Classes\CLSID\{#DLLCLSID}\InprocServer32";  ValueName: ""; ValueData: "{app}\{#DLLName}"; ValueType: string; Check: InstallArch('x86')
+Root: HKA32; Subkey: "Software\Classes\CLSID\{#DLLCLSID}\InprocServer32";  ValueName: "ThreadingModel"; ValueData: "Apartment"; ValueType: string; Check: InstallArch('x86')
+
+Root: HKA64; Subkey: "Software\Classes\CLSID\{#DLLCLSID}";  ValueName: ""; ValueData: "{#MyAppName} Shell Extension";  ValueType: string; Flags: uninsdeletekey; Check: InstallArch('x64')
+Root: HKA64; Subkey: "Software\Classes\CLSID\{#DLLCLSID}\InprocServer32";  ValueName: ""; ValueData: "{app}\{#DLLName}"; ValueType: string; Check: InstallArch('x64')
+Root: HKA64; Subkey: "Software\Classes\CLSID\{#DLLCLSID}\InprocServer32";  ValueName: "ThreadingModel"; ValueData: "Apartment"; ValueType: string; Check: InstallArch('x64')
+
+Root: HKA64; Subkey: "Software\Classes\CLSID\{#DLLCLSID}";  ValueName: ""; ValueData: "{#MyAppName} Shell Extension";  ValueType: string; Flags: uninsdeletekey; Check: InstallArch('arm64')
+Root: HKA64; Subkey: "Software\Classes\CLSID\{#DLLCLSID}\InprocServer32";  ValueName: ""; ValueData: "{app}\{#DLLName}"; ValueType: string; Check: InstallArch('arm64')
+Root: HKA64; Subkey: "Software\Classes\CLSID\{#DLLCLSID}\InprocServer32";  ValueName: "ThreadingModel"; ValueData: "Apartment"; ValueType: string; Check: InstallArch('arm64')
+
+Root: HKA; Subkey: "Software\Classes\AllFilesystemObjects\shellex\PropertySheetHandlers\{#DLLCLSID}";  ValueName: ""; Flags: uninsdeletekey; ValueType: none;
+Root: HKA; Subkey: "Software\Classes\AllFilesystemObjects\shellex\ContextMenuHandlers\{#DLLCLSID}";    ValueName: ""; Flags: uninsdeletekey; ValueType: none; Tasks: myContextMenu
+
+Root: HKA; Subkey: "Software\Classes\{#MyAppName}";                     ValueData: "Checksum file";      ValueType: string; ValueName: ""; Flags: uninsdeletekey;
+Root: HKA; Subkey: "Software\Classes\{#MyAppName}\shell\open\command";  ValueData: "rundll32 ""{app}\{#DLLName},StandaloneEntry"" ""%1""";  ValueType: string; ValueName: ""
+Root: HKA; Subkey: "Software\Classes\{#MyAppName}\DefaultIcon";         ValueData: "{app}\{#DLLName},0"; ValueType: string; ValueName: ""
+
+Root: HKA; Subkey: "Software\Classes\.md5";        ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKA; Subkey: "Software\Classes\.md5sum";     ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKA; Subkey: "Software\Classes\.md5sums";    ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKA; Subkey: "Software\Classes\.ripemd160";  ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKA; Subkey: "Software\Classes\.sha1";       ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKA; Subkey: "Software\Classes\.sha1sum";    ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKA; Subkey: "Software\Classes\.sha1sums";   ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKA; Subkey: "Software\Classes\.sha224";     ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKA; Subkey: "Software\Classes\.sha224sum";  ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKA; Subkey: "Software\Classes\.sha256";     ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKA; Subkey: "Software\Classes\.sha256sum";  ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKA; Subkey: "Software\Classes\.sha256sums"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKA; Subkey: "Software\Classes\.sha384";     ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKA; Subkey: "Software\Classes\.sha512";     ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKA; Subkey: "Software\Classes\.sha512sum";  ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKA; Subkey: "Software\Classes\.sha512sums"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKA; Subkey: "Software\Classes\.sha3";       ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKA; Subkey: "Software\Classes\.sha3-512";   ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKA; Subkey: "Software\Classes\.sha3-224";   ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKA; Subkey: "Software\Classes\.sha3-256";   ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKA; Subkey: "Software\Classes\.sha3-384";   ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKA; Subkey: "Software\Classes\.k12-264";    ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKA; Subkey: "Software\Classes\.ph128-264";  ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKA; Subkey: "Software\Classes\.ph256-528";  ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKA; Subkey: "Software\Classes\.blake3";     ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKA; Subkey: "Software\Classes\.blake2sp";   ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKA; Subkey: "Software\Classes\.xxh32";      ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKA; Subkey: "Software\Classes\.xxh64";      ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKA; Subkey: "Software\Classes\.xxh3-64";    ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKA; Subkey: "Software\Classes\.xxh3-128";   ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKA; Subkey: "Software\Classes\.md4";        ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
 
 ; corz checksum that we accidentally support
-Root: HKCR; Subkey: ".hash"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKA; Subkey: "Software\Classes\.hash"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
 
 ; our default export extension when there is no known for a given algorithm
-Root: HKCR; Subkey: ".sums"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+Root: HKA; Subkey: "Software\Classes\.sums"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
 
 [Code]
 function InstallArch(Arch: String): Boolean;
