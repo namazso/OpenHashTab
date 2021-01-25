@@ -81,7 +81,8 @@ public:
         // According to wikipedia delimiter is always space.
         const auto notspace = file.find_last_not_of(' ');
         file.resize(notspace == std::string_view::npos ? 0 : notspace + 1);
-        auto hash = utl::HashStringToBytes(pieces[2].str().c_str());
+        const auto hash_str = pieces[2].str();
+        auto hash = utl::HashStringToBytes(std::string_view{ hash_str });
         if (!hash.empty())
         {
           files.emplace_back(std::move(file), std::move(hash));
@@ -96,7 +97,8 @@ public:
       if (std::regex_match(begin(sv), end(sv), pieces, _hex))
       {
         _hash = HashStyle::Hex;
-        auto hash = utl::HashStringToBytes(pieces[1].str().c_str());
+        const auto hash_str = pieces[1].str();
+        auto hash = utl::HashStringToBytes(std::string_view{ hash_str });
         if (!hash.empty())
         {
           files.emplace_back(pieces[2], std::move(hash));
@@ -166,11 +168,28 @@ DWORD TryParseSumFile(HANDLE h, FileSumList& output)
     return error;
   }
 
-  auto first = static_cast<char*>(address);
+  auto first = static_cast<const char*>(address);
   const auto last = first + size;
 
   if (0 == memcmp(first, "\xEF\xBB\xBF", 3))
     first += 3; // file is at least 6 bytes so this is safe
+
+  // special handling files with only a single hash in them
+  {
+    const std::string_view sv{ first, (size_t)(last - first) };
+    const auto nwfirst = sv.find_first_not_of("\r\n\t\f\v ");
+    if(nwfirst != std::string_view::npos)
+    {
+      const auto nwlast = sv.find_last_not_of("\r\n\t\f\v ");
+      const std::string_view nwsv{ first + nwfirst, nwlast + 1 - nwfirst };
+      auto hash = utl::HashStringToBytes<true>(nwsv);
+      if(!hash.empty())
+      {
+        output.emplace_back(std::string{}, std::move(hash));
+        return ERROR_SUCCESS;
+      }
+    }
+  }
 
   SumFileParser2 sfp;
   auto failed = false;

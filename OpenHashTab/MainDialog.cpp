@@ -382,7 +382,8 @@ INT_PTR MainDialog::OnInitDialog(UINT, WPARAM, LPARAM)
   
   if (_prop_page->settings.clipboard_autoenable)
   {
-    const auto hash_size = utl::HashStringToBytes(utl::GetClipboardText(_hwnd).c_str()).size();
+    const auto clip = utl::GetClipboardText(_hwnd);
+    const auto hash_size = utl::HashStringToBytes(std::wstring_view{ clip }).size();
     auto existing = 0u;
     auto enabled = 0u;
     for (const auto& algo : HashAlgorithm::Algorithms())
@@ -489,7 +490,7 @@ INT_PTR MainDialog::OnAllFilesFinished(UINT, WPARAM, LPARAM)
   UpdateDefaultStatus();
 
   const auto clip = utl::GetClipboardText(_hwnd);
-  const auto find_hash = utl::HashStringToBytes(clip.c_str());
+  const auto find_hash = utl::HashStringToBytes(std::wstring_view{ clip });
   if (find_hash.size() >= 4) // at least 4 bytes for a valid hash
   {
     SetWindowTextW(_hwnd_EDIT_HASH, (clip.c_str()));
@@ -645,7 +646,8 @@ INT_PTR MainDialog::OnNeedAdjust(UINT, WPARAM, LPARAM)
 
 INT_PTR MainDialog::OnHashEditChanged(UINT, WPARAM, LPARAM)
 {
-  const auto find_hash = utl::HashStringToBytes(utl::GetWindowTextString(_hwnd_EDIT_HASH).c_str());
+  const auto edit_str = utl::GetWindowTextString(_hwnd_EDIT_HASH);
+  const auto find_hash = utl::HashStringToBytes(std::wstring_view{ edit_str });
   auto found = false;
   for (const auto& file : _prop_page->GetFiles())
   {

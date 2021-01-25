@@ -76,30 +76,41 @@ namespace utl
     *str = Char(0);
   }
 
-  template <typename Char>
-  std::vector<uint8_t> HashStringToBytes(Char* str)
+  template <bool Strict = false, typename Char>
+  std::vector<uint8_t> HashStringToBytes(std::basic_string_view<Char> str)
   {
-    auto it = str;
-    do
-      if (const auto c = *it; !c || utl::unhex<Char>(c) != 0xFF)
-        break;
-    while (++it);
+    constexpr static Char hex[] = {
+      '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+      'a', 'b', 'c', 'd', 'e', 'f',
+      'A', 'B', 'C', 'D', 'E', 'F',
+      0
+    };
+    typename std::basic_string_view<Char>::iterator begin{str.begin()}, end{str.end()};
+    if constexpr (!Strict)
+    {
+      const auto ibegin = str.find_first_of(hex);
+      if(ibegin != std::basic_string_view<Char>::npos)
+      {
+        const auto iend = str.find_last_of(hex);
+        begin = str.begin() + ibegin;
+        end = str.begin() + iend + 1;
+      }
+    }
+
+    const auto lenc = std::distance(begin, end);
+    if (lenc % 2 != 0)
+      return {}; // odd
 
     std::vector<uint8_t> res;
 
-    uint8_t byte = 0;
-    for (auto i = 0; it[i]; ++i)
-      if (const auto nibble = utl::unhex<Char>(it[i]); nibble == 0xFF)
-        if (i % 2 == 0)
-          break;
-        else
-          return {};
-      else
-        if (i % 2 == 0)
-          byte = nibble << 4;
-        else
-          res.push_back(byte | nibble);
-
+    for (size_t i = 0u; i < lenc / 2; ++i)
+    {
+      const auto a = utl::unhex<Char>(begin[i * 2]);
+      const auto b = utl::unhex<Char>(begin[i * 2 + 1]);
+      if (a == 0xFF || b == 0xFF)
+        return {}; // invalid
+      res.push_back(a << 4 | b);
+    }
     return res;
   }
 

@@ -158,6 +158,7 @@ DWORD utl::SetClipboardText(HWND hwnd, std::wstring_view text)
       if (const auto lcb = static_cast<LPWSTR>(GlobalLock(cb)))
       {
         memcpy(lcb, text.data(), (len + 1) * sizeof(wchar_t));
+        lcb[len] = 0;
         const auto ref = GlobalUnlock(cb);
         error = GetLastError();
         if (ref != 0 || error == ERROR_SUCCESS)
