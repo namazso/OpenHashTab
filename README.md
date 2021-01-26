@@ -8,14 +8,17 @@ OpenHashTab is a shell extension for conveniently calculating and checking file 
 
 ## Features
 
-* Support for 19 different selectable algorithms, see **Algorithms**
+* Support for 22 algorithms, see **Algorithms**
 * High performance hash calculation
 * Native Windows looks
-* HiDPI  support
+* High DPI screen support
 * Long path support\*
-* Multilingual
-* Sumfile checking and export support (*sum program family, corz .hash, SFV (export only))
-* File associations and standalone mode for quick checking sumfiles
+* Multilingual (Consider contributing to translation!)
+* Check hashes against VirusTotal with a button
+* Hash checking against a checksum file (Supported: hex hash next to file, \*sum output (hex or base64), corz .hash, SFV)
+* Hash export to file or clipboard (Supported: \*sum output, corz .hash, SFV)
+* Optional context menu option for faster access
+* File associations and standalone mode
 
 \* to the extent Windows and configuration supports it. [Enable long paths](https://www.tenforums.com/tutorials/51704-enable-disable-win32-long-paths-windows-10-a.html) on 1607+ for better support.
 
@@ -33,6 +36,7 @@ Most of the actions should be obvious. Some not-so-obvious features are listed h
 * Double click name or algorithm to copy the line in sumfile format
 * Right click for popup menu: copy hash, copy filename, copy line, copy everything
 * The counters next to the status text is in the format `(match/mismatch/nothing to check against/error)`
+* Columns sort lexographically, except the hash column which sorts by match type
 * Selecting the tab on a sumfile will interpret it as such and hash the files listed in it.
 * If a hashed file has a sumfile with same filename plus one of the recognized sumfile extensions and the option for it is enabled, the file hash is checked against it.
 
@@ -48,10 +52,12 @@ Most of the actions should be obvious. Some not-so-obvious features are listed h
 * SHA-2 (SHA-224, SHA-256, SHA-384, SHA-512)
 * SHA-3 (SHA3-224, SHA3-256, SHA3-384, SHA3-512)
 * BLAKE3
+* KangarooTwelve (264 bit)
+* ParallelHash128 (264 bit) and ParallelHash256 (528 bit)
 
 ## Download
 
-[Latest release](https://github.com/namazso/OpenHashTab/releases/latest/download/OpenHashTab_setup.exe)
+[Latest release](https://github.com/namazso/OpenHashTab/releases/latest)
 
 [Development builds](https://github.com/namazso/OpenHashTab/actions?query=branch%3Amaster)
 
