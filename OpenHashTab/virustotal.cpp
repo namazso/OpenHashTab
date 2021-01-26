@@ -27,6 +27,8 @@
 #include <unordered_map>
 #include <sstream>
 
+#include "virustotal_api.h"
+
 bool vt::CheckForToS(Settings* settings, HWND hwnd)
 {
   if(!settings->virustotal_tos)
@@ -35,9 +37,10 @@ bool vt::CheckForToS(Settings* settings, HWND hwnd)
       hwnd,
       ESTRt(L"VirusTotal Terms of Service"),
       MB_YESNO,
-      ESTRt(L"You must agree to VirusTotal's terms of service to use this.\r\n"
+      ESTRt(L"The following data will be sent: file path, creation date, hash\r\n"
+      L"You must agree to VirusTotal's terms of service to use this.\r\n"
       L"The ToS is available at https://www.virustotal.com/about/terms-of-service\r\n"
-      L"Do you agree with the VirusTotal Terms of Service?")
+      L"Do you agree to the VirusTotal Terms of Service?")
     );
 
     if (answer == IDYES)
@@ -51,21 +54,46 @@ std::list<vt::Result> vt::Query(const std::list<FileHashTask*>& files, size_t al
   std::string query_str;
   {
     std::stringstream query;
-    query << ESTRt("[{\"hash\":\"");
+    query << "[";
+    bool first = true;
     for (const auto& h : files)
     {
+      if (h->GetError() != 0)
+        continue;
+
+      if (first)
+        first = false;
+      else
+        query << ",";
+
       char hash[HashAlgorithm::k_max_size * 2 + 1]{};
       utl::HashBytesToString(hash, h->GetHashResult()[algo]);
-      query << hash << ESTRt("\"},{\"hash\":\"");
+
+      FILETIME ft{};
+      GetFileTime(h->GetHandle(), &ft, nullptr, nullptr);
+      SYSTEMTIME st{};
+      FileTimeToSystemTime(&ft, &st);
+
+      query << utl::FormatString(R"({
+        "autostart_location": "",
+        "autostart_entry": "",
+        "hash": "%s",
+        "image_path": "%S",
+        "creation_datetime": "%04u-%02u-%02u %02u:%02u:%02u"
+        })",
+        hash,
+        h->GetDisplayName().c_str(),
+        st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond
+      );
     }
-    query << ESTRt("\"}]");
+    query << "]";
     query_str = query.str();
   }
 
-  const auto user_agent =   ESTR(L"VirusTotal")();
+  const auto user_agent =   ESTR(TEXT(VT_USERAGENT))();
   const auto server_name =  ESTR(L"www.virustotal.com")();
   const auto method =       ESTR(L"POST")();
-  const auto uri =          ESTR(L"/partners/sysinternals/file-reports?\x0061\x0070\x0069\x006b\x0065\x0079=4e3202fdbe953d628f650229af5b3eb49cd46b2d3bfe5546ae3c5fa48b554e0c")();
+  const auto uri =          ESTR(L"/partners/sysinternals/file-reports?\x0061\x0070\x0069\x006b\x0065\x0079=" VT_MAGICNUMBERS)();
   const auto headers =      ESTR(L"Content-Type: application/json\r\n")();
 
   HTTPRequest r{};

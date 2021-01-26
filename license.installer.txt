@@ -26,6 +26,10 @@ phnt (licensed under CC BY 4.0):
 by processhacker contributors
 https://github.com/processhacker/phnt
 
+Partial code from Process Hacker (licensed under GPLv3 or later):
+Copyright (C) 2016-2020 dmex
+https://github.com/processhacker/processhacker
+
 tiny-json (licensed under MIT license):
 Copyright (c) 2018 Rafa Garcia
 https://github.com/rafagafe/tiny-json

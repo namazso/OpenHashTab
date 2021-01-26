@@ -179,6 +179,7 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="utl.h" />
     <ClInclude Include="virustotal.h" />
+    <ClInclude Include="virustotal_api.h" />
     <ClInclude Include="wnd.h" />
   </ItemGroup>
   <ItemGroup>
