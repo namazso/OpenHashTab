@@ -113,7 +113,7 @@ Root: HKA; Subkey: "Software\Classes\AllFilesystemObjects\shellex\PropertySheetH
 Root: HKA; Subkey: "Software\Classes\AllFilesystemObjects\shellex\ContextMenuHandlers\{#DLLCLSID}";    ValueName: ""; Flags: uninsdeletekey; ValueType: none; Tasks: myContextMenu
 
 Root: HKA; Subkey: "Software\Classes\{#MyAppName}";                     ValueData: "Checksum file";      ValueType: string; ValueName: ""; Flags: uninsdeletekey;
-Root: HKA; Subkey: "Software\Classes\{#MyAppName}\shell\open\command";  ValueData: "rundll32 ""{app}\{#DLLName},StandaloneEntry"" ""%1""";  ValueType: string; ValueName: ""
+Root: HKA; Subkey: "Software\Classes\{#MyAppName}\shell\open\command";  ValueData: "rundll32 ""{app}\{#DLLName}"",StandaloneEntry ""%1""";  ValueType: string; ValueName: ""
 Root: HKA; Subkey: "Software\Classes\{#MyAppName}\DefaultIcon";         ValueData: "{app}\{#DLLName},0"; ValueType: string; ValueName: ""
 
 Root: HKA; Subkey: "Software\Classes\.md5";        ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
