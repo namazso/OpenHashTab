@@ -21,7 +21,6 @@
 #include <string_view>
 
 #include "base64.h"
-#include "Settings.h"
 #include "utl.h"
 
 constexpr char k_regex_hex[] = R"(([0-9a-fA-F]{8,512}) [ \*](.+))";
@@ -182,7 +181,7 @@ DWORD TryParseSumFile(HANDLE h, FileSumList& output)
     {
       const auto nwlast = sv.find_last_not_of("\r\n\t\f\v ");
       const std::string_view nwsv{ first + nwfirst, nwlast + 1 - nwfirst };
-      auto hash = utl::HashStringToBytes<true>(nwsv);
+      auto hash = utl::HashStringToBytes(nwsv);
       if(!hash.empty())
       {
         output.emplace_back(std::string{}, std::move(hash));
