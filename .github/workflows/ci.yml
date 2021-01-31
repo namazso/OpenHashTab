@@ -24,14 +24,14 @@ jobs:
         If($Env:GITHUB_REF -match "v([0-9]*)\.([0-9]*)\.([0-9]*)") {
             $IsRelease = "yes";
             $Version = $Matches[0];
-            $VersionMinor = $Matches[1];
-            $VersionMajor = $Matches[2];
+            $VersionMajor = $Matches[1];
+            $VersionMinor = $Matches[2];
             $VersionPatch = $Matches[3];
         } Else {
             $IsRelease = "no";
             $Version = $Env:GITHUB_SHA;
-            $VersionMinor = 0;
             $VersionMajor = 0;
+            $VersionMinor = 0;
             $VersionPatch = 0;
         }
         Echo ("::set-output name=is_release::" + $IsRelease);
