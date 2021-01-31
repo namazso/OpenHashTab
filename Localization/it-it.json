@@ -30,7 +30,7 @@
         "CANCEL": "Annulla",
         "CLIPBOARD_AUTOENABLE_EXCLUSIVE": "Disabilita tutti gli altri algoritmi",
         "CLIPBOARD_AUTOENABLE_IF_NONE": "Solo se non sono abilitati algoritmi di quella lunghezza",
-        "CLIPBOARD_AUTOENABLE": "Se la clipboard contiene un hash, abilita in automatico algoritmi di quella profondità per la sessione",
+        "CLIPBOARD_AUTOENABLE": "Se negli appunti è presente un hash, abilita automaticamente un algoritmo di quella lunghezza per la sessione",
         "COPY_HASH": "Copia hash",
         "SUMFILE_BANNER_DATE": "Aggiungi data al banner",
         "SUMFILE_BANNER": "Aggiungi banner al file esportato",
