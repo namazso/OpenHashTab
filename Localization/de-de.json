@@ -37,6 +37,7 @@
         "COPY_LINE": "Zeile kopieren",
         "COPY_HASH": "Hash kopieren",
         "CHECK_FOR_UPDATES": "Auf Updates prüfen",
-        "CANCEL": "Abbrechen"
+        "CANCEL": "Abbrechen",
+        "CLIPBOARD_AUTOENABLE": "Wähle automatisch die Algorithmen mit der passenden Länge, falls ein Hash in der Zwischenablage liegt"
     }
 }
