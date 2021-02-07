@@ -17,7 +17,7 @@
         "NOMATCH": "Keine Übereinstimmung gefunden.",
         "ERROR": "Fehler",
         "UPDATE_NEWEST_TITLE": "Herzlichen Glückwunsch",
-        "SUMFILE_BANNER_DATE": "Füge Banner an exportierten Dateien an",
+        "SUMFILE_BANNER_DATE": "Füge Datum zum Banner hinzu",
         "SUMFILE_BANNER": "Füge Banner an exportierten Dateien an",
         "SUMFILE_DOT_HASH_COMPATIBLE": "Exportiere Summendateien im corz .hash-kompatiblen Format",
         "SUMFILE_FORWARD_SLASHES": "Verwenden Sie Schrägstrichpfade in exportierten Dateien",
@@ -38,6 +38,8 @@
         "COPY_HASH": "Hash kopieren",
         "CHECK_FOR_UPDATES": "Auf Updates prüfen",
         "CANCEL": "Abbrechen",
-        "CLIPBOARD_AUTOENABLE": "Wähle automatisch die Algorithmen mit der passenden Länge, falls ein Hash in der Zwischenablage liegt"
+        "CLIPBOARD_AUTOENABLE": "Wähle automatisch die Algorithmen mit der passenden Länge, falls ein Hash in der Zwischenablage liegt",
+        "CLIPBOARD_AUTOENABLE_IF_NONE": "Nur, wenn Algorithmen derselben Länge aktiviert sind",
+        "CLIPBOARD_AUTOENABLE_EXCLUSIVE": "Deaktiviere alle anderen Algorithmen"
     }
 }
