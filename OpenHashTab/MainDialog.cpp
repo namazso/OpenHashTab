@@ -611,7 +611,10 @@ INT_PTR MainDialog::OnExportClicked(UINT, WPARAM, LPARAM)
     const auto ext = utl::UTF8ToWide(exporter->GetExtension());
     const auto path_and_basename = _prop_page->GetSumfileDefaultSavePathAndBaseName();
     const auto name = path_and_basename.second + L"." + ext;
-    const auto sumfile_path = utl::SaveDialog(_hwnd, path_and_basename.first.c_str(), name.c_str());
+    const auto is_shift = !!HIBYTE(GetKeyState(VK_SHIFT));
+    const auto sumfile_path = is_shift
+      ? path_and_basename.first + name
+      : utl::SaveDialog(_hwnd, path_and_basename.first.c_str(), name.c_str());
     if (!sumfile_path.empty())
     {
       const auto content = GetSumfileAsString(exporter, false);
