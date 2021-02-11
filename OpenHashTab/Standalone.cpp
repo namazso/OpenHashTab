@@ -21,7 +21,7 @@
 #include "utl.h"
 
 // rundll32 OpenHashTab.dll,StandaloneEntry <args>
-extern "C" __declspec(dllexport) void CALLBACK StandaloneEntryW(
+extern "C" __declspec(dllexport) void StandaloneEntryW(
   _In_  HWND      hWnd,
   _In_  HINSTANCE hRunDLLInstance,
   _In_  LPCWSTR   lpCmdLine,
