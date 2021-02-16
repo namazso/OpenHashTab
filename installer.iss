@@ -151,6 +151,9 @@ Root: HKA; Subkey: "Software\Classes\.md4";        ValueType: string; ValueName:
 ; corz checksum that we accidentally support
 Root: HKA; Subkey: "Software\Classes\.hash"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
 
+; sfv
+Root: HKA; Subkey: "Software\Classes\.sfv"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
+
 ; our default export extension when there is no known for a given algorithm
 Root: HKA; Subkey: "Software\Classes\.sums"; ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
 
