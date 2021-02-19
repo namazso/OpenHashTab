@@ -114,7 +114,8 @@ ProcessedFileList ProcessEverything(std::list<std::wstring> list, const Settings
           fsl_absolute.emplace_back(path, std::move(filesum.second));
         }
 
-        // fall through - let it calculate the sumfile's sum, in case the user needs that
+        if (!settings->hash_sumfile_too)
+          list.erase(list.begin());
       }
     }
   }
