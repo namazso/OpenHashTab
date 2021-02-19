@@ -713,7 +713,16 @@ INT_PTR MainDialog::OnNeedAdjust(UINT, WPARAM, LPARAM)
 INT_PTR MainDialog::OnHashEditChanged(UINT, WPARAM, LPARAM)
 {
   const auto edit_str = utl::GetWindowTextString(_hwnd_EDIT_HASH);
-  const auto find_hash = utl::FindHashInString(std::wstring_view{ edit_str });
+  const auto find_hash =
+    _prop_page->settings.checkagainst_strict
+    ? utl::HashStringToBytes(std::wstring_view{ edit_str })
+    : utl::FindHashInString(std::wstring_view{ edit_str });
+  if(find_hash.size() && _prop_page->settings.checkagainst_autoformat)
+  {
+    wchar_t hash_str[HashAlgorithm::k_max_size * 2 + 1];
+    utl::HashBytesToString(hash_str, find_hash, _prop_page->settings.display_uppercase);
+    SetWindowTextW(_hwnd_EDIT_HASH, hash_str);
+  }
   auto found = false;
   for (const auto& file : _prop_page->GetFiles())
   {
