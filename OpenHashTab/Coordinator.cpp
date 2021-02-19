@@ -82,7 +82,12 @@ void Coordinator::AddFiles()
   {
     _is_sumfile = true;
     if (type != -1)
+    {
+      if (settings.sumfile_algorithm_only)
+        for (auto& a : settings.algorithms)
+          a.SetNoSave(false); // disable all algorithms
       settings.algorithms[type].SetNoSave(true); // enable algorithm the sumfile is made with
+    }
   }
   for (const auto& file : _files.files)
     AddFile(file.first, file.second);

@@ -46,6 +46,7 @@
         "CHECKAGAINST_STRICT": "Strict mode for hash checker field",
         "HASH_SUMFILE_TOO": "When processing a sumfile hash the sumfile too",
         "ITEM_MATCHING": "1 matching file",
-        "ITEMS_MATCHING": "%d matching files"
+        "ITEMS_MATCHING": "%d matching files",
+        "SUMFILE_ALGORITHM_ONLY": "When processing a sumfile of known algorithm, disable other algorithms"
     }
 }

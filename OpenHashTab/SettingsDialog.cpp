@@ -48,6 +48,7 @@ static constexpr SettingCheckbox s_boxes[] =
   { &Settings::checkagainst_autoformat,         CTLSTR(CHECKAGAINST_AUTOFORMAT        ) },
   { &Settings::checkagainst_strict,             CTLSTR(CHECKAGAINST_STRICT            ) },
   { &Settings::hash_sumfile_too,                CTLSTR(HASH_SUMFILE_TOO               ) },
+  { &Settings::sumfile_algorithm_only,          CTLSTR(SUMFILE_ALGORITHM_ONLY         ) },
 };
 
 #undef CTLSTR

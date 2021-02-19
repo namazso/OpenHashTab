@@ -71,6 +71,7 @@
 #define IDS_CHECK_FOR_UPDATES           233
 #define IDC_CHECK_CHECKAGAINST_AUTOFORMAT 233
 #define IDS_COPY_HASH                   234
+#define IDC_CHECK_SUMFILE_ALGORITHM_ONLY 234
 #define IDS_COPY_LINE                   235
 #define IDS_COPY_FILE                   236
 #define IDS_COPY_EVERYTHING             237
@@ -90,12 +91,13 @@
 #define IDS_HASH_SUMFILE_TOO            252
 #define IDS_ITEM_MATCHING               253
 #define IDS_ITEMS_MATCHING              254
+#define IDS_SUMFILE_ALGORITHM_ONLY      255
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        255
+#define _APS_NEXT_RESOURCE_VALUE        256
 #define _APS_NEXT_COMMAND_VALUE         32768
 #define _APS_NEXT_CONTROL_VALUE         228
 #define _APS_NEXT_SYMED_VALUE           111

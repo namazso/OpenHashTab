@@ -90,4 +90,5 @@ struct Settings
   RegistrySetting<bool> checkagainst_autoformat{ "CheckAgainstAutoformat", false };
   RegistrySetting<bool> checkagainst_strict{ "CheckAgainstStruct", false };
   RegistrySetting<bool> hash_sumfile_too{ "HashSumfileToo", false };
+  RegistrySetting<bool> sumfile_algorithm_only{ "SumfileAlgorithmOnly", true };
 };
