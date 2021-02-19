@@ -64,9 +64,12 @@
 #define IDC_CHECK_CLIPBOARD_AUTOENABLE_EXCLUSIVE 229
 #define IDS_SUMFILE_BANNER_DATE         230
 #define IDI_ICON_VT                     231
+#define IDC_CHECK_CHECKAGAINST_STRICT   231
 #define IDI_ICON2                       232
 #define IDI_ICON_COG                    232
+#define IDC_CHECK_HASH_SUMFILE_TOO      232
 #define IDS_CHECK_FOR_UPDATES           233
+#define IDC_CHECK_CHECKAGAINST_AUTOFORMAT 233
 #define IDS_COPY_HASH                   234
 #define IDS_COPY_LINE                   235
 #define IDS_COPY_FILE                   236
@@ -81,12 +84,18 @@
 #define IDS_CLIPBOARD_AUTOENABLE        246
 #define IDS_CLIPBOARD_AUTOENABLE_IF_NONE 247
 #define IDS_CLIPBOARD_AUTOENABLE_EXCLUSIVE 248
+#define IDS_SETTINGS_TITLE              249
+#define IDS_CHECKAGAINST_AUTOFORMAT     250
+#define IDS_CHECKAGAINST_STRICT         251
+#define IDS_HASH_SUMFILE_TOO            252
+#define IDS_ITEM_MATCHING               253
+#define IDS_ITEMS_MATCHING              254
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        249
+#define _APS_NEXT_RESOURCE_VALUE        255
 #define _APS_NEXT_COMMAND_VALUE         32768
 #define _APS_NEXT_CONTROL_VALUE         228
 #define _APS_NEXT_SYMED_VALUE           111

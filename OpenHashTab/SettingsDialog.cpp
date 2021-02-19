@@ -45,6 +45,9 @@ static constexpr SettingCheckbox s_boxes[] =
   { &Settings::clipboard_autoenable,            CTLSTR(CLIPBOARD_AUTOENABLE           ) },
   { &Settings::clipboard_autoenable_if_none,    CTLSTR(CLIPBOARD_AUTOENABLE_IF_NONE   ) },
   { &Settings::clipboard_autoenable_exclusive,  CTLSTR(CLIPBOARD_AUTOENABLE_EXCLUSIVE ) },
+  { &Settings::checkagainst_autoformat,         CTLSTR(CHECKAGAINST_AUTOFORMAT        ) },
+  { &Settings::checkagainst_strict,             CTLSTR(CHECKAGAINST_STRICT            ) },
+  { &Settings::hash_sumfile_too,                CTLSTR(HASH_SUMFILE_TOO               ) },
 };
 
 #undef CTLSTR
@@ -66,6 +69,7 @@ INT_PTR SettingsDialog::DlgProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
   {
   case WM_INITDIALOG:
   {
+    utl::SetWindowTextStringFromTable(_hwnd, IDS_SETTINGS_TITLE);
     utl::SetWindowTextStringFromTable(_hwnd_BUTTON_CHECK_FOR_UPDATES, IDS_CHECK_FOR_UPDATES);
     const auto list = _hwnd_ALGORITHM_LIST;
     ListView_SetExtendedListViewStyleEx(list, LVS_EX_CHECKBOXES, LVS_EX_CHECKBOXES);

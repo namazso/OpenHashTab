@@ -40,6 +40,12 @@
         "UPDATE_NEWEST_TEXT": "You are already on the latest version",
         "CLIPBOARD_AUTOENABLE": "If clipboard contains a hash, automatically enable algorithms of that length for the run",
         "CLIPBOARD_AUTOENABLE_IF_NONE": "Only if no algorithms of that length are enabled",
-        "CLIPBOARD_AUTOENABLE_EXCLUSIVE": "Disable all other algorithms"
+        "CLIPBOARD_AUTOENABLE_EXCLUSIVE": "Disable all other algorithms",
+        "SETTINGS_TITLE": "Settings",
+        "CHECKAGAINST_AUTOFORMAT": "Automatically reformat pasted hashes in checker field",
+        "CHECKAGAINST_STRICT": "Strict mode for hash checker field",
+        "HASH_SUMFILE_TOO": "When processing a sumfile hash the sumfile too",
+        "ITEM_MATCHING": "1 matching file",
+        "ITEMS_MATCHING": "%d matching files"
     }
 }
