@@ -40,6 +40,13 @@
         "VT_NO_COMPATIBLE": "Nincs kompatibilis algoritmus engedélyezve",
         "CLIPBOARD_AUTOENABLE_IF_NONE": "De csak ha nincs megfelelő hosszú már engedélyezve",
         "CLIPBOARD_AUTOENABLE_EXCLUSIVE": "És az összes többi algoritmus letiltása",
-        "CLIPBOARD_AUTOENABLE": "Ha a vágólapon egy hash van, az olyan hosszúságú algorithmusok automatikus engedélyezése"
+        "CLIPBOARD_AUTOENABLE": "Ha a vágólapon egy hash van, az olyan hosszúságú algorithmusok automatikus engedélyezése",
+        "SUMFILE_ALGORITHM_ONLY": "Ismert algoritmusú sum-fájl esetén minden más algoritmus letiltása",
+        "ITEMS_MATCHING": "%d fájl egyezik",
+        "ITEM_MATCHING": "1 fájl egyezik",
+        "HASH_SUMFILE_TOO": "Sum-fájl ellenőrzés esetén a sum-fájl hashelése is",
+        "CHECKAGAINST_STRICT": "Szigorú módú ellenőrző mező",
+        "CHECKAGAINST_AUTOFORMAT": "Az ellenőrző mezőbe beillesztett hashek automatikus formázása",
+        "SETTINGS_TITLE": "Beállítások"
     }
 }
