@@ -36,7 +36,11 @@ extern "C" {
 
 #include "../xxHash/xxhash.h"
 
+extern "C" {
+#define uint512_u uint512_u_STREEBOG
 #include "../streebog/gost3411-2012-core.h"
+#undef uint512_u
+}
 
 template <typename T> HashContext* hash_context_factory(const HashAlgorithm* algorithm) { return new T(algorithm); }
 
