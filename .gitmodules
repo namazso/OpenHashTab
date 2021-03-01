@@ -25,3 +25,6 @@
 [submodule "mctrl"]
 	path = mctrl
 	url = https://github.com/mity/mctrl.git
+[submodule "streebog"]
+	path = streebog
+	url = https://github.com/adegtyarev/streebog.git

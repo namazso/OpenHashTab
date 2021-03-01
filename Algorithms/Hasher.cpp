@@ -36,6 +36,7 @@ extern "C" {
 
 #include "../xxHash/xxhash.h"
 
+#include "../streebog/gost3411-2012-core.h"
 
 template <typename T> HashContext* hash_context_factory(const HashAlgorithm* algorithm) { return new T(algorithm); }
 
@@ -514,6 +515,40 @@ public:
 
 using PH256_528HashContext = ParallelHash256HashContext<8192, 528>;
 
+
+template <unsigned HashBitlen>
+class GOST34112012HashContext : HashContext
+{
+  template <typename T> friend HashContext* hash_context_factory(const HashAlgorithm* algorithm);
+
+  GOST34112012Context ctx{};
+
+public:
+  GOST34112012HashContext(const HashAlgorithm* algorithm) : HashContext(algorithm)
+  {
+    GOST34112012Init(&ctx, HashBitlen);
+  }
+  ~GOST34112012HashContext() = default;
+
+  void Clear() override
+  {
+    GOST34112012Init(&ctx, HashBitlen);
+  }
+
+  void Update(const void* data, size_t size) override
+  {
+    GOST34112012Update(&ctx, (const unsigned char*)data, size);
+  }
+
+  void Finish(uint8_t* out) override
+  {
+    GOST34112012Final(&ctx, out);
+  }
+};
+
+using GOST34112012_256HashContext = GOST34112012HashContext<256>;
+using GOST34112012_512HashContext = GOST34112012HashContext<512>;
+
 // these are what I found with a quick FTP search
 static const char* const no_exts[] = { nullptr };
 static const char* const md5_exts[] = { "md5", "md5sum", "md5sums", nullptr };
@@ -565,6 +600,8 @@ constexpr HashAlgorithm HashAlgorithm::k_algorithms[] =
   { "PH128-264", 33, ph128_264_exts, hash_context_factory<PH128_264HashContext>, true },
   { "PH256-528", 66, ph256_528_exts, hash_context_factory<PH256_528HashContext>, true },
   { "BLAKE3", 32, blake3_exts, hash_context_factory<Blake3HashContext>, true },
+  { "GOST R 34.11-2012 (256)", 32, no_exts, hash_context_factory<GOST34112012_256HashContext>, true },
+  { "GOST R 34.11-2012 (512)", 64, no_exts, hash_context_factory<GOST34112012_512HashContext>, true },
 };
 
 extern "C" __declspec(dllexport) const HashAlgorithm* Algorithms()

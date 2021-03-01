@@ -16,6 +16,12 @@
     <Filter Include="CRC32">
       <UniqueIdentifier>{e8de2202-489c-4331-90cf-a66bc00736b6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GOST R 34.11-2012">
+      <UniqueIdentifier>{5bd3a683-cf14-4915-9242-cdabbdbbc761}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="XKCP">
+      <UniqueIdentifier>{797b3c51-465d-4c66-88bc-2a934fb9f78c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\mbedtls\library\sha512.c">
@@ -76,6 +82,9 @@
     <ClCompile Include="..\BLAKE3\c\blake3_sse41.c">
       <Filter>Blake3</Filter>
     </ClCompile>
+    <ClCompile Include="..\streebog\gost3411-2012-core.c">
+      <Filter>GOST R 34.11-2012</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="mbedtls_config.h">
@@ -97,7 +106,33 @@
     <ClInclude Include="..\BLAKE3\c\blake3_impl.h">
       <Filter>Blake3</Filter>
     </ClInclude>
-    <ClInclude Include="XKCP\config.h" />
+    <ClInclude Include="..\streebog\gost3411-2012-const.h">
+      <Filter>GOST R 34.11-2012</Filter>
+    </ClInclude>
+    <ClInclude Include="..\streebog\gost3411-2012-core.h">
+      <Filter>GOST R 34.11-2012</Filter>
+    </ClInclude>
+    <ClInclude Include="..\streebog\gost3411-2012-mmx.h">
+      <Filter>GOST R 34.11-2012</Filter>
+    </ClInclude>
+    <ClInclude Include="..\streebog\gost3411-2012-precalc.h">
+      <Filter>GOST R 34.11-2012</Filter>
+    </ClInclude>
+    <ClInclude Include="..\streebog\gost3411-2012-ref.h">
+      <Filter>GOST R 34.11-2012</Filter>
+    </ClInclude>
+    <ClInclude Include="..\streebog\gost3411-2012-sse2.h">
+      <Filter>GOST R 34.11-2012</Filter>
+    </ClInclude>
+    <ClInclude Include="..\streebog\gost3411-2012-sse41.h">
+      <Filter>GOST R 34.11-2012</Filter>
+    </ClInclude>
+    <ClInclude Include="streebog\gost3411-2012-config.h">
+      <Filter>GOST R 34.11-2012</Filter>
+    </ClInclude>
+    <ClInclude Include="XKCP\config.h">
+      <Filter>XKCP</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <MASM Include="..\BLAKE3\c\blake3_avx2_x86-64_windows_msvc.asm">

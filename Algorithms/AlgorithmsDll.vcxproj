@@ -123,6 +123,7 @@
     <ClCompile Include="..\mbedtls\library\sha1.c" />
     <ClCompile Include="..\mbedtls\library\sha256.c" />
     <ClCompile Include="..\mbedtls\library\sha512.c" />
+    <ClCompile Include="..\streebog\gost3411-2012-core.c" />
     <ClCompile Include="blake2sp.c" />
     <ClCompile Include="..\BLAKE3\c\blake3.c" />
     <ClCompile Include="..\BLAKE3\c\blake3_sse2.c">
@@ -157,10 +158,18 @@
     <ClCompile Include="xxhash.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\streebog\gost3411-2012-const.h" />
+    <ClInclude Include="..\streebog\gost3411-2012-core.h" />
+    <ClInclude Include="..\streebog\gost3411-2012-mmx.h" />
+    <ClInclude Include="..\streebog\gost3411-2012-precalc.h" />
+    <ClInclude Include="..\streebog\gost3411-2012-ref.h" />
+    <ClInclude Include="..\streebog\gost3411-2012-sse2.h" />
+    <ClInclude Include="..\streebog\gost3411-2012-sse41.h" />
     <ClInclude Include="..\xxHash\xxhash.h" />
     <ClInclude Include="blake2sp.h" />
     <ClInclude Include="..\BLAKE3\c\blake3.h" />
     <ClInclude Include="..\BLAKE3\c\blake3_impl.h" />
+    <ClInclude Include="streebog\gost3411-2012-config.h" />
     <ClInclude Include="XKCP\config.h" />
     <ClInclude Include="crc32.h" />
     <ClInclude Include="Hasher.h" />
@@ -224,7 +233,7 @@
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup>
-    <IncludePath>$(SolutionDir)mbedtls\include;$(ProjectDir)XKCP;$(SolutionDir)XKCP\lib\high\Keccak\;$(SolutionDir)XKCP\lib\high\Keccak\FIPS202\;$(SolutionDir)XKCP\lib\high\Keccak\SP800-185\;$(SolutionDir)XKCP\lib\high\common\;$(SolutionDir)XKCP\lib\high\Keccak\PRG\;$(SolutionDir)XKCP\lib\high\Ketje\;$(SolutionDir)XKCP\lib\high\Keyak\;$(SolutionDir)XKCP\lib\high\KangarooTwelve\;$(SolutionDir)XKCP\lib\high\Kravatte\;$(SolutionDir)XKCP\lib\high\Xoofff\;$(SolutionDir)XKCP\lib\high\Xoodyak\;$(SolutionDir)XKCP\lib\common\;$(SolutionDir)XKCP\lib\low\KeccakP-200\ref\;$(SolutionDir)XKCP\lib\low\KeccakP-400\ref\;$(SolutionDir)XKCP\lib\low\KeccakP-800\plain\;$(SolutionDir)XKCP\lib\low\KeccakP-800\plain\lcua\;$(SolutionDir)XKCP\lib\low\KeccakP-1600\common\;$(SolutionDir)XKCP\lib\low\KeccakP-1600\plain-64bits\;$(SolutionDir)XKCP\lib\low\common\;$(SolutionDir)XKCP\lib\low\KeccakP-1600\plain-64bits\lcua-shld\;$(SolutionDir)XKCP\lib\low\KeccakP-1600-times2\SIMD128\;$(SolutionDir)XKCP\lib\low\KeccakP-1600-times2\SIMD128\SSSE3-ua\;$(SolutionDir)XKCP\lib\low\KeccakP-1600-times4\fallback-on2\;$(SolutionDir)XKCP\lib\low\KeccakP-1600-times8\fallback-on2\;$(SolutionDir)XKCP\lib\low\Xoodoo\;$(SolutionDir)XKCP\lib\low\Xoodoo\SSE2\;$(SolutionDir)XKCP\lib\low\Xoodoo-times4\SSSE3\;$(SolutionDir)XKCP\lib\low\Xoodoo-times8\fallback-on1\;$(SolutionDir)XKCP\lib\low\Xoodoo-times16\fallback-on1\;$(SolutionDir)XKCP\lib\low\Ketje\SnP-compliant\;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)streebog;$(SolutionDir)mbedtls\include;$(ProjectDir)XKCP;$(SolutionDir)XKCP\lib\high\Keccak\;$(SolutionDir)XKCP\lib\high\Keccak\FIPS202\;$(SolutionDir)XKCP\lib\high\Keccak\SP800-185\;$(SolutionDir)XKCP\lib\high\common\;$(SolutionDir)XKCP\lib\high\Keccak\PRG\;$(SolutionDir)XKCP\lib\high\Ketje\;$(SolutionDir)XKCP\lib\high\Keyak\;$(SolutionDir)XKCP\lib\high\KangarooTwelve\;$(SolutionDir)XKCP\lib\high\Kravatte\;$(SolutionDir)XKCP\lib\high\Xoofff\;$(SolutionDir)XKCP\lib\high\Xoodyak\;$(SolutionDir)XKCP\lib\common\;$(SolutionDir)XKCP\lib\low\KeccakP-200\ref\;$(SolutionDir)XKCP\lib\low\KeccakP-400\ref\;$(SolutionDir)XKCP\lib\low\KeccakP-800\plain\;$(SolutionDir)XKCP\lib\low\KeccakP-800\plain\lcua\;$(SolutionDir)XKCP\lib\low\KeccakP-1600\common\;$(SolutionDir)XKCP\lib\low\KeccakP-1600\plain-64bits\;$(SolutionDir)XKCP\lib\low\common\;$(SolutionDir)XKCP\lib\low\KeccakP-1600\plain-64bits\lcua-shld\;$(SolutionDir)XKCP\lib\low\KeccakP-1600-times2\SIMD128\;$(SolutionDir)XKCP\lib\low\KeccakP-1600-times2\SIMD128\SSSE3-ua\;$(SolutionDir)XKCP\lib\low\KeccakP-1600-times4\fallback-on2\;$(SolutionDir)XKCP\lib\low\KeccakP-1600-times8\fallback-on2\;$(SolutionDir)XKCP\lib\low\Xoodoo\;$(SolutionDir)XKCP\lib\low\Xoodoo\SSE2\;$(SolutionDir)XKCP\lib\low\Xoodoo-times4\SSSE3\;$(SolutionDir)XKCP\lib\low\Xoodoo-times8\fallback-on1\;$(SolutionDir)XKCP\lib\low\Xoodoo-times16\fallback-on1\;$(SolutionDir)XKCP\lib\low\Ketje\SnP-compliant\;$(IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)bin\$(ConfigurationReal)\$(Platform)\</OutDir>
     <TargetName>$(ProjectName)-$(Platform)-$(Flavor)</TargetName>
     <IntDir>$(SolutionDir)obj\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
