@@ -454,6 +454,8 @@ public:
 };
 
 using K12_264HashContext = KangarooTwelveHashContext<264>;
+using K12_256HashContext = KangarooTwelveHashContext<256>;
+using K12_512HashContext = KangarooTwelveHashContext<512>;
 
 template <unsigned BlockByteLen, unsigned HashBitlen>
 class ParallelHash128HashContext : HashContext
@@ -601,6 +603,8 @@ constexpr HashAlgorithm HashAlgorithm::k_algorithms[] =
   { "SHA3-384", 48, sha3_384_exts, hash_context_factory<SHA3_384HashContext>, true },
   { "SHA3-512", 64, sha3_512_exts, hash_context_factory<SHA3_512HashContext>, true },
   { "K12-264", 33, k12_264_exts, hash_context_factory<K12_264HashContext>, true },
+  { "K12-256", 32, no_exts, hash_context_factory<K12_256HashContext>, true },
+  { "K12-512", 64, no_exts, hash_context_factory<K12_512HashContext>, true },
   { "PH128-264", 33, ph128_264_exts, hash_context_factory<PH128_264HashContext>, true },
   { "PH256-528", 66, ph256_528_exts, hash_context_factory<PH256_528HashContext>, true },
   { "BLAKE3", 32, blake3_exts, hash_context_factory<Blake3HashContext>, true },
