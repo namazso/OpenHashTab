@@ -46,6 +46,10 @@ brg_endian.h (from XKCP) (licensed under BSD 3-Clause license):
 Copyright (c) 1998-2008 Brian Gladman, Worcester, UK. All rights reserved.
 https://github.com/XKCP/XKCP/blob/master/lib/common/brg_endian.h
 
+streebog (licensed under GPLv3, upgraded via GPLv2+ statement):
+Copyright (c) 2013, Alexey Degtyarev <alexey@renatasystems.org>.
+https://github.com/adegtyarev/streebog
+
 langcomp (licensed under GPLv3+):
 Copyright (C) 2020  namazso
 https://github.com/namazso/langcomp
