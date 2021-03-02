@@ -72,11 +72,16 @@ INT_PTR SettingsDialog::DlgProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
   {
     utl::SetWindowTextStringFromTable(_hwnd, IDS_SETTINGS_TITLE);
     utl::SetWindowTextStringFromTable(_hwnd_BUTTON_CHECK_FOR_UPDATES, IDS_CHECK_FOR_UPDATES);
+    
+    utl::SetFontForChildren(_hwnd, _font.get());
+
     const auto list = _hwnd_ALGORITHM_LIST;
     ListView_SetExtendedListViewStyleEx(list, LVS_EX_CHECKBOXES, LVS_EX_CHECKBOXES);
+    auto width = 0;
     for (const auto& algorithm : HashAlgorithm::Algorithms())
     {
       const auto name = utl::UTF8ToWide(algorithm.GetName());
+      width = std::max(width, ListView_GetStringWidth(list, name.c_str()));
       LVITEMW lvitem
       {
         LVIF_PARAM,
@@ -92,14 +97,15 @@ INT_PTR SettingsDialog::DlgProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
       ListView_SetCheckState(list, item, _settings->algorithms[algorithm.Idx()]);
     }
 
+    // let's hope 40 px padding is good enough
+    ListView_SetColumnWidth(list, 0, width + utl::GetDPIScaledPixels(list, 40));
+
     for (const auto& ctl : s_boxes)
     {
       const auto ctl_hwnd = GetDlgItem(_hwnd, ctl.control_id);
       Button_SetCheck(ctl_hwnd, _settings->*ctl.setting);
       SetWindowTextW(ctl_hwnd, utl::GetString(ctl.string_id).c_str());
     }
-    
-    utl::SetFontForChildren(_hwnd, _font.get());
 
     UpdateCheckboxAvailability();
 

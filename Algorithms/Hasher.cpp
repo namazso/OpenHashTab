@@ -608,8 +608,8 @@ constexpr HashAlgorithm HashAlgorithm::k_algorithms[] =
   { "PH128-264", 33, ph128_264_exts, hash_context_factory<PH128_264HashContext>, true },
   { "PH256-528", 66, ph256_528_exts, hash_context_factory<PH256_528HashContext>, true },
   { "BLAKE3", 32, blake3_exts, hash_context_factory<Blake3HashContext>, true },
-  { "GOST R 34.11-2012 (256)", 32, no_exts, hash_context_factory<GOST34112012_256HashContext>, true },
-  { "GOST R 34.11-2012 (512)", 64, no_exts, hash_context_factory<GOST34112012_512HashContext>, true },
+  { "GOST 2012 (256)", 32, no_exts, hash_context_factory<GOST34112012_256HashContext>, true },
+  { "GOST 2012 (512)", 64, no_exts, hash_context_factory<GOST34112012_512HashContext>, true },
 };
 
 extern "C" __declspec(dllexport) const HashAlgorithm* Algorithms()
