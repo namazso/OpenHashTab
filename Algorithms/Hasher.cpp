@@ -205,6 +205,7 @@ public:
   }
 };
 
+template <unsigned HashBitlen>
 class Blake3HashContext : HashContext
 {
   template <typename T> friend HashContext* hash_context_factory(const HashAlgorithm* algorithm);
@@ -230,9 +231,12 @@ public:
 
   void Finish(uint8_t* out) override
   {
-    blake3_hasher_finalize(&ctx, out, BLAKE3_OUT_LEN);
+    blake3_hasher_finalize(&ctx, out, HashBitlen / 8);
   }
 };
+
+using Blake3_256HashContext = Blake3HashContext<256>;
+using Blake3_512HashContext = Blake3HashContext<512>;
 
 class XXH32HashContext : HashContext
 {
@@ -607,7 +611,8 @@ constexpr HashAlgorithm HashAlgorithm::k_algorithms[] =
   { "K12-512", 64, no_exts, hash_context_factory<K12_512HashContext>, true },
   { "PH128-264", 33, ph128_264_exts, hash_context_factory<PH128_264HashContext>, true },
   { "PH256-528", 66, ph256_528_exts, hash_context_factory<PH256_528HashContext>, true },
-  { "BLAKE3", 32, blake3_exts, hash_context_factory<Blake3HashContext>, true },
+  { "BLAKE3", 32, blake3_exts, hash_context_factory<Blake3_256HashContext>, true },
+  { "BLAKE3-512", 64, no_exts, hash_context_factory<Blake3_512HashContext>, true },
   { "GOST 2012 (256)", 32, no_exts, hash_context_factory<GOST34112012_256HashContext>, true },
   { "GOST 2012 (512)", 64, no_exts, hash_context_factory<GOST34112012_512HashContext>, true },
 };
