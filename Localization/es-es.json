@@ -40,6 +40,9 @@
         "CANCEL": "Cancelar",
         "CLIPBOARD_AUTOENABLE_EXCLUSIVE": "Deshabilitar todos los demás algoritmos",
         "CLIPBOARD_AUTOENABLE_IF_NONE": "Sólo si no se habilitan algoritmos de esa longitud",
-        "CLIPBOARD_AUTOENABLE": "Si el Portapapeles contiene un hash, habilita automáticamente los algoritmos de esa longitud para el procesamiento"
+        "CLIPBOARD_AUTOENABLE": "Si el Portapapeles contiene un hash, habilita automáticamente los algoritmos de esa longitud para el procesamiento",
+        "ITEMS_MATCHING": "%d archivos coincidentes",
+        "ITEM_MATCHING": "Un archivo coincidente",
+        "SETTINGS_TITLE": "Configuración"
     }
 }
