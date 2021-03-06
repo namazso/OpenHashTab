@@ -40,6 +40,11 @@
         "SUMFILE_UNIX_ENDINGS": "Esportare i file checksum con interruzioni riga Unix",
         "SUMFILE_UPPERCASE": "Esporta Hash in maiuscolo",
         "LOOK_FOR_SUMFILES": "Rileva file di checksum adiacenti ai file da processare",
-        "DISPLAY_UPPERCASE": "Visualizza Hash in maiuscolo"
+        "DISPLAY_UPPERCASE": "Visualizza Hash in maiuscolo",
+        "ITEMS_MATCHING": "%d corrispondenze trovate",
+        "ITEM_MATCHING": "1 corrispondenza trovata",
+        "CHECKAGAINST_STRICT": "Modalità ristretta per il campo di verifica hash",
+        "CHECKAGAINST_AUTOFORMAT": "Riformatta automaticamente gli hash nel campo di verifica",
+        "SETTINGS_TITLE": "Impostazioni"
     }
 }
