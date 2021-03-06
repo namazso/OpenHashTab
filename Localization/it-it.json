@@ -45,6 +45,8 @@
         "ITEM_MATCHING": "1 corrispondenza trovata",
         "CHECKAGAINST_STRICT": "Modalità ristretta per il campo di verifica hash",
         "CHECKAGAINST_AUTOFORMAT": "Riformatta automaticamente gli hash nel campo di verifica",
-        "SETTINGS_TITLE": "Impostazioni"
+        "SETTINGS_TITLE": "Impostazioni",
+        "HASH_SUMFILE_TOO": "Durante il processo di un file di checksum calcolane l'hash",
+        "SUMFILE_ALGORITHM_ONLY": "Durante il processo di un file di checksum di un algoritmo noto, disabilita gli altri algoritmi"
     }
 }
