@@ -54,6 +54,7 @@ Most of the actions should be obvious. Some not-so-obvious features are listed h
 * BLAKE3
 * KangarooTwelve (264 bit)
 * ParallelHash128 (264 bit) and ParallelHash256 (528 bit)
+* Streebog (GOST R 34.11-12)
 
 ## Download
 
