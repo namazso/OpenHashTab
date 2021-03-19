@@ -1,6 +1,6 @@
 {
     "langid": "LANG_CHINESE",
-    "sublangid": "LANG_CHINESE_TRADITIONAL",
+    "sublangid": "SUBLANG_CHINESE_TRADITIONAL",
     "strings": {
         "FILENAME": "檔案名",
         "ALGORITHM": "算法",
