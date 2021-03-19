@@ -275,7 +275,7 @@
       <EnableUAC>false</EnableUAC>
       <AdditionalOptions>/PDBALTPATH:%_PDB% /Brepro %(AdditionalOptions)</AdditionalOptions>
       <!--<NoEntryPoint>true</NoEntryPoint>-->
-      <AdditionalDependencies>$(SolutionDir)obj\libXKCP-$(Platform)-$(Flavor).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)XKCP\bin\obj\libXKCP-$(Platform)-$(Flavor).lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(ConfigurationReal)'=='Release'">
