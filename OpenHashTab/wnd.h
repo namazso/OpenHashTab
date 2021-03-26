@@ -342,9 +342,8 @@ namespace wnd
                 pStyle = &pTemplate->style;
                 pexStyle = &pTemplate->dwExtendedStyle;
               }
-
-              // I have NO IDEA what 0x48 means, but without at least 0x40 the window just doesn't show.
-              *pStyle = WS_POPUPWINDOW | WS_CAPTION | WS_THICKFRAME | 0x40;// | 0x8;
+              
+              *pStyle = WS_POPUPWINDOW | WS_CAPTION | WS_THICKFRAME | DS_SHELLFONT;
               *pexStyle = WS_EX_OVERLAPPEDWINDOW | WS_EX_APPWINDOW;
 
               hwnd = CreateDialogIndirectParamW(hInstance, pTemplate, hWndParent, lpDialogFunc, dwInitParam);
