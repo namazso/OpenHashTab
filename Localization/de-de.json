@@ -41,6 +41,12 @@
         "CLIPBOARD_AUTOENABLE": "Wähle automatisch die Algorithmen mit der passenden Länge, falls ein Hash in der Zwischenablage liegt",
         "CLIPBOARD_AUTOENABLE_IF_NONE": "Nur, wenn Algorithmen derselben Länge aktiviert sind",
         "CLIPBOARD_AUTOENABLE_EXCLUSIVE": "Deaktiviere alle anderen Algorithmen",
-        "SETTINGS_TITLE": "Einstellungen"
+        "SETTINGS_TITLE": "Einstellungen",
+        "SUMFILE_ALGORITHM_ONLY": "Wenn Sie eine Summendatei mit bekanntem Algorithmus bearbeiten, deaktivieren Sie andere Algorithmen",
+        "ITEMS_MATCHING": "%d übereinstimmende Dateien",
+        "ITEM_MATCHING": "1 passende Datei",
+        "HASH_SUMFILE_TOO": "Bei der Verarbeitung einer Summendatei wird der Hash der Summendatei zu",
+        "CHECKAGAINST_STRICT": "Strikter Modus für Hash-Checker-Feld",
+        "CHECKAGAINST_AUTOFORMAT": "Automatisch eingefügte Hashes im Prüffeld umformatieren"
     }
 }
