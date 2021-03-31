@@ -13,7 +13,7 @@
         "DONE": "Fini !",
         "PROCESSING": "Traitement…",
         "HASHES": "Sommes",
-        "CLIPBOARD": "Vers le presse-papier",
+        "CLIPBOARD": "Copier p.-pa",
         "NOMATCH": "Aucune comparaison trouvée.",
         "ERROR": "Erreur",
         "SUMFILE_USE_DOUBLE_SPACE": "Exporter les fichiers de sommes avec un double espace au lieu de l'espace-astérisque",
@@ -42,10 +42,10 @@
         "CLIPBOARD_AUTOENABLE_IF_NONE": "Uniquement si aucun algorithme de cette longueur n'est activé",
         "CLIPBOARD_AUTOENABLE": "Si le presse-papiers contient un hachage, activer automatiquement les algorithmes de cette longueur pour l'exécution",
         "CHECKAGAINST_AUTOFORMAT": "Reformatage automatique des hachages collés dans le champ du vérificateur",
-        "SUMFILE_ALGORITHM_ONLY": "Lors du traitement d'un fichier de somme d'algorithme connu, désactiver les autres algorithmes.",
+        "SUMFILE_ALGORITHM_ONLY": "Lors du traitement d'un fichier de somme d'algorithme connu, désactiver les autres algorithmes",
         "ITEMS_MATCHING": "%d fichiers correspondants",
         "ITEM_MATCHING": "1 fichier correspondant",
-        "HASH_SUMFILE_TOO": "Lors du traitement d'un fichier de somme, le fichier de somme est également haché.",
+        "HASH_SUMFILE_TOO": "Lors du traitement d'un fichier de somme, le fichier de somme est également haché",
         "CHECKAGAINST_STRICT": "Mode strict pour le champ du vérificateur de hachage",
         "SETTINGS_TITLE": "paramètre"
     }
