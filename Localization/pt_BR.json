@@ -40,6 +40,11 @@
         "UPDATE_NEWEST_TEXT": "Voçê já está na última versão",
         "CLIPBOARD_AUTOENABLE_EXCLUSIVE": "Desactivar todos os outros algoritmos",
         "CLIPBOARD_AUTOENABLE_IF_NONE": "Apenas se não estiverem activos algoritmos desse comprimento",
-        "CLIPBOARD_AUTOENABLE": "Se na área de transferência existir algum hash, ativar automaticamente os algoritmos desse comprimento para execução"
+        "CLIPBOARD_AUTOENABLE": "Se na área de transferência existir algum hash, ativar automaticamente os algoritmos desse comprimento para execução",
+        "ITEMS_MATCHING": "%d arquivos correspondentes",
+        "ITEM_MATCHING": "1 arquivo correspondente",
+        "CHECKAGAINST_AUTOFORMAT": "Reformatar automaticamente hashes colados no campo de checagem",
+        "CHECKAGAINST_STRICT": "Modo estrito para o campo de checagem de hash",
+        "SETTINGS_TITLE": "Configurações"
     }
 }
