@@ -13,6 +13,15 @@ jobs:
     runs-on: windows-latest
 
     steps:
+    - name: Install Alpine WSLv1
+      uses: Vampire/setup-wsl@v1
+      with:
+          distribution: Alpine
+          
+    - name: Install tools on Alpine
+      run: |
+        wsl -d Alpine -u root -- apk add libxslt make
+      
     - name: Checkout
       uses: actions/checkout@v1
       with:
