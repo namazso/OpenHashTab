@@ -69,9 +69,6 @@ jobs:
     - name: Build Algorithms (x86)
       run: |
         msbuild AlgorithmsDll.sln /p:Configuration=Release /p:Platform=x86-sse2
-        msbuild AlgorithmsDll.sln /p:Configuration=Release /p:Platform=x86-avx
-        msbuild AlgorithmsDll.sln /p:Configuration=Release /p:Platform=x86-avx2
-        msbuild AlgorithmsDll.sln /p:Configuration=Release /p:Platform=x86-avx512
       
     - name: Build Algorithms (x64)
       run: |
