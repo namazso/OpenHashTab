@@ -16,6 +16,9 @@
 #include "Hasher.h"
 
 #include <Windows.h>
+#if defined(_M_IX86) ||  defined(_M_X64)
+#include <immintrin.h>
+#endif
 
 enum : uint32_t {
   SSE2_CPUID_MASK       = 1u << 26,
