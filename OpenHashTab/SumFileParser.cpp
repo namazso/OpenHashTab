@@ -215,6 +215,15 @@ DWORD TryParseSumFile(HANDLE h, FileSumList& output)
   UnmapViewOfFile(address);
   CloseHandle(mapping);
 
+  for (const auto& file : sfp.files)
+  {
+    if (!file.first.empty() && utl::UTF8ToWide(file.first.c_str()).empty())
+    {
+      failed = true;
+      break;
+    }
+  }
+
   if (!failed)
     output = std::move(sfp.files);
 
