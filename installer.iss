@@ -41,12 +41,8 @@ AppCopyright={#MyCopyright}
 CreateAppDir=yes
 DefaultDirName={autopf}\OpenHashTab
 LicenseFile=license.installer.txt
-#ifndef SYSTEM
-PrivilegesRequired=lowest
-OutputBaseFilename=OpenHashTab_setup_user
-#else
-OutputBaseFilename=OpenHashTab_setup_system
-#endif
+PrivilegesRequiredOverridesAllowed=commandline dialog
+OutputBaseFilename=OpenHashTab_setup
 OutputDir=.
 Compression=lzma
 SolidCompression=yes
