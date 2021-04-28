@@ -87,7 +87,7 @@ In addition to contributors reported by git, some translations were also contrib
 
 ### Requirements
 
-* MSYS2 with make
+* WSL Alpine with make and libxslt
 * Visual Studio 2019 16.8+ (with ARM64 and clang-cl)
 * [InnoSetup](http://www.jrsoftware.org/isinfo.php)
 
