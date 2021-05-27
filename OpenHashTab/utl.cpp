@@ -32,7 +32,7 @@ std::vector<uint8_t> utl::FindHashInString(std::wstring_view wv)
   return {};
 }
 
-int utl::FormattedMessageBox(HWND hwnd, LPCWSTR caption, UINT type, LPCWSTR fmt, ...)
+int utl::FormattedMessageBox(HWND hwnd, LPCWSTR caption, UINT type, _In_z_ _Printf_format_string_ LPCWSTR fmt, ...)
 {
   va_list args;
   va_start(args, fmt);
@@ -363,10 +363,18 @@ std::pair<const char*, size_t> utl::GetResource(LPCWSTR name, LPCWSTR type)
     name,
     type
   );
-  const auto rc_data = LoadResource(GetInstance(), rc);
-  const auto size = SizeofResource(GetInstance(), rc);
-  const auto data = static_cast<const char*>(LockResource(rc_data));
-  return { data, size };
+  if (rc)
+  {
+    const auto rc_data = LoadResource(GetInstance(), rc);
+    const auto size = SizeofResource(GetInstance(), rc);
+    if (rc_data && size)
+    {
+      const auto data = static_cast<const char*>(LockResource(rc_data));
+      if (data)
+        return { data, size };
+    }
+  }
+  return { nullptr, 0 };
 }
 
 utl::UniqueFont utl::GetDPIScaledFont()
