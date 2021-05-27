@@ -202,9 +202,16 @@ void MainDialog::AddItemToFileList(LPCWSTR filename, LPCWSTR algorithm, LPCWSTR 
   };
   lvitem.lParam = lparam;
   const auto item = ListView_InsertItem(list, &lvitem);
-  ListView_SetItemText(list, item, ColIndex_Filename, const_cast<LPWSTR>(filename));
-  ListView_SetItemText(list, item, ColIndex_Algorithm, const_cast<LPWSTR>(algorithm));
-  ListView_SetItemText(list, item, ColIndex_Hash, const_cast<LPWSTR>(hash));
+  lvitem = {};
+  lvitem.iSubItem = ColIndex_Filename;
+  lvitem.pszText = const_cast<LPWSTR>(filename);
+  SendNotifyMessageW(list, LVM_SETITEMTEXT, (WPARAM)item, (LPARAM)&lvitem);
+  lvitem.iSubItem = ColIndex_Algorithm;
+  lvitem.pszText = const_cast<LPWSTR>(algorithm);
+  SendNotifyMessageW(list, LVM_SETITEMTEXT, (WPARAM)item, (LPARAM)&lvitem);
+  lvitem.iSubItem = ColIndex_Hash;
+  lvitem.pszText = const_cast<LPWSTR>(hash);
+  SendNotifyMessageW(list, LVM_SETITEMTEXT, (WPARAM)item, (LPARAM)&lvitem);
 }
 
 void MainDialog::ListDoubleClick(int item, int subitem)
@@ -368,7 +375,6 @@ INT_PTR MainDialog::DlgProc(UINT msg, WPARAM wparam, LPARAM lparam)
     { &MainDialog::OnClose,             WM_CLOSE },
     { &MainDialog::OnNeedAdjust,        WM_WINDOWPOSCHANGING },
     { &MainDialog::OnNeedAdjust,        WM_WINDOWPOSCHANGED },
-    { &MainDialog::OnFileFinished,      wnd::WM_USER_FILE_FINISHED, wnd::Match_w, wnd::k_user_magic_wparam },
     { &MainDialog::OnAllFilesFinished,  wnd::WM_USER_ALL_FILES_FINISHED, wnd::Match_w, wnd::k_user_magic_wparam },
     { &MainDialog::OnFileProgress,      wnd::WM_USER_FILE_PROGRESS, wnd::Match_w, wnd::k_user_magic_wparam },
     { &MainDialog::OnStatusUpdateTimer, WM_TIMER,   wnd::Match_w,   k_status_update_timer_id },
@@ -472,10 +478,8 @@ INT_PTR MainDialog::OnInitDialog(UINT, WPARAM, LPARAM)
   return FALSE;
 }
 
-INT_PTR MainDialog::OnFileFinished(UINT, WPARAM, LPARAM lparam)
+void MainDialog::FileFinished(FileHashTask* file)
 {
-  const auto file = reinterpret_cast<FileHashTask*>(lparam);
-
   if (const auto error = file->GetError(); error == ERROR_SUCCESS)
   {
     switch (file->GetMatchState())
@@ -515,14 +519,13 @@ INT_PTR MainDialog::OnFileFinished(UINT, WPARAM, LPARAM lparam)
       file->ToLparam(0)
     );
   }
-
-  UpdateDefaultStatus();
-
-  return FALSE;
 }
 
 INT_PTR MainDialog::OnAllFilesFinished(UINT, WPARAM, LPARAM)
 {
+  for (const auto& file : _prop_page->GetFiles())
+    FileFinished(file.get());
+
   _finished = true;
 
   // We only enable settings button after processing is done because changing enabled algorithms could result

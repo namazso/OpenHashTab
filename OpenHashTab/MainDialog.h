@@ -75,6 +75,8 @@ class MainDialog
   void ListPopupMenu(POINT pt);
   void ListSort(ColIndex col, bool desc);
 
+  void FileFinished(FileHashTask* file);
+
 public:
   MainDialog(HWND hwnd, void* prop_page);
   ~MainDialog();
@@ -83,7 +85,6 @@ public:
 
 private:
   INT_PTR OnInitDialog(UINT, WPARAM, LPARAM);
-  INT_PTR OnFileFinished(UINT, WPARAM, LPARAM lparam);
   INT_PTR OnAllFilesFinished(UINT, WPARAM, LPARAM);
   INT_PTR OnFileProgress(UINT, WPARAM, LPARAM lparam);
   INT_PTR OnStatusUpdateTimer(UINT, WPARAM, LPARAM);

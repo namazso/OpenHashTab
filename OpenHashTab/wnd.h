@@ -25,8 +25,7 @@ namespace wnd
 
   enum UserWindowMessages : UINT
   {
-    WM_USER_FILE_FINISHED = WM_USER,
-    WM_USER_ALL_FILES_FINISHED,
+    WM_USER_ALL_FILES_FINISHED = WM_USER,
     WM_USER_FILE_PROGRESS
   };
 

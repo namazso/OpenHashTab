@@ -38,7 +38,7 @@ void Coordinator::RegisterWindow(HWND window)
 {
   // Turns out the dialog can sometimes be still running at the time we receive a RELEASE, so let's reference here
   Reference();
-  std::lock_guard<std::mutex> guard{_window_mutex};
+  std::lock_guard guard{_window_mutex};
   assert(_window == nullptr);
   _window = window;
 }
@@ -46,7 +46,7 @@ void Coordinator::RegisterWindow(HWND window)
 void Coordinator::UnregisterWindow()
 {
   {
-    std::lock_guard<std::mutex> guard{ _window_mutex };
+    std::lock_guard guard{ _window_mutex };
     assert(_window != nullptr);
     _window = nullptr;
   }
@@ -120,16 +120,12 @@ void Coordinator::Cancel(bool wait)
 
 void Coordinator::FileCompletionCallback(FileHashTask* file)
 {
-  std::lock_guard<std::mutex> guard{ _window_mutex };
+  std::lock_guard guard{ _window_mutex };
 
   const auto not_finished = --_files_not_finished;
 
-  if (_window)
-  {
-    SendNotifyMessageW(_window, wnd::WM_USER_FILE_FINISHED, wnd::k_user_magic_wparam, (LPARAM)file);
-    if (not_finished == 0)
-      SendNotifyMessageW(_window, wnd::WM_USER_ALL_FILES_FINISHED, wnd::k_user_magic_wparam, 0);
-  }
+  if (_window && not_finished == 0)
+    SendNotifyMessageW(_window, wnd::WM_USER_ALL_FILES_FINISHED, wnd::k_user_magic_wparam, 0);
 }
 
 void Coordinator::FileProgressCallback(uint64_t size_progress)
@@ -144,7 +140,7 @@ void Coordinator::FileProgressCallback(uint64_t size_progress)
 
   if(old_part != new_part)
   {
-    std::lock_guard<std::mutex> guard{ _window_mutex };
+    std::lock_guard guard{ _window_mutex };
     if(_window)
       SendNotifyMessageW(
         _window,
