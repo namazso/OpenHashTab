@@ -10,13 +10,13 @@
         "EXPORT_TO": "Izvoz u datoteku kontrolnog zbroja:",
         "EXPORT_BTN": "Izvezi …",
         "SUMFILE": "Interpretirano kao datoteka kontrolnog zbroja.",
-        "DONE": "Završeno!",
+        "DONE": "Gotovo!",
         "PROCESSING": "Obrada u tijeku …",
         "HASHES": "Šifre",
         "CLIPBOARD": "U međuspremnik",
         "NOMATCH": "Ništa se ne podudara.",
         "ERROR": "Greška",
-        "CANCEL": "Obustavi",
+        "CANCEL": "Odustani",
         "DISPLAY_UPPERCASE": "Prikaži šifre velikim slovima",
         "LOOK_FOR_SUMFILES": "Traži datoteke kontrolnih zbrojeva pored datoteka koje se šifriraju",
         "SUMFILE_UPPERCASE": "Izvezi šifre velikim slovima",
@@ -26,7 +26,7 @@
         "SUMFILE_DOT_HASH_COMPATIBLE": "Izvezi datoteke kontrolnog zbroja u corz .hash kompatibilnom formatu",
         "SUMFILE_BANNER": "Izvezenim datotekama dodaj naslov",
         "SUMFILE_BANNER_DATE": "U naslov dodaj datum",
-        "CHECK_FOR_UPDATES": "Provjeri nadogradnje",
+        "CHECK_FOR_UPDATES": "Traži nove verzije",
         "COPY_HASH": "Kopiraj šifru",
         "COPY_LINE": "Kopiraj redak",
         "COPY_FILE": "Kopiraj ime datoteke",
@@ -47,6 +47,6 @@
         "HASH_SUMFILE_TOO": "Prilikom obrade datoteke kontrolnog zbroja također šifriraj tu datoteku",
         "ITEM_MATCHING": "Podudaranje s 1 datotekom",
         "ITEMS_MATCHING": "%d odgovarajućih datoteka",
-        "SUMFILE_ALGORITHM_ONLY": "Prilikom obrade datoteke kontrolnog zbroja poznatog algoritma, dekativiraj ostale algoritme"
+        "SUMFILE_ALGORITHM_ONLY": "Prilikom obrade datoteke kontrolnog zbroja poznatog algoritma, deakativiraj ostale algoritme"
     }
 }
