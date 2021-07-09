@@ -2,7 +2,7 @@
     "langid": "LANG_LITHUANIAN",
     "sublangid": "SUBLANG_DEFAULT",
     "strings": {
-        "FILENAME": "",
+        "FILENAME": "Pavadinimas",
         "ALGORITHM": "Algoritmas",
         "COPIED": "✔ Nukopijuota",
         "HASH": "Hash",
