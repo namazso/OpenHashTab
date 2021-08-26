@@ -40,6 +40,13 @@
         "UPDATE_NEWEST_TEXT": "이미 최신 버전을 사용 중입니다.",
         "CLIPBOARD_AUTOENABLE": "클립보드에 해시가 있을 경우 길이가 일치하는 알고리즘 자동 활성화",
         "CLIPBOARD_AUTOENABLE_IF_NONE": "해당 길이의 알고리즘이 하나도 활성화되어 있지 않은 경우에만",
-        "CLIPBOARD_AUTOENABLE_EXCLUSIVE": "다른 알고리즘 모두 비활성화"
+        "CLIPBOARD_AUTOENABLE_EXCLUSIVE": "다른 알고리즘 모두 비활성화",
+        "SUMFILE_ALGORITHM_ONLY": "sumfile 처리 시 해당 알고리즘 외에 다른 알고리즘 사용 안 함",
+        "ITEMS_MATCHING": "%d개 파일 일치",
+        "ITEM_MATCHING": "1개 파일 일치",
+        "HASH_SUMFILE_TOO": "sumfile 처리 시 sumfile 자체의 해시도 계산",
+        "CHECKAGAINST_STRICT": "해시 비교 칸에 엄격한 규칙 사용",
+        "CHECKAGAINST_AUTOFORMAT": "붙여넣기한 해시를 자동으로 해시 비교 칸에 맞추기",
+        "SETTINGS_TITLE": "설정"
     }
 }
