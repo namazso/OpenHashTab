@@ -55,6 +55,7 @@ jobs:
     - name: Build XKCP
       run: |
         cd ${{ github.workspace }}
+        cd Algorithms\deps
         cmd /C build-xkcp.bat
       
     - name: Build mCtrl

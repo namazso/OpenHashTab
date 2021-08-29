@@ -24,28 +24,28 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\mbedtls\library\sha512.c">
+    <ClCompile Include="deps\mbedtls\library\sha512.c">
       <Filter>mbedTLS</Filter>
     </ClCompile>
-    <ClCompile Include="..\mbedtls\library\sha256.c">
+    <ClCompile Include="deps\mbedtls\library\sha256.c">
       <Filter>mbedTLS</Filter>
     </ClCompile>
-    <ClCompile Include="..\mbedtls\library\sha1.c">
+    <ClCompile Include="deps\mbedtls\library\sha1.c">
       <Filter>mbedTLS</Filter>
     </ClCompile>
-    <ClCompile Include="..\mbedtls\library\ripemd160.c">
+    <ClCompile Include="deps\mbedtls\library\ripemd160.c">
       <Filter>mbedTLS</Filter>
     </ClCompile>
-    <ClCompile Include="..\mbedtls\library\platform_util.c">
+    <ClCompile Include="deps\mbedtls\library\platform_util.c">
       <Filter>mbedTLS</Filter>
     </ClCompile>
-    <ClCompile Include="..\mbedtls\library\md5.c">
+    <ClCompile Include="deps\mbedtls\library\md5.c">
       <Filter>mbedTLS</Filter>
     </ClCompile>
-    <ClCompile Include="..\mbedtls\library\md4.c">
+    <ClCompile Include="deps\mbedtls\library\md4.c">
       <Filter>mbedTLS</Filter>
     </ClCompile>
-    <ClCompile Include="..\mbedtls\library\md2.c">
+    <ClCompile Include="deps\mbedtls\library\md2.c">
       <Filter>mbedTLS</Filter>
     </ClCompile>
     <ClCompile Include="xxhash.c">
@@ -61,28 +61,28 @@
     <ClCompile Include="blake3_dispatch.c">
       <Filter>Blake3</Filter>
     </ClCompile>
-    <ClCompile Include="..\BLAKE3\c\blake3.c">
+    <ClCompile Include="deps\BLAKE3\c\blake3.c">
       <Filter>Blake3</Filter>
     </ClCompile>
-    <ClCompile Include="..\BLAKE3\c\blake3_avx2.c">
+    <ClCompile Include="deps\BLAKE3\c\blake3_avx2.c">
       <Filter>Blake3</Filter>
     </ClCompile>
-    <ClCompile Include="..\BLAKE3\c\blake3_avx512.c">
+    <ClCompile Include="deps\BLAKE3\c\blake3_avx512.c">
       <Filter>Blake3</Filter>
     </ClCompile>
-    <ClCompile Include="..\BLAKE3\c\blake3_neon.c">
+    <ClCompile Include="deps\BLAKE3\c\blake3_neon.c">
       <Filter>Blake3</Filter>
     </ClCompile>
-    <ClCompile Include="..\BLAKE3\c\blake3_portable.c">
+    <ClCompile Include="deps\BLAKE3\c\blake3_portable.c">
       <Filter>Blake3</Filter>
     </ClCompile>
-    <ClCompile Include="..\BLAKE3\c\blake3_sse2.c">
+    <ClCompile Include="deps\BLAKE3\c\blake3_sse2.c">
       <Filter>Blake3</Filter>
     </ClCompile>
-    <ClCompile Include="..\BLAKE3\c\blake3_sse41.c">
+    <ClCompile Include="deps\BLAKE3\c\blake3_sse41.c">
       <Filter>Blake3</Filter>
     </ClCompile>
-    <ClCompile Include="..\streebog\gost3411-2012-core.c">
+    <ClCompile Include="deps\streebog\gost3411-2012-core.c">
       <Filter>GOST R 34.11-2012</Filter>
     </ClCompile>
   </ItemGroup>
@@ -90,7 +90,7 @@
     <ClInclude Include="mbedtls_config.h">
       <Filter>mbedTLS</Filter>
     </ClInclude>
-    <ClInclude Include="..\xxHash\xxhash.h">
+    <ClInclude Include="deps\xxHash\xxhash.h">
       <Filter>xxHash</Filter>
     </ClInclude>
     <ClInclude Include="blake2sp.h">
@@ -100,31 +100,31 @@
       <Filter>CRC32</Filter>
     </ClInclude>
     <ClInclude Include="Hasher.h" />
-    <ClInclude Include="..\BLAKE3\c\blake3.h">
+    <ClInclude Include="deps\BLAKE3\c\blake3.h">
       <Filter>Blake3</Filter>
     </ClInclude>
-    <ClInclude Include="..\BLAKE3\c\blake3_impl.h">
+    <ClInclude Include="deps\BLAKE3\c\blake3_impl.h">
       <Filter>Blake3</Filter>
     </ClInclude>
-    <ClInclude Include="..\streebog\gost3411-2012-const.h">
+    <ClInclude Include="deps\streebog\gost3411-2012-const.h">
       <Filter>GOST R 34.11-2012</Filter>
     </ClInclude>
-    <ClInclude Include="..\streebog\gost3411-2012-core.h">
+    <ClInclude Include="deps\streebog\gost3411-2012-core.h">
       <Filter>GOST R 34.11-2012</Filter>
     </ClInclude>
-    <ClInclude Include="..\streebog\gost3411-2012-mmx.h">
+    <ClInclude Include="deps\streebog\gost3411-2012-mmx.h">
       <Filter>GOST R 34.11-2012</Filter>
     </ClInclude>
-    <ClInclude Include="..\streebog\gost3411-2012-precalc.h">
+    <ClInclude Include="deps\streebog\gost3411-2012-precalc.h">
       <Filter>GOST R 34.11-2012</Filter>
     </ClInclude>
-    <ClInclude Include="..\streebog\gost3411-2012-ref.h">
+    <ClInclude Include="deps\streebog\gost3411-2012-ref.h">
       <Filter>GOST R 34.11-2012</Filter>
     </ClInclude>
-    <ClInclude Include="..\streebog\gost3411-2012-sse2.h">
+    <ClInclude Include="deps\streebog\gost3411-2012-sse2.h">
       <Filter>GOST R 34.11-2012</Filter>
     </ClInclude>
-    <ClInclude Include="..\streebog\gost3411-2012-sse41.h">
+    <ClInclude Include="deps\streebog\gost3411-2012-sse41.h">
       <Filter>GOST R 34.11-2012</Filter>
     </ClInclude>
     <ClInclude Include="streebog\gost3411-2012-config.h">
@@ -135,16 +135,16 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <MASM Include="..\BLAKE3\c\blake3_avx2_x86-64_windows_msvc.asm">
+    <MASM Include="deps\BLAKE3\c\blake3_avx2_x86-64_windows_msvc.asm">
       <Filter>Blake3</Filter>
     </MASM>
-    <MASM Include="..\BLAKE3\c\blake3_avx512_x86-64_windows_msvc.asm">
+    <MASM Include="deps\BLAKE3\c\blake3_avx512_x86-64_windows_msvc.asm">
       <Filter>Blake3</Filter>
     </MASM>
-    <MASM Include="..\BLAKE3\c\blake3_sse2_x86-64_windows_msvc.asm">
+    <MASM Include="deps\BLAKE3\c\blake3_sse2_x86-64_windows_msvc.asm">
       <Filter>Blake3</Filter>
     </MASM>
-    <MASM Include="..\BLAKE3\c\blake3_sse41_x86-64_windows_msvc.asm">
+    <MASM Include="deps\BLAKE3\c\blake3_sse41_x86-64_windows_msvc.asm">
       <Filter>Blake3</Filter>
     </MASM>
   </ItemGroup>

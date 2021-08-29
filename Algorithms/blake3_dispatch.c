@@ -2,7 +2,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "../BLAKE3/c/blake3_impl.h"
+#include "deps/BLAKE3/c/blake3_impl.h"
 
 #include <immintrin.h>
 

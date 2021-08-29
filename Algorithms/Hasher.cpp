@@ -25,7 +25,7 @@
 #include <mbedtls/ripemd160.h>
 #include "blake2sp.h"
 #include "crc32.h"
-#include "../BLAKE3/c/blake3.h"
+#include "deps/BLAKE3/c/blake3.h"
 extern "C" {
 #include "KeccakHash.h"
 #include "KangarooTwelve.h"
@@ -34,11 +34,11 @@ extern "C" {
 
 #define XXH_STATIC_LINKING_ONLY
 
-#include "../xxHash/xxhash.h"
+#include "deps/xxHash/xxhash.h"
 
 extern "C" {
 #define uint512_u uint512_u_STREEBOG
-#include "../streebog/gost3411-2012-core.h"
+#include "deps/streebog/gost3411-2012-core.h"
 #undef uint512_u
 }
 

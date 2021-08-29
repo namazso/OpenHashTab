@@ -12,4 +12,4 @@
 #  include <arm_neon.h>
 #endif
 
-#include "../xxHash/xxhash.h"
+#include "deps/xxHash/xxhash.h"
