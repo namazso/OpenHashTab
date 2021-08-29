@@ -54,9 +54,6 @@
     <ClCompile Include="blake2sp.c">
       <Filter>Blake2sp</Filter>
     </ClCompile>
-    <ClCompile Include="crc32.c">
-      <Filter>CRC32</Filter>
-    </ClCompile>
     <ClCompile Include="Hasher.cpp" />
     <ClCompile Include="blake3_dispatch.c">
       <Filter>Blake3</Filter>
@@ -85,6 +82,9 @@
     <ClCompile Include="deps\streebog\gost3411-2012-core.c">
       <Filter>GOST R 34.11-2012</Filter>
     </ClCompile>
+    <ClCompile Include="deps\crc32\Crc32.cpp">
+      <Filter>CRC32</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="mbedtls_config.h">
@@ -95,9 +95,6 @@
     </ClInclude>
     <ClInclude Include="blake2sp.h">
       <Filter>Blake2sp</Filter>
-    </ClInclude>
-    <ClInclude Include="crc32.h">
-      <Filter>CRC32</Filter>
     </ClInclude>
     <ClInclude Include="Hasher.h" />
     <ClInclude Include="deps\BLAKE3\c\blake3.h">
@@ -132,6 +129,9 @@
     </ClInclude>
     <ClInclude Include="XKCP\config.h">
       <Filter>XKCP</Filter>
+    </ClInclude>
+    <ClInclude Include="deps\crc32\Crc32.h">
+      <Filter>CRC32</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

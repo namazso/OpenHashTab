@@ -24,7 +24,7 @@
 #include <mbedtls/sha512.h>
 #include <mbedtls/ripemd160.h>
 #include "blake2sp.h"
-#include "crc32.h"
+#include "deps/crc32/Crc32.h"
 #include "deps/BLAKE3/c/blake3.h"
 extern "C" {
 #include "KeccakHash.h"
@@ -193,7 +193,7 @@ public:
 
   void Update(const void* data, size_t size) override
   {
-    crc = Crc32_ComputeBuf(crc, data, size);
+    crc = crc32_fast(data, size, crc);
   }
 
   void Finish(uint8_t* out) override

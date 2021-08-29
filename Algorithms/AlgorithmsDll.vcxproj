@@ -115,6 +115,7 @@
     <Flavor>avx512</Flavor>
   </PropertyGroup>
   <ItemGroup>
+    <ClCompile Include="deps\crc32\Crc32.cpp" />
     <ClCompile Include="deps\mbedtls\library\md2.c" />
     <ClCompile Include="deps\mbedtls\library\md4.c" />
     <ClCompile Include="deps\mbedtls\library\md5.c" />
@@ -153,11 +154,11 @@
       <ExcludedFromBuild Condition="'$(Flavor)'!='neon'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="deps\BLAKE3\c\blake3_portable.c" />
-    <ClCompile Include="crc32.c" />
     <ClCompile Include="Hasher.cpp" />
     <ClCompile Include="xxhash.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="deps\crc32\Crc32.h" />
     <ClInclude Include="deps\streebog\gost3411-2012-const.h" />
     <ClInclude Include="deps\streebog\gost3411-2012-core.h" />
     <ClInclude Include="deps\streebog\gost3411-2012-mmx.h" />
@@ -171,7 +172,6 @@
     <ClInclude Include="deps\BLAKE3\c\blake3_impl.h" />
     <ClInclude Include="streebog\gost3411-2012-config.h" />
     <ClInclude Include="XKCP\config.h" />
-    <ClInclude Include="crc32.h" />
     <ClInclude Include="Hasher.h" />
     <ClInclude Include="mbedtls_config.h" />
   </ItemGroup>

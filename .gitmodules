@@ -28,3 +28,6 @@
 [submodule "Algorithms/deps/streebog"]
 	path = Algorithms/deps/streebog
 	url = https://github.com/adegtyarev/streebog.git
+[submodule "Algorithms/deps/crc32"]
+	path = Algorithms/deps/crc32
+	url = https://github.com/namazso/crc32.git
