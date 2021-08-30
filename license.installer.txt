@@ -21,6 +21,9 @@ Copyright (c) 2011-2016 Stephan Brumme
 Modified by namazso for Windows/ARM64 compatibility.
 https://github.com/namazso/crc32
 
+crc64 implementation (public domain):
+by duk
+
 blake3 reference implementation (CC0):
 by Samuel Neves and Jack O'Connor
 
