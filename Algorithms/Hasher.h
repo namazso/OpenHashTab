@@ -57,7 +57,7 @@ class HashAlgorithm
 {
 public:
   using FactoryFn = HashContext* (const HashAlgorithm* algorithm);
-  constexpr static auto k_count = 27;
+  constexpr static auto k_count = 28;
   constexpr static auto k_max_size = 64;
 private:
   static const HashAlgorithm k_algorithms[k_count];

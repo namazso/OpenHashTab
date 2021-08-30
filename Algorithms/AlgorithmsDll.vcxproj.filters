@@ -22,6 +22,9 @@
     <Filter Include="XKCP">
       <UniqueIdentifier>{797b3c51-465d-4c66-88bc-2a934fb9f78c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="CRC64">
+      <UniqueIdentifier>{5d3fcf71-ff59-4873-b414-8eb2005a636e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="deps\mbedtls\library\sha512.c">
@@ -85,6 +88,9 @@
     <ClCompile Include="deps\crc32\Crc32.cpp">
       <Filter>CRC32</Filter>
     </ClCompile>
+    <ClCompile Include="crc64.cpp">
+      <Filter>CRC64</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="mbedtls_config.h">
@@ -132,6 +138,9 @@
     </ClInclude>
     <ClInclude Include="deps\crc32\Crc32.h">
       <Filter>CRC32</Filter>
+    </ClInclude>
+    <ClInclude Include="crc64.h">
+      <Filter>CRC64</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -31,6 +31,7 @@ extern "C" {
 #include "KangarooTwelve.h"
 #include "SP800-185.h"
 }
+#include "crc64.h"
 
 #define XXH_STATIC_LINKING_ONLY
 
@@ -202,6 +203,39 @@ public:
     out[1] = 0xFF & (crc >> 16);
     out[2] = 0xFF & (crc >> 8);
     out[3] = 0xFF & (crc >> 0);
+  }
+};
+
+class Crc64HashContext : HashContext
+{
+  template <typename T> friend HashContext* hash_context_factory(const HashAlgorithm* algorithm);
+
+  uint64_t crc{};
+
+public:
+  Crc64HashContext(const HashAlgorithm* algorithm) : HashContext(algorithm) {}
+  ~Crc64HashContext() = default;
+
+  void Clear() override
+  {
+    crc = 0;
+  }
+
+  void Update(const void* data, size_t size) override
+  {
+    crc = crc64(crc, data, size);
+  }
+
+  void Finish(uint8_t* out) override
+  {
+    out[0] = 0xFF & (crc >> 56);
+    out[1] = 0xFF & (crc >> 48);
+    out[2] = 0xFF & (crc >> 40);
+    out[3] = 0xFF & (crc >> 32);
+    out[4] = 0xFF & (crc >> 24);
+    out[5] = 0xFF & (crc >> 16);
+    out[6] = 0xFF & (crc >> 8);
+    out[7] = 0xFF & (crc >> 0);
   }
 };
 
@@ -588,6 +622,7 @@ static const char* const md4_exts[] = { "md4", nullptr };
 constexpr HashAlgorithm HashAlgorithm::k_algorithms[] =
 {
   { "CRC32", 4, no_exts, hash_context_factory<Crc32HashContext>, false },
+  { "CRC64", 8, no_exts, hash_context_factory<Crc64HashContext>, false },
   { "XXH32", 4, xxh32_exts, hash_context_factory<XXH32HashContext>, false },
   { "XXH64", 8, xxh64_exts, hash_context_factory<XXH64HashContext>, false },
   { "XXH3-64", 8, xxh3_64_exts, hash_context_factory<XXH3_64bitsHashContext>, false },

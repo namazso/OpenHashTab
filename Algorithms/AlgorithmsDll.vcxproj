@@ -115,6 +115,7 @@
     <Flavor>avx512</Flavor>
   </PropertyGroup>
   <ItemGroup>
+    <ClCompile Include="crc64.cpp" />
     <ClCompile Include="deps\crc32\Crc32.cpp" />
     <ClCompile Include="deps\mbedtls\library\md2.c" />
     <ClCompile Include="deps\mbedtls\library\md4.c" />
@@ -158,6 +159,7 @@
     <ClCompile Include="xxhash.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="crc64.h" />
     <ClInclude Include="deps\crc32\Crc32.h" />
     <ClInclude Include="deps\streebog\gost3411-2012-const.h" />
     <ClInclude Include="deps\streebog\gost3411-2012-core.h" />
