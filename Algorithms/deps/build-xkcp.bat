@@ -1,5 +1,3 @@
-mkdir obj
-set CHERE_INVOKING=1 || exit /B 1
 wsl -d Alpine -- /bin/ash -e -c "cd XKCP && make generic32/libXKCP.a.vcxproj" || exit /B 1
 wsl -d Alpine -- /bin/ash -e -c "cd XKCP && make generic64/libXKCP.a.vcxproj" || exit /B 1
 wsl -d Alpine -- /bin/ash -e -c "cd XKCP && make AVX/libXKCP.a.vcxproj" || exit /B 1
