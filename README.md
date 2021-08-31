@@ -8,7 +8,7 @@ OpenHashTab is a shell extension for conveniently calculating and checking file 
 
 ## Features
 
-* Support for 22 algorithms, see **Algorithms**
+* Support for 28 algorithms, see **Algorithms**
 * High performance hash calculation
 * Native Windows looks
 * High DPI screen support
@@ -42,7 +42,7 @@ Most of the actions should be obvious. Some not-so-obvious features are listed h
 
 ## Algorithms
 
-* CRC32
+* CRC32, CRC64 (xz)
 * xxHash (XXH32, XXH64)
 * xxHash3 (64 and 128 bit variants)
 * MD4, MD5
@@ -51,10 +51,10 @@ Most of the actions should be obvious. Some not-so-obvious features are listed h
 * SHA-1
 * SHA-2 (SHA-224, SHA-256, SHA-384, SHA-512)
 * SHA-3 (SHA3-224, SHA3-256, SHA3-384, SHA3-512)
-* BLAKE3
-* KangarooTwelve (264 bit)
+* BLAKE3 (256 bit, 512 bit)
+* KangarooTwelve (264 bit, 256 bit, 512 bit)
 * ParallelHash128 (264 bit) and ParallelHash256 (528 bit)
-* Streebog (GOST R 34.11-12)
+* Streebog (GOST R 34.11-12) (256 bit, 512 bit)
 
 ## Download
 
