@@ -60,6 +60,8 @@ Most of the actions should be obvious. Some not-so-obvious features are listed h
 
 [Latest release](https://github.com/namazso/OpenHashTab/releases/latest)
 
+[Latest development build](https://nightly.link/namazso/OpenHashTab/workflows/ci/master/setup.zip)
+
 [Development builds](https://github.com/namazso/OpenHashTab/actions?query=branch%3Amaster)
 
 ## Screenshot
