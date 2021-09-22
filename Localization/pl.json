@@ -22,7 +22,7 @@
         "SUMFILE_UPPERCASE": "Eksportuj hashe wielkimi literami",
         "SUMFILE_UNIX_ENDINGS": "Eksportuj pliki jako ze znakami końca linii zgodnymi z Unix",
         "SUMFILE_USE_DOUBLE_SPACE": "Eksportuj pliki sum z ciągiem podwójnej spacji zamiast ciągu \"spacja-gwiazdka\"",
-        "SUMFILE_FORWARD_SLASHES": "Użyj ścieżek z ukośnikiem prawym (slash, "/") w eksportowanych plikach",
+        "SUMFILE_FORWARD_SLASHES": "Użyj ścieżek z ukośnikiem prawym (slash, \"/\") w eksportowanych plikach",
         "SUMFILE_DOT_HASH_COMPATIBLE": "Eksportuj pliki sum w formacie zgodnym z corz .hash",
         "SUMFILE_BANNER": "Dodaj baner do eksportowanych plików",
         "SUMFILE_BANNER_DATE": "Dodaj datę do banera",
