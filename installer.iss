@@ -52,7 +52,8 @@ VersionInfoVersion={#CI_VERSION_NUMERIC}
 ChangesAssociations = yes
 
 [Languages]
-Name: "english"; MessagesFile: "compiler:Default.isl"
+Name: "en"; MessagesFile: "compiler:Default.isl"
+// "English" seems to always break the default language detection with unknown reasons.
 Name: "armenian"; MessagesFile: "compiler:Languages\Armenian.isl"
 Name: "brazilianportuguese"; MessagesFile: "compiler:Languages\BrazilianPortuguese.isl"
 Name: "catalan"; MessagesFile: "compiler:Languages\Catalan.isl"
@@ -76,15 +77,26 @@ Name: "slovenian"; MessagesFile: "compiler:Languages\Slovenian.isl"
 Name: "spanish"; MessagesFile: "compiler:Languages\Spanish.isl"
 Name: "turkish"; MessagesFile: "compiler:Languages\Turkish.isl"
 Name: "ukrainian"; MessagesFile: "compiler:Languages\Ukrainian.isl"
+Name: "ChineseSimplified"; MessagesFile: "Localization\isl\ChineseSimplified.isl"
+Name: "ChineseTraditional"; MessagesFile: "Localization\isl\ChineseTraditional.isl"
 
 [Files]
 Source: "bin\Release\Win32\*.dll"; DestDir: "{app}"; Flags: ignoreversion solidbreak restartreplace 32bit; Check: InstallArch('x86')
 Source: "bin\Release\x64\*.dll";   DestDir: "{app}"; Flags: ignoreversion solidbreak restartreplace 64bit; Check: InstallArch('x64')
 Source: "bin\Release\ARM64\*.dll"; DestDir: "{app}"; Flags: ignoreversion solidbreak restartreplace 64bit; Check: InstallArch('arm64') 
 
+[CustomMessages]
+GroupDescription=Optional features:
+myAssociation=Associate with known sumfile formats
+myContextMenu=Add to context menu
+
+ChineseSimplified.GroupDescription=可选操作：
+ChineseSimplified.myAssociation=关联已知的校验和文件（sumfile）格式
+ChineseSimplified.myContextMenu=添加右键菜单
+
 [Tasks]
-Name: myAssociation; Description: "Associate with known sumfile formats"; GroupDescription: "Optional features:"
-Name: myContextMenu; Description: "Add to context menu"; GroupDescription: "Optional features:"
+Name: myAssociation; Description: "{cm:myAssociation}"; GroupDescription: "{cm:GroupDescription}"
+Name: myContextMenu; Description: "{cm:myContextMenu}"; GroupDescription: "{cm:GroupDescription}"
 
 [Registry]
 #ifdef SYSTEM
