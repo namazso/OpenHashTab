@@ -239,6 +239,117 @@ public:
   }
 };
 
+template <bool ExtraNullVersion>
+class ED2kHashContext : HashContext
+{
+  template <typename T>
+  friend HashContext* hash_context_factory(const HashAlgorithm* algorithm);
+
+  mbedtls_md4_context current_chunk{};
+  mbedtls_md4_context root_hash{};
+  uint8_t last_chunk_hash[16] = { 0x31, 0xd6, 0xcf, 0xe0, 0xd1, 0x6a, 0xe9, 0x31, 0xb7, 0x3c, 0x59, 0xd7, 0xe0, 0xc0, 0x89, 0xc0 };
+  uint64_t hashed{};
+
+  constexpr static auto k_chunk_size = 9728000;
+  
+  void UpdateInternal(const void* data, size_t size)
+  {
+    if (size == 0)
+      return;
+    
+    mbedtls_md4_update_ret(&current_chunk, (const uint8_t*)data, size);
+    hashed += size;
+
+    if (hashed % k_chunk_size == 0)
+    {
+      mbedtls_md4_finish_ret(&current_chunk, last_chunk_hash);
+
+      mbedtls_md4_free(&current_chunk);
+      mbedtls_md4_init(&current_chunk);
+      mbedtls_md4_starts_ret(&current_chunk);
+
+      mbedtls_md4_update_ret(&root_hash, last_chunk_hash, sizeof(last_chunk_hash));
+    }
+  }
+
+public:
+  ED2kHashContext(const HashAlgorithm* algorithm)
+    : HashContext(algorithm)
+  {
+    mbedtls_md4_init(&current_chunk);
+    mbedtls_md4_starts_ret(&current_chunk);
+
+    mbedtls_md4_init(&root_hash);
+    mbedtls_md4_starts_ret(&root_hash);
+  }
+
+  ~ED2kHashContext()
+  {
+    mbedtls_md4_free(&current_chunk);
+    mbedtls_md4_free(&root_hash);
+  };
+
+  void Clear() override
+  {
+    mbedtls_md4_free(&current_chunk);
+    mbedtls_md4_init(&current_chunk);
+    mbedtls_md4_starts_ret(&current_chunk);
+
+    mbedtls_md4_free(&root_hash);
+    mbedtls_md4_init(&root_hash);
+    mbedtls_md4_starts_ret(&root_hash);
+
+    hashed = 0;
+
+    constexpr static uint8_t empty_md4[16] = {0x31, 0xd6, 0xcf, 0xe0, 0xd1, 0x6a, 0xe9, 0x31, 0xb7, 0x3c, 0x59, 0xd7, 0xe0, 0xc0, 0x89, 0xc0};
+    memcpy(last_chunk_hash, empty_md4, sizeof(last_chunk_hash)); // this is needed for empty files
+  }
+
+  void Update(const void* data, size_t size) override
+  {
+    const auto bytes = (const uint8_t*)data;
+    const auto needed_for_next_chunk = (size_t)(((hashed / k_chunk_size) + 1) * k_chunk_size - hashed);
+    const auto first_part = std::min(needed_for_next_chunk, size);
+    const auto second_part = size - first_part;
+
+    UpdateInternal(bytes, first_part);
+    if (second_part)
+      UpdateInternal(bytes + first_part, second_part);
+  }
+
+  void Finish(uint8_t* out) override
+  {
+    if (hashed < k_chunk_size)
+    {
+      mbedtls_md4_finish_ret(&current_chunk, out);
+      return;
+    }
+
+    if (!ExtraNullVersion)
+    {
+      if (hashed == k_chunk_size)
+      {
+        memcpy(out, last_chunk_hash, sizeof(last_chunk_hash));
+        return;
+      }
+      if (hashed % k_chunk_size == 0)
+      {
+        mbedtls_md4_finish_ret(&root_hash, out);
+        return;
+      }
+    }
+    
+    mbedtls_md4_context copy_root_hash;
+    mbedtls_md4_clone(&copy_root_hash, &root_hash);
+
+    uint8_t partial_chunk[16]{};
+    mbedtls_md4_finish_ret(&current_chunk, partial_chunk);
+    mbedtls_md4_update_ret(&copy_root_hash, partial_chunk, sizeof(partial_chunk));
+    mbedtls_md4_finish_ret(&copy_root_hash, out);
+    mbedtls_md4_free(&copy_root_hash);
+  }
+};
+
 template <unsigned HashBitlen>
 class Blake3HashContext : HashContext
 {
@@ -650,6 +761,8 @@ constexpr HashAlgorithm HashAlgorithm::k_algorithms[] =
   { "BLAKE3-512", 64, no_exts, hash_context_factory<Blake3_512HashContext>, true },
   { "GOST 2012 (256)", 32, no_exts, hash_context_factory<GOST34112012_256HashContext>, true },
   { "GOST 2012 (512)", 64, no_exts, hash_context_factory<GOST34112012_512HashContext>, true },
+  { "eD2k", 16, no_exts, hash_context_factory<ED2kHashContext<false>>, false },
+  { "eD2k (Old)", 16, no_exts, hash_context_factory<ED2kHashContext<true>>, false },
 };
 
 extern "C" __declspec(dllexport) const HashAlgorithm* Algorithms()
