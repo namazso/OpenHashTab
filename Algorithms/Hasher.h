@@ -73,7 +73,7 @@ public:
   }
   static ALGORITHMSDLL_YES(constexpr) int Idx(const HashAlgorithm* algorithm)
   {
-    return algorithm ? algorithm - std::begin(Algorithms()) : -1;
+    return algorithm ? (int)(algorithm - std::begin(Algorithms())) : -1;
   }
   static ALGORITHMSDLL_YES(constexpr) int IdxByName(std::string_view name)
   {

@@ -164,7 +164,7 @@ decltype(HashAlgorithm::k_algorithms)& HashAlgorithm::Algorithms()
     wcscat_s(dll, get_cpu_level_wstr(get_cpu_level()));
 
     WCHAR path[MAX_PATH]{};
-    GetModuleFileNameW((HMODULE)&__ImageBase, path, std::size(path));
+    GetModuleFileNameW((HMODULE)&__ImageBase, path, (DWORD)std::size(path));
     const auto fname = wcsrchr(path, L'\\');
 
     if (fname)
