@@ -18,8 +18,7 @@ blake2sp implementation (public domain):
 
 crc32 implementation (zlib license):
 Copyright (c) 2011-2016 Stephan Brumme
-Modified by namazso for Windows/ARM64 compatibility.
-https://github.com/namazso/crc32
+https://github.com/stbrumme/crc32
 
 crc64 implementation (public domain):
 by duk
