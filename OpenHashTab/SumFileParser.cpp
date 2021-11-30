@@ -22,6 +22,7 @@
 
 #include "base64.h"
 #include "utl.h"
+#include "../Algorithms/Hasher.h"
 
 constexpr char k_regex_hex[] = R"(([0-9a-fA-F]{8,512}) [ \*](.+))";
 constexpr char k_regex_b64[] = R"(([0-9a-zA-Z=+\/,\-_]{6,512}) [ \*](.+))";
@@ -129,7 +130,6 @@ public:
 // Returns error code if reading failed. If the file is not a sumfile or empty success is returned, but output is empty
 DWORD TryParseSumFile(HANDLE h, FileSumList& output)
 {
-  static constexpr auto k_max_sumfile_size = 1u << 20; // 1 MB
   static constexpr auto k_min_sumfile_size = 6; // 6 bytes for base64 CRC
 
   output.clear();
@@ -138,7 +138,7 @@ DWORD TryParseSumFile(HANDLE h, FileSumList& output)
   if (!GetFileInformationByHandle(h, &fi))
     return GetLastError();
 
-  if (fi.nFileSizeHigh > 0 || fi.nFileSizeLow > k_max_sumfile_size || fi.nFileSizeLow < k_min_sumfile_size)
+  if (fi.nFileSizeHigh > 0 || fi.nFileSizeLow < k_min_sumfile_size)
     return ERROR_SUCCESS;
 
   const auto size = static_cast<size_t>(fi.nFileSizeLow);
@@ -170,10 +170,12 @@ DWORD TryParseSumFile(HANDLE h, FileSumList& output)
   auto first = static_cast<const char*>(address);
   const auto last = first + size;
 
+  // skip UTF-8 BOM if any
   if (0 == memcmp(first, "\xEF\xBB\xBF", 3))
     first += 3; // file is at least 6 bytes so this is safe
 
   // special handling files with only a single hash in them
+  if (size <= HashAlgorithm::k_max_size * 2 * 2) // longest hash, hexed, and extra for newlines / spaces
   {
     const std::string_view sv{ first, (size_t)(last - first) };
     const auto nwfirst = sv.find_first_not_of("\r\n\t\f\v ");
