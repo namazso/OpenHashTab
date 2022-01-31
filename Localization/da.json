@@ -1,6 +1,6 @@
 {
     "langid": "LANG_DANISH",
-    "sublangid": "NONE",
+    "sublangid": "SUBLANG_DEFAULT",
     "strings": {
         "FILENAME": "Navn",
         "ALGORITHM": "Algoritme",
