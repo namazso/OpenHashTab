@@ -23,7 +23,7 @@ jobs:
         wsl -d Alpine -u root -- apk add libxslt make
       
     - name: Checkout
-      uses: actions/checkout@v1
+      uses: actions/checkout@v3
       with:
           submodules: recursive
           
@@ -112,44 +112,18 @@ jobs:
         path: |
           .\artifacts.7z
 
-    - name: Create release
-      if: ${{ steps.checktag.outputs.is_release == 'yes' }}
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
-        draft: false
-        prerelease: true
-
-    - name: Upload release setup (User)
-      if: ${{ steps.checktag.outputs.is_release == 'yes' }}
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-        asset_path: .\OpenHashTab_setup.exe
-        asset_name: OpenHashTab_setup.exe
-        asset_content_type: application/octet-stream
-
     - name: Pack release symbols
       if: ${{ steps.checktag.outputs.is_release == 'yes' }}
       run: |
         cd ${{ github.workspace }}
         7z a symbols.7z .\bin\Release\*\*.pdb
         
-    - name: Upload release symbols
+    - name: Release
+      uses: softprops/action-gh-release@v1
       if: ${{ steps.checktag.outputs.is_release == 'yes' }}
-      id: upload-release-symbol 
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+        files: |
+          .\OpenHashTab_setup.exe
         asset_path: .\symbols.7z
-        asset_name: symbols.7z
-        asset_content_type: application/octet-stream
-
+        name: Release ${{ steps.checktag.outputs.version }}
+        prerelease: true
