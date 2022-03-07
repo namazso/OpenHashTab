@@ -58,7 +58,7 @@ std::wstring utl::GetString(UINT id)
 {
   static ULONG langid_override{};
   static decltype(&RtlLoadString) pRtlLoadString{};
-  bool once = false;
+  static bool once = false;
   if (!once)
   {
     langid_override = detail::GetSettingDWORD("LangIdOverride", 0);
