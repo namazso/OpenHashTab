@@ -1,6 +1,6 @@
 {
-    "langid": "LANG_ESPERANTO",
-    "sublangid": "SUBLANG_DEFAULT",
+    "langid": "0x1000",
+    "sublangid": "0",
     "strings": {
         "FILENAME": "Nomo",
         "ALGORITHM": "Algoritmo",
