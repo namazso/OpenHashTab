@@ -1,6 +1,6 @@
 {
     "langid": "LANG_KOREAN",
-    "sublangid": "SUBLANG_DEFAULT",
+    "sublangid": "SUBLANG_KOREAN",
     "strings": {
         "FILENAME": "이름",
         "ALGORITHM": "알고리즘",

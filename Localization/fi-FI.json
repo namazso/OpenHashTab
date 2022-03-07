@@ -1,6 +1,6 @@
 {
     "langid": "LANG_FINNISH",
-    "sublangid": "SUBLANG_DEFAULT",
+    "sublangid": "SUBLANG_FINNISH_FINLAND",
     "strings": {
         "FILENAME": "Nimi",
         "ALGORITHM": "Algoritmi",

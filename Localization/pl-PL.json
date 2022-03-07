@@ -1,6 +1,6 @@
 {
     "langid": "LANG_POLISH",
-    "sublangid": "SUBLANG_DEFAULT",
+    "sublangid": "SUBLANG_POLISH_POLAND",
     "strings": {
         "FILENAME": "Nazwa",
         "ALGORITHM": "Algorytm",

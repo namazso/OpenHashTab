@@ -1,6 +1,6 @@
 {
     "langid": "LANG_CROATIAN",
-    "sublangid": "SUBLANG_DEFAULT",
+    "sublangid": "SUBLANG_CROATIAN_CROATIA",
     "strings": {
         "FILENAME": "Ime",
         "ALGORITHM": "Algoritam",

@@ -1,6 +1,6 @@
 {
     "langid": "LANG_LITHUANIAN",
-    "sublangid": "SUBLANG_DEFAULT",
+    "sublangid": "SUBLANG_LITHUANIAN",
     "strings": {
         "FILENAME": "Pavadinimas",
         "ALGORITHM": "Algoritmas",

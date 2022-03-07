@@ -1,6 +1,6 @@
 {
     "langid": "LANG_ARABIC",
-    "sublangid": "SUBLANG_DEFAULT",
+    "sublangid": "SUBLANG_NEUTRAL",
     "strings": {
         "FILENAME": "الاسم",
         "ALGORITHM": "الخوارزمية",

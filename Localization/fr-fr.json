@@ -1,6 +1,6 @@
 {
     "langid": "LANG_FRENCH",
-    "sublangid": "SUBLANG_DEFAULT",
+    "sublangid": "SUBLANG_FRENCH",
     "strings": {
         "FILENAME": "Nom",
         "ALGORITHM": "Algorithme",

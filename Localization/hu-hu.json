@@ -1,6 +1,6 @@
 {
     "langid": "LANG_HUNGARIAN",
-    "sublangid": "SUBLANG_DEFAULT",
+    "sublangid": "SUBLANG_HUNGARIAN_HUNGARY",
     "strings": {
         "FILENAME": "Név",
         "ALGORITHM": "Algoritmus",

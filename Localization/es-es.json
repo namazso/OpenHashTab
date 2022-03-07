@@ -1,6 +1,6 @@
 {
     "langid": "LANG_SPANISH",
-    "sublangid": "SUBLANG_DEFAULT",
+    "sublangid": "SUBLANG_SPANISH_MODERN",
     "strings": {
         "FILENAME": "Nombre",
         "ALGORITHM": "Algoritmo",

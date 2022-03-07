@@ -1,6 +1,6 @@
 {
     "langid": "LANG_DUTCH",
-    "sublangid": "SUBLANG_DEFAULT",
+    "sublangid": "SUBLANG_DUTCH",
     "strings": {
         "FILENAME": "Bestandsnaam",
         "ALGORITHM": "Algoritme",

@@ -1,6 +1,6 @@
 {
     "langid": "LANG_RUSSIAN",
-    "sublangid": "SUBLANG_DEFAULT",
+    "sublangid": "SUBLANG_RUSSIAN_RUSSIA",
     "strings": {
         "FILENAME": "Имя",
         "ALGORITHM": "Алгоритм",

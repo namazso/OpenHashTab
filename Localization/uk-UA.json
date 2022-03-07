@@ -1,6 +1,6 @@
 {
     "langid": "LANG_UKRAINIAN",
-    "sublangid": "SUBLANG_DEFAULT",
+    "sublangid": "SUBLANG_UKRAINIAN_UKRAINE",
     "strings": {
         "FILENAME": "Ім'я",
         "ALGORITHM": "Алгоритм",

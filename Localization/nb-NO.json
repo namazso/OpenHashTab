@@ -1,6 +1,6 @@
 {
     "langid": "LANG_NORWEGIAN",
-    "sublangid": "SUBLANG_DEFAULT",
+    "sublangid": "SUBLANG_NORWEGIAN_BOKMAL",
     "strings": {
         "FILENAME": "Navn",
         "ALGORITHM": "Algoritme",
