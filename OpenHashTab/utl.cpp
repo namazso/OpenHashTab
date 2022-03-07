@@ -20,6 +20,19 @@
 #include <memory>
 #include <regex>
 
+#include "Settings.h"
+
+extern "C" NTSTATUS RtlLoadString(
+  HINSTANCE ImageBase,
+  USHORT StringId,
+  ULONG LangId,
+  ULONG Flags,
+  PCWCH* OutPtr,
+  PUSHORT OutCch,
+  void* unk1,
+  void* unk2
+);
+
 std::vector<uint8_t> utl::FindHashInString(std::wstring_view wv)
 {
   using wvmatch = std::match_results<std::wstring_view::iterator>;
@@ -43,8 +56,37 @@ int utl::FormattedMessageBox(HWND hwnd, LPCWSTR caption, UINT type, _In_z_ _Prin
 
 std::wstring utl::GetString(UINT id)
 {
-  LPCWSTR v = nullptr;
-  const auto len = LoadStringW(GetInstance(), id, reinterpret_cast<LPWSTR>(&v), 0);
+  static ULONG langid_override{};
+  static decltype(&RtlLoadString) pRtlLoadString{};
+  bool once = false;
+  if (!once)
+  {
+    langid_override = detail::GetSettingDWORD("LangIdOverride", 0);
+    const auto ntdll = GetModuleHandleW(L"ntdll");
+    if (ntdll)
+      pRtlLoadString = (decltype(&RtlLoadString))GetProcAddress(ntdll, "RtlLoadString");
+    once = true;
+  }
+  PCWCH v{};
+  USHORT len{};
+  if (pRtlLoadString)
+    pRtlLoadString(
+      GetInstance(),
+      (USHORT)id,
+      langid_override,
+      0,
+      &v,
+      &len,
+      nullptr,
+      nullptr
+    );
+  else
+    len = (USHORT)LoadStringW(
+      GetInstance(),
+      id,
+      reinterpret_cast<LPWSTR>(&v),
+      0
+    );
   return {v, v + len};
 }
 
