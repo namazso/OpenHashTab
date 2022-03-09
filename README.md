@@ -110,7 +110,7 @@ HashTab is a similar purpose proprietary software. While this software has been 
 
 All original code in this repo are licensed under the following license, unless explicitly stated otherwise in the file:
 
-	Copyright 2019-2021 namazso <admin@namazso.eu>
+	Copyright 2019-2022 namazso <admin@namazso.eu>
 	OpenHashTab - File hashing shell extension
 	
 	OpenHashTab is free software: you can redistribute it and/or modify
