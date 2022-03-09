@@ -27,10 +27,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Hasher.h" />
+    <ClCompile Include="HasherLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="HasherLoader.cpp" />
+    <ClInclude Include="Hasher.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

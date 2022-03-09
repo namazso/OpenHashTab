@@ -42,10 +42,10 @@ public:
   constexpr SumfileExporter(size_t idx) : idx(idx) {}
   bool IsEnabled(Settings* settings) const override { return settings->algorithms[idx]; }
   std::string GetExportString(Settings* settings, bool for_clipboard, const std::list<FileHashTask*>& files) const override;
-  const char* GetName() const override { return HashAlgorithm::Algorithms()[idx].GetName(); }
+  const char* GetName() const override { return LegacyHashAlgorithm::Algorithms()[idx].GetName(); }
   const char* GetExtension() const override
   {
-    const auto v = HashAlgorithm::Algorithms()[idx].GetExtensions()[0];
+    const auto v = LegacyHashAlgorithm::Algorithms()[idx].GetExtensions()[0];
     return v ? v : "sums";
   }
 };
@@ -55,7 +55,7 @@ class SFVExporter : public Exporter
 public:
   constexpr SFVExporter() {}
   const char* GetName() const override { return "SFV (CRC32)"; }
-  bool IsEnabled(Settings* settings) const override { return settings->algorithms[HashAlgorithm::IdxByName("CRC32")]; }
+  bool IsEnabled(Settings* settings) const override { return settings->algorithms[LegacyHashAlgorithm::IdxByName("CRC32")]; }
   std::string GetExportString(Settings* settings, bool for_clipboard, const std::list<FileHashTask*>& files) const override;
   const char* GetExtension() const override { return "sfv"; }
 };
@@ -88,7 +88,7 @@ std::string SFVExporter::GetExportString(
     ss << ";" << line_end;
   }
 
-  const auto crc32 = HashAlgorithm::IdxByName("CRC32");
+  const auto crc32 = LegacyHashAlgorithm::IdxByName("CRC32");
 
   for (const auto file : files)
   {
@@ -97,7 +97,7 @@ std::string SFVExporter::GetExportString(
     auto filename = utl::WideToUTF8(file->GetDisplayName().c_str());
     if (settings->sumfile_forward_slashes)
       std::replace(begin(filename), end(filename), '\\', '/');
-    char hash[HashAlgorithm::k_max_size * 2 + 1];
+    char hash[LegacyHashAlgorithm::k_max_size * 2 + 1];
     utl::HashBytesToString(hash, file->GetHashResult()[crc32], settings->sumfile_uppercase);
     ss << filename << " " << hash << line_end;
   }
@@ -131,10 +131,10 @@ std::string GetExportStringSumfile(
     ss << "#" << line_end;
   }
 
-  std::string hash_name_dothash[HashAlgorithm::k_count];
-  for(auto i = 0u; i < HashAlgorithm::k_count; ++i)
+  std::string hash_name_dothash[LegacyHashAlgorithm::k_count];
+  for(auto i = 0u; i < LegacyHashAlgorithm::k_count; ++i)
   {
-    std::string name = HashAlgorithm::Algorithms()[i].GetName();
+    std::string name = LegacyHashAlgorithm::Algorithms()[i].GetName();
     std::transform(begin(name), end(name), begin(name), tolower);
     name.erase(std::remove(begin(name), end(name), '-'), end(name));
     hash_name_dothash[i] = std::move(name);
@@ -151,7 +151,7 @@ std::string GetExportStringSumfile(
       std::replace(begin(filename), end(filename), '\\', '/');
     const auto write_hash = [&](size_t idx)
     {
-      char hash[HashAlgorithm::k_max_size * 2 + 1];
+      char hash[LegacyHashAlgorithm::k_max_size * 2 + 1];
       utl::HashBytesToString(hash, file->GetHashResult()[idx], uppercase);
       if (dot_hash_compatible)
         ss << "#" << hash_name_dothash[idx] << "#" << filename_original << "#1970.01.01@00.00:00" << line_end; // ISO8601 or gtfo
@@ -160,7 +160,7 @@ std::string GetExportStringSumfile(
     if (!dot_hash)
       write_hash(algorithm);
     else
-      for (auto i = 0u; i < HashAlgorithm::k_count; ++i)
+      for (auto i = 0u; i < LegacyHashAlgorithm::k_count; ++i)
         if (settings->algorithms[i])
           write_hash(i);
   }
@@ -212,8 +212,8 @@ constexpr std::array<const Exporter*, Exporter::k_count> Exporter::k_exporters =
 {
   std::array<const Exporter*, k_count> elems{};
   auto i = 0u;
-  for (;i < HashAlgorithm::k_count; ++i)
-    elems[i] = &Array<SumfileExporter, HashAlgorithm::k_count>::value[i];
+  for (;i < LegacyHashAlgorithm::k_count; ++i)
+    elems[i] = &Array<SumfileExporter, LegacyHashAlgorithm::k_count>::value[i];
   elems[i++] = &s_dot_hash_exporter;
   elems[i++] = &s_sfv_exporter;
   return elems;

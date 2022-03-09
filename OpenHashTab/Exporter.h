@@ -14,7 +14,7 @@
 //    You should have received a copy of the GNU General Public License
 //    along with OpenHashTab.  If not, see <https://www.gnu.org/licenses/>.
 #pragma once
-#include "../Algorithms/Hasher.h"
+#include "../AlgorithmsLoader/Hasher.h"
 
 #include <list>
 
@@ -38,6 +38,6 @@ public:
     const std::list<FileHashTask*>& files
   ) const = 0;
 
-  constexpr static auto k_count = HashAlgorithm::k_count + 2;
+  constexpr static auto k_count = LegacyHashAlgorithm::k_count + 2;
   const static std::array<const Exporter*, k_count> k_exporters;
 };

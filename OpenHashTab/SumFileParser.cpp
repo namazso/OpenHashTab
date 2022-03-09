@@ -22,7 +22,7 @@
 
 #include "base64.h"
 #include "utl.h"
-#include "../Algorithms/Hasher.h"
+#include "../AlgorithmsLoader/Hasher.h"
 
 constexpr char k_regex_hex[] = R"(([0-9a-fA-F]{8,512}) [ \*](.+))";
 constexpr char k_regex_b64[] = R"(([0-9a-zA-Z=+\/,\-_]{6,512}) [ \*](.+))";
@@ -175,7 +175,7 @@ DWORD TryParseSumFile(HANDLE h, FileSumList& output)
     first += 3; // file is at least 6 bytes so this is safe
 
   // special handling files with only a single hash in them
-  if (size <= HashAlgorithm::k_max_size * 2 * 2) // longest hash, hexed, and extra for newlines / spaces
+  if (size <= LegacyHashAlgorithm::k_max_size * 2 * 2) // longest hash, hexed, and extra for newlines / spaces
   {
     const std::string_view sv{ first, (size_t)(last - first) };
     const auto nwfirst = sv.find_first_not_of("\r\n\t\f\v ");

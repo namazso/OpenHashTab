@@ -16,10 +16,11 @@
 #define VC_EXTRALEAN
 #define WIN32_LEAN_AND_MEAN
 
+#include <cassert>
 #include <Windows.h>
 #include <random>
 
-#include "../Algorithms/Hasher.h"
+#include "../AlgorithmsLoader/Hasher.h"
 
 int main()
 {
@@ -47,13 +48,13 @@ int main()
   LARGE_INTEGER frequency{};
   QueryPerformanceFrequency(&frequency);
 
-  uint64_t measurements[k_passes][HashAlgorithm::k_count]{};
+  uint64_t measurements[k_passes][LegacyHashAlgorithm::k_count]{};
 
   for (auto& measurement : measurements)
   {
-    for (auto i = 0u; i < HashAlgorithm::k_count; ++i)
+    for (auto i = 0u; i < LegacyHashAlgorithm::k_count; ++i)
     {
-      auto& h = HashAlgorithm::Algorithms()[i];
+      auto& h = LegacyHashAlgorithm::Algorithms()[i];
       const auto ctx = h.MakeContext();
 
       LARGE_INTEGER begin{}, end{};
@@ -61,12 +62,39 @@ int main()
       QueryPerformanceCounter(&begin);
 
       ctx->Update(p, k_size);
-      uint8_t hash[HashAlgorithm::k_max_size];
+      uint8_t hash[LegacyHashAlgorithm::k_max_size+4];
+#ifndef NDEBUG
+      const auto size = h.GetSize();
+      hash[size - 4] = 0xFF;
+      hash[size - 3] = 0xFF;
+      hash[size - 2] = 0xFF;
+      hash[size - 1] = 0xFF;
+      hash[size] = 0xFF;
+      hash[size + 1] = 0xFF;
+      hash[size + 2] = 0xFF;
+      hash[size + 3] = 0xFF;
+#endif
       ctx->Finish(hash);
+#ifndef NDEBUG
+      const auto size_according_to_ctx = ctx->GetOutputSize();
+      assert(size == size_according_to_ctx);
+      const auto doesnt_overflow = std::all_of(
+        &hash[size],
+        &hash[size + 4],
+        [](uint8_t v) { return v == 0xFF; }
+      );
+      assert(doesnt_overflow);
+      const auto fills_space = !std::all_of(
+        &hash[size - 4],
+        &hash[size],
+        [](uint8_t v) { return v == 0xFF; }
+      );
+      assert(fills_space);
+#endif
 
       // copy into volatile to ensure Finish isnt optimized away
-      volatile uint8_t hash_cpy[HashAlgorithm::k_max_size];
-      std::copy_n(std::begin(hash), std::size(hash), std::begin(hash_cpy));
+      volatile uint8_t hash_cpy[LegacyHashAlgorithm::k_max_size];
+      std::copy_n(std::begin(hash), std::size(hash_cpy), std::begin(hash_cpy));
 
       QueryPerformanceCounter(&end);
 
@@ -76,15 +104,15 @@ int main()
     }
   }
 
-  for (auto i = 0u; i < HashAlgorithm::k_count; ++i)
+  for (auto i = 0u; i < LegacyHashAlgorithm::k_count; ++i)
   {
-    auto& h = HashAlgorithm::Algorithms()[i];
+    auto& h = LegacyHashAlgorithm::Algorithms()[i];
 
     printf("%s\t", h.GetName());
 
     uint64_t sum = 0;
 
-    for (auto& measurement : measurements)
+    for (const auto& measurement : measurements)
     {
       const auto v = measurement[i];
       sum += v;

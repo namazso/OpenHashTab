@@ -51,9 +51,9 @@ void detail::SetSettingDWORD(const char* name, DWORD new_value)
 
 Settings::Settings()
 {
-  bool defaults[HashAlgorithm::k_count]{};
+  bool defaults[LegacyHashAlgorithm::k_count]{};
   for (const auto name : {"MD5", "SHA-1", "SHA-256", "SHA-512"})
-    defaults[HashAlgorithm::IdxByName(name)] = true;
-  for (auto i = 0u; i < HashAlgorithm::k_count; ++i)
-    algorithms[i].Init(HashAlgorithm::Algorithms()[i].GetName(), defaults[i]);
+    defaults[LegacyHashAlgorithm::IdxByName(name)] = true;
+  for (auto i = 0u; i < LegacyHashAlgorithm::k_count; ++i)
+    algorithms[i].Init(LegacyHashAlgorithm::Algorithms()[i].GetName(), defaults[i]);
 }

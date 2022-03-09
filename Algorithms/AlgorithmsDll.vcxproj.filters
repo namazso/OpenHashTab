@@ -57,7 +57,7 @@
     <ClCompile Include="blake2sp.c">
       <Filter>Blake2sp</Filter>
     </ClCompile>
-    <ClCompile Include="Hasher.cpp" />
+    <ClCompile Include="Hasher2.cpp" />
     <ClCompile Include="blake3_dispatch.c">
       <Filter>Blake3</Filter>
     </ClCompile>
@@ -102,7 +102,6 @@
     <ClInclude Include="blake2sp.h">
       <Filter>Blake2sp</Filter>
     </ClInclude>
-    <ClInclude Include="Hasher.h" />
     <ClInclude Include="deps\BLAKE3\c\blake3.h">
       <Filter>Blake3</Filter>
     </ClInclude>
@@ -142,6 +141,7 @@
     <ClInclude Include="crc64.h">
       <Filter>CRC64</Filter>
     </ClInclude>
+    <ClInclude Include="Hasher2.h" />
   </ItemGroup>
   <ItemGroup>
     <MASM Include="deps\BLAKE3\c\blake3_avx2_x86-64_windows_msvc.asm">

@@ -113,11 +113,11 @@ FileHashTask::FileHashTask(Coordinator* prop_page, const std::wstring& path, con
   // Instead of exception, set _error because a failed file is still a finished
   // file task. Finish mechanism will trigger on first block read
 
-  for (auto i = 0u; i < HashAlgorithm::k_count; ++i)
+  for (auto i = 0u; i < LegacyHashAlgorithm::k_count; ++i)
   {
     _lparam_idx[i] = static_cast<uint8_t>(i);
     if (_prop_page->settings.algorithms[i])
-      _hash_contexts[i].reset(HashAlgorithm::Algorithms()[i].MakeContext());
+      _hash_contexts[i].reset(LegacyHashAlgorithm::Algorithms()[i].MakeContext());
   }
 
   _handle = utl::OpenForRead(path, true);
@@ -274,10 +274,10 @@ void FileHashTask::AddToHashQueue()
 {
   assert(_block);
 
-  _hash_start_counter.store(HashAlgorithm::k_count, std::memory_order_relaxed);
-  _hash_finish_counter.store(HashAlgorithm::k_count, std::memory_order_relaxed);
+  _hash_start_counter.store(LegacyHashAlgorithm::k_count, std::memory_order_relaxed);
+  _hash_finish_counter.store(LegacyHashAlgorithm::k_count, std::memory_order_relaxed);
 
-  for (auto i = 0u; i < HashAlgorithm::k_count; ++i)
+  for (auto i = 0u; i < LegacyHashAlgorithm::k_count; ++i)
     SubmitThreadpoolWork(_threadpool_hash_work);
 }
 
@@ -324,19 +324,22 @@ void FileHashTask::Finish()
     // If we expect a hash but none match, write no match to all algos
     _match_state = _file_info.expected_hashes.empty() ? MatchState_None : MatchState_Mismatch;
 
-    for (auto i = 0u; i < HashAlgorithm::k_count; ++i)
+    for (auto i = 0u; i < LegacyHashAlgorithm::k_count; ++i)
     {
       auto& it_result = _hash_results[i];
       const auto it_ctx = _hash_contexts[i].get();
       if(it_ctx)
-        it_result = it_ctx->Finish();
+      {
+        it_result.resize(it_ctx->GetOutputSize());
+        it_ctx->Finish(it_result.data());
+      }
 
       // TODO: O(n^2) BABY HERE WE GO
       for(const auto& expected : _file_info.expected_hashes)
       if (_match_state != MatchState_None && it_result == expected)
       {
         // secure algorithms trump insecure ones
-        if(_match_state == MatchState_Mismatch || !HashAlgorithm::Algorithms()[_match_state].IsSecure())
+        if(_match_state == MatchState_Mismatch || !LegacyHashAlgorithm::Algorithms()[_match_state].IsSecure())
         _match_state = i; // TODO: store all matches somehow
       }
     }

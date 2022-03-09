@@ -13,7 +13,10 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with OpenHashTab.  If not, see <https://www.gnu.org/licenses/>.
-#include "Hasher.h"
+#include "Hasher2.h"
+
+#include <new>
+#include <numeric>
 
 #include <mbedtls/md.h>
 #include <mbedtls/md2.h>
@@ -24,6 +27,7 @@
 #include <mbedtls/sha512.h>
 #include <mbedtls/ripemd160.h>
 #include "blake2sp.h"
+#include "Hasher2.h"
 #include "deps/crc32/Crc32.h"
 #include "deps/BLAKE3/c/blake3.h"
 extern "C" {
@@ -43,9 +47,6 @@ extern "C" {
 #undef uint512_u
 }
 
-template <typename T> HashContext* hash_context_factory(const HashAlgorithm* algorithm) { return new T(algorithm); }
-
-
 template <
   typename Ctx,
   size_t Size,
@@ -55,30 +56,17 @@ template <
   int (*UpdateRet)(Ctx* ctx, const unsigned char*, size_t),
   int (*FinishRet)(Ctx* ctx, unsigned char*)
 >
-class MbedHashContext : HashContext
+class MbedHashContext final : HashContext
 {
-  template <typename T> friend HashContext* hash_context_factory(const HashAlgorithm* algorithm);
-
   Ctx ctx{};
 
 public:
-  MbedHashContext(const HashAlgorithm* algorithm) : HashContext(algorithm)
+  MbedHashContext()
   {
     Init(&ctx);
     StartsRet(&ctx);
   }
-  ~MbedHashContext()
-  {
-    Free(&ctx);
-  }
-
-  void Clear() override
-  {
-    Free(&ctx);
-    Init(&ctx);
-    StartsRet(&ctx);
-  }
-
+  
   void Update(const void* data, size_t size) override
   {
     UpdateRet(&ctx, (const unsigned char*)data, size);
@@ -87,6 +75,11 @@ public:
   void Finish(uint8_t* out) override
   {
     FinishRet(&ctx, out);
+  }
+
+  size_t GetOutputSize() override
+  {
+    return Size;
   }
 };
 
@@ -148,20 +141,12 @@ using Sha512HashContext = MbedHashContext<
   &mbedtls_sha512_finish_ret
 >;
 
-class Blake2SpHashContext : HashContext
+class Blake2SpHashContext final : HashContext
 {
-  template <typename T> friend HashContext* hash_context_factory(const HashAlgorithm* algorithm);
-
   CBlake2sp ctx{};
 
 public:
-  Blake2SpHashContext(const HashAlgorithm* algorithm) : HashContext(algorithm)
-  {
-    Blake2sp_Init(&ctx);
-  }
-  ~Blake2SpHashContext() = default;
-
-  void Clear() override
+  Blake2SpHashContext()
   {
     Blake2sp_Init(&ctx);
   }
@@ -175,22 +160,19 @@ public:
   {
     Blake2sp_Final(&ctx, out);
   }
+
+  size_t GetOutputSize() override
+  {
+    return BLAKE2S_DIGEST_SIZE;
+  }
 };
 
-class Crc32HashContext : HashContext
+class Crc32HashContext final : HashContext
 {
-  template <typename T> friend HashContext* hash_context_factory(const HashAlgorithm* algorithm);
-
   uint32_t crc{};
 
 public:
-  Crc32HashContext(const HashAlgorithm* algorithm) : HashContext(algorithm) {}
-  ~Crc32HashContext() = default;
-
-  void Clear() override
-  {
-    crc = 0;
-  }
+  Crc32HashContext() {}
 
   void Update(const void* data, size_t size) override
   {
@@ -204,22 +186,19 @@ public:
     out[2] = 0xFF & (crc >> 8);
     out[3] = 0xFF & (crc >> 0);
   }
+
+  size_t GetOutputSize() override
+  {
+    return 4;
+  }
 };
 
-class Crc64HashContext : HashContext
+class Crc64HashContext final : HashContext
 {
-  template <typename T> friend HashContext* hash_context_factory(const HashAlgorithm* algorithm);
-
   uint64_t crc{};
 
 public:
-  Crc64HashContext(const HashAlgorithm* algorithm) : HashContext(algorithm) {}
-  ~Crc64HashContext() = default;
-
-  void Clear() override
-  {
-    crc = 0;
-  }
+  Crc64HashContext() {}
 
   void Update(const void* data, size_t size) override
   {
@@ -237,14 +216,16 @@ public:
     out[6] = 0xFF & (crc >> 8);
     out[7] = 0xFF & (crc >> 0);
   }
+
+  size_t GetOutputSize() override
+  {
+    return 8;
+  }
 };
 
 template <bool ExtraNullVersion>
-class ED2kHashContext : HashContext
+class ED2kHashContext final : HashContext
 {
-  template <typename T>
-  friend HashContext* hash_context_factory(const HashAlgorithm* algorithm);
-
   mbedtls_md4_context current_chunk{};
   mbedtls_md4_context root_hash{};
   uint8_t last_chunk_hash[16] = { 0x31, 0xd6, 0xcf, 0xe0, 0xd1, 0x6a, 0xe9, 0x31, 0xb7, 0x3c, 0x59, 0xd7, 0xe0, 0xc0, 0x89, 0xc0 };
@@ -273,8 +254,7 @@ class ED2kHashContext : HashContext
   }
 
 public:
-  ED2kHashContext(const HashAlgorithm* algorithm)
-    : HashContext(algorithm)
+  ED2kHashContext()
   {
     mbedtls_md4_init(&current_chunk);
     mbedtls_md4_starts_ret(&current_chunk);
@@ -282,29 +262,7 @@ public:
     mbedtls_md4_init(&root_hash);
     mbedtls_md4_starts_ret(&root_hash);
   }
-
-  ~ED2kHashContext()
-  {
-    mbedtls_md4_free(&current_chunk);
-    mbedtls_md4_free(&root_hash);
-  };
-
-  void Clear() override
-  {
-    mbedtls_md4_free(&current_chunk);
-    mbedtls_md4_init(&current_chunk);
-    mbedtls_md4_starts_ret(&current_chunk);
-
-    mbedtls_md4_free(&root_hash);
-    mbedtls_md4_init(&root_hash);
-    mbedtls_md4_starts_ret(&root_hash);
-
-    hashed = 0;
-
-    constexpr static uint8_t empty_md4[16] = {0x31, 0xd6, 0xcf, 0xe0, 0xd1, 0x6a, 0xe9, 0x31, 0xb7, 0x3c, 0x59, 0xd7, 0xe0, 0xc0, 0x89, 0xc0};
-    memcpy(last_chunk_hash, empty_md4, sizeof(last_chunk_hash)); // this is needed for empty files
-  }
-
+  
   void Update(const void* data, size_t size) override
   {
     const auto bytes = (const uint8_t*)data;
@@ -348,23 +306,36 @@ public:
     mbedtls_md4_finish_ret(&copy_root_hash, out);
     mbedtls_md4_free(&copy_root_hash);
   }
+
+  size_t GetOutputSize() override
+  {
+    return 16;
+  }
 };
 
-template <unsigned HashBitlen>
-class Blake3HashContext : HashContext
+class Blake3HashContext final : HashContext
 {
-  template <typename T> friend HashContext* hash_context_factory(const HashAlgorithm* algorithm);
-
   blake3_hasher ctx{};
 
-public:
-  Blake3HashContext(const HashAlgorithm* algorithm) : HashContext(algorithm)
-  {
-    blake3_hasher_init(&ctx);
-  }
-  ~Blake3HashContext() = default;
+  size_t out_len{};
 
-  void Clear() override
+public:
+  constexpr static const char* k_params[] = {
+    "Bits"
+  };
+
+  static size_t ParamCheck(const uint64_t* params)
+  {
+    const auto len = params[0];
+    if (len % 8)
+      return 0;
+    if (len > std::numeric_limits<size_t>::max())
+      return 0;
+    return len / 8;
+  }
+
+  Blake3HashContext(const uint64_t* params)
+    : out_len(params[0] / 8)
   {
     blake3_hasher_init(&ctx);
   }
@@ -376,31 +347,25 @@ public:
 
   void Finish(uint8_t* out) override
   {
-    blake3_hasher_finalize(&ctx, out, HashBitlen / 8);
+    blake3_hasher_finalize(&ctx, out, out_len);
+  }
+
+  size_t GetOutputSize() override
+  {
+    return out_len;
   }
 };
 
-using Blake3_256HashContext = Blake3HashContext<256>;
-using Blake3_512HashContext = Blake3HashContext<512>;
-
-class XXH32HashContext : HashContext
+class XXH32HashContext final : HashContext
 {
-  template <typename T> friend HashContext* hash_context_factory(const HashAlgorithm* algorithm);
-
   XXH32_state_t ctx{};
 
 public:
-  XXH32HashContext(const HashAlgorithm* algorithm) : HashContext(algorithm)
+  XXH32HashContext()
   {
     XXH32_reset(&ctx, 0);
   }
-  ~XXH32HashContext() = default;
-
-  void Clear() override
-  {
-    XXH32_reset(&ctx, 0);
-  }
-
+  
   void Update(const void* data, size_t size) override
   {
     XXH32_update(&ctx, data, size);
@@ -414,22 +379,19 @@ public:
     out[2] = 0xFF & (xxh32 >> 8);
     out[3] = 0xFF & (xxh32 >> 0);
   }
+
+  size_t GetOutputSize() override
+  {
+    return 4;
+  }
 };
 
-class XXH64HashContext : HashContext
+class XXH64HashContext final : HashContext
 {
-  template <typename T> friend HashContext* hash_context_factory(const HashAlgorithm* algorithm);
-
   XXH64_state_t ctx{};
 
 public:
-  XXH64HashContext(const HashAlgorithm* algorithm) : HashContext(algorithm)
-  {
-    XXH64_reset(&ctx, 0);
-  }
-  ~XXH64HashContext() = default;
-
-  void Clear() override
+  XXH64HashContext()
   {
     XXH64_reset(&ctx, 0);
   }
@@ -451,26 +413,23 @@ public:
     out[6] = 0xFF & (xxh64 >> 8);
     out[7] = 0xFF & (xxh64 >> 0);
   }
+
+  size_t GetOutputSize() override
+  {
+    return 8;
+  }
 };
 
-class XXH3_64bitsHashContext : HashContext
+class XXH3_64bitsHashContext final : HashContext
 {
-  template <typename T> friend HashContext* hash_context_factory(const HashAlgorithm* algorithm);
-
   XXH3_state_t ctx{};
 
 public:
-  XXH3_64bitsHashContext(const HashAlgorithm* algorithm) : HashContext(algorithm)
+  XXH3_64bitsHashContext()
   {
     XXH3_64bits_reset(&ctx);
   }
-  ~XXH3_64bitsHashContext() = default;
-
-  void Clear() override
-  {
-    XXH3_64bits_reset(&ctx);
-  }
-
+  
   void Update(const void* data, size_t size) override
   {
     XXH3_64bits_update(&ctx, data, size);
@@ -488,26 +447,23 @@ public:
     out[6] = 0xFF & (xxh64 >> 8);
     out[7] = 0xFF & (xxh64 >> 0);
   }
+
+  size_t GetOutputSize() override
+  {
+    return 8;
+  }
 };
 
-class XXH3_128bitsHashContext : HashContext
+class XXH3_128bitsHashContext final : HashContext
 {
-  template <typename T> friend HashContext* hash_context_factory(const HashAlgorithm* algorithm);
-
   XXH3_state_t ctx{};
 
 public:
-  XXH3_128bitsHashContext(const HashAlgorithm* algorithm) : HashContext(algorithm)
+  XXH3_128bitsHashContext()
   {
     XXH3_128bits_reset(&ctx);
   }
-  ~XXH3_128bitsHashContext() = default;
-
-  void Clear() override
-  {
-    XXH3_128bits_reset(&ctx);
-  }
-
+  
   void Update(const void* data, size_t size) override
   {
     XXH3_128bits_update(&ctx, data, size);
@@ -533,27 +489,52 @@ public:
     out[14] = 0xFF & (xxh128.low64 >> 8);
     out[15] = 0xFF & (xxh128.low64 >> 0);
   }
+
+  size_t GetOutputSize() override
+  {
+    return 16;
+  }
 };
 
-template <unsigned Rate, unsigned Capacity, unsigned HashBitlen, unsigned char DelimitedSuffix>
-class KeccakHashContext : HashContext
+class KeccakHashContext final : HashContext
 {
-  template <typename T> friend HashContext* hash_context_factory(const HashAlgorithm* algorithm);
-
   Keccak_HashInstance ctx{};
 
 public:
-  KeccakHashContext(const HashAlgorithm* algorithm) : HashContext(algorithm)
-  {
-    Keccak_HashInitialize(&ctx, Rate, Capacity, HashBitlen, DelimitedSuffix);
-  }
-  ~KeccakHashContext() = default;
+  constexpr static const char* k_params[] = {
+    "Rate",
+    "Capacity",
+    "Bits",
+    "Delimited suffix"
+  };
 
-  void Clear() override
+  static size_t ParamCheck(const uint64_t* params)
   {
-    Keccak_HashInitialize(&ctx, Rate, Capacity, HashBitlen, DelimitedSuffix);
+    for (size_t i = 0; i < 4; ++i)
+      if (params[i] > std::numeric_limits<unsigned>::max())
+        return 0;
+    Keccak_HashInstance ctx{};
+    const auto result = Keccak_HashInitialize(
+      &ctx,
+      (unsigned)params[0],
+      (unsigned)params[1],
+      (unsigned)params[2],
+      (unsigned)params[3]
+    );
+    return result == KECCAK_SUCCESS ? (unsigned)params[2] / 8 : 0;
   }
 
+  KeccakHashContext(const uint64_t* params)
+  {
+    Keccak_HashInitialize(
+      &ctx,
+      (unsigned)params[0],
+      (unsigned)params[1],
+      (unsigned)params[2],
+      (unsigned)params[3]
+    );
+  }
+  
   void Update(const void* data, size_t size) override
   {
     Keccak_HashUpdate(&ctx, (const BitSequence*)data, size * 8);
@@ -563,34 +544,35 @@ public:
   {
     Keccak_HashFinal(&ctx, (BitSequence*)out);
   }
+  
+  size_t GetOutputSize() override
+  {
+    return ctx.fixedOutputLength / 8;
+  }
 };
 
-//using SHAKE128HashContext = KeccakHashContext<1344,  256,   0, 0x1F>;
-//using SHAKE256HashContext = KeccakHashContext<1088,  512,   0, 0x1F>;
-using SHA3_224HashContext = KeccakHashContext<1152,  448, 224, 0x06>;
-using SHA3_256HashContext = KeccakHashContext<1088,  512, 256, 0x06>;
-using SHA3_384HashContext = KeccakHashContext< 832,  768, 384, 0x06>;
-using SHA3_512HashContext = KeccakHashContext< 576, 1024, 512, 0x06>;
-
-template <unsigned HashBitlen>
-class KangarooTwelveHashContext : HashContext
+class KangarooTwelveHashContext final : HashContext
 {
-  template <typename T> friend HashContext* hash_context_factory(const HashAlgorithm* algorithm);
-
   KangarooTwelve_Instance ctx{};
 
 public:
-  KangarooTwelveHashContext(const HashAlgorithm* algorithm) : HashContext(algorithm)
-  {
-    KangarooTwelve_Initialize(&ctx, HashBitlen / 8);
-  }
-  ~KangarooTwelveHashContext() = default;
+  constexpr static const char* k_params[] = {
+    "Bits"
+  };
 
-  void Clear() override
+  static size_t ParamCheck(const uint64_t* params)
   {
-    KangarooTwelve_Initialize(&ctx, HashBitlen / 8);
+    if (params[0] % 8 != 0 || params[0] > std::numeric_limits<size_t>::max())
+      return 0;
+    KangarooTwelve_Instance ctx{};
+    return KangarooTwelve_Initialize(&ctx, params[0]) == 0 ? (size_t)(params[0] / 8) : 0;
   }
 
+  KangarooTwelveHashContext(const uint64_t* params)
+  {
+    KangarooTwelve_Initialize(&ctx, (size_t)(params[0] / 8));
+  }
+  
   void Update(const void* data, size_t size) override
   {
     KangarooTwelve_Update(&ctx, (const unsigned char*)data, size);
@@ -600,31 +582,37 @@ public:
   {
     KangarooTwelve_Final(&ctx, out, (const unsigned char*)"", 0);
   }
+
+  size_t GetOutputSize() override
+  {
+    return ctx.fixedOutputLength;
+  }
 };
 
-using K12_264HashContext = KangarooTwelveHashContext<264>;
-using K12_256HashContext = KangarooTwelveHashContext<256>;
-using K12_512HashContext = KangarooTwelveHashContext<512>;
-
-template <unsigned BlockByteLen, unsigned HashBitlen>
-class ParallelHash128HashContext : HashContext
+class ParallelHash128HashContext final : HashContext
 {
-  template <typename T> friend HashContext* hash_context_factory(const HashAlgorithm* algorithm);
-
   ParallelHash_Instance ctx{};
 
 public:
-  ParallelHash128HashContext(const HashAlgorithm* algorithm) : HashContext(algorithm)
-  {
-    ParallelHash128_Initialize(&ctx, BlockByteLen, HashBitlen, (const unsigned char*)"", 0);
-  }
-  ~ParallelHash128HashContext() = default;
+  constexpr static const char* k_params[] = {
+    "Block length",
+    "Bits"
+  };
 
-  void Clear() override
+  static size_t ParamCheck(const uint64_t* params)
   {
-    ParallelHash128_Initialize(&ctx, BlockByteLen, HashBitlen, (const unsigned char*)"", 0);
+    if (params[0] > std::numeric_limits<size_t>::max() || params[1] > std::numeric_limits<size_t>::max())
+      return 0;
+    ParallelHash_Instance ctx{};
+    const auto result = ParallelHash128_Initialize(&ctx, (size_t)params[0], (size_t)params[1], nullptr, 0);
+    return result == 0 ? (size_t)(params[1] / 8) : 0;
   }
 
+  ParallelHash128HashContext(const uint64_t* params)
+  {
+    ParallelHash128_Initialize(&ctx, (size_t)params[0], (size_t)params[1], nullptr, 0);
+  }
+  
   void Update(const void* data, size_t size) override
   {
     ParallelHash128_Update(&ctx, (const unsigned char*)data, size);
@@ -634,29 +622,37 @@ public:
   {
     ParallelHash128_Final(&ctx, out);
   }
+
+  size_t GetOutputSize() override
+  {
+    return ctx.fixedOutputLength / 8;
+  }
 };
 
-using PH128_264HashContext = ParallelHash128HashContext<8192, 264>;
-
-template <unsigned BlockByteLen, unsigned HashBitlen>
-class ParallelHash256HashContext : HashContext
+class ParallelHash256HashContext final : HashContext
 {
-  template <typename T> friend HashContext* hash_context_factory(const HashAlgorithm* algorithm);
-
   ParallelHash_Instance ctx{};
 
 public:
-  ParallelHash256HashContext(const HashAlgorithm* algorithm) : HashContext(algorithm)
-  {
-    ParallelHash256_Initialize(&ctx, BlockByteLen, HashBitlen, (const unsigned char*)"", 0);
-  }
-  ~ParallelHash256HashContext() = default;
+  constexpr static const char* k_params[] = {
+    "Block length",
+    "Bits"
+  };
 
-  void Clear() override
+  static size_t ParamCheck(const uint64_t* params)
   {
-    ParallelHash256_Initialize(&ctx, BlockByteLen, HashBitlen, (const unsigned char*)"", 0);
+    if (params[0] > std::numeric_limits<size_t>::max() || params[1] > std::numeric_limits<size_t>::max() || (size_t)params[1] % 8 != 0)
+      return 0;
+    ParallelHash_Instance ctx{};
+    const auto result = ParallelHash256_Initialize(&ctx, (size_t)params[0], (size_t)params[1], nullptr, 0);
+    return result == 0 ? (size_t)(params[1] / 8) : 0;
   }
 
+  ParallelHash256HashContext(const uint64_t* params)
+  {
+    ParallelHash256_Initialize(&ctx, (size_t)params[0], (size_t)params[1], nullptr, 0);
+  }
+  
   void Update(const void* data, size_t size) override
   {
     ParallelHash256_Update(&ctx, (const unsigned char*)data, size);
@@ -666,28 +662,22 @@ public:
   {
     ParallelHash256_Final(&ctx, out);
   }
+
+  size_t GetOutputSize() override
+  {
+    return ctx.fixedOutputLength / 8;
+  }
 };
 
-using PH256_528HashContext = ParallelHash256HashContext<8192, 528>;
-
-
-template <unsigned HashBitlen>
-class GOST34112012HashContext : HashContext
+template <unsigned Bits>
+class GOST34112012HashContext final : HashContext
 {
-  template <typename T> friend HashContext* hash_context_factory(const HashAlgorithm* algorithm);
-
   GOST34112012Context ctx{};
 
 public:
-  GOST34112012HashContext(const HashAlgorithm* algorithm) : HashContext(algorithm)
+  GOST34112012HashContext()
   {
-    GOST34112012Init(&ctx, HashBitlen);
-  }
-  ~GOST34112012HashContext() = default;
-
-  void Clear() override
-  {
-    GOST34112012Init(&ctx, HashBitlen);
+    GOST34112012Init(&ctx, Bits);
   }
 
   void Update(const void* data, size_t size) override
@@ -699,11 +689,128 @@ public:
   {
     GOST34112012Final(&ctx, out);
   }
+
+  size_t GetOutputSize() override
+  {
+    return Bits / 8;
+  }
 };
 
 using GOST34112012_256HashContext = GOST34112012HashContext<256>;
 using GOST34112012_512HashContext = GOST34112012HashContext<512>;
 
+template <typename T, class = void>
+class HashContextTraits
+{
+  static void Factory(const uint64_t*, void* memory)
+  {
+    new (memory) T();
+  }
+  static size_t ParamCheck(const uint64_t*)
+  {
+    T t{};
+    return t.GetOutputSize();
+  }
+public:
+  static constexpr auto factory_fn = &Factory;
+  static constexpr auto param_check_fn = &ParamCheck;
+  static constexpr const char* const* params = nullptr;
+  static constexpr size_t params_count = 0;
+};
+
+template <typename T>
+class HashContextTraits<T, std::void_t<decltype(T::k_params)>>
+{
+  static void Factory(const uint64_t* params, void* memory)
+  {
+    new (memory) T(params);
+  }
+public:
+  static constexpr auto factory_fn = &Factory;
+  static constexpr auto param_check_fn = &T::ParamCheck;
+  static constexpr const char* const* params = T::k_params;
+  static constexpr size_t params_count = std::size(T::k_params);
+};
+
+template <typename T>
+constexpr HashAlgorithm make_algorithm(const char* name, bool is_secure)
+{
+  return HashAlgorithm{
+    name,
+    HashContextTraits<T>::factory_fn,
+    HashContextTraits<T>::param_check_fn,
+    is_secure,
+    HashContextTraits<T>::params,
+    HashContextTraits<T>::params_count
+  };
+}
+
+constexpr HashAlgorithm k_algorithms[] = {
+  make_algorithm<Crc32HashContext>("CRC32", false),
+  make_algorithm<Crc64HashContext>("CRC64", false),
+  make_algorithm<XXH32HashContext>("XXH32", false),
+  make_algorithm<XXH64HashContext>("XXH64", false),
+  make_algorithm<XXH3_64bitsHashContext>("XXH3-64", false),
+  make_algorithm<XXH3_128bitsHashContext>("XXH3-128", false),
+  make_algorithm<Md4HashContext>("MD4", false),
+  make_algorithm<Md5HashContext>("MD5", false),
+  make_algorithm<RipeMD160HashContext>("RipeMD160", true),
+  make_algorithm<Sha1HashContext>("SHA-1", true),
+  make_algorithm<Sha224HashContext>("SHA-224", true),
+  make_algorithm<Sha256HashContext>("SHA-256", true),
+  make_algorithm<Sha384HashContext>("SHA-384", true),
+  make_algorithm<Sha512HashContext>("SHA-512", true),
+  make_algorithm<Blake2SpHashContext>("BLAKE2sp", true),
+  make_algorithm<KeccakHashContext>("Keccak", true),
+  make_algorithm<KangarooTwelveHashContext>("K12", true),
+  make_algorithm<ParallelHash128HashContext>("PH128", true),
+  make_algorithm<ParallelHash256HashContext>("PH256", true),
+  make_algorithm<Blake3HashContext>("BLAKE3", true),
+  make_algorithm<GOST34112012_256HashContext>("GOST 2012 (256)", true),
+  make_algorithm<GOST34112012_512HashContext>("GOST 2012 (512)", true),
+  make_algorithm<ED2kHashContext<false>>("eD2k", true),
+  make_algorithm<ED2kHashContext<true>>("eD2k (Old)", true),
+};
+
+union AllContexts
+{
+  Crc32HashContext crc32;
+  Crc64HashContext crc64;
+  XXH32HashContext xxh32;
+  XXH64HashContext xxh64;
+  XXH3_64bitsHashContext xxh3_64;
+  XXH3_128bitsHashContext xxh3_128;
+  Md4HashContext md4;
+  Md5HashContext md5;
+  RipeMD160HashContext ripemd160;
+  Sha1HashContext sha1;
+  Sha224HashContext sha224;
+  Sha256HashContext sha256;
+  Sha384HashContext sha384;
+  Sha512HashContext sha512;
+  Blake2SpHashContext blake2_sp;
+  KeccakHashContext keccak;
+  KangarooTwelveHashContext k12;
+  ParallelHash128HashContext ph128;
+  ParallelHash256HashContext ph256;
+  Blake3HashContext blake3;
+  GOST34112012_256HashContext gost2012_256;
+  GOST34112012_512HashContext gost2012_512;
+  ED2kHashContext<false> ed2k;
+  ED2kHashContext<true> ed2k_old;
+};
+
+// C++14 guarantees that members have the same offset, so only check if one of them has an offset of 0
+static_assert(offsetof(AllContexts, crc32) == 0, "Union members are offset!");
+static_assert(alignof(AllContexts) == alignof(HashContext), "Align mismatch!");
+static_assert(sizeof(AllContexts) <= sizeof(HashContextStorage), "Context too big!");
+
+extern "C" __declspec(dllexport) constexpr size_t k_context_size = sizeof(AllContexts);
+extern "C" __declspec(dllexport) constexpr size_t k_context_align = alignof(AllContexts);
+extern "C" __declspec(dllexport) constexpr const HashAlgorithm* k_algorithms_begin = std::begin(k_algorithms);
+extern "C" __declspec(dllexport) constexpr const HashAlgorithm* k_algorithms_end = std::end(k_algorithms);
+
+/*
 // these are what I found with a quick FTP search
 static const char* const no_exts[] = { nullptr };
 static const char* const md5_exts[] = { "md5", "md5sum", "md5sums", nullptr };
@@ -763,9 +870,11 @@ constexpr HashAlgorithm HashAlgorithm::k_algorithms[] =
   { "GOST 2012 (512)", 64, no_exts, hash_context_factory<GOST34112012_512HashContext>, true },
   { "eD2k", 16, no_exts, hash_context_factory<ED2kHashContext<false>>, false },
   { "eD2k (Old)", 16, no_exts, hash_context_factory<ED2kHashContext<true>>, false },
-};
+};*/
 
+/*
 extern "C" __declspec(dllexport) const HashAlgorithm* Algorithms()
 {
   return HashAlgorithm::Algorithms();
 }
+*/

@@ -96,7 +96,7 @@ ProcessedFileList ProcessEverything(std::list<std::wstring> list, const Settings
         {
           ++extension;
           const auto ext_char = utl::WideToUTF8(extension);
-          for(const auto& algo : HashAlgorithm::Algorithms())
+          for(const auto& algo : LegacyHashAlgorithm::Algorithms())
             for(auto ext = algo.GetExtensions(); *ext; ++ext)
               if (0 == strcmp(*ext, ext_char.c_str()))
                 pfl.sumfile_type = algo.Idx();
@@ -215,12 +215,12 @@ ProcessedFileList ProcessEverything(std::list<std::wstring> list, const Settings
       // Look for sumfile for this file. If we're already processing a sumfile, don't look for one for security.
       if (pfl.sumfile_type == -2 && settings->look_for_sumfiles)
       {
-        for (auto i = 0u; i < HashAlgorithm::k_count; ++i)
+        for (auto i = 0u; i < LegacyHashAlgorithm::k_count; ++i)
         {
           if (!settings->algorithms[i])
             continue;
 
-          for (auto ext = HashAlgorithm::Algorithms()[i].GetExtensions(); *ext; ++ext)
+          for (auto ext = LegacyHashAlgorithm::Algorithms()[i].GetExtensions(); *ext; ++ext)
           {
             const auto sumfile_path = normalized + L"." + utl::UTF8ToWide(*ext);
             const auto handle = utl::OpenForRead(sumfile_path);

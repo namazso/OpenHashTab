@@ -66,7 +66,7 @@ std::list<vt::Result> vt::Query(const std::list<FileHashTask*>& files, size_t al
       else
         query << ",";
 
-      char hash[HashAlgorithm::k_max_size * 2 + 1]{};
+      char hash[LegacyHashAlgorithm::k_max_size * 2 + 1]{};
       utl::HashBytesToString(hash, h->GetHashResult()[algo]);
 
       FILETIME ft{};
@@ -171,7 +171,7 @@ std::list<vt::Result> vt::Query(const std::list<FileHashTask*>& files, size_t al
   std::list<Result> result;
   for(const auto f : files)
   {
-    char hash[HashAlgorithm::k_max_size * 2 + 1]{};
+    char hash[LegacyHashAlgorithm::k_max_size * 2 + 1]{};
     utl::HashBytesToString(hash, f->GetHashResult()[algo]);
     const auto res = result_map.find(hash);
     if(res != end(result_map))

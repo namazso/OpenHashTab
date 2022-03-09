@@ -62,11 +62,11 @@ class FileHashTask
 
   PTP_IO _threadpool_io = nullptr;
   
-  std::unique_ptr<HashContext> _hash_contexts[HashAlgorithm::k_count];
+  std::unique_ptr<HashContext> _hash_contexts[LegacyHashAlgorithm::k_count];
 
   OVERLAPPED _overlapped{};
 
-  using hash_results_t = std::array<std::vector<uint8_t>, HashAlgorithm::k_count>;
+  using hash_results_t = std::array<std::vector<uint8_t>, LegacyHashAlgorithm::k_count>;
 
   hash_results_t _hash_results;
 
@@ -90,7 +90,7 @@ class FileHashTask
   int _match_state{};
   bool _cancelled{};
 
-  uint8_t _lparam_idx[HashAlgorithm::k_count]{};
+  uint8_t _lparam_idx[LegacyHashAlgorithm::k_count]{};
 
 public:
   FileHashTask(const FileHashTask&) = delete;

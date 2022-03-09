@@ -79,7 +79,7 @@ static HashColorType HashColorTypeForFile(FileHashTask* file, size_t hasher)
 
   if (match != FileHashTask::MatchState_None && static_cast<size_t>(match) == hasher)
   {
-    if (HashAlgorithm::Algorithms()[hasher].IsSecure())
+    if (LegacyHashAlgorithm::Algorithms()[hasher].IsSecure())
       return HashColorType::Match;
     
     return HashColorType::Insecure;
@@ -441,7 +441,7 @@ INT_PTR MainDialog::OnInitDialog(UINT, WPARAM, LPARAM)
     const auto hash_size = utl::FindHashInString(std::wstring_view{ clip }).size();
     auto existing = 0u;
     auto enabled = 0u;
-    for (const auto& algo : HashAlgorithm::Algorithms())
+    for (const auto& algo : LegacyHashAlgorithm::Algorithms())
       if (algo.GetSize() == hash_size)
       {
         ++existing;
@@ -452,7 +452,7 @@ INT_PTR MainDialog::OnInitDialog(UINT, WPARAM, LPARAM)
       if (_prop_page->settings.clipboard_autoenable_exclusive)
         for (auto& setting : _prop_page->settings.algorithms)
           setting.SetNoSave(false);
-      for (const auto& algo : HashAlgorithm::Algorithms())
+      for (const auto& algo : LegacyHashAlgorithm::Algorithms())
         if (algo.GetSize() == hash_size)
           _prop_page->settings.algorithms[algo.Idx()].SetNoSave(true);
     }
@@ -497,14 +497,14 @@ void MainDialog::FileFinished(FileHashTask* file)
 
     const auto& results = file->GetHashResult();
 
-    for (auto i = 0u; i < HashAlgorithm::k_count; ++i)
+    for (auto i = 0u; i < LegacyHashAlgorithm::k_count; ++i)
     {
       auto& result = results[i];
       if (!result.empty())
       {
-        wchar_t hash_str[HashAlgorithm::k_max_size * 2 + 1];
+        wchar_t hash_str[LegacyHashAlgorithm::k_max_size * 2 + 1];
         utl::HashBytesToString(hash_str, result, _prop_page->settings.display_uppercase);
-        const auto tname = utl::UTF8ToWide(HashAlgorithm::Algorithms()[i].GetName());
+        const auto tname = utl::UTF8ToWide(LegacyHashAlgorithm::Algorithms()[i].GetName());
         AddItemToFileList(file->GetDisplayName().c_str(), tname.c_str(), hash_str, file->ToLparam(i));
       }
     }
@@ -648,9 +648,9 @@ INT_PTR MainDialog::OnVTClicked(UINT, WPARAM, LPARAM)
   if (vt::CheckForToS(&_prop_page->settings, _hwnd))
   {
     const int algos[] = {
-      HashAlgorithm::IdxByName("SHA-256"),
-      HashAlgorithm::IdxByName("SHA-1"),
-      HashAlgorithm::IdxByName("MD5")
+      LegacyHashAlgorithm::IdxByName("SHA-256"),
+      LegacyHashAlgorithm::IdxByName("SHA-1"),
+      LegacyHashAlgorithm::IdxByName("MD5")
     };
     const auto algo = std::find_if(std::begin(algos), std::end(algos), [&](const int& v)
       {
@@ -722,7 +722,7 @@ INT_PTR MainDialog::OnHashEditChanged(UINT, WPARAM, LPARAM)
     : utl::FindHashInString(std::wstring_view{ edit_str });
   if(find_hash.size() && _prop_page->settings.checkagainst_autoformat)
   {
-    wchar_t hash_str[HashAlgorithm::k_max_size * 2 + 1];
+    wchar_t hash_str[LegacyHashAlgorithm::k_max_size * 2 + 1];
     utl::HashBytesToString(hash_str, find_hash, _prop_page->settings.display_uppercase);
     SetWindowTextW(_hwnd_EDIT_HASH, hash_str);
   }
@@ -730,12 +730,12 @@ INT_PTR MainDialog::OnHashEditChanged(UINT, WPARAM, LPARAM)
   for (const auto& file : _prop_page->GetFiles())
   {
     const auto& result = file->GetHashResult();
-    for (auto i = 0; i < HashAlgorithm::k_count; ++i)
+    for (auto i = 0; i < LegacyHashAlgorithm::k_count; ++i)
     {
       if (!result[i].empty() && result[i] == find_hash)
       {
         found = true;
-        const auto algorithm_name = utl::UTF8ToWide(HashAlgorithm::Algorithms()[i].GetName());
+        const auto algorithm_name = utl::UTF8ToWide(LegacyHashAlgorithm::Algorithms()[i].GetName());
         const auto txt = algorithm_name + L" / " + file->GetDisplayName();
         SetWindowTextW(_hwnd_STATIC_CHECK_RESULT, txt.c_str());
         break;

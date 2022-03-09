@@ -155,7 +155,7 @@
       <ExcludedFromBuild Condition="'$(Flavor)'!='neon'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="deps\BLAKE3\c\blake3_portable.c" />
-    <ClCompile Include="Hasher.cpp" />
+    <ClCompile Include="Hasher2.cpp" />
     <ClCompile Include="xxhash.c" />
   </ItemGroup>
   <ItemGroup>
@@ -172,9 +172,9 @@
     <ClInclude Include="blake2sp.h" />
     <ClInclude Include="deps\BLAKE3\c\blake3.h" />
     <ClInclude Include="deps\BLAKE3\c\blake3_impl.h" />
+    <ClInclude Include="Hasher2.h" />
     <ClInclude Include="streebog\gost3411-2012-config.h" />
     <ClInclude Include="XKCP\config.h" />
-    <ClInclude Include="Hasher.h" />
     <ClInclude Include="mbedtls_config.h" />
   </ItemGroup>
   <ItemGroup>
