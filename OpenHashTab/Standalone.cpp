@@ -21,11 +21,11 @@
 #include "utl.h"
 
 // rundll32 OpenHashTab.dll,StandaloneEntry <args>
-extern "C" __declspec(dllexport) void StandaloneEntryW(
-  _In_  HWND      hWnd,
-  _In_  HINSTANCE hRunDLLInstance,
-  _In_  LPCWSTR   lpCmdLine,
-  _In_  int       nShowCmd
+extern "C" __declspec(dllexport) int APIENTRY StandaloneEntryW(
+  _In_opt_  HWND      hWnd,
+  _In_      HINSTANCE hRunDLLInstance,
+  _In_      LPCWSTR   lpCmdLine,
+  _In_      int       nShowCmd
 )
 {
   UNREFERENCED_PARAMETER(hWnd);
@@ -37,7 +37,7 @@ extern "C" __declspec(dllexport) void StandaloneEntryW(
   LocalFree(argv);
 
   if (files.empty())
-    return;
+    return 0;
   
   // TODO: Support per monitor / v2 DPI awareness too
   SetProcessDPIAware();
@@ -76,4 +76,6 @@ extern "C" __declspec(dllexport) void StandaloneEntryW(
   // should we maybe just kill ourselves with ExitProcess
   // and let the OS do the cleanup?
   delete coordinator;
+
+  return (int)msg.wParam;
 }

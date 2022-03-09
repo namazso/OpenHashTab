@@ -22,7 +22,7 @@
 
 #include "Settings.h"
 
-extern "C" NTSTATUS RtlLoadString(
+extern "C" NTSTATUS NTAPI RtlLoadString(
   HINSTANCE ImageBase,
   USHORT StringId,
   ULONG LangId,
