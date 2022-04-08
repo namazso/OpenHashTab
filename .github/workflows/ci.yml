@@ -99,14 +99,14 @@ jobs:
         7z a artifacts.7z .\bin\Release\
         
     - name: Upload setup
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: setup
         path: |
           .\OpenHashTab_setup.exe
           
     - name: Upload artifacts
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: artifacts
         path: |
