@@ -3,9 +3,9 @@ name: release
 on:
   push:
     tags:
-      - 'v*'
+      - "v*"
     branches:
-      - '*'
+      - "*"
 
 jobs:
   build:
@@ -13,117 +13,125 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - name: Install Alpine WSLv1
-      uses: Vampire/setup-wsl@v1
-      with:
+      - name: Install Alpine WSLv1
+        uses: Vampire/setup-wsl@v1
+        with:
           distribution: Alpine
-          
-    - name: Install tools on Alpine
-      run: |
-        wsl -d Alpine -u root -- apk add libxslt make
-      
-    - name: Checkout
-      uses: actions/checkout@v3
-      with:
+
+      - name: Install tools on Alpine
+        run: |
+          wsl -d Alpine -u root -- apk add libxslt make
+
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
           submodules: recursive
-          
-    - name: Figure out if we're running for a tag
-      id: checktag
-      run: |
-        If($Env:GITHUB_REF -match "v([0-9]*)\.([0-9]*)\.([0-9]*)") {
-            $IsRelease = "yes";
-            $Version = $Matches[0];
-            $VersionMajor = $Matches[1];
-            $VersionMinor = $Matches[2];
-            $VersionPatch = $Matches[3];
-        } Else {
-            $IsRelease = "no";
-            $Version = $Env:GITHUB_SHA;
-            $VersionMajor = 0;
-            $VersionMinor = 0;
-            $VersionPatch = 0;
-        }
-        Echo ("::set-output name=is_release::" + $IsRelease);
-        Echo ("::set-output name=version::" + $Version);
-        Echo ("::set-output name=version_major::" + $VersionMajor);
-        Echo ("::set-output name=version_minor::" + $VersionMinor);
-        Echo ("::set-output name=version_patch::" + $VersionPatch);
+          fetch-depth: 0
 
-    - name: Set up MSBuild
-      uses: microsoft/setup-msbuild@v1
-      
-    - name: Build XKCP
-      run: |
-        cd ${{ github.workspace }}
-        cd Algorithms\deps
-        cmd /C build-xkcp.bat
-      
-    - name: Build mCtrl
-      run: |
-        cd ${{ github.workspace }}
-        cmd /C build-mctrl.bat
-      
-    - name: Build Algorithms (ARM64)
-      run: |
-        msbuild AlgorithmsDll.sln /p:Configuration=Release /p:Platform=a64-neon
-      
-    - name: Build Algorithms (x86)
-      run: |
-        msbuild AlgorithmsDll.sln /p:Configuration=Release /p:Platform=x86-sse2
-      
-    - name: Build Algorithms (x64)
-      run: |
-        msbuild AlgorithmsDll.sln /p:Configuration=Release /p:Platform=x64-sse2
-        msbuild AlgorithmsDll.sln /p:Configuration=Release /p:Platform=x64-avx
-        msbuild AlgorithmsDll.sln /p:Configuration=Release /p:Platform=x64-avx2
-        msbuild AlgorithmsDll.sln /p:Configuration=Release /p:Platform=x64-avx512
-      
-    - name: Build Solution (Win32)
-      run: |
-        msbuild "-property:Configuration=Release;Platform=x86;CI_VERSION=${{ steps.checktag.outputs.version }};CI_VERSION_MAJOR=${{ steps.checktag.outputs.version_major }};CI_VERSION_MINOR=${{ steps.checktag.outputs.version_minor }};CI_VERSION_PATCH=${{ steps.checktag.outputs.version_patch }}" OpenHashTab.sln
+      - name: Figure out if we're running for a tag
+        id: checktag
+        run: |
+          cd ${{ github.workspace }}
+          If($Env:GITHUB_REF -match "v([0-9]*)\.([0-9]*)\.([0-9]*)") {
+              $IsRelease = "yes";
+              $Version = $Matches[0];
+              $VersionMajor = $Matches[1];
+              $VersionMinor = $Matches[2];
+              $VersionPatch = $Matches[3];
+          } Else {
+              $IsRelease = "no";
+              $Version = (git describe --dirty --broken --always);
+              If($Version -match "v([0-9]*)\.([0-9]*)\.([0-9]*)-.*") {
+                  $VersionMajor = $Matches[1];
+                  $VersionMinor = $Matches[2];
+                  $VersionPatch = $Matches[3];
+              } Else {
+                  $VersionMajor = 0;
+                  $VersionMinor = 0;
+                  $VersionPatch = 0;
+              }
+          }
+          Echo ("::set-output name=is_release::" + $IsRelease);
+          Echo ("::set-output name=version::" + $Version);
+          Echo ("::set-output name=version_major::" + $VersionMajor);
+          Echo ("::set-output name=version_minor::" + $VersionMinor);
+          Echo ("::set-output name=version_patch::" + $VersionPatch);
 
-    - name: Build Solution (x64)
-      run: |
-        msbuild "-property:Configuration=Release;Platform=x64;CI_VERSION=${{ steps.checktag.outputs.version }};CI_VERSION_MAJOR=${{ steps.checktag.outputs.version_major }};CI_VERSION_MINOR=${{ steps.checktag.outputs.version_minor }};CI_VERSION_PATCH=${{ steps.checktag.outputs.version_patch }}" OpenHashTab.sln
+      - name: Set up MSBuild
+        uses: microsoft/setup-msbuild@v1
 
-    - name: Build Solution (ARM64)
-      run: |
-        msbuild "-property:Configuration=Release;Platform=ARM64;CI_VERSION=${{ steps.checktag.outputs.version }};CI_VERSION_MAJOR=${{ steps.checktag.outputs.version_major }};CI_VERSION_MINOR=${{ steps.checktag.outputs.version_minor }};CI_VERSION_PATCH=${{ steps.checktag.outputs.version_patch }}" OpenHashTab.sln
-        
-    - name: Build Installer
-      run: |
-        iscc .\installer.iss -DCI_VERSION="${{ steps.checktag.outputs.version }}" -DCI_VERSION_NUMERIC="${{ steps.checktag.outputs.version_major }}.${{ steps.checktag.outputs.version_minor }}.${{ steps.checktag.outputs.version_patch }}"
-        
-    - name: Pack artifacts
-      run: |
-        7z a artifacts.7z .\bin\Release\
-        
-    - name: Upload setup
-      uses: actions/upload-artifact@v3
-      with:
-        name: setup
-        path: |
-          .\OpenHashTab_setup.exe
-          
-    - name: Upload artifacts
-      uses: actions/upload-artifact@v3
-      with:
-        name: artifacts
-        path: |
-          .\artifacts.7z
+      - name: Build XKCP
+        run: |
+          cd ${{ github.workspace }}
+          cd Algorithms\deps
+          cmd /C build-xkcp.bat
 
-    - name: Pack release symbols
-      if: ${{ steps.checktag.outputs.is_release == 'yes' }}
-      run: |
-        cd ${{ github.workspace }}
-        7z a symbols.7z .\bin\Release\*\*.pdb
-        
-    - name: Release
-      uses: softprops/action-gh-release@v1
-      if: ${{ steps.checktag.outputs.is_release == 'yes' }}
-      with:
-        files: |
-          .\OpenHashTab_setup.exe
-        asset_path: .\symbols.7z
-        name: Release ${{ steps.checktag.outputs.version }}
-        prerelease: true
+      - name: Build mCtrl
+        run: |
+          cd ${{ github.workspace }}
+          cmd /C build-mctrl.bat
+
+      - name: Build Algorithms (ARM64)
+        run: |
+          msbuild AlgorithmsDll.sln /p:Configuration=Release /p:Platform=a64-neon
+
+      - name: Build Algorithms (x86)
+        run: |
+          msbuild AlgorithmsDll.sln /p:Configuration=Release /p:Platform=x86-sse2
+
+      - name: Build Algorithms (x64)
+        run: |
+          msbuild AlgorithmsDll.sln /p:Configuration=Release /p:Platform=x64-sse2
+          msbuild AlgorithmsDll.sln /p:Configuration=Release /p:Platform=x64-avx
+          msbuild AlgorithmsDll.sln /p:Configuration=Release /p:Platform=x64-avx2
+          msbuild AlgorithmsDll.sln /p:Configuration=Release /p:Platform=x64-avx512
+
+      - name: Build Solution (Win32)
+        run: |
+          msbuild "-property:Configuration=Release;Platform=x86;CI_VERSION=${{ steps.checktag.outputs.version }};CI_VERSION_MAJOR=${{ steps.checktag.outputs.version_major }};CI_VERSION_MINOR=${{ steps.checktag.outputs.version_minor }};CI_VERSION_PATCH=${{ steps.checktag.outputs.version_patch }}" OpenHashTab.sln
+
+      - name: Build Solution (x64)
+        run: |
+          msbuild "-property:Configuration=Release;Platform=x64;CI_VERSION=${{ steps.checktag.outputs.version }};CI_VERSION_MAJOR=${{ steps.checktag.outputs.version_major }};CI_VERSION_MINOR=${{ steps.checktag.outputs.version_minor }};CI_VERSION_PATCH=${{ steps.checktag.outputs.version_patch }}" OpenHashTab.sln
+
+      - name: Build Solution (ARM64)
+        run: |
+          msbuild "-property:Configuration=Release;Platform=ARM64;CI_VERSION=${{ steps.checktag.outputs.version }};CI_VERSION_MAJOR=${{ steps.checktag.outputs.version_major }};CI_VERSION_MINOR=${{ steps.checktag.outputs.version_minor }};CI_VERSION_PATCH=${{ steps.checktag.outputs.version_patch }}" OpenHashTab.sln
+
+      - name: Build Installer
+        run: |
+          iscc .\installer.iss -DCI_VERSION="${{ steps.checktag.outputs.version }}" -DCI_VERSION_NUMERIC="${{ steps.checktag.outputs.version_major }}.${{ steps.checktag.outputs.version_minor }}.${{ steps.checktag.outputs.version_patch }}"
+
+      - name: Pack artifacts
+        run: |
+          7z a artifacts.7z .\bin\Release\
+
+      - name: Upload setup
+        uses: actions/upload-artifact@v3
+        with:
+          name: setup
+          path: |
+            .\OpenHashTab_setup.exe
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: artifacts
+          path: |
+            .\artifacts.7z
+
+      - name: Pack release symbols
+        if: ${{ steps.checktag.outputs.is_release == 'yes' }}
+        run: |
+          cd ${{ github.workspace }}
+          7z a symbols.7z .\bin\Release\*\*.pdb
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: ${{ steps.checktag.outputs.is_release == 'yes' }}
+        with:
+          files: |
+            .\OpenHashTab_setup.exe
+          asset_path: .\symbols.7z
+          name: Release ${{ steps.checktag.outputs.version }}
+          prerelease: true
