@@ -86,6 +86,10 @@ BEGIN
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,180,163,275,11
     CONTROL         "IDS_SUMFILE_ALGORITHM_ONLY",IDC_CHECK_SUMFILE_ALGORITHM_ONLY,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,180,198,275,11
+    ICON            IDI_ICON1,IDC_ICON_1,177,244,20,20
+    LTEXT           "OpenHashTab",IDC_PROJECT_NAME,201,244,255,8
+    CONTROL         "<a href=""https://github.com/namazso/OpenHashTab"">github.com/namazso/OpenHashTab</a>",IDC_PROJECT_LINK,
+                    "SysLink",WS_TABSTOP,201,254,156,12
 END
 
 

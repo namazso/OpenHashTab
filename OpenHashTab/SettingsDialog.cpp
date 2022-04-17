@@ -19,6 +19,7 @@
 
 #include "Settings.h"
 #include "utl.h"
+#include "stringencrypt.h"
 
 #include <stdexcept>
 
@@ -70,6 +71,8 @@ INT_PTR SettingsDialog::DlgProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
   {
   case WM_INITDIALOG:
   {
+    SetWindowTextW(_hwnd_PROJECT_NAME, L"OpenHashTab " CI_VERSION);
+
     utl::SetWindowTextStringFromTable(_hwnd, IDS_SETTINGS_TITLE);
     utl::SetWindowTextStringFromTable(_hwnd_BUTTON_CHECK_FOR_UPDATES, IDS_CHECK_FOR_UPDATES);
     
@@ -178,7 +181,7 @@ INT_PTR SettingsDialog::DlgProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
   }
 
   case WM_NOTIFY:
-    if(pnmhdr->idFrom == IDC_ALGORITHM_LIST && pnmhdr->code == LVN_ITEMCHANGED && _done_setup)
+    if (pnmhdr->idFrom == IDC_ALGORITHM_LIST && pnmhdr->code == LVN_ITEMCHANGED && _done_setup)
     {
       const auto pnmlv = reinterpret_cast<LPNMLISTVIEW>(lParam);
       const auto idx = pnmlv->iItem;
@@ -192,6 +195,14 @@ INT_PTR SettingsDialog::DlgProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
       ListView_GetItem(list, &lvitem);
       const auto algorithm = reinterpret_cast<const LegacyHashAlgorithm*>(lvitem.lParam);
       _settings->algorithms[algorithm->Idx()].Set(check);
+      return TRUE;
+    }
+    else if (pnmhdr->idFrom == IDC_PROJECT_LINK && (pnmhdr->code == NM_CLICK || pnmhdr->code == NM_RETURN))
+    {
+      const auto pnmlink = (PNMLINK)pnmhdr;
+      const auto shell32 = LoadLibraryExW(ESTRt(L"shell32"), nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);
+      const auto pShellExecute = (decltype(&::ShellExecuteW))GetProcAddress(shell32, ESTRt("ShellExecuteW"));
+      pShellExecute(nullptr, L"open", pnmlink->item.szUrl, nullptr, nullptr, SW_SHOW);
       return TRUE;
     }
   }

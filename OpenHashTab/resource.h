@@ -63,6 +63,7 @@
 #define IDS_SUMFILE_BANNER              229
 #define IDC_CHECK_CLIPBOARD_AUTOENABLE_EXCLUSIVE 229
 #define IDS_SUMFILE_BANNER_DATE         230
+#define IDC_ICON_1                      230
 #define IDI_ICON_VT                     231
 #define IDC_CHECK_CHECKAGAINST_STRICT   231
 #define IDI_ICON2                       232
@@ -73,7 +74,9 @@
 #define IDS_COPY_HASH                   234
 #define IDC_CHECK_SUMFILE_ALGORITHM_ONLY 234
 #define IDS_COPY_LINE                   235
+#define IDC_PROJECT_NAME                235
 #define IDS_COPY_FILE                   236
+#define IDC_PROJECT_LINK                236
 #define IDS_COPY_EVERYTHING             237
 #define IDS_VT_NO_COMPATIBLE            239
 #define IDS_VT_NOT_FOUND                240
@@ -99,7 +102,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        256
 #define _APS_NEXT_COMMAND_VALUE         32768
-#define _APS_NEXT_CONTROL_VALUE         228
+#define _APS_NEXT_CONTROL_VALUE         237
 #define _APS_NEXT_SYMED_VALUE           111
 #endif
 #endif

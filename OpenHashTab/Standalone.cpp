@@ -45,7 +45,7 @@ extern "C" __declspec(dllexport) int APIENTRY StandaloneEntryW(
   INITCOMMONCONTROLSEX iccex
   {
     sizeof(INITCOMMONCONTROLSEX),
-    ICC_WIN95_CLASSES
+    ICC_WIN95_CLASSES | ICC_LINK_CLASS
   };
   InitCommonControlsEx(&iccex);
   

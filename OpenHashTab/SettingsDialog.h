@@ -33,6 +33,8 @@ class SettingsDialog
   MAKE_IDC_MEMBER(_hwnd, CHECK_CLIPBOARD_AUTOENABLE_IF_NONE);
   MAKE_IDC_MEMBER(_hwnd, CHECK_CLIPBOARD_AUTOENABLE_EXCLUSIVE);
 
+  MAKE_IDC_MEMBER(_hwnd, PROJECT_NAME);
+
   Settings* _settings;
   utl::UniqueFont _font{ utl::GetDPIScaledFont() };
   bool _done_setup = false;
