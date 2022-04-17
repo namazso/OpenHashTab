@@ -18,6 +18,7 @@
 
 namespace detail
 {
+  DWORD GetMachineSettingDWORD(const char* name, DWORD default_value);
   DWORD GetSettingDWORD(const char* name, DWORD default_value);
   void SetSettingDWORD(const char* name, DWORD new_value);
 }

@@ -533,7 +533,10 @@ INT_PTR MainDialog::OnAllFilesFinished(UINT, WPARAM, LPARAM)
   Button_Enable(_hwnd_BUTTON_SETTINGS, true);
   Button_Enable(_hwnd_BUTTON_EXPORT, true);
   Button_Enable(_hwnd_BUTTON_CLIPBOARD, true);
-  Button_Enable(_hwnd_BUTTON_VT, true);
+
+  if (detail::GetMachineSettingDWORD("ForceDisableVT", 0) == 0)
+    Button_Enable(_hwnd_BUTTON_VT, true);
+
   Edit_Enable(_hwnd_EDIT_HASH, true);
 
   ShowWindow(_hwnd_PROGRESS, 0);

@@ -21,6 +21,22 @@
 
 constexpr static auto k_reg_path = L"Software\\OpenHashTab";
 
+DWORD detail::GetMachineSettingDWORD(const char* name, DWORD default_value)
+{
+  DWORD value;
+  DWORD size = sizeof(value);
+  const auto status = RegGetValueW(
+    HKEY_LOCAL_MACHINE,
+    k_reg_path,
+    utl::UTF8ToWide(name).c_str(),
+    RRF_RT_REG_DWORD,
+    nullptr,
+    &value,
+    &size
+  );
+  return status == ERROR_SUCCESS ? value : default_value;
+}
+
 DWORD detail::GetSettingDWORD(const char* name, DWORD default_value)
 {
   DWORD value;
