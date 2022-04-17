@@ -55,13 +55,13 @@ int main()
     for (auto i = 0u; i < LegacyHashAlgorithm::k_count; ++i)
     {
       auto& h = LegacyHashAlgorithm::Algorithms()[i];
-      const auto ctx = h.MakeContext();
+      auto ctx = h.MakeContext();
 
       LARGE_INTEGER begin{}, end{};
 
       QueryPerformanceCounter(&begin);
 
-      ctx->Update(p, k_size);
+      ctx.Update(p, k_size);
       uint8_t hash[LegacyHashAlgorithm::k_max_size+4];
 #ifndef NDEBUG
       const auto size = h.GetSize();
@@ -74,9 +74,9 @@ int main()
       hash[size + 2] = 0xFF;
       hash[size + 3] = 0xFF;
 #endif
-      ctx->Finish(hash);
+      ctx.Finish(hash);
 #ifndef NDEBUG
-      const auto size_according_to_ctx = ctx->GetOutputSize();
+      const auto size_according_to_ctx = ctx.GetOutputSize();
       assert(size == size_according_to_ctx);
       const auto doesnt_overflow = std::all_of(
         &hash[size],
@@ -97,9 +97,7 @@ int main()
       std::copy_n(std::begin(hash), std::size(hash_cpy), std::begin(hash_cpy));
 
       QueryPerformanceCounter(&end);
-
-      delete ctx;
-
+      
       measurement[i] = end.QuadPart - begin.QuadPart;
     }
   }

@@ -62,7 +62,7 @@ class FileHashTask
 
   PTP_IO _threadpool_io = nullptr;
   
-  std::unique_ptr<HashContext> _hash_contexts[LegacyHashAlgorithm::k_count];
+  HashBox _hash_contexts[LegacyHashAlgorithm::k_count];
 
   OVERLAPPED _overlapped{};
 

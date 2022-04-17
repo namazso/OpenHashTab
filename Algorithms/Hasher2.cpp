@@ -47,6 +47,8 @@ extern "C" {
 #undef uint512_u
 }
 
+class HashContext{};
+
 template <
   typename Ctx,
   size_t Size,
@@ -56,7 +58,7 @@ template <
   int (*UpdateRet)(Ctx* ctx, const unsigned char*, size_t),
   int (*FinishRet)(Ctx* ctx, unsigned char*)
 >
-class MbedHashContext final : HashContext
+class MbedHashContext final : public HashContext
 {
   Ctx ctx{};
 
@@ -67,17 +69,17 @@ public:
     StartsRet(&ctx);
   }
   
-  void Update(const void* data, size_t size) override
+  void Update(const void* data, size_t size)
   {
     UpdateRet(&ctx, (const unsigned char*)data, size);
   }
 
-  void Finish(uint8_t* out) override
+  void Finish(uint8_t* out)
   {
     FinishRet(&ctx, out);
   }
 
-  size_t GetOutputSize() override
+  size_t GetOutputSize()
   {
     return Size;
   }
@@ -141,7 +143,7 @@ using Sha512HashContext = MbedHashContext<
   &mbedtls_sha512_finish_ret
 >;
 
-class Blake2SpHashContext final : HashContext
+class Blake2SpHashContext final : public HashContext
 {
   CBlake2sp ctx{};
 
@@ -151,35 +153,35 @@ public:
     Blake2sp_Init(&ctx);
   }
 
-  void Update(const void* data, size_t size) override
+  void Update(const void* data, size_t size)
   {
     Blake2sp_Update(&ctx, (const unsigned char*)data, size);
   }
 
-  void Finish(uint8_t* out) override
+  void Finish(uint8_t* out)
   {
     Blake2sp_Final(&ctx, out);
   }
 
-  size_t GetOutputSize() override
+  size_t GetOutputSize()
   {
     return BLAKE2S_DIGEST_SIZE;
   }
 };
 
-class Crc32HashContext final : HashContext
+class Crc32HashContext final : public HashContext
 {
   uint32_t crc{};
 
 public:
   Crc32HashContext() {}
 
-  void Update(const void* data, size_t size) override
+  void Update(const void* data, size_t size)
   {
     crc = crc32_fast(data, size, crc);
   }
 
-  void Finish(uint8_t* out) override
+  void Finish(uint8_t* out)
   {
     out[0] = 0xFF & (crc >> 24);
     out[1] = 0xFF & (crc >> 16);
@@ -187,25 +189,25 @@ public:
     out[3] = 0xFF & (crc >> 0);
   }
 
-  size_t GetOutputSize() override
+  size_t GetOutputSize()
   {
     return 4;
   }
 };
 
-class Crc64HashContext final : HashContext
+class Crc64HashContext final : public HashContext
 {
   uint64_t crc{};
 
 public:
   Crc64HashContext() {}
 
-  void Update(const void* data, size_t size) override
+  void Update(const void* data, size_t size)
   {
     crc = crc64(crc, data, size);
   }
 
-  void Finish(uint8_t* out) override
+  void Finish(uint8_t* out)
   {
     out[0] = 0xFF & (crc >> 56);
     out[1] = 0xFF & (crc >> 48);
@@ -217,14 +219,14 @@ public:
     out[7] = 0xFF & (crc >> 0);
   }
 
-  size_t GetOutputSize() override
+  size_t GetOutputSize()
   {
     return 8;
   }
 };
 
 template <bool ExtraNullVersion>
-class ED2kHashContext final : HashContext
+class ED2kHashContext final : public HashContext
 {
   mbedtls_md4_context current_chunk{};
   mbedtls_md4_context root_hash{};
@@ -263,7 +265,7 @@ public:
     mbedtls_md4_starts_ret(&root_hash);
   }
   
-  void Update(const void* data, size_t size) override
+  void Update(const void* data, size_t size)
   {
     const auto bytes = (const uint8_t*)data;
     const auto needed_for_next_chunk = (size_t)(((hashed / k_chunk_size) + 1) * k_chunk_size - hashed);
@@ -275,7 +277,7 @@ public:
       UpdateInternal(bytes + first_part, second_part);
   }
 
-  void Finish(uint8_t* out) override
+  void Finish(uint8_t* out)
   {
     if (hashed < k_chunk_size)
     {
@@ -307,13 +309,13 @@ public:
     mbedtls_md4_free(&copy_root_hash);
   }
 
-  size_t GetOutputSize() override
+  size_t GetOutputSize()
   {
     return 16;
   }
 };
 
-class Blake3HashContext final : HashContext
+class Blake3HashContext final : public HashContext
 {
   blake3_hasher ctx{};
 
@@ -340,23 +342,23 @@ public:
     blake3_hasher_init(&ctx);
   }
 
-  void Update(const void* data, size_t size) override
+  void Update(const void* data, size_t size)
   {
     blake3_hasher_update(&ctx, data, size);
   }
 
-  void Finish(uint8_t* out) override
+  void Finish(uint8_t* out)
   {
     blake3_hasher_finalize(&ctx, out, out_len);
   }
 
-  size_t GetOutputSize() override
+  size_t GetOutputSize()
   {
     return out_len;
   }
 };
 
-class XXH32HashContext final : HashContext
+class XXH32HashContext final : public HashContext
 {
   XXH32_state_t ctx{};
 
@@ -366,12 +368,12 @@ public:
     XXH32_reset(&ctx, 0);
   }
   
-  void Update(const void* data, size_t size) override
+  void Update(const void* data, size_t size)
   {
     XXH32_update(&ctx, data, size);
   }
 
-  void Finish(uint8_t* out) override
+  void Finish(uint8_t* out)
   {
     const auto xxh32 = XXH32_digest(&ctx);
     out[0] = 0xFF & (xxh32 >> 24);
@@ -380,13 +382,13 @@ public:
     out[3] = 0xFF & (xxh32 >> 0);
   }
 
-  size_t GetOutputSize() override
+  size_t GetOutputSize()
   {
     return 4;
   }
 };
 
-class XXH64HashContext final : HashContext
+class XXH64HashContext final : public HashContext
 {
   XXH64_state_t ctx{};
 
@@ -396,12 +398,12 @@ public:
     XXH64_reset(&ctx, 0);
   }
 
-  void Update(const void* data, size_t size) override
+  void Update(const void* data, size_t size)
   {
     XXH64_update(&ctx, data, size);
   }
 
-  void Finish(uint8_t* out) override
+  void Finish(uint8_t* out)
   {
     const auto xxh64 = XXH64_digest(&ctx);
     out[0] = 0xFF & (xxh64 >> 56);
@@ -414,13 +416,13 @@ public:
     out[7] = 0xFF & (xxh64 >> 0);
   }
 
-  size_t GetOutputSize() override
+  size_t GetOutputSize()
   {
     return 8;
   }
 };
 
-class XXH3_64bitsHashContext final : HashContext
+class XXH3_64bitsHashContext final : public HashContext
 {
   XXH3_state_t ctx{};
 
@@ -430,12 +432,12 @@ public:
     XXH3_64bits_reset(&ctx);
   }
   
-  void Update(const void* data, size_t size) override
+  void Update(const void* data, size_t size)
   {
     XXH3_64bits_update(&ctx, data, size);
   }
 
-  void Finish(uint8_t* out) override
+  void Finish(uint8_t* out)
   {
     const auto xxh64 = XXH3_64bits_digest(&ctx);
     out[0] = 0xFF & (xxh64 >> 56);
@@ -448,13 +450,13 @@ public:
     out[7] = 0xFF & (xxh64 >> 0);
   }
 
-  size_t GetOutputSize() override
+  size_t GetOutputSize()
   {
     return 8;
   }
 };
 
-class XXH3_128bitsHashContext final : HashContext
+class XXH3_128bitsHashContext final : public HashContext
 {
   XXH3_state_t ctx{};
 
@@ -464,12 +466,12 @@ public:
     XXH3_128bits_reset(&ctx);
   }
   
-  void Update(const void* data, size_t size) override
+  void Update(const void* data, size_t size)
   {
     XXH3_128bits_update(&ctx, data, size);
   }
 
-  void Finish(uint8_t* out) override
+  void Finish(uint8_t* out)
   {
     const auto xxh128 = XXH3_128bits_digest(&ctx);
     out[0] = 0xFF & (xxh128.high64 >> 56);
@@ -490,13 +492,13 @@ public:
     out[15] = 0xFF & (xxh128.low64 >> 0);
   }
 
-  size_t GetOutputSize() override
+  size_t GetOutputSize()
   {
     return 16;
   }
 };
 
-class KeccakHashContext final : HashContext
+class KeccakHashContext final : public HashContext
 {
   Keccak_HashInstance ctx{};
 
@@ -535,23 +537,23 @@ public:
     );
   }
   
-  void Update(const void* data, size_t size) override
+  void Update(const void* data, size_t size)
   {
     Keccak_HashUpdate(&ctx, (const BitSequence*)data, size * 8);
   }
 
-  void Finish(uint8_t* out) override
+  void Finish(uint8_t* out)
   {
     Keccak_HashFinal(&ctx, (BitSequence*)out);
   }
   
-  size_t GetOutputSize() override
+  size_t GetOutputSize()
   {
     return ctx.fixedOutputLength / 8;
   }
 };
 
-class KangarooTwelveHashContext final : HashContext
+class KangarooTwelveHashContext final : public HashContext
 {
   KangarooTwelve_Instance ctx{};
 
@@ -573,23 +575,23 @@ public:
     KangarooTwelve_Initialize(&ctx, (size_t)(params[0] / 8));
   }
   
-  void Update(const void* data, size_t size) override
+  void Update(const void* data, size_t size)
   {
     KangarooTwelve_Update(&ctx, (const unsigned char*)data, size);
   }
 
-  void Finish(uint8_t* out) override
+  void Finish(uint8_t* out)
   {
     KangarooTwelve_Final(&ctx, out, (const unsigned char*)"", 0);
   }
 
-  size_t GetOutputSize() override
+  size_t GetOutputSize()
   {
     return ctx.fixedOutputLength;
   }
 };
 
-class ParallelHash128HashContext final : HashContext
+class ParallelHash128HashContext final : public HashContext
 {
   ParallelHash_Instance ctx{};
 
@@ -613,23 +615,23 @@ public:
     ParallelHash128_Initialize(&ctx, (size_t)params[0], (size_t)params[1], nullptr, 0);
   }
   
-  void Update(const void* data, size_t size) override
+  void Update(const void* data, size_t size)
   {
     ParallelHash128_Update(&ctx, (const unsigned char*)data, size);
   }
 
-  void Finish(uint8_t* out) override
+  void Finish(uint8_t* out)
   {
     ParallelHash128_Final(&ctx, out);
   }
 
-  size_t GetOutputSize() override
+  size_t GetOutputSize()
   {
     return ctx.fixedOutputLength / 8;
   }
 };
 
-class ParallelHash256HashContext final : HashContext
+class ParallelHash256HashContext final : public HashContext
 {
   ParallelHash_Instance ctx{};
 
@@ -653,24 +655,24 @@ public:
     ParallelHash256_Initialize(&ctx, (size_t)params[0], (size_t)params[1], nullptr, 0);
   }
   
-  void Update(const void* data, size_t size) override
+  void Update(const void* data, size_t size)
   {
     ParallelHash256_Update(&ctx, (const unsigned char*)data, size);
   }
 
-  void Finish(uint8_t* out) override
+  void Finish(uint8_t* out)
   {
     ParallelHash256_Final(&ctx, out);
   }
 
-  size_t GetOutputSize() override
+  size_t GetOutputSize()
   {
     return ctx.fixedOutputLength / 8;
   }
 };
 
 template <unsigned Bits>
-class GOST34112012HashContext final : HashContext
+class GOST34112012HashContext final : public HashContext
 {
   GOST34112012Context ctx{};
 
@@ -680,17 +682,17 @@ public:
     GOST34112012Init(&ctx, Bits);
   }
 
-  void Update(const void* data, size_t size) override
+  void Update(const void* data, size_t size)
   {
     GOST34112012Update(&ctx, (const unsigned char*)data, size);
   }
 
-  void Finish(uint8_t* out) override
+  void Finish(uint8_t* out)
   {
     GOST34112012Final(&ctx, out);
   }
 
-  size_t GetOutputSize() override
+  size_t GetOutputSize()
   {
     return Bits / 8;
   }
@@ -702,18 +704,42 @@ using GOST34112012_512HashContext = GOST34112012HashContext<512>;
 template <typename T, class = void>
 class HashContextTraits
 {
-  static void Factory(const uint64_t*, void* memory)
+  static HashContext* ALGORITHMS_CC Factory(const uint64_t*)
   {
-    new (memory) T();
+    return new T();
   }
-  static size_t ParamCheck(const uint64_t*)
+
+  static size_t ALGORITHMS_CC ParamCheck(const uint64_t*)
   {
-    T t{};
-    return t.GetOutputSize();
+    return T{}.GetOutputSize();
+  }
+
+  static void ALGORITHMS_CC Update(HashContext* ctx, const void* data, size_t size)
+  {
+    ((T*)ctx)->Update(data, size);
+  }
+
+  static void ALGORITHMS_CC Finish(HashContext* ctx, uint8_t* out)
+  {
+    ((T*)ctx)->Finish(out);
+  }
+
+  static size_t ALGORITHMS_CC GetOutputSize(HashContext* ctx)
+  {
+    return ((T*)ctx)->GetOutputSize();
+  }
+
+  static void ALGORITHMS_CC Delete(HashContext* ctx)
+  {
+    delete ((T*)ctx);
   }
 public:
-  static constexpr auto factory_fn = &Factory;
   static constexpr auto param_check_fn = &ParamCheck;
+  static constexpr auto factory_fn = &Factory;
+  static constexpr auto update_fn = &Update;
+  static constexpr auto finish_fn = &Finish;
+  static constexpr auto get_output_size_fn = &GetOutputSize;
+  static constexpr auto delete_fn = &Delete;
   static constexpr const char* const* params = nullptr;
   static constexpr size_t params_count = 0;
 };
@@ -721,13 +747,42 @@ public:
 template <typename T>
 class HashContextTraits<T, std::void_t<decltype(T::k_params)>>
 {
-  static void Factory(const uint64_t* params, void* memory)
+  static HashContext* ALGORITHMS_CC Factory(const uint64_t* params)
   {
-    new (memory) T(params);
+    return new T(params);
+  }
+
+  static size_t ALGORITHMS_CC ParamCheck(const uint64_t* params)
+  {
+    return T::ParamCheck(params);
+  }
+
+  static void ALGORITHMS_CC Update(HashContext* ctx, const void* data, size_t size)
+  {
+    ((T*)ctx)->Update(data, size);
+  }
+
+  static void ALGORITHMS_CC Finish(HashContext* ctx, uint8_t* out)
+  {
+    ((T*)ctx)->Finish(out);
+  }
+
+  static size_t ALGORITHMS_CC GetOutputSize(HashContext* ctx)
+  {
+    return ((T*)ctx)->GetOutputSize();
+  }
+
+  static void ALGORITHMS_CC Delete(HashContext* ctx)
+  {
+    delete ((T*)ctx);
   }
 public:
+  static constexpr auto param_check_fn = &ParamCheck;
   static constexpr auto factory_fn = &Factory;
-  static constexpr auto param_check_fn = &T::ParamCheck;
+  static constexpr auto update_fn = &Update;
+  static constexpr auto finish_fn = &Finish;
+  static constexpr auto get_output_size_fn = &GetOutputSize;
+  static constexpr auto delete_fn = &Delete;
   static constexpr const char* const* params = T::k_params;
   static constexpr size_t params_count = std::size(T::k_params);
 };
@@ -736,9 +791,13 @@ template <typename T>
 constexpr HashAlgorithm make_algorithm(const char* name, bool is_secure)
 {
   return HashAlgorithm{
-    name,
-    HashContextTraits<T>::factory_fn,
     HashContextTraits<T>::param_check_fn,
+    HashContextTraits<T>::factory_fn,
+    HashContextTraits<T>::update_fn,
+    HashContextTraits<T>::finish_fn,
+    HashContextTraits<T>::get_output_size_fn,
+    HashContextTraits<T>::delete_fn,
+    name,
     is_secure,
     HashContextTraits<T>::params,
     HashContextTraits<T>::params_count
@@ -772,41 +831,6 @@ constexpr HashAlgorithm k_algorithms[] = {
   make_algorithm<ED2kHashContext<true>>("eD2k (Old)", true),
 };
 
-union AllContexts
-{
-  Crc32HashContext crc32;
-  Crc64HashContext crc64;
-  XXH32HashContext xxh32;
-  XXH64HashContext xxh64;
-  XXH3_64bitsHashContext xxh3_64;
-  XXH3_128bitsHashContext xxh3_128;
-  Md4HashContext md4;
-  Md5HashContext md5;
-  RipeMD160HashContext ripemd160;
-  Sha1HashContext sha1;
-  Sha224HashContext sha224;
-  Sha256HashContext sha256;
-  Sha384HashContext sha384;
-  Sha512HashContext sha512;
-  Blake2SpHashContext blake2_sp;
-  KeccakHashContext keccak;
-  KangarooTwelveHashContext k12;
-  ParallelHash128HashContext ph128;
-  ParallelHash256HashContext ph256;
-  Blake3HashContext blake3;
-  GOST34112012_256HashContext gost2012_256;
-  GOST34112012_512HashContext gost2012_512;
-  ED2kHashContext<false> ed2k;
-  ED2kHashContext<true> ed2k_old;
-};
-
-// C++14 guarantees that members have the same offset, so only check if one of them has an offset of 0
-static_assert(offsetof(AllContexts, crc32) == 0, "Union members are offset!");
-static_assert(alignof(AllContexts) == alignof(HashContext), "Align mismatch!");
-static_assert(sizeof(AllContexts) <= sizeof(HashContextStorage), "Context too big!");
-
-extern "C" __declspec(dllexport) constexpr size_t k_context_size = sizeof(AllContexts);
-extern "C" __declspec(dllexport) constexpr size_t k_context_align = alignof(AllContexts);
 extern "C" __declspec(dllexport) constexpr const HashAlgorithm* k_algorithms_begin = std::begin(k_algorithms);
 extern "C" __declspec(dllexport) constexpr const HashAlgorithm* k_algorithms_end = std::end(k_algorithms);
 

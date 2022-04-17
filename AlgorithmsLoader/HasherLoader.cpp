@@ -157,9 +157,6 @@ struct AlgorithmsDll
   const HashAlgorithm* algorithms_begin{};
   const HashAlgorithm* algorithms_end{};
 
-  size_t context_align{};
-  size_t context_size{};
-
   AlgorithmsDll()
   {
     wchar_t dll[64] = L"AlgorithmsDll-"
@@ -191,16 +188,9 @@ struct AlgorithmsDll
     {
       const auto p_algorithms_begin = GetProcAddress(hm, "k_algorithms_begin");
       const auto p_algorithms_end = GetProcAddress(hm, "k_algorithms_end");
-      const auto p_context_align = GetProcAddress(hm, "k_context_align");
-      const auto p_context_size = GetProcAddress(hm, "k_context_size");
 
       algorithms_begin = *(const HashAlgorithm* const*)p_algorithms_begin;
       algorithms_end = *(const HashAlgorithm* const*)p_algorithms_end;
-      context_align = *(const size_t*)p_context_align;
-      context_size = *(const size_t*)p_context_size;
-
-      if (context_align != CONTEXT_ALIGN || context_size > CONTEXT_SIZE)
-        __debugbreak(); // make a loud crash if this happens
     }
   }
   ~AlgorithmsDll()
@@ -232,7 +222,7 @@ LegacyHashAlgorithm::LegacyHashAlgorithm(
     if (0 == strcmp(alg_name, it->name))
     {
       _algorithm = it;
-      _size = (uint32_t)it->param_check_fn(params);
+      _size = (uint32_t)it->ParamCheck(params);
       assert(_size);
       assert(_size == expected_size);
       _is_secure = it->is_secure;
@@ -310,9 +300,7 @@ LegacyHashAlgorithm::AlgorithmsType& LegacyHashAlgorithm::Algorithms()
   return algorithms;
 }
 
-HashContext* LegacyHashAlgorithm::MakeContext() const
+HashBox LegacyHashAlgorithm::MakeContext() const
 {
-  const auto memory = new HashContextStorage;
-  _algorithm->factory_fn(_params, memory);
-  return (HashContext*)memory;
+  return _algorithm->MakeContext(_params);
 }

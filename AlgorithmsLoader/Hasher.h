@@ -24,8 +24,6 @@
 class LegacyHashAlgorithm
 {
 public:
-  using FactoryFn = HashContext* (const LegacyHashAlgorithm* algorithm);
-
   constexpr static auto k_count = 30;
   constexpr static auto k_max_size = 66;
 
@@ -76,5 +74,5 @@ public:
   constexpr const char* GetName() const { return _name; }
   constexpr uint32_t GetSize() const { return _size; }
   constexpr const char* const* GetExtensions() const { return _extensions; }
-  HashContext* MakeContext() const;
+  HashBox MakeContext() const;
 };

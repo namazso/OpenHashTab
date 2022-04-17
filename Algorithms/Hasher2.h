@@ -16,86 +16,132 @@
 #pragma once
 #include <cstdint>
 #include <cstddef>
-#include <utility>
 
-class HashAlgorithm;
+#define ALGORITHMS_CC __stdcall
 
-#define CONTEXT_ALIGN (64)
-#define CONTEXT_SIZE (2048)
-
-class alignas(CONTEXT_ALIGN) HashContext
-{
-public:
-  constexpr HashContext() = default;
-  HashContext(const HashContext&) = delete;
-  HashContext(HashContext&&) = delete;
-  HashContext& operator=(const HashContext&) = delete;
-  HashContext& operator=(HashContext&&) = delete;
-
-  // Hash contexts should always be POD
-  // virtual ~HashContext() = default;
-
-  virtual void Update(const void* data, size_t size) = 0;
-  virtual void Finish(uint8_t* out) = 0;
-  virtual size_t GetOutputSize() = 0;
-};
-
-union alignas(alignof(HashContext)) HashContextStorage
-{
-private:
-  struct MyHashContext : HashContext
-  {
-    void Update(const void* data, size_t size) override {}
-    void Finish(uint8_t* out) override {}
-    size_t GetOutputSize() override { return 0; }
-  };
-
-  MyHashContext _hc;
-  char _padding[CONTEXT_SIZE]{};
-
-public:
-  constexpr HashContextStorage() {}
-};
-
+class HashContext;
 
 class HashAlgorithm
 {
+  friend class HashBox;
+
+  using ParamCheckFn = size_t ALGORITHMS_CC(const uint64_t* params); // returns: length of the output for the given params, 0 if invalid
+  using FactoryFn = HashContext* ALGORITHMS_CC(const uint64_t* params);
+
+  using UpdateFn = void ALGORITHMS_CC(HashContext* ctx, const void* data, size_t size);
+  using FinishFn = void ALGORITHMS_CC(HashContext* ctx, uint8_t* out);
+  using GetOutputSizeFn = size_t ALGORITHMS_CC(HashContext* ctx);
+
+  using DeleteFn = void ALGORITHMS_CC(HashContext* ctx);
+
+  ParamCheckFn* _param_check_fn;
+  FactoryFn* _factory_fn;
+  UpdateFn* _update_fn;
+  FinishFn* _finish_fn;
+  GetOutputSizeFn* _get_output_size_fn;
+  DeleteFn* _delete_fn;
+
 public:
-  using FactoryFn = void (const uint64_t* params, void* memory);
-  using ParamCheckFn = size_t (const uint64_t* params); // returns: length of the output for the given params, 0 if invalid
-  
   const char* name;
-  FactoryFn* factory_fn;
-  ParamCheckFn* param_check_fn;
   const char* const* params;
   uint32_t params_size;
   bool is_secure;
 
+  HashBox MakeContext(const uint64_t* params) const;
+  size_t ParamCheck(const uint64_t* _params) const { return _param_check_fn(_params); }
+
   constexpr HashAlgorithm(
-    const char* name,
-    FactoryFn* factory_fn,
     ParamCheckFn* param_check_fn,
+    FactoryFn* factory_fn,
+    UpdateFn* update_fn,
+    FinishFn* finish_fn,
+    GetOutputSizeFn* get_output_size_fn,
+    DeleteFn* delete_fn,
+    const char* name,
     bool is_secure,
     const char* const* params,
     uint32_t params_size
-  ) : name(name)
-    , factory_fn(factory_fn)
-    , param_check_fn(param_check_fn)
+  ) : _param_check_fn(param_check_fn)
+    , _factory_fn(factory_fn)
+    , _update_fn(update_fn)
+    , _finish_fn(finish_fn)
+    , _get_output_size_fn(get_output_size_fn)
+    , _delete_fn(delete_fn)
+    , name(name)
     , params(params)
     , params_size(params_size)
     , is_secure(is_secure) {}
 
   template <size_t N>
   constexpr HashAlgorithm(
-    const char* name,
-    FactoryFn* factory_fn,
     ParamCheckFn* param_check_fn,
+    FactoryFn* factory_fn,
+    UpdateFn* update_fn,
+    FinishFn* finish_fn,
+    GetOutputSizeFn* get_output_size_fn,
+    DeleteFn* delete_fn,
+    const char* name,
     bool is_secure,
     const char* const(&params)[N]
-  ) : name(name)
-    , factory_fn(factory_fn)
-    , param_check_fn(param_check_fn)
+  ) : _param_check_fn(param_check_fn)
+    , _factory_fn(factory_fn)
+    , _update_fn(update_fn)
+    , _finish_fn(finish_fn)
+    , _get_output_size_fn(get_output_size_fn)
+    , _delete_fn(delete_fn)
+    , name(name)
     , params(params)
     , params_size(N)
     , is_secure(is_secure) {}
 };
+
+class HashBox
+{
+  const HashAlgorithm* _algorithm{};
+  HashContext* _ctx{};
+
+public:
+  constexpr HashBox() {}
+
+  HashBox(const HashAlgorithm& algorithm, const uint64_t* params)
+    : _algorithm(&algorithm)
+    , _ctx(_algorithm->_factory_fn(params)) {}
+
+  ~HashBox() { if(_ctx) _algorithm->_delete_fn(_ctx); }
+
+  HashBox(const HashBox&) = delete;
+  HashBox(HashBox&& rhs) noexcept
+    : _algorithm(rhs._algorithm)
+    , _ctx(rhs._ctx)
+  {
+    rhs._algorithm = nullptr;
+    rhs._ctx = nullptr;
+  }
+
+  HashBox& operator=(const HashBox&) = delete;
+  HashBox& operator=(HashBox&& rhs) noexcept
+  {
+    _algorithm = rhs._algorithm;
+    _ctx = rhs._ctx;
+    rhs._algorithm = nullptr;
+    rhs._ctx = nullptr;
+    return *this;
+  }
+
+  void Initialize(const HashAlgorithm& algorithm, const uint64_t* params)
+  {
+    _algorithm = &algorithm;
+    _ctx = _algorithm->_factory_fn(params);
+  }
+
+  bool IsInitialized() const { return _ctx != nullptr; }
+
+  void Update(const void* data, size_t size) { _algorithm->_update_fn(_ctx, data, size); }
+  void Finish(uint8_t* out) { _algorithm->_finish_fn(_ctx, out); }
+  size_t GetOutputSize() const { return _algorithm->_get_output_size_fn(_ctx); }
+};
+
+inline HashBox HashAlgorithm::MakeContext(const uint64_t* params) const
+{
+  return { *this, params };
+}

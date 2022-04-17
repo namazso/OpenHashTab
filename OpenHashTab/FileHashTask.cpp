@@ -117,7 +117,7 @@ FileHashTask::FileHashTask(Coordinator* prop_page, const std::wstring& path, con
   {
     _lparam_idx[i] = static_cast<uint8_t>(i);
     if (_prop_page->settings.algorithms[i])
-      _hash_contexts[i].reset(LegacyHashAlgorithm::Algorithms()[i].MakeContext());
+      _hash_contexts[i] = LegacyHashAlgorithm::Algorithms()[i].MakeContext();
   }
 
   _handle = utl::OpenForRead(path, true);
@@ -284,10 +284,10 @@ void FileHashTask::AddToHashQueue()
 void FileHashTask::DoHashRound()
 {
   const auto ctx_index = --_hash_start_counter;
-  const auto ctx = _hash_contexts[ctx_index].get();
+  auto& ctx = _hash_contexts[ctx_index];
   const auto block_size = GetCurrentBlockSize();
-  if (ctx)
-    ctx->Update(_block, block_size);
+  if (ctx.IsInitialized())
+    ctx.Update(_block, block_size);
   const auto locks_on_this = --_hash_finish_counter;
   if (locks_on_this == 0)
     FinishedBlock();
@@ -327,11 +327,11 @@ void FileHashTask::Finish()
     for (auto i = 0u; i < LegacyHashAlgorithm::k_count; ++i)
     {
       auto& it_result = _hash_results[i];
-      const auto it_ctx = _hash_contexts[i].get();
-      if(it_ctx)
+      auto& it_ctx = _hash_contexts[i];
+      if(it_ctx.IsInitialized())
       {
-        it_result.resize(it_ctx->GetOutputSize());
-        it_ctx->Finish(it_result.data());
+        it_result.resize(it_ctx.GetOutputSize());
+        it_ctx.Finish(it_result.data());
       }
 
       // TODO: O(n^2) BABY HERE WE GO
