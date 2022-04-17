@@ -50,6 +50,7 @@ WizardStyle=modern
 VersionInfoProductTextVersion={#CI_VERSION}
 VersionInfoVersion={#CI_VERSION_NUMERIC}
 ChangesAssociations = yes
+UninstallDisplayIcon={app}\OpenHashTab.dll,0
 
 [Languages]
 Name: "en"; MessagesFile: "compiler:Default.isl"
