@@ -90,9 +90,9 @@ GroupDescription=Optional features:
 myAssociation=Associate with known sumfile formats
 myContextMenu=Add to context menu
 
-ChineseSimplified.GroupDescription=¿ÉÑ¡²Ù×÷£º
-ChineseSimplified.myAssociation=¹ØÁªÒÑÖªµÄĞ£ÑéºÍÎÄ¼ş£¨sumfile£©¸ñÊ½
-ChineseSimplified.myContextMenu=Ìí¼ÓÓÒ¼ü²Ëµ¥
+ChineseSimplified.GroupDescription=å¯é€‰æ“ä½œï¼š
+ChineseSimplified.myAssociation=å…³è”å·²çŸ¥çš„æ ¡éªŒå’Œæ–‡ä»¶ï¼ˆsumfileï¼‰æ ¼å¼
+ChineseSimplified.myContextMenu=æ·»åŠ å³é”®èœå•
 
 [Tasks]
 Name: myAssociation; Description: "{cm:myAssociation}"; GroupDescription: "{cm:GroupDescription}"
