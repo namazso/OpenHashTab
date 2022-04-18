@@ -79,15 +79,18 @@ namespace utl
   template <typename Char>
   std::vector<uint8_t> HashStringToBytes(std::basic_string_view<Char> str)
   {
-    if (str.size() % 2 != 0)
-      return {}; // odd
-
     std::vector<uint8_t> res;
 
-    for (size_t i = 0u; i < str.size() / 2; ++i)
+    for (size_t i = 0u; i < str.size() - 1; i += 2)
     {
-      const auto a = utl::unhex<Char>(str[i * 2]);
-      const auto b = utl::unhex<Char>(str[i * 2 + 1]);
+      while (str[i] == ' ')
+      {
+        i++;
+        if (!(i < str.size() - 1))
+          break;
+      }
+      const auto a = utl::unhex<Char>(str[i]);
+      const auto b = utl::unhex<Char>(str[i + 1]);
       if (a == 0xFF || b == 0xFF)
         return {}; // invalid
       res.push_back(a << 4 | b);

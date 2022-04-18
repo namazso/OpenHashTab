@@ -36,11 +36,11 @@ extern "C" NTSTATUS NTAPI RtlLoadString(
 std::vector<uint8_t> utl::FindHashInString(std::wstring_view wv)
 {
   using wvmatch = std::match_results<std::wstring_view::iterator>;
-  constexpr static wchar_t regex_str[] = LR"([^\u0080-\uFFFFa-zA-Z0-9]*((?:[0-9a-fA-F]{2})+)([^\u0080-\uFFFFa-zA-Z0-9].*)?)";
+  constexpr static wchar_t regex_str[] = LR"(((?:[0-9A-F]{2} ?){2,}|(?:[0-9a-f]{2} ?){2,}))";
   static std::wregex regex{ regex_str };
 
   wvmatch pieces;
-  if (std::regex_match(begin(wv), end(wv), pieces, regex))
+  if (std::regex_search(begin(wv), end(wv), pieces, regex))
     return HashStringToBytes(std::wstring_view{ pieces[1].str() });
   return {};
 }
