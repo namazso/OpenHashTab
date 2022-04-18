@@ -75,16 +75,16 @@ HRESULT STDMETHODCALLTYPE COpenHashTabShlExt::Initialize(
     0
   );
 
+  const auto file_name_buf = std::make_unique<wchar_t[]>(PATHCCH_MAX_CCH);
+
   for (auto i = 0u; i < file_count; i++)
   {
-    wchar_t file_name[PATHCCH_MAX_CCH];
-
     // Get the next filename.
-    if (0 == DragQueryFileW(drop, i, file_name, static_cast<UINT>(std::size(file_name))))
+    if (0 == DragQueryFileW(drop, i, file_name_buf.get(), static_cast<UINT>(PATHCCH_MAX_CCH)))
       continue;
 
     // Add the filename to our list of files to act on.
-    _files_raw.emplace_back(file_name);
+    _files_raw.emplace_back(file_name_buf.get());
   }
 
   // Release resources.
@@ -156,7 +156,13 @@ HRESULT STDMETHODCALLTYPE COpenHashTabShlExt::ReplacePage(
 
 // IContextMenu
 
-HRESULT COpenHashTabShlExt::QueryContextMenu(HMENU hmenu, UINT indexMenu, UINT idCmdFirst, UINT idCmdLast, UINT uFlags)
+HRESULT COpenHashTabShlExt::QueryContextMenu(
+  _In_  HMENU hmenu,
+  _In_  UINT indexMenu,
+  _In_  UINT idCmdFirst,
+  _In_  UINT idCmdLast,
+  _In_  UINT uFlags
+)
 {
   // If the flags include CMF_DEFAULTONLY then we shouldn't do anything.
   if (uFlags & CMF_DEFAULTONLY)
@@ -177,7 +183,9 @@ HRESULT COpenHashTabShlExt::QueryContextMenu(HMENU hmenu, UINT indexMenu, UINT i
   return MAKE_HRESULT(SEVERITY_SUCCESS, FACILITY_NULL, 1);
 }
 
-HRESULT COpenHashTabShlExt::InvokeCommand(CMINVOKECOMMANDINFO* pici)
+HRESULT COpenHashTabShlExt::InvokeCommand(
+  _In_  CMINVOKECOMMANDINFO* pici
+)
 {
   if(IS_INTRESOURCE(pici->lpVerb) && (UINT)(UINT_PTR)pici->lpVerb == 0)
   {
@@ -198,7 +206,13 @@ HRESULT COpenHashTabShlExt::InvokeCommand(CMINVOKECOMMANDINFO* pici)
   return E_INVALIDARG;
 }
 
-HRESULT COpenHashTabShlExt::GetCommandString(UINT_PTR idCmd, UINT uType, UINT* pReserved, CHAR* pszName, UINT cchMax)
+HRESULT COpenHashTabShlExt::GetCommandString(
+  _In_  UINT_PTR idCmd,
+  _In_  UINT uType,
+  _Reserved_  UINT* pReserved,
+  _Out_writes_bytes_((uType& GCS_UNICODE) ? (cchMax * sizeof(wchar_t)) : cchMax) _When_(!(uType& (GCS_VALIDATEA | GCS_VALIDATEW)), _Null_terminated_)  CHAR* pszName,
+  _In_  UINT cchMax
+)
 {
   // Check idCmd, it must be 0 since we have only one menu item.
   if (0 != idCmd)

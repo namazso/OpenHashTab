@@ -98,7 +98,7 @@ std::wstring utl::GetWindowTextString(HWND hwnd)
   // if text is 0 long, GetWindowTextLength returns 0, same as when error happened
   if (len == 0 && GetLastError() != 0)
     return {};
-  const auto p = std::make_unique<wchar_t[]>(len + 1);
+  const auto p = std::make_unique<wchar_t[]>((size_t)len + 1);
   GetWindowTextW(hwnd, p.get(), len + 1);
   return {p.get()};
 }
@@ -262,12 +262,12 @@ std::wstring utl::GetClipboardText(HWND hwnd)
 
 std::wstring utl::SaveDialog(HWND hwnd, const wchar_t* defpath, const wchar_t* defname)
 {
-  wchar_t name[PATHCCH_MAX_CCH];
-  wcscpy_s(name, defname);
+  const auto name = std::make_unique<wchar_t[]>(PATHCCH_MAX_CCH);
+  wcscpy_s(name.get(), PATHCCH_MAX_CCH, defname);
 
   OPENFILENAME of = { sizeof(OPENFILENAME), hwnd };
-  of.lpstrFile = name;
-  of.nMaxFile = static_cast<DWORD>(std::size(name));
+  of.lpstrFile = name.get();
+  of.nMaxFile = PATHCCH_MAX_CCH;
   of.lpstrInitialDir = defpath;
   of.Flags = OFN_EXPLORER | OFN_OVERWRITEPROMPT;
   if (!GetSaveFileNameW(&of))
@@ -285,8 +285,8 @@ std::wstring utl::SaveDialog(HWND hwnd, const wchar_t* defpath, const wchar_t* d
     return {};
   }
   // Compiler keeps crying about it even though it's impossible
-  name[std::size(name) - 1] = 0;
-  return { name };
+  name[PATHCCH_MAX_CCH - 1] = 0;
+  return { name.get() };
 }
 
 DWORD utl::SaveMemoryAsFile(const wchar_t* path, const void* p, DWORD size)
@@ -330,7 +330,7 @@ std::wstring utl::UTF8ToWide(const char* p)
 
   std::wstring wstr;
   // size includes null
-  wstr.resize(wsize - 1);
+  wstr.resize((size_t)wsize - 1);
 
   MultiByteToWideChar(
     CP_UTF8,
@@ -359,7 +359,7 @@ std::string utl::WideToUTF8(const wchar_t* p)
 
   std::string str;
   // size includes null
-  str.resize(size - 1);
+  str.resize((size_t)size - 1);
 
   WideCharToMultiByte(
     CP_UTF8,

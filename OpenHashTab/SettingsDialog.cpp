@@ -101,7 +101,7 @@ INT_PTR SettingsDialog::DlgProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
     }
 
     // let's hope 40 px padding is good enough
-    ListView_SetColumnWidth(list, 0, width + utl::GetDPIScaledPixels(list, 40));
+    ListView_SetColumnWidth(list, 0, (intptr_t)width + utl::GetDPIScaledPixels(list, 40));
 
     for (const auto& ctl : s_boxes)
     {
@@ -201,8 +201,12 @@ INT_PTR SettingsDialog::DlgProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
     {
       const auto pnmlink = (PNMLINK)pnmhdr;
       const auto shell32 = LoadLibraryExW(ESTRt(L"shell32"), nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);
-      const auto pShellExecute = (decltype(&::ShellExecuteW))GetProcAddress(shell32, ESTRt("ShellExecuteW"));
-      pShellExecute(nullptr, L"open", pnmlink->item.szUrl, nullptr, nullptr, SW_SHOW);
+      if (shell32)
+      {
+        const auto pShellExecute = (decltype(&::ShellExecuteW))GetProcAddress(shell32, ESTRt("ShellExecuteW"));
+        if (pShellExecute)
+          pShellExecute(nullptr, L"open", pnmlink->item.szUrl, nullptr, nullptr, SW_SHOW);
+      }
       return TRUE;
     }
   }

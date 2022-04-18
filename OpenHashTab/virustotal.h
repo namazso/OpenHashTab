@@ -28,10 +28,10 @@ namespace vt
   struct Result
   {
     std::string permalink;
-    FileHashTask* file;
-    int positives;
-    int total;
-    bool found;
+    FileHashTask* file{};
+    int positives{};
+    int total{};
+    bool found{};
   };
 
   std::list<Result> Query(const std::list<FileHashTask*>& files, size_t algo);

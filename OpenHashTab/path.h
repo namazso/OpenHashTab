@@ -28,7 +28,7 @@ struct ProcessedFileList
   // 0+: a sumfile belonging to the algorithm given
   // 
   // If the main file is a sumfile of a hash format we don't have enabled we want to enable it for this session.
-  int sumfile_type;
+  int sumfile_type{-2};
 
   // A Win32 path to a directory that supposedly contains all files hashed. Ends with a slash.
   std::wstring base_path;

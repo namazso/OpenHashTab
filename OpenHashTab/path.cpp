@@ -31,30 +31,29 @@
 static std::wstring NormalizePath(std::wstring_view path)
 {
   const auto long_compat = utl::MakePathLongCompatible(std::wstring{ path });
+  const auto pbuf = std::make_unique<wchar_t[]>(PATHCCH_MAX_CCH);
   std::wstring full;
   {
-    wchar_t buf[0x10000 / 2];
     const auto ret = GetFullPathNameW(
       long_compat.c_str(),
-      std::size(buf),
-      buf,
+      PATHCCH_MAX_CCH,
+      pbuf.get(),
       nullptr
     );
     if (ret == 0)
       return utl::MakePathLongCompatible(long_compat);
-    full = buf;
+    full = pbuf.get();
   }
   auto slash = full.rbegin();
   while(true)
   {
-    wchar_t buf2[0x10000 / 2];
     const auto ret = GetLongPathNameW(
       std::wstring{ full.begin(), slash.base() }.c_str(),
-      buf2,
-      std::size(buf2)
+      pbuf.get(),
+      PATHCCH_MAX_CCH
     );
     if (ret != 0)
-      return utl::MakePathLongCompatible(std::wstring{ buf2 } + std::wstring{ slash.base(), full.end() });
+      return utl::MakePathLongCompatible(std::wstring{ pbuf.get() } + std::wstring{ slash.base(), full.end() });
 
     const auto result = std::find(slash, full.rend(), L'\\');
     if (result == full.rend())

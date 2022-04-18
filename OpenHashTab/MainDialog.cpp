@@ -103,10 +103,10 @@ static const Exporter* GetSelectedExporter(HWND combo)
 
 static std::wstring ListView_GetItemTextStr(HWND hwnd, int item, int subitem)
 {
-  wchar_t name[PATHCCH_MAX_CCH];
-  name[0] = 0;
-  ListView_GetItemText(hwnd, item, subitem, name, std::size(name));
-  return name;
+  const auto pbuf = std::make_unique<wchar_t[]>(PATHCCH_MAX_CCH);
+  pbuf[0] = 0;
+  ListView_GetItemText(hwnd, item, subitem, pbuf.get(), PATHCCH_MAX_CCH);
+  return pbuf.get();
 }
 
 static std::pair<FileHashTask*, size_t> TaskAlgPairFromLVIndex(HWND list_view, int index)
@@ -177,11 +177,14 @@ INT_PTR MainDialog::CustomDrawListView(LPARAM lparam, HWND list)
 
       // fall through for normal color
     }
+    [[fallthrough]];
     default:
       break;
     }
 
+    return CDRF_DODEFAULT;
   }
+
   default:
     break;
   }

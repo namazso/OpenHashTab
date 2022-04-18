@@ -210,11 +210,12 @@ constexpr static auto s_sfv_exporter = SFVExporter();
 
 constexpr std::array<const Exporter*, Exporter::k_count> Exporter::k_exporters = []
 {
+  static_assert(Exporter::k_count == LegacyHashAlgorithm::k_count + 2, "Wrong exporter count");
   std::array<const Exporter*, k_count> elems{};
   auto i = 0u;
   for (;i < LegacyHashAlgorithm::k_count; ++i)
     elems[i] = &Array<SumfileExporter, LegacyHashAlgorithm::k_count>::value[i];
-  elems[i++] = &s_dot_hash_exporter;
-  elems[i++] = &s_sfv_exporter;
+  elems[LegacyHashAlgorithm::k_count] = &s_dot_hash_exporter;
+  elems[LegacyHashAlgorithm::k_count + 1] = &s_sfv_exporter;
   return elems;
 }();
