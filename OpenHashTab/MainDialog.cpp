@@ -37,35 +37,37 @@ enum class HashColorType
   Unknown
 };
 
-static bool ColorLine(LPNMLVCUSTOMDRAW plvcd, HashColorType type)
+struct HashColorSettingEntry
 {
-  // No hash to compare to  - system colors
-  // Error processing file  - system bg, red text
-  // Hash mismatch          - red bg, white text for all algos
-  // Secure hash matches    - green bg, white text for algo matching
-  // Insecure hash matches  - orange bg, white text for algo matching
-  
-  switch(type)
+  RegistrySetting<bool> Settings::* fg_enabled;
+  RegistrySetting<COLORREF> Settings::* fg_color;
+  RegistrySetting<bool> Settings::* bg_enabled;
+  RegistrySetting<COLORREF> Settings::* bg_color;
+};
+
+constexpr static HashColorSettingEntry HASH_COLOR_SETTING_MAP[5] = {
+  {&Settings::error_fg_enabled, &Settings::error_fg_color, &Settings::error_bg_enabled, &Settings::error_bg_color},
+  {&Settings::match_fg_enabled, &Settings::match_fg_color, &Settings::match_bg_enabled, &Settings::match_bg_color},
+  {&Settings::insecure_fg_enabled, &Settings::insecure_fg_color, &Settings::insecure_bg_enabled, &Settings::insecure_bg_color},
+  {&Settings::mismatch_fg_enabled, &Settings::mismatch_fg_color, &Settings::mismatch_bg_enabled, &Settings::mismatch_bg_color},
+  {&Settings::unknown_fg_enabled, &Settings::unknown_fg_color, &Settings::unknown_bg_enabled, &Settings::unknown_bg_color},
+};
+
+static bool ColorLine(const Settings& settings, LPNMLVCUSTOMDRAW plvcd, HashColorType type)
+{
+  auto& entry = HASH_COLOR_SETTING_MAP[(size_t)type];
+  bool was_set = false;
+  if (settings.*entry.fg_enabled)
   {
-  case HashColorType::Unknown:
-    return false;
-  case HashColorType::Error:
-    plvcd->clrText = RGB(255, 55, 23);
-    break;
-  case HashColorType::Match:
-    plvcd->clrText = RGB(255, 255, 255);
-    plvcd->clrTextBk = RGB(45, 170, 23);
-    break;
-  case HashColorType::Insecure:
-    plvcd->clrText = RGB(255, 255, 255);
-    plvcd->clrTextBk = RGB(170, 82, 23);
-    break;
-  case HashColorType::Mismatch:
-    plvcd->clrText = RGB(255, 255, 255);
-    plvcd->clrTextBk = RGB(230, 55, 23);
-    break;
+    was_set = true;
+    plvcd->clrText = settings.*entry.fg_color;
   }
-  return true;
+  if (settings.*entry.bg_enabled)
+  {
+    was_set = true;
+    plvcd->clrTextBk = settings.*entry.bg_color;
+  }
+  return was_set;
 }
 
 static HashColorType HashColorTypeForFile(FileHashTask* file, size_t hasher)
@@ -172,7 +174,11 @@ INT_PTR MainDialog::CustomDrawListView(LPARAM lparam, HWND list)
       const auto file = file_hash.first;
       const auto hasher = file_hash.second;
       const auto color_type = HashColorTypeForFile(file, hasher);
-      if(ColorLine(lplvcd, color_type))
+
+      // this is horrible
+      const auto dlg = (MainDialog*)GetWindowLongPtrW(GetParent(lplvcd->nmcd.hdr.hwndFrom), GWLP_USERDATA);
+
+      if(ColorLine(dlg->_prop_page->settings, lplvcd, color_type))
         return CDRF_NEWFONT;
 
       // fall through for normal color

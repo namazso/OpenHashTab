@@ -92,4 +92,37 @@ struct Settings
   RegistrySetting<bool> checkagainst_strict{ "CheckAgainstStruct", false };
   RegistrySetting<bool> hash_sumfile_too{ "HashSumfileToo", false };
   RegistrySetting<bool> sumfile_algorithm_only{ "SumfileAlgorithmOnly", true };
+
+  // Following are the color settings. Defaults:
+  //
+  // No hash to compare to  - system colors
+  // Error processing file  - system bg, red text
+  // Hash mismatch          - red bg, white text for all algos
+  // Secure hash matches    - green bg, white text for algo matching
+  // Insecure hash matches  - orange bg, white text for algo matching
+
+  RegistrySetting<bool>     unknown_fg_enabled{ "UnknownFgEnabled", false };
+  RegistrySetting<COLORREF> unknown_fg_color  { "UnknownFgColor", RGB(0, 0, 0) };
+  RegistrySetting<bool>     unknown_bg_enabled{ "UnknownBgEnabled", false };
+  RegistrySetting<COLORREF> unknown_bg_color  { "UnknownBgColor", RGB(255, 255, 255) };
+  
+  RegistrySetting<bool>     match_fg_enabled{ "MatchFgEnabled", true };
+  RegistrySetting<COLORREF> match_fg_color  { "MatchFgColor", RGB(255, 255, 255) };
+  RegistrySetting<bool>     match_bg_enabled{ "MatchBgEnabled", true };
+  RegistrySetting<COLORREF> match_bg_color  { "MatchBgColor", RGB(45, 170, 23) };
+  
+  RegistrySetting<bool>     mismatch_fg_enabled{ "MismatchFgEnabled", true };
+  RegistrySetting<COLORREF> mismatch_fg_color  { "MismatchFgColor", RGB(255, 255, 255) };
+  RegistrySetting<bool>     mismatch_bg_enabled{ "MismatchBgEnabled", true };
+  RegistrySetting<COLORREF> mismatch_bg_color  { "MismatchBgColor", RGB(230, 55, 23) };
+  
+  RegistrySetting<bool>     insecure_fg_enabled{ "InsecureFgEnabled", true };
+  RegistrySetting<COLORREF> insecure_fg_color  { "InsecureFgColor", RGB(255, 255, 255) };
+  RegistrySetting<bool>     insecure_bg_enabled{ "InsecureBgEnabled", true };
+  RegistrySetting<COLORREF> insecure_bg_color  { "InsecureBgColor", RGB(170, 82, 23) };
+  
+  RegistrySetting<bool>     error_fg_enabled{ "ErrorFgEnabled", true };
+  RegistrySetting<COLORREF> error_fg_color  { "ErrorFgColor", RGB(255, 55, 23) };
+  RegistrySetting<bool>     error_bg_enabled{ "ErrorBgEnabled", false };
+  RegistrySetting<COLORREF> error_bg_color  { "ErrorBgColor", RGB(255, 255, 255) };
 };
