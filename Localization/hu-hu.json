@@ -47,6 +47,13 @@
         "HASH_SUMFILE_TOO": "Sum-fájl ellenőrzés esetén a sum-fájl hashelése is",
         "CHECKAGAINST_STRICT": "Szigorú módú ellenőrző mező",
         "CHECKAGAINST_AUTOFORMAT": "Az ellenőrző mezőbe beillesztett hashek automatikus formázása",
-        "SETTINGS_TITLE": "Beállítások"
+        "SETTINGS_TITLE": "Beállítások",
+        "ERROR_GROUP": "Hiba",
+        "MISMATCH_GROUP": "Eltérés",
+        "MATCH_GROUP": "Egyezés",
+        "INSECURE_GROUP": "Nem biztonságos",
+        "UNKNOWN_GROUP": "Ismeretlen",
+        "FOREGROUND": "Előtér",
+        "BACKGROUND": "Háttér"
     }
 }
