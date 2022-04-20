@@ -25,33 +25,9 @@
 #include "FileHashTask.h"
 #include "wnd.h"
 #include "virustotal.h"
+#include "hash_colors.h"
 
 #include <sstream>
-
-enum class HashColorType
-{
-  Error,
-  Match,
-  Insecure,
-  Mismatch,
-  Unknown
-};
-
-struct HashColorSettingEntry
-{
-  RegistrySetting<bool> Settings::* fg_enabled;
-  RegistrySetting<COLORREF> Settings::* fg_color;
-  RegistrySetting<bool> Settings::* bg_enabled;
-  RegistrySetting<COLORREF> Settings::* bg_color;
-};
-
-constexpr static HashColorSettingEntry HASH_COLOR_SETTING_MAP[5] = {
-  {&Settings::error_fg_enabled, &Settings::error_fg_color, &Settings::error_bg_enabled, &Settings::error_bg_color},
-  {&Settings::match_fg_enabled, &Settings::match_fg_color, &Settings::match_bg_enabled, &Settings::match_bg_color},
-  {&Settings::insecure_fg_enabled, &Settings::insecure_fg_color, &Settings::insecure_bg_enabled, &Settings::insecure_bg_color},
-  {&Settings::mismatch_fg_enabled, &Settings::mismatch_fg_color, &Settings::mismatch_bg_enabled, &Settings::mismatch_bg_color},
-  {&Settings::unknown_fg_enabled, &Settings::unknown_fg_color, &Settings::unknown_bg_enabled, &Settings::unknown_bg_color},
-};
 
 static bool ColorLine(const Settings& settings, LPNMLVCUSTOMDRAW plvcd, HashColorType type)
 {

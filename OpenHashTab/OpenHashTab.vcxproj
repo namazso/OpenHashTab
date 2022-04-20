@@ -159,6 +159,7 @@
   <ItemGroup>
     <ClInclude Include="..\tiny-json\tiny-json.h" />
     <ClInclude Include="base64.h" />
+    <ClInclude Include="hash_colors.h" />
     <ClInclude Include="dllmain.h" />
     <ClInclude Include="Exporter.h" />
     <ClInclude Include="FileHashTask.h" />

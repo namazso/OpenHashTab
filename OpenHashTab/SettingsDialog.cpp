@@ -54,6 +54,47 @@ static constexpr SettingCheckbox s_boxes[] =
 
 #undef CTLSTR
 
+static bool DoColorButton(HWND owner, RegistrySetting<COLORREF>& setting)
+{
+  static COLORREF defcolors[16] = {
+    RGB(45, 170, 23),
+    RGB(170, 82, 23),
+    RGB(230, 55, 23),
+    RGB(255, 55, 23),
+    RGB(255, 255, 255),
+    RGB(255, 255, 255),
+    RGB(255, 255, 255),
+    RGB(255, 255, 255),
+    RGB(255, 255, 255),
+    RGB(255, 255, 255),
+    RGB(255, 255, 255),
+    RGB(255, 255, 255),
+    RGB(255, 255, 255),
+    RGB(255, 255, 255),
+    RGB(255, 255, 255),
+    RGB(255, 255, 255),
+  };
+
+  CHOOSECOLORW ccw{};
+  ccw.lStructSize = sizeof(ccw);
+  ccw.hwndOwner = owner;
+  ccw.rgbResult = setting.Get();
+  ccw.lpCustColors = defcolors;
+  ccw.Flags = CC_ANYCOLOR | CC_FULLOPEN | CC_RGBINIT;
+  if (ChooseColorW(&ccw))
+  {
+    setting.Set(ccw.rgbResult);
+    return true;
+  }
+  return false;
+}
+
+static std::wstring FormatColor(COLORREF clr)
+{
+  return utl::FormatString(L"#%06X", ((uint32_t)GetRValue(clr) << 16) | ((uint32_t)GetGValue(clr) << 8) | GetBValue(clr));
+}
+
+
 void SettingsDialog::UpdateCheckboxAvailability()
 {
   const auto banner = BST_CHECKED == Button_GetCheck(_hwnd_CHECK_SUMFILE_BANNER);
@@ -62,6 +103,18 @@ void SettingsDialog::UpdateCheckboxAvailability()
   const auto clipboard = BST_CHECKED == Button_GetCheck(_hwnd_CHECK_CLIPBOARD_AUTOENABLE);
   Button_Enable(_hwnd_CHECK_CLIPBOARD_AUTOENABLE_IF_NONE, clipboard);
   Button_Enable(_hwnd_CHECK_CLIPBOARD_AUTOENABLE_EXCLUSIVE, clipboard);
+}
+
+void SettingsDialog::UpdateColorItems()
+{
+  for (const auto& e : HASH_COLOR_SETTING_MAP)
+  {
+    Button_SetCheck(GetDlgItem(_hwnd, e.settings_dlg_fg_check), _settings->*e.fg_enabled ? BST_CHECKED : 0);
+    Button_SetCheck(GetDlgItem(_hwnd, e.settings_dlg_bg_check), _settings->*e.bg_enabled ? BST_CHECKED : 0);
+    SetWindowTextW(GetDlgItem(_hwnd, e.settings_dlg_fg_btn), FormatColor((_settings->*e.fg_color).Get()).c_str());
+    SetWindowTextW(GetDlgItem(_hwnd, e.settings_dlg_bg_btn), FormatColor((_settings->*e.bg_color).Get()).c_str());
+    RedrawWindow(GetDlgItem(_hwnd, e.settings_dlg_sample), nullptr, nullptr, RDW_INVALIDATE);
+  }
 }
 
 INT_PTR SettingsDialog::DlgProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -75,6 +128,20 @@ INT_PTR SettingsDialog::DlgProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
 
     utl::SetWindowTextStringFromTable(_hwnd, IDS_SETTINGS_TITLE);
     utl::SetWindowTextStringFromTable(_hwnd_BUTTON_CHECK_FOR_UPDATES, IDS_CHECK_FOR_UPDATES);
+
+    const auto fg_text = utl::GetString(IDS_FOREGROUND);
+    const auto bg_text = utl::GetString(IDS_BACKGROUND);
+
+    for (const auto& e : HASH_COLOR_SETTING_MAP)
+    {
+      const auto wnd = GetDlgItem(_hwnd, e.settings_dlg_group);
+      const auto str = utl::GetString(e.settings_dlg_group_str);
+      SetWindowTextW(wnd, str.c_str());
+      SetWindowTextW(GetDlgItem(_hwnd, e.settings_dlg_fg_check), fg_text.c_str());
+      SetWindowTextW(GetDlgItem(_hwnd, e.settings_dlg_bg_check), bg_text.c_str());
+    }
+
+    UpdateColorItems();
     
     utl::SetFontForChildren(_hwnd, _font.get());
 
@@ -176,6 +243,24 @@ INT_PTR SettingsDialog::DlgProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
           (_settings->*ctl.setting).Set(BST_CHECKED == Button_GetCheck(GetDlgItem(_hwnd, ctl.control_id)));
 
       UpdateCheckboxAvailability();
+
+      for (const auto& e : HASH_COLOR_SETTING_MAP)
+      {
+        bool changed = true;
+        if (id == e.settings_dlg_fg_check)
+          (_settings->*e.fg_enabled).Set(BST_CHECKED == Button_GetCheck(GetDlgItem(_hwnd, e.settings_dlg_fg_check)));
+        else if (id == e.settings_dlg_bg_check)
+          (_settings->*e.bg_enabled).Set(BST_CHECKED == Button_GetCheck(GetDlgItem(_hwnd, e.settings_dlg_bg_check)));
+        else if (id == e.settings_dlg_fg_btn)
+          changed = DoColorButton(_hwnd, _settings->*e.fg_color);
+        else if (id == e.settings_dlg_bg_btn)
+          changed = DoColorButton(_hwnd, _settings->*e.bg_color);
+        else
+          changed = false;
+
+        if (changed)
+          UpdateColorItems();
+      }
     }
     break;
   }
@@ -209,6 +294,30 @@ INT_PTR SettingsDialog::DlgProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
       }
       return TRUE;
     }
+    break;
+
+  case WM_CTLCOLORSTATIC:
+    for (size_t i = 0; i < std::size(HASH_COLOR_SETTING_MAP); ++i)
+    {
+      const auto& e = HASH_COLOR_SETTING_MAP[i];
+      if ((HWND)lParam == _samples[i])
+      {
+        auto hdc = (HDC)wParam;
+
+        if (_settings->*e.fg_enabled)
+          SetTextColor(hdc, _settings->*e.fg_color);
+        else
+          SetTextColor(hdc, GetSysColor(COLOR_WINDOWTEXT));
+
+        if (_settings->*e.bg_enabled)
+          SetBkColor(hdc, _settings->*e.bg_color);
+        else
+          SetBkColor(hdc, GetSysColor(COLOR_WINDOW));
+        
+        return (INT_PTR)GetSysColorBrush(COLOR_WINDOW);
+      }
+    }
+    break;
   }
   return FALSE;
 }

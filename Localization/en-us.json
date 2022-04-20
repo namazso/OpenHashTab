@@ -47,6 +47,13 @@
         "HASH_SUMFILE_TOO": "When processing a sumfile hash the sumfile too",
         "ITEM_MATCHING": "1 matching file",
         "ITEMS_MATCHING": "%d matching files",
-        "SUMFILE_ALGORITHM_ONLY": "When processing a sumfile of known algorithm, disable other algorithms"
+        "SUMFILE_ALGORITHM_ONLY": "When processing a sumfile of known algorithm, disable other algorithms",
+		"ERROR_GROUP": "Error",
+		"MATCH_GROUP": "Match",
+		"MISMATCH_GROUP": "Mismatch",
+		"INSECURE_GROUP": "Insecure",
+		"UNKNOWN_GROUP": "Unknown",
+		"FOREGROUND": "Foreground",
+		"BACKGROUND": "Background"
     }
 }

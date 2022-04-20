@@ -78,14 +78,24 @@
 #define IDS_COPY_FILE                   236
 #define IDC_PROJECT_LINK                236
 #define IDS_COPY_EVERYTHING             237
+#define IDC_UNKNOWN_FG_CHECK            237
+#define IDC_UNKNOWN_FG_BTN              238
 #define IDS_VT_NO_COMPATIBLE            239
+#define IDC_UNKNOWN_BG_CHECK            239
 #define IDS_VT_NOT_FOUND                240
+#define IDC_UNKNOWN_BG_BTN              240
 #define IDS_UPDATE_DISABLED_IN_DEV_BUILD 241
+#define IDC_UNKNOWN_SAMPLE              241
 #define IDS_UPDATE_AVAILABLE_TITLE      242
+#define IDC_UNKNOWN_GROUP               242
 #define IDS_UPDATE_AVAILABLE_TEXT       243
+#define IDC_MATCH_GROUP                 243
 #define IDS_UPDATE_NEWEST_TITLE         244
+#define IDC_MISMATCH_GROUP              244
 #define IDS_UPDATE_NEWEST_TEXT          245
+#define IDC_INSECURE_GROUP              245
 #define IDS_CLIPBOARD_AUTOENABLE        246
+#define IDC_ERROR_GROUP                 246
 #define IDS_CLIPBOARD_AUTOENABLE_IF_NONE 247
 #define IDS_CLIPBOARD_AUTOENABLE_EXCLUSIVE 248
 #define IDS_SETTINGS_TITLE              249
@@ -95,14 +105,42 @@
 #define IDS_ITEM_MATCHING               253
 #define IDS_ITEMS_MATCHING              254
 #define IDS_SUMFILE_ALGORITHM_ONLY      255
+#define IDS_ERROR_GROUP                 256
+#define IDS_MATCH_GROUP                 257
+#define IDS_INSECURE_GROUP              258
+#define IDS_MISMATCH_GROUP              259
+#define IDS_UNKNOWN_GROUP               260
+#define IDS_FOREGROUND                  261
+#define IDS_BACKGROUND                  262
+#define IDC_MATCH_FG_CHECK              282
+#define IDC_MATCH_SAMPLE                283
+#define IDC_MATCH_FG_BTN                284
+#define IDC_MATCH_BG_CHECK              285
+#define IDC_MATCH_BG_BTN                286
+#define IDC_MISMATCH_FG_CHECK           287
+#define IDC_MISMATCH_SAMPLE             288
+#define IDC_MISMATCH_FG_BTN             289
+#define IDC_MISMATCH_BG_CHECK           290
+#define IDC_MISMATCH_BG_BTN             291
+#define IDC_INSECURE_FG_CHECK           292
+#define IDC_INSECURE_SAMPLE             293
+#define IDC_INSECURE_FG_BTN             294
+#define IDC_INSECURE_BG_CHECK           295
+#define IDC_INSECURE_BG_BTN             296
+#define IDC_ERROR_FG_CHECK              297
+#define IDC_UNK_SAMPLE5                 298
+#define IDC_ERROR_SAMPLE                298
+#define IDC_ERROR_FG_BTN                299
+#define IDC_ERROR_BG_CHECK              300
+#define IDC_ERROR_BG_BTN                301
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        256
+#define _APS_NEXT_RESOURCE_VALUE        263
 #define _APS_NEXT_COMMAND_VALUE         32768
-#define _APS_NEXT_CONTROL_VALUE         237
+#define _APS_NEXT_CONTROL_VALUE         247
 #define _APS_NEXT_SYMED_VALUE           111
 #endif
 #endif
