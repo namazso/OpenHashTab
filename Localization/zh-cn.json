@@ -47,6 +47,13 @@
         "SUMFILE_ALGORITHM_ONLY": "确定 Hash 文件的算法后，不再尝试其他算法",
         "ITEMS_MATCHING": "%d 个匹配文件",
         "ITEM_MATCHING": "1个匹配文件",
-        "SETTINGS_TITLE": "设置"
+        "SETTINGS_TITLE": "设置",
+        "MISMATCH_GROUP": "不匹配",
+        "INSECURE_GROUP": "不安全",
+        "UNKNOWN_GROUP": "未知",
+        "FOREGROUND": "前景",
+        "BACKGROUND": "背景",
+        "MATCH_GROUP": "匹配",
+        "ERROR_GROUP": "错误"
     }
 }
