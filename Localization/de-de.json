@@ -44,9 +44,16 @@
         "SETTINGS_TITLE": "Einstellungen",
         "SUMFILE_ALGORITHM_ONLY": "Wenn Sie eine Summendatei mit bekanntem Algorithmus bearbeiten, deaktivieren Sie andere Algorithmen",
         "ITEMS_MATCHING": "%d übereinstimmende Dateien",
-        "ITEM_MATCHING": "1 passende Datei",
-        "HASH_SUMFILE_TOO": "Bei der Verarbeitung einer Summendatei wird der Hash der Summendatei zu",
+        "ITEM_MATCHING": "1 übereinstimmende Datei",
+        "HASH_SUMFILE_TOO": "Bei der Verarbeitung einer Summendatei wird diese auch gehasht",
         "CHECKAGAINST_STRICT": "Strikter Modus für Hash-Checker-Feld",
-        "CHECKAGAINST_AUTOFORMAT": "Automatisch eingefügte Hashes im Prüffeld umformatieren"
+        "CHECKAGAINST_AUTOFORMAT": "Automatisch eingefügte Hashes im Prüffeld umformatieren",
+        "ERROR_GROUP": "Fehler",
+        "FOREGROUND": "Vordergrund",
+        "MATCH_GROUP": "Übereinstimmung",
+        "MISMATCH_GROUP": "Nichtübereinstimmung",
+        "INSECURE_GROUP": "Unsicher",
+        "UNKNOWN_GROUP": "Unbekannt",
+        "BACKGROUND": "Hintergrund"
     }
 }
