@@ -47,6 +47,13 @@
         "ITEMS_MATCHING": "%d 個符合檔案",
         "SUMFILE_ALGORITHM_ONLY": "確定雜湊值檔案的演算法後，不再嘗試其他演算法",
         "HASH_SUMFILE_TOO": "在處理雜湊值檔案時，也對雜湊值驗證檔進行雜湊值演算",
-        "ITEM_MATCHING": "1 個符合檔案"
+        "ITEM_MATCHING": "1 個符合檔案",
+        "INSECURE_GROUP": "不安全",
+        "FOREGROUND": "前景",
+        "BACKGROUND": "背景",
+        "ERROR_GROUP": "錯誤",
+        "MATCH_GROUP": "符合",
+        "MISMATCH_GROUP": "不符",
+        "UNKNOWN_GROUP": "未知"
     }
 }
