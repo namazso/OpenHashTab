@@ -40,6 +40,16 @@ Most of the actions should be obvious. Some not-so-obvious features are listed h
 * Selecting the tab on a sumfile will interpret it as such and hash the files listed in it.
 * If a hashed file has a sumfile with same filename plus one of the recognized sumfile extensions and the option for it is enabled, the file hash is checked against it.
 
+### Advanced features
+
+**Override Windows language selection**
+
+Add a `DWORD` named `LangIdOverride` to `HKEY_CURRENT_USER\SOFTWARE\OpenHashTab` with your preferred [LCID](https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-lcid/70feba9f-294e-491e-b6eb-56532684c37f)
+
+**Disable VirusTotal button for all users on a machine**
+
+Add a `DWORD` named `ForceDisableVT` to `HKEY_LOCAL_MACHINE\SOFTWARE\OpenHashTab` with a nonzero value
+
 ## Algorithms
 
 * CRC32, CRC64 (xz)
