@@ -44,9 +44,16 @@
         "ITEMS_MATCHING": "%d archivos coincidentes",
         "ITEM_MATCHING": "Un archivo coincidente",
         "SETTINGS_TITLE": "Configuración",
-        "SUMFILE_ALGORITHM_ONLY": "Procesar un archivo de suma de algoritmos conocidos, deshabilita otros algoritmos",
+        "SUMFILE_ALGORITHM_ONLY": "Al procesar un archivo de suma de algoritmos conocidos, deshabilita otros algoritmos",
         "HASH_SUMFILE_TOO": "Generar hashes para los archivos de checksum también",
         "CHECKAGAINST_STRICT": "Modo estricto para el campo de comprobación del hash",
-        "CHECKAGAINST_AUTOFORMAT": "Formatear automáticamente los hashes pegados en el campo de comprobación"
+        "CHECKAGAINST_AUTOFORMAT": "Formatear automáticamente los hashes pegados en el campo de comprobación",
+        "ERROR_GROUP": "Error",
+        "MATCH_GROUP": "Coincide",
+        "MISMATCH_GROUP": "No coincide",
+        "INSECURE_GROUP": "Inseguro",
+        "UNKNOWN_GROUP": "Desconocido",
+        "FOREGROUND": "Primer plano",
+        "BACKGROUND": "Segundo plano"
     }
 }
