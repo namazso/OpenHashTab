@@ -1,6 +1,6 @@
 {
-    "langid": "",
-    "sublangid": "",
+    "langid": "LANG_GALICIAN",
+    "sublangid": "SUBLANG_GALICIAN_GALICIAN",
     "strings": {
         "FILENAME": "Nome",
         "ALGORITHM": "Algoritmo",
