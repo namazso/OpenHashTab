@@ -31,3 +31,6 @@
 [submodule "Algorithms/deps/crc32"]
 	path = Algorithms/deps/crc32
 	url = https://github.com/stbrumme/crc32.git
+[submodule "Algorithms/deps/QuickXorHash"]
+	path = Algorithms/deps/QuickXorHash
+	url = https://github.com/namazso/QuickXorHash.git

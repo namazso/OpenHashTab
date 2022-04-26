@@ -295,6 +295,7 @@ LegacyHashAlgorithm::AlgorithmsType& LegacyHashAlgorithm::Algorithms()
     {"GOST 2012 (512)", 64, no_exts, "GOST 2012 (512)"},
     {"eD2k", 16, no_exts, "eD2k"},
     {"eD2k (Old)", 16, no_exts, "eD2k (Old)"},
+    {"QuickXorHash", 20, no_exts, "QuickXorHash"},
   };
 
   return algorithms;

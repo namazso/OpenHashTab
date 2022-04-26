@@ -25,6 +25,9 @@
     <Filter Include="CRC64">
       <UniqueIdentifier>{5d3fcf71-ff59-4873-b414-8eb2005a636e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="QuickXorHash">
+      <UniqueIdentifier>{a1cce50e-3e65-4478-8e6c-c1310894be78}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="deps\mbedtls\library\sha512.c">
@@ -91,6 +94,9 @@
     <ClCompile Include="crc64.cpp">
       <Filter>CRC64</Filter>
     </ClCompile>
+    <ClCompile Include="deps\QuickXorHash\quickxorhash.c">
+      <Filter>QuickXorHash</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="mbedtls_config.h">
@@ -142,6 +148,9 @@
       <Filter>CRC64</Filter>
     </ClInclude>
     <ClInclude Include="Hasher2.h" />
+    <ClInclude Include="deps\QuickXorHash\quickxorhash.h">
+      <Filter>QuickXorHash</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <MASM Include="deps\BLAKE3\c\blake3_avx2_x86-64_windows_msvc.asm">

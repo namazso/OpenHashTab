@@ -125,6 +125,7 @@
     <ClCompile Include="deps\mbedtls\library\sha1.c" />
     <ClCompile Include="deps\mbedtls\library\sha256.c" />
     <ClCompile Include="deps\mbedtls\library\sha512.c" />
+    <ClCompile Include="deps\QuickXorHash\quickxorhash.c" />
     <ClCompile Include="deps\streebog\gost3411-2012-core.c" />
     <ClCompile Include="blake2sp.c" />
     <ClCompile Include="deps\BLAKE3\c\blake3.c" />
@@ -161,6 +162,7 @@
   <ItemGroup>
     <ClInclude Include="crc64.h" />
     <ClInclude Include="deps\crc32\Crc32.h" />
+    <ClInclude Include="deps\QuickXorHash\quickxorhash.h" />
     <ClInclude Include="deps\streebog\gost3411-2012-const.h" />
     <ClInclude Include="deps\streebog\gost3411-2012-core.h" />
     <ClInclude Include="deps\streebog\gost3411-2012-mmx.h" />

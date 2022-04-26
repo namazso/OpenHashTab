@@ -36,6 +36,7 @@ extern "C" {
 #include "SP800-185.h"
 }
 #include "crc64.h"
+#include "deps/QuickXorHash/quickxorhash.h"
 
 #define XXH_STATIC_LINKING_ONLY
 
@@ -701,6 +702,32 @@ public:
 using GOST34112012_256HashContext = GOST34112012HashContext<256>;
 using GOST34112012_512HashContext = GOST34112012HashContext<512>;
 
+class QuickXorHashContext final : public HashContext
+{
+  qxhash ctx{};
+
+public:
+  QuickXorHashContext()
+  {
+    qxhash_init(&ctx);
+  }
+
+  void Update(const void* data, size_t size)
+  {
+    qxhash_update(&ctx, (const uint8_t*)data, size);
+  }
+
+  void Finish(uint8_t* out)
+  {
+    qxhash_final(&ctx, out);
+  }
+
+  size_t GetOutputSize()
+  {
+    return QUICKXORHASH_SIZE;
+  }
+};
+
 template <typename T, class = void>
 class HashContextTraits
 {
@@ -827,8 +854,9 @@ constexpr HashAlgorithm k_algorithms[] = {
   make_algorithm<Blake3HashContext>("BLAKE3", true),
   make_algorithm<GOST34112012_256HashContext>("GOST 2012 (256)", true),
   make_algorithm<GOST34112012_512HashContext>("GOST 2012 (512)", true),
-  make_algorithm<ED2kHashContext<false>>("eD2k", true),
-  make_algorithm<ED2kHashContext<true>>("eD2k (Old)", true),
+  make_algorithm<ED2kHashContext<false>>("eD2k", false),
+  make_algorithm<ED2kHashContext<true>>("eD2k (Old)", false),
+  make_algorithm<QuickXorHashContext>("QuickXorHash", false),
 };
 
 extern "C" __declspec(dllexport) constexpr const HashAlgorithm* k_algorithms_begin = std::begin(k_algorithms);
