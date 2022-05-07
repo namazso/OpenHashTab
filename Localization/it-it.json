@@ -47,6 +47,13 @@
         "CHECKAGAINST_AUTOFORMAT": "Riformatta automaticamente gli hash nel campo di verifica",
         "SETTINGS_TITLE": "Impostazioni",
         "HASH_SUMFILE_TOO": "Durante il processo di un file di checksum calcolane l'hash",
-        "SUMFILE_ALGORITHM_ONLY": "Durante il processo di un file di checksum di un algoritmo noto, disabilita gli altri algoritmi"
+        "SUMFILE_ALGORITHM_ONLY": "Durante il processo di un file di checksum di un algoritmo noto, disabilita gli altri algoritmi",
+        "ERROR_GROUP": "Errore",
+        "INSECURE_GROUP": "Non sicuro",
+        "UNKNOWN_GROUP": "Sconosciuto",
+        "FOREGROUND": "Primo piano",
+        "BACKGROUND": "Secondo piano",
+        "MATCH_GROUP": "Identico",
+        "MISMATCH_GROUP": "Differente"
     }
 }
