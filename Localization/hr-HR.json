@@ -47,6 +47,13 @@
         "HASH_SUMFILE_TOO": "Prilikom obrade datoteke kontrolnog zbroja također šifriraj tu datoteku",
         "ITEM_MATCHING": "Podudaranje s 1 datotekom",
         "ITEMS_MATCHING": "%d odgovarajućih datoteka",
-        "SUMFILE_ALGORITHM_ONLY": "Prilikom obrade datoteke kontrolnog zbroja poznatog algoritma, deakativiraj ostale algoritme"
+        "SUMFILE_ALGORITHM_ONLY": "Prilikom obrade datoteke kontrolnog zbroja poznatog algoritma, deakativiraj ostale algoritme",
+        "ERROR_GROUP": "Greška",
+        "MATCH_GROUP": "Poklapanje",
+        "BACKGROUND": "Boja pozadine",
+        "MISMATCH_GROUP": "Nepoklapanje",
+        "INSECURE_GROUP": "Nesigurno",
+        "UNKNOWN_GROUP": "Nepoznato",
+        "FOREGROUND": "Prednja boja"
     }
 }
