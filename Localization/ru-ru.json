@@ -50,8 +50,8 @@
         "CHECKAGAINST_STRICT": "Строгий режим в поле проверки хэша",
         "ERROR_GROUP": "Ошибка",
         "UNKNOWN_GROUP": "Неизвестно",
-        "FOREGROUND": "На переднем плане",
-        "BACKGROUND": "На заднем плане",
+        "FOREGROUND": "Цвет текста",
+        "BACKGROUND": "Цвет фона",
         "MATCH_GROUP": "Совпавшие",
         "MISMATCH_GROUP": "Несовпавшие",
         "INSECURE_GROUP": "Небезопасные"
