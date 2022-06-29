@@ -47,6 +47,13 @@
         "ITEM_MATCHING": "1 fichier correspondant",
         "HASH_SUMFILE_TOO": "Lors du traitement d'un fichier de somme, le fichier de somme est également haché",
         "CHECKAGAINST_STRICT": "Mode strict pour le champ du vérificateur de hachage",
-        "SETTINGS_TITLE": "paramètre"
+        "SETTINGS_TITLE": "paramètre",
+        "ERROR_GROUP": "Erreur",
+        "MATCH_GROUP": "Correspond",
+        "INSECURE_GROUP": "Non sécurisé",
+        "UNKNOWN_GROUP": "Inconnu",
+        "BACKGROUND": "Arrière-plan",
+        "FOREGROUND": "Premier-plan",
+        "MISMATCH_GROUP": "Ne correspond pas"
     }
 }
