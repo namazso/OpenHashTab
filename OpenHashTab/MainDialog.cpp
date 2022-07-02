@@ -423,23 +423,27 @@ INT_PTR MainDialog::OnInitDialog(UINT, WPARAM, LPARAM)
   if (_prop_page->settings.clipboard_autoenable)
   {
     const auto clip = utl::GetClipboardText(_hwnd);
-    const auto hash_size = utl::FindHashInString(std::wstring_view{ clip }).size();
-    auto existing = 0u;
-    auto enabled = 0u;
-    for (const auto& algo : LegacyHashAlgorithm::Algorithms())
-      if (algo.GetSize() == hash_size)
-      {
-        ++existing;
-        enabled += _prop_page->settings.algorithms[algo.Idx()] ? 1 : 0;
-      }
-    if (existing != 0 && (!_prop_page->settings.clipboard_autoenable_if_none || enabled == 0))
+    // just ignore stupid long clibpoard contents
+    if (clip.size() < std::numeric_limits<short>::max())
     {
-      if (_prop_page->settings.clipboard_autoenable_exclusive)
-        for (auto& setting : _prop_page->settings.algorithms)
-          setting.SetNoSave(false);
+      const auto hash_size = utl::FindHashInString(std::wstring_view{ clip }).size();
+      auto existing = 0u;
+      auto enabled = 0u;
       for (const auto& algo : LegacyHashAlgorithm::Algorithms())
         if (algo.GetSize() == hash_size)
-          _prop_page->settings.algorithms[algo.Idx()].SetNoSave(true);
+        {
+          ++existing;
+          enabled += _prop_page->settings.algorithms[algo.Idx()] ? 1 : 0;
+        }
+      if (existing != 0 && (!_prop_page->settings.clipboard_autoenable_if_none || enabled == 0))
+      {
+        if (_prop_page->settings.clipboard_autoenable_exclusive)
+          for (auto& setting : _prop_page->settings.algorithms)
+            setting.SetNoSave(false);
+        for (const auto& algo : LegacyHashAlgorithm::Algorithms())
+          if (algo.GetSize() == hash_size)
+            _prop_page->settings.algorithms[algo.Idx()].SetNoSave(true);
+      }
     }
   }
 
@@ -530,11 +534,15 @@ INT_PTR MainDialog::OnAllFilesFinished(UINT, WPARAM, LPARAM)
   UpdateDefaultStatus();
 
   const auto clip = utl::GetClipboardText(_hwnd);
-  const auto find_hash = utl::FindHashInString(std::wstring_view{ clip });
-  if (find_hash.size() >= 4) // at least 4 bytes for a valid hash
+  // just ignore stupid long clibpoard contents
+  if (clip.size() < std::numeric_limits<short>::max())
   {
-    SetWindowTextW(_hwnd_EDIT_HASH, (clip.c_str()));
-    OnHashEditChanged(0, 0, 0); // fake a change as if the user pasted it
+    const auto find_hash = utl::FindHashInString(std::wstring_view{ clip });
+    if (find_hash.size() >= 4) // at least 4 bytes for a valid hash
+    {
+      SetWindowTextW(_hwnd_EDIT_HASH, (clip.c_str()));
+      OnHashEditChanged(0, 0, 0); // fake a change as if the user pasted it
+    }
   }
 
   ListSort(ColIndex_Filename, false);
