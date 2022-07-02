@@ -64,14 +64,14 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <IgnoreImportLibrary>true</IgnoreImportLibrary>
-    <IncludePath>$(SolutionDir)concurrentqueue;$(SolutionDir)phnt;$(SolutionDir)tiny-json;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)concurrentqueue;$(SolutionDir)phnt;$(SolutionDir)tiny-json;$(SolutionDir)compile-time-regular-expressions\include;$(IncludePath)</IncludePath>
     <OutDir>$(SolutionDir)bin\$(Configuration)\$(Platform)\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
       <PreprocessorDefinitions>CI_VERSION="$(CI_VERSION)";CI_VERSION_MAJOR=$(CI_VERSION_MAJOR);CI_VERSION_MINOR=$(CI_VERSION_MINOR);CI_VERSION_PATCH=$(CI_VERSION_PATCH);%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <PrecompiledHeader>Use</PrecompiledHeader>
     </ClCompile>
     <Midl>

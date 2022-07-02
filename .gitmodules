@@ -34,3 +34,6 @@
 [submodule "Algorithms/deps/QuickXorHash"]
 	path = Algorithms/deps/QuickXorHash
 	url = https://github.com/namazso/QuickXorHash.git
+[submodule "compile-time-regular-expressions"]
+	path = compile-time-regular-expressions
+	url = https://github.com/hanickadot/compile-time-regular-expressions.git

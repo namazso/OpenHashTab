@@ -17,23 +17,19 @@
 
 #include "SumFileParser.h"
 
-#include <regex>
+#include <ctre-unicode.hpp>
 #include <string_view>
 
 #include "base64.h"
 #include "utl.h"
 #include "../AlgorithmsLoader/Hasher.h"
 
-constexpr char k_regex_hex[] = R"(([0-9a-fA-F]{8,512}) [ \*](.+))";
-constexpr char k_regex_b64[] = R"(([0-9a-zA-Z=+\/,\-_]{6,512}) [ \*](.+))";
-constexpr char k_regex_sfv[] = R"((.+)\s+([0-9a-fA-F]{8}))";
+auto k_regex_hex = ctre::match<R"(([0-9a-fA-F]{8,512}) [ \*](.+))">;
+auto k_regex_b64 = ctre::match<R"(([0-9a-zA-Z=+\/,\-_]{6,512}) [ \*](.+))">;
+auto k_regex_sfv = ctre::match<R"((.+)\s+([0-9a-fA-F]{8}))">;
 
 class SumFileParser2
 {
-  std::regex _hex{ k_regex_hex };
-  std::regex _b64{ k_regex_b64 };
-  std::regex _sfv{ k_regex_sfv };
-
   enum class CommentStyle
   {
     Unknown,
@@ -54,8 +50,6 @@ public:
 
   bool ProcessLine(std::string_view sv)
   {
-    using svmatch = std::match_results<std::string_view::iterator>;
-
     if (sv.find_first_not_of("\r\n\t\f\v ") == std::string_view::npos)
       return true; // empty line
 
@@ -73,15 +67,13 @@ public:
 
     if ((_hash == HashStyle::Unknown || _hash == HashStyle::Sfv))
     {
-      svmatch pieces;
-      if(std::regex_match(begin(sv), end(sv), pieces, _sfv))
+      if(auto [whole, file_match, hash_str] = k_regex_sfv(sv); whole)
       {
         _hash = HashStyle::Sfv;
-        auto file = pieces[1].str();
         // According to wikipedia delimiter is always space.
+        auto file = std::string(file_match);
         const auto notspace = file.find_last_not_of(' ');
         file.resize(notspace == std::string_view::npos ? 0 : notspace + 1);
-        const auto hash_str = pieces[2].str();
         auto hash = utl::HashStringToBytes(std::string_view{ hash_str });
         if (!hash.empty())
         {
@@ -93,15 +85,13 @@ public:
 
     if ((_hash == HashStyle::Unknown || _hash == HashStyle::Hex))
     {
-      svmatch pieces;
-      if (std::regex_match(begin(sv), end(sv), pieces, _hex))
+      if (auto [whole, hash_str, file] = k_regex_hex(sv); whole)
       {
         _hash = HashStyle::Hex;
-        const auto hash_str = pieces[1].str();
         auto hash = utl::HashStringToBytes(std::string_view{ hash_str });
         if (!hash.empty())
         {
-          files.emplace_back(pieces[2], std::move(hash));
+          files.emplace_back(file, std::move(hash));
           return true;
         }
       }
@@ -109,15 +99,14 @@ public:
 
     if ((_hash == HashStyle::Unknown || _hash == HashStyle::Base64))
     {
-      svmatch pieces;
-      if (std::regex_match(begin(sv), end(sv), pieces, _b64))
+      if (auto [whole, hash_match, file] = k_regex_hex(sv); whole)
       {
         _hash = HashStyle::Base64;
-        const auto str = pieces[1].str();
-        auto hash = b64::decode(str.c_str(), str.size());
+        const auto hash_str = std::string(hash_match);
+        auto hash = b64::decode(hash_str.c_str(), hash_str.size());
         if (!hash.empty())
         {
-          files.emplace_back(pieces[2], std::move(hash));
+          files.emplace_back(file, std::move(hash));
           return true;
         }
       }

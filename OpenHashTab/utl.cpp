@@ -18,7 +18,7 @@
 #include "utl.h"
 
 #include <memory>
-#include <regex>
+#include <ctre-unicode.hpp>
 
 #include "Settings.h"
 
@@ -35,13 +35,10 @@ extern "C" NTSTATUS NTAPI RtlLoadString(
 
 std::vector<uint8_t> utl::FindHashInString(std::wstring_view wv)
 {
-  using wvmatch = std::match_results<std::wstring_view::iterator>;
-  constexpr static wchar_t regex_str[] = LR"(((?:[0-9A-F]{2} ?){4,}|(?:[0-9a-f]{2} ?){4,}))";
-  static std::wregex regex{ regex_str };
-
-  wvmatch pieces;
-  if (std::regex_search(begin(wv), end(wv), pieces, regex))
-    return HashStringToBytes(std::wstring_view{ pieces[1].str() });
+  static auto regex = ctre::match<LR"(((?:[0-9A-F]{2} ?){4,}|(?:[0-9a-f]{2} ?){4,}))">;
+  
+  if (auto [whole, hash] = regex(wv); whole)
+    return HashStringToBytes(std::wstring_view{ std::wstring(hash)});
   return {};
 }
 
