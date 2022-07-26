@@ -28,8 +28,6 @@
 
 #include "targetver.h"
 
-#define PHNT_VERSION PHNT_WIN7
-
 #define ISOLATION_AWARE_ENABLED 1
 #define SIDEBYSIDE_COMMONCONTROLS 1
 
@@ -48,11 +46,9 @@
 #include <atlcom.h>
 #include <atlctl.h>
 
-// PHNT
-#include <phnt_windows.h>
-#include <phnt.h>
-
 // Windows
+#include <Windows.h>
+#include <windowsx.h>
 #include <WinUser.h>
 #include <CommCtrl.h>
 #include <VersionHelpers.h>

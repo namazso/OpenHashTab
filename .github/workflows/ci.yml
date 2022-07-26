@@ -66,11 +66,6 @@ jobs:
           cd Algorithms\deps
           cmd /C build-xkcp.bat
 
-      - name: Build mCtrl
-        run: |
-          cd ${{ github.workspace }}
-          cmd /C build-mctrl.bat
-
       - name: Build Algorithms (ARM64)
         run: |
           msbuild AlgorithmsDll.sln /p:Configuration=Release /p:Platform=a64-neon

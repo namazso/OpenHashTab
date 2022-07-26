@@ -7,9 +7,6 @@
 [submodule "langcomp"]
 	path = langcomp
 	url = https://github.com/namazso/langcomp.git
-[submodule "phnt"]
-	path = phnt
-	url = https://github.com/processhacker/phnt.git
 [submodule "tiny-json"]
 	path = tiny-json
 	url = https://github.com/rafagafe/tiny-json.git
@@ -22,9 +19,6 @@
 [submodule "Algorithms/deps/XKCP"]
 	path = Algorithms/deps/XKCP
 	url = https://github.com/XKCP/XKCP.git
-[submodule "mctrl"]
-	path = mctrl
-	url = https://github.com/mity/mctrl.git
 [submodule "Algorithms/deps/streebog"]
 	path = Algorithms/deps/streebog
 	url = https://github.com/adegtyarev/streebog.git

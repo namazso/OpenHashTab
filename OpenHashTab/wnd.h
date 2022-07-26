@@ -87,8 +87,8 @@ namespace wnd
       original_w = rect.right - rect.left;
       original_h = rect.bottom - rect.top;
       const auto layout = utl::GetResource(MAKEINTRESOURCEW(resid), L"AFX_DIALOG_LAYOUT");
-      const auto* pw = (PCSHORT)layout.first;
-      const auto* end = (PCSHORT)(layout.first + layout.second);
+      const auto* pw = (const SHORT*)layout.first;
+      const auto* end = (const SHORT*)(layout.first + layout.second);
       if (*pw++ != 0)
         return;
       for (auto wnd = GetWindow(parent, GW_CHILD); wnd && (pw + 4) <= end; wnd = GetWindow(wnd, GW_HWNDNEXT), pw += 4)
