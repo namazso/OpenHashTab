@@ -40,6 +40,20 @@
         "UPDATE_NEWEST_TEXT": "أنت بالفعل في أحدث إصدار",
         "CLIPBOARD_AUTOENABLE": "إذا كانت الحافظة تحتوي على تجزئة ، تلقائيًا مَكِّن الخوارزميات التي بهذا الطول للتشغيل",
         "CLIPBOARD_AUTOENABLE_IF_NONE": "فقط إذا لم تكُن أي خوارزمية بهذا الطول مُفعّلة",
-        "CLIPBOARD_AUTOENABLE_EXCLUSIVE": "عطِّل كافة الخوارزميات الأخرى"
+        "CLIPBOARD_AUTOENABLE_EXCLUSIVE": "عطِّل كافة الخوارزميات الأخرى",
+        "ITEMS_MATCHING": "%d ملفات متطابقة",
+        "SUMFILE_ALGORITHM_ONLY": "عند معالجة مجموع خوارزمية معروفة ، قم بتعطيل الخوارزميات الأخرى",
+        "INSECURE_GROUP": "غير اَمن",
+        "UNKNOWN_GROUP": "غير معروف",
+        "FOREGROUND": "المقدمة",
+        "BACKGROUND": "الخلفية",
+        "SETTINGS_TITLE": "إعدادات",
+        "CHECKAGAINST_AUTOFORMAT": "إعادة تنسيق التجزئة الملصقة تلقائيًا في حقل المدقق",
+        "CHECKAGAINST_STRICT": "الوضع الصارم لحقل مدقق التجزئة",
+        "HASH_SUMFILE_TOO": "عند معالجة ملف المجموع تجزئة ملف المجموع أيضًا",
+        "MATCH_GROUP": "متطابق",
+        "MISMATCH_GROUP": "غير متابق",
+        "ITEM_MATCHING": "ملف واحد مطابق",
+        "ERROR_GROUP": "خطأ"
     }
 }
