@@ -47,6 +47,13 @@
         "HASH_SUMFILE_TOO": "Pri spracovaní súčtového súboru hashujte aj súčtový súbor",
         "ITEM_MATCHING": "1 zhodný súbor",
         "ITEMS_MATCHING": "%d zhodných súborov",
-        "SUMFILE_ALGORITHM_ONLY": "Pri spracúvaní sumfile so známym algoritmom, vypnúť ostatné algoritmy"
+        "SUMFILE_ALGORITHM_ONLY": "Pri spracúvaní sumfile so známym algoritmom, vypnúť ostatné algoritmy",
+        "ERROR_GROUP": "Chyba",
+        "MATCH_GROUP": "Zhoda",
+        "MISMATCH_GROUP": "Nezhoda",
+        "INSECURE_GROUP": "Nezabezpečená",
+        "UNKNOWN_GROUP": "Neznáma",
+        "FOREGROUND": "Popredie",
+        "BACKGROUND": "Pozadie"
     }
 }
