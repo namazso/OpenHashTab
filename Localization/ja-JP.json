@@ -47,6 +47,13 @@
         "HASH_SUMFILE_TOO": "サムファイルを処理するときにサムファイルのハッシュ値も計算する",
         "ITEM_MATCHING": "1 ファイルと一致",
         "ITEMS_MATCHING": "%d ファイルと一致",
-        "SUMFILE_ALGORITHM_ONLY": "既知のアルゴリズムのサムファイルを処理するとき、他のアルゴリズムを無効にする"
+        "SUMFILE_ALGORITHM_ONLY": "既知のアルゴリズムのサムファイルを処理するとき、他のアルゴリズムを無効にする",
+        "ERROR_GROUP": "エラー",
+        "MATCH_GROUP": "一致",
+        "MISMATCH_GROUP": "不一致",
+        "INSECURE_GROUP": "安全ではない",
+        "UNKNOWN_GROUP": "未知",
+        "FOREGROUND": "フォアグラウンド",
+        "BACKGROUND": "バックグラウンド"
     }
 }
