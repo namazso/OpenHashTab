@@ -26,10 +26,6 @@ by duk
 blake3 reference implementation (CC0):
 by Samuel Neves and Jack O'Connor
 
-phnt (licensed under CC BY 4.0):
-by processhacker contributors
-https://github.com/processhacker/phnt
-
 Partial code from Process Hacker (licensed under GPLv3 or later):
 Copyright (C) 2016-2020 dmex
 https://github.com/processhacker/processhacker
