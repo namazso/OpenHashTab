@@ -4,7 +4,9 @@
 
 #include "deps/BLAKE3/c/blake3_impl.h"
 
+#if defined(_M_IX86) ||  defined(_M_X64)
 #include <immintrin.h>
+#endif
 
 void blake3_compress_in_place(uint32_t cv[8],
                               const uint8_t block[BLAKE3_BLOCK_LEN],
