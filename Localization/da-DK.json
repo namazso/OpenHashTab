@@ -47,6 +47,13 @@
         "HASH_SUMFILE_TOO": "Når du behandler en checksumfil, hash også checksumfilen",
         "ITEM_MATCHING": "1 matchende fil",
         "ITEMS_MATCHING": "%d matchende filer",
-        "SUMFILE_ALGORITHM_ONLY": "Under behandling af en checksumfil, med kendte algoritmer, skal andre algoritmer deaktiveres"
+        "SUMFILE_ALGORITHM_ONLY": "Under behandling af en checksumfil, med kendte algoritmer, skal andre algoritmer deaktiveres",
+        "ERROR_GROUP": "Fejl",
+        "MATCH_GROUP": "Ens",
+        "INSECURE_GROUP": "Usikker",
+        "MISMATCH_GROUP": "Uens",
+        "UNKNOWN_GROUP": "Ukendt",
+        "FOREGROUND": "Tekst",
+        "BACKGROUND": "Baggrund"
     }
 }
