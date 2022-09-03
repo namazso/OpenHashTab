@@ -47,6 +47,13 @@
         "HASH_SUMFILE_TOO": "Summatiedostoa käsiteltäessä laske tarkiste myös summatiedostolle",
         "ITEM_MATCHING": "1 vastaava tiedosto",
         "ITEMS_MATCHING": "%d vastaavaa tiedostoa",
-        "SUMFILE_ALGORITHM_ONLY": "Kun käsitellään tunnetun algoritmin summatiedostoa, poista muut algoritmit käytöstä"
+        "SUMFILE_ALGORITHM_ONLY": "Kun käsitellään tunnetun algoritmin summatiedostoa, poista muut algoritmit käytöstä",
+        "ERROR_GROUP": "Virhe",
+        "MATCH_GROUP": "Sama",
+        "MISMATCH_GROUP": "Eri",
+        "INSECURE_GROUP": "Epävarma",
+        "FOREGROUND": "Etupuoli",
+        "BACKGROUND": "Tausta",
+        "UNKNOWN_GROUP": "Tuntematon"
     }
 }
