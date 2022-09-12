@@ -15,7 +15,7 @@
         "HASHES": "Hashes",
         "CLIPBOARD": "Para a área de transferência",
         "NOMATCH": "Nenhuma combinação encontrada.",
-        "ERROR": "Error",
+        "ERROR": "Erro",
         "CANCEL": "Cancelar",
         "DISPLAY_UPPERCASE": "Mostrar os hashes em maiúsculas",
         "LOOK_FOR_SUMFILES": "Procurar sumfiles próximos dos ficheiros em análise",
@@ -45,6 +45,15 @@
         "ITEM_MATCHING": "1 arquivo correspondente",
         "CHECKAGAINST_AUTOFORMAT": "Reformatar automaticamente hashes colados no campo de checagem",
         "CHECKAGAINST_STRICT": "Modo estrito para o campo de checagem de hash",
-        "SETTINGS_TITLE": "Configurações"
+        "SETTINGS_TITLE": "Configurações",
+        "HASH_SUMFILE_TOO": "Ao processar um arquivo de soma, também faz hash no arquivo de soma",
+        "SUMFILE_ALGORITHM_ONLY": "Ao processar um arquivo de soma de algoritmos conhecidos, desabilite outros algoritmos",
+        "ERROR_GROUP": "Erro",
+        "MATCH_GROUP": "Correspondente",
+        "MISMATCH_GROUP": "Não correspondente",
+        "INSECURE_GROUP": "Inseguro",
+        "UNKNOWN_GROUP": "Desconhecido",
+        "FOREGROUND": "Frente",
+        "BACKGROUND": "Fundo"
     }
 }
