@@ -35,7 +35,7 @@ extern "C" NTSTATUS NTAPI RtlLoadString(
 
 std::vector<uint8_t> utl::FindHashInString(std::wstring_view wv)
 {
-  static auto regex = ctre::match<LR"(((?:[0-9A-F]{2} ?){4,}|(?:[0-9a-f]{2} ?){4,}))">;
+  static auto regex = ctre::match<LR"(((?:[0-9A-F]{2} ?)(?:[0-9A-F]{2} ?)(?:[0-9A-F]{2} ?)(?:[0-9A-F]{2} ?)++|(?:[0-9a-f]{2} ?)(?:[0-9a-f]{2} ?)(?:[0-9a-f]{2} ?)(?:[0-9a-f]{2} ?)++))">;
   
   if (auto [whole, hash] = regex(wv); whole)
     return HashStringToBytes(std::wstring_view{ std::wstring(hash)});
