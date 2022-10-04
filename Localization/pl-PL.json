@@ -38,8 +38,8 @@
         "UPDATE_AVAILABLE_TEXT": "Dostępna jest nowa wersja %hu.%hu.%hu",
         "UPDATE_NEWEST_TITLE": "Gratulacje",
         "UPDATE_NEWEST_TEXT": "Masz już najnowszą wersję",
-        "CLIPBOARD_AUTOENABLE": "Jeśli schowek zawiera hash włącz automatycznie algorytmy o długości długości odpowiadającej algorytmom",
-        "CLIPBOARD_AUTOENABLE_IF_NONE": "Tylko, jeśli nie są włączone algorytmy o takiej długości",
+        "CLIPBOARD_AUTOENABLE": "Jeśli schowek zawiera hash, automatycznie włącz algorytmy o tej długości dla przebiegu",
+        "CLIPBOARD_AUTOENABLE_IF_NONE": "Tylko wtedy, gdy nie są włączone żadne algorytmy o tej długości",
         "CLIPBOARD_AUTOENABLE_EXCLUSIVE": "Wyłącz wszelkie inne algorytmy",
         "SETTINGS_TITLE": "Ustawienia",
         "CHECKAGAINST_AUTOFORMAT": "Sformatuj automatycznie wklejone hashe w polu porównania",
@@ -47,6 +47,13 @@
         "HASH_SUMFILE_TOO": "Podczas przetwarzania pliku hashy oblicz również hash tego pliku",
         "ITEM_MATCHING": "1 dopasowany plik",
         "ITEMS_MATCHING": "%d dopasowanych plików",
-        "SUMFILE_ALGORITHM_ONLY": "Wyłącz pozostałe algorytmy podczas przetwarzania pliku sum znanego algorytmu"
+        "SUMFILE_ALGORITHM_ONLY": "Wyłącz pozostałe algorytmy podczas przetwarzania pliku sum znanego algorytmu",
+        "ERROR_GROUP": "Błędny",
+        "INSECURE_GROUP": "Niepewny",
+        "UNKNOWN_GROUP": "Nieznany",
+        "MATCH_GROUP": "Zgodny",
+        "BACKGROUND": "Drugoplanowy",
+        "FOREGROUND": "Pierwszoplanowy",
+        "MISMATCH_GROUP": "Niezgodny"
     }
 }
