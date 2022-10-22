@@ -47,6 +47,13 @@
         "HASH_SUMFILE_TOO": "Apdorojant sumos failą taip pat atlikti ir sumos failo maišą",
         "ITEM_MATCHING": "1 atitinkantis failas",
         "ITEMS_MATCHING": "%d atitinkantys failai",
-        "SUMFILE_ALGORITHM_ONLY": "Apdorojant žinomo algoritmo sumos failą, išjungti kitus algoritmus"
+        "SUMFILE_ALGORITHM_ONLY": "Apdorojant žinomo algoritmo sumos failą, išjungti kitus algoritmus",
+        "ERROR_GROUP": "Klaida",
+        "MATCH_GROUP": "Atitikimas",
+        "INSECURE_GROUP": "Nesaugus",
+        "FOREGROUND": "Priekinio plano",
+        "UNKNOWN_GROUP": "Nežinomas",
+        "BACKGROUND": "Foninis",
+        "MISMATCH_GROUP": "Neatitikimas"
     }
 }
