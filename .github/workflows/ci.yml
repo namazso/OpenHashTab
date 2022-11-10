@@ -51,11 +51,11 @@ jobs:
                   $VersionPatch = 0;
               }
           }
-          Echo ("is_release=" + $IsRelease) >> $GITHUB_OUTPUT;
-          Echo ("version=" + $Version) >> $GITHUB_OUTPUT;
-          Echo ("version_major=" + $VersionMajor) >> $GITHUB_OUTPUT;
-          Echo ("version_minor=" + $VersionMinor) >> $GITHUB_OUTPUT;
-          Echo ("version_patch=" + $VersionPatch) >> $GITHUB_OUTPUT;
+          Echo ("is_release=" + $IsRelease) >> $Env:GITHUB_OUTPUT;
+          Echo ("version=" + $Version) >> $Env:GITHUB_OUTPUT;
+          Echo ("version_major=" + $VersionMajor) >> $Env:GITHUB_OUTPUT;
+          Echo ("version_minor=" + $VersionMinor) >> $Env:GITHUB_OUTPUT;
+          Echo ("version_patch=" + $VersionPatch) >> $Env:GITHUB_OUTPUT;
 
       - name: Set up MSBuild
         uses: microsoft/setup-msbuild@v1
