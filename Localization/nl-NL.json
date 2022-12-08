@@ -47,6 +47,11 @@
         "HASH_SUMFILE_TOO": "Maak ook hash van hashbestand bij verwerken hashbestand",
         "ITEM_MATCHING": "1 overeenkomend bestand",
         "ITEMS_MATCHING": "%d overeenkomende bestanden",
-        "SUMFILE_ALGORITHM_ONLY": "Zet alle andere algoritmes uit bij het verwerken van een hashbestand met een bekend algoritme"
+        "SUMFILE_ALGORITHM_ONLY": "Zet alle andere algoritmes uit bij het verwerken van een hashbestand met een bekend algoritme",
+        "UNKNOWN_GROUP": "Onbekend",
+        "ERROR_GROUP": "Foutmelding",
+        "INSECURE_GROUP": "Onveilig",
+        "BACKGROUND": "Achtergrond",
+        "FOREGROUND": "Voorgrond"
     }
 }
