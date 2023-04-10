@@ -1,6 +1,6 @@
 {
     "langid": "LANG_SWEDISH",
-    "sublangid": "SUBLANG_SWEDISH_SWEDEN",
+    "sublangid": "SUBLANG_SWEDISH",
     "strings": {
         "FILENAME": "Namn",
         "ALGORITHM": "Algoritm",
