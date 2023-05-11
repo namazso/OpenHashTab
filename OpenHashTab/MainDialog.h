@@ -99,4 +99,3 @@ private:
   INT_PTR OnClipboardClicked(UINT, WPARAM, LPARAM);
   INT_PTR OnSettingsClicked(UINT, WPARAM, LPARAM);
 };
-
