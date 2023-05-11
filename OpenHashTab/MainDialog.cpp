@@ -59,7 +59,7 @@ static HashColorType HashColorTypeForFile(FileHashTask* file, size_t hasher)
   {
     if (LegacyHashAlgorithm::Algorithms()[hasher].IsSecure())
       return HashColorType::Match;
-    
+
     return HashColorType::Insecure;
   }
   return HashColorType::Unknown;
@@ -386,7 +386,7 @@ INT_PTR MainDialog::OnInitDialog(UINT, WPARAM, LPARAM)
     GCLP_HICON,
     reinterpret_cast<LONG_PTR>(LoadIconW(utl::GetInstance(), MAKEINTRESOURCEW(IDI_ICON1)))
   );
-  
+
   utl::SetFontForChildren(_hwnd, _font.get());
 
   utl::SetIconButton(_hwnd_BUTTON_VT, IDI_ICON_VT);
@@ -419,7 +419,7 @@ INT_PTR MainDialog::OnInitDialog(UINT, WPARAM, LPARAM)
   }
 
   SendMessageW(_hwnd_PROGRESS, PBM_SETRANGE32, 0, Coordinator::k_progress_resolution);
-  
+
   if (_prop_page->settings.clipboard_autoenable)
   {
     const auto clip = utl::GetClipboardText(_hwnd);
@@ -698,7 +698,7 @@ INT_PTR MainDialog::OnClose(UINT, WPARAM, LPARAM)
 {
   // we should never ever receive WM_CLOSE when running as a property sheet, so DestroyWindow is safe here
   DestroyWindow(_hwnd);
-  
+
   return FALSE;
 }
 

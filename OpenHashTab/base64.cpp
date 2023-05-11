@@ -26,7 +26,7 @@ static const char encode_table[64]{
 std::string b64::encode(const uint8_t* src, size_t len)
 {
   const auto olen = 4 * ((len + 2) / 3);
-  
+
   std::string str;
   str.resize(olen);
 

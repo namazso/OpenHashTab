@@ -97,7 +97,7 @@ int main()
       std::copy_n(std::begin(hash), std::size(hash_cpy), std::begin(hash_cpy));
 
       QueryPerformanceCounter(&end);
-      
+
       measurement[i] = end.QuadPart - begin.QuadPart;
     }
   }

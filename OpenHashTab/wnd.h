@@ -280,7 +280,7 @@ namespace wnd
         return true;
     return false;
   }
-  
+
   inline HWND CreateDialogFromChildDialogResourceParam(
     _In_opt_  HINSTANCE hInstance,
     _In_      LPCWSTR   lpTemplateName,
@@ -341,7 +341,7 @@ namespace wnd
                 pStyle = &pTemplate->style;
                 pexStyle = &pTemplate->dwExtendedStyle;
               }
-              
+
               *pStyle = WS_POPUPWINDOW | WS_CAPTION | WS_THICKFRAME | DS_SHELLFONT;
               *pexStyle = WS_EX_OVERLAPPEDWINDOW | WS_EX_APPWINDOW;
 
