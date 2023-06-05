@@ -72,7 +72,7 @@ extern "C" __declspec(dllexport) int APIENTRY StandaloneEntryW(
     }
   }
 
-  // this will wait for hask tasks to gracefully terminate.
+  // this will wait for hash tasks to gracefully terminate.
   // should we maybe just kill ourselves with ExitProcess
   // and let the OS do the cleanup?
   delete coordinator;

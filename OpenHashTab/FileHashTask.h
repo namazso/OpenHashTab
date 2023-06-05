@@ -25,7 +25,7 @@ class Coordinator;
 
 class FileHashTask
 {
-  // Increasing this will make CPU use more efficent,
+  // Increasing this will make CPU use more efficient,
   // but also increase memory usage
   constexpr static size_t k_block_size = 2 << 20; // 2 MB
 
