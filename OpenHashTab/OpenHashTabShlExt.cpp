@@ -199,7 +199,7 @@ HRESULT COpenHashTabShlExt::InvokeCommand(
       reinterpret_cast<LPARAM>(coordinator)
     );
     ShowWindow(dialog, SW_SHOW);
-    
+
     return S_OK;
   }
 
@@ -217,7 +217,7 @@ HRESULT COpenHashTabShlExt::GetCommandString(
   // Check idCmd, it must be 0 since we have only one menu item.
   if (0 != idCmd)
     return E_INVALIDARG;
-  
+
   if (uType == GCS_HELPTEXTW)
   {
     wcscpy_s((LPWSTR)pszName, cchMax, L"Is this even displayed anywhere??");

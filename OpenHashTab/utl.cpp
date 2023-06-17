@@ -36,7 +36,7 @@ extern "C" NTSTATUS NTAPI RtlLoadString(
 std::vector<uint8_t> utl::FindHashInString(std::wstring_view wv)
 {
   static auto regex = ctre::match<LR"(((?:[0-9A-F]{2} ?)(?:[0-9A-F]{2} ?)(?:[0-9A-F]{2} ?)(?:[0-9A-F]{2} ?)++|(?:[0-9a-f]{2} ?)(?:[0-9a-f]{2} ?)(?:[0-9a-f]{2} ?)(?:[0-9a-f]{2} ?)++))">;
-  
+
   if (auto [whole, hash] = regex(wv); whole)
     return HashStringToBytes(std::wstring_view{ std::wstring(hash)});
   return {};
@@ -206,7 +206,7 @@ DWORD utl::SetClipboardText(HWND hwnd, std::wstring_view text)
 
     if (const auto cb = GlobalAlloc(GMEM_MOVEABLE, (len + 1) * sizeof(wchar_t)))
     {
-      // Lock the handle and copy the text to the buffer. 
+      // Lock the handle and copy the text to the buffer.
       if (const auto lcb = static_cast<LPWSTR>(GlobalLock(cb)))
       {
         memcpy(lcb, text.data(), (len + 1) * sizeof(wchar_t));

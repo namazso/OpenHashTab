@@ -63,7 +63,7 @@ public:
     _In_ LPFNSVADDPROPSHEETPAGE replace_with_proc,
     _In_ LPARAM                 lparam
   ) override;
-  
+
   // IContextMenu
   HRESULT STDMETHODCALLTYPE QueryContextMenu(
     _In_  HMENU hmenu,

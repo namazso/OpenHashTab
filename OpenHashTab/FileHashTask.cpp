@@ -152,7 +152,7 @@ FileHashTask::FileHashTask(Coordinator* prop_page, const std::wstring& path, con
     _error = GetLastError();
     return;
   }
-  
+
   _threadpool_io = CreateThreadpoolIo(
     _handle,
     IoCallback,

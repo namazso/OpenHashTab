@@ -142,7 +142,7 @@ INT_PTR SettingsDialog::DlgProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
     }
 
     UpdateColorItems();
-    
+
     utl::SetFontForChildren(_hwnd, _font.get());
 
     const auto list = _hwnd_ALGORITHM_LIST;
@@ -313,7 +313,7 @@ INT_PTR SettingsDialog::DlgProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
           SetBkColor(hdc, _settings->*e.bg_color);
         else
           SetBkColor(hdc, GetSysColor(COLOR_WINDOW));
-        
+
         return (INT_PTR)GetSysColorBrush(COLOR_WINDOW);
       }
     }

@@ -48,12 +48,12 @@
         "ITEM_MATCHING": "1 odpovídající soubor",
         "ITEMS_MATCHING": "%d odpovídajících souborů",
         "SUMFILE_ALGORITHM_ONLY": "Při zpracování sumsouboru známého algoritmu deaktivovat ostatní algoritmy",
-		"ERROR_GROUP": "Chybné",
-		"MATCH_GROUP": "Shodné",
-		"MISMATCH_GROUP": "Neshodné",
-		"INSECURE_GROUP": "Nejisté",
-		"UNKNOWN_GROUP": "Neznámé",
-		"FOREGROUND": "Popředí",
-		"BACKGROUND": "Pozadí"
+        "ERROR_GROUP": "Chybné",
+        "MATCH_GROUP": "Shodné",
+        "MISMATCH_GROUP": "Neshodné",
+        "INSECURE_GROUP": "Nejisté",
+        "UNKNOWN_GROUP": "Neznámé",
+        "FOREGROUND": "Popředí",
+        "BACKGROUND": "Pozadí"
     }
 }

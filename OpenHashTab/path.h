@@ -26,7 +26,7 @@ struct ProcessedFileList
   // -2: not sumfile
   // -1: unknown sumfile
   // 0+: a sumfile belonging to the algorithm given
-  // 
+  //
   // If the main file is a sumfile of a hash format we don't have enabled we want to enable it for this session.
   int sumfile_type{-2};
 

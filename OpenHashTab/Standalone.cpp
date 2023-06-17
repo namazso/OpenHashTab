@@ -30,7 +30,7 @@ extern "C" __declspec(dllexport) int APIENTRY StandaloneEntryW(
 {
   UNREFERENCED_PARAMETER(hWnd);
   UNREFERENCED_PARAMETER(hRunDLLInstance);
-  
+
   auto argc = 0;
   const auto argv = CommandLineToArgvW(lpCmdLine, &argc);
   const std::list<std::wstring> files{ argv, argv + argc };
@@ -38,7 +38,7 @@ extern "C" __declspec(dllexport) int APIENTRY StandaloneEntryW(
 
   if (files.empty())
     return 0;
-  
+
   // TODO: Support per monitor / v2 DPI awareness too
   SetProcessDPIAware();
 
@@ -48,7 +48,7 @@ extern "C" __declspec(dllexport) int APIENTRY StandaloneEntryW(
     ICC_WIN95_CLASSES | ICC_LINK_CLASS
   };
   InitCommonControlsEx(&iccex);
-  
+
   const auto coordinator = new StandaloneCoordinator(files);
 
   const auto dialog = wnd::CreateDialogFromChildDialogResourceParam(
@@ -59,7 +59,7 @@ extern "C" __declspec(dllexport) int APIENTRY StandaloneEntryW(
     reinterpret_cast<LPARAM>(coordinator)
   );
   ShowWindow(dialog, nShowCmd);
-  
+
   MSG msg;
 
   // Main message loop:

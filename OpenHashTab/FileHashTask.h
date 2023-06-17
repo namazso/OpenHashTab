@@ -61,7 +61,7 @@ class FileHashTask
   PTP_WORK _threadpool_hash_work = nullptr;
 
   PTP_IO _threadpool_io = nullptr;
-  
+
   HashBox _hash_contexts[LegacyHashAlgorithm::k_count];
 
   OVERLAPPED _overlapped{};
