@@ -2,7 +2,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#include "deps/BLAKE3/c/blake3_impl.h"
+#include "BLAKE3/c/blake3_impl.h"
 
 #if defined(_M_IX86) ||  defined(_M_X64)
 #include <immintrin.h>

@@ -28,23 +28,23 @@
 #include <mbedtls/ripemd160.h>
 #include "blake2sp.h"
 #include "Hasher2.h"
-#include "deps/crc32/Crc32.h"
-#include "deps/BLAKE3/c/blake3.h"
+#include <Crc32.h>
+#include <blake3.h>
 extern "C" {
 #include "KeccakHash.h"
 #include "KangarooTwelve.h"
 #include "SP800-185.h"
 }
 #include "crc64.h"
-#include "deps/QuickXorHash/quickxorhash.h"
+#include <quickxorhash.h>
 
 #define XXH_STATIC_LINKING_ONLY
 
-#include "deps/xxHash/xxhash.h"
+#include <xxhash.h>
 
 extern "C" {
 #define uint512_u uint512_u_STREEBOG
-#include "deps/streebog/gost3411-2012-core.h"
+#include <gost3411-2012-core.h>
 #undef uint512_u
 }
 
