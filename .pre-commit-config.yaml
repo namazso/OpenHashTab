@@ -21,4 +21,4 @@ repos:
       - id: trailing-whitespace
       - id: mixed-line-ending
         args:
-          - --fix=lf
+          - --fix=crlf
