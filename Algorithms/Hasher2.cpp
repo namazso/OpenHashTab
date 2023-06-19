@@ -859,8 +859,11 @@ constexpr HashAlgorithm k_algorithms[] = {
   make_algorithm<QuickXorHashContext>("QuickXorHash", false),
 };
 
-extern "C" __declspec(dllexport) constexpr const HashAlgorithm* k_algorithms_begin = std::begin(k_algorithms);
-extern "C" __declspec(dllexport) constexpr const HashAlgorithm* k_algorithms_end = std::end(k_algorithms);
+constexpr const HashAlgorithm* k_algorithms_begin = std::begin(k_algorithms);
+constexpr const HashAlgorithm* k_algorithms_end = std::end(k_algorithms);
+
+extern "C" const HashAlgorithm* get_algorithms_begin() { return k_algorithms_begin; }
+extern "C" const HashAlgorithm* get_algorithms_end() { return k_algorithms_end; }
 
 /*
 // these are what I found with a quick FTP search

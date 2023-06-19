@@ -4,14 +4,7 @@ project(AlgorithmsDll)
 
 set(CMAKE_CXX_STANDARD 20)
 
-string(REGEX REPLACE "/M[DT]d?" "" CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG}")
-string(REGEX REPLACE "/M[DT]d?" "" CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE}")
-string(REGEX REPLACE "/M[DT]d?" "" CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELWITHDEBINFO}")
-string(REGEX REPLACE "/M[DT]d?" "" CMAKE_C_FLAGS_MINSIZEREL "${CMAKE_C_FLAGS_MINSIZEREL}")
-string(REGEX REPLACE "/M[DT]d?" "" CMAKE_CXX_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG}")
-string(REGEX REPLACE "/M[DT]d?" "" CMAKE_CXX_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE}")
-string(REGEX REPLACE "/M[DT]d?" "" CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELWITHDEBINFO}")
-string(REGEX REPLACE "/M[DT]d?" "" CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_C_FLAGS_MINSIZEREL}")
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
 string(REGEX REPLACE "/Ob1" "/Ob2" CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELWITHDEBINFO}")
 string(REGEX REPLACE "/Ob1" "/Ob2" CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELWITHDEBINFO}")
@@ -54,6 +47,18 @@ target_link_libraries(${PROJECT_NAME}
         mbedtls
         blake2sp
         BLAKE3
+        )
+
+target_link_options(${PROJECT_NAME} PRIVATE
+        /BREPRO
+        /PDBALTPATH:%_PDB%
+        /FILEALIGN:0x1000
+        /cetcompat
+        /guard:cf
+        "/EXPORT:get_algorithms_begin_${OHT_FLAVOR}=get_algorithms_begin"
+        "/EXPORT:get_algorithms_end_${OHT_FLAVOR}=get_algorithms_end"
+        /OPT:REF
+        /OPT:ICF=10
         )
 
 install(TARGETS ${PROJECT_NAME} DESTINATION .)
