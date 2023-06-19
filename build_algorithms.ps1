@@ -31,7 +31,7 @@ $Environment = (Get-ChildItem Env:);
         -G Ninja `
         -S Algorithms `
         -B "cmake-algorithms-$_" `
-        --install-prefix ((Get-Item AlgorithmsLoader).FullName) `
+        --install-prefix ((Get-Item AlgorithmsDlls).FullName) `
         "-DOHT_FLAVOR=$_" `
         -DCMAKE_BUILD_TYPE=RelWithDebInfo `
         -DCMAKE_C_COMPILER=clang-cl `

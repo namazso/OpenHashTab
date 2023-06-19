@@ -124,26 +124,72 @@ static CPUFeatureLevel get_cpu_level()
   return best;
 }
 
-static const wchar_t* get_cpu_level_wstr(CPUFeatureLevel level)
-{
+extern "C" const HashAlgorithm* get_algorithms_begin_SSE2();
+extern "C" const HashAlgorithm* get_algorithms_end_SSE2();
+extern "C" const HashAlgorithm* get_algorithms_begin_AVX();
+extern "C" const HashAlgorithm* get_algorithms_end_AVX();
+extern "C" const HashAlgorithm* get_algorithms_begin_AVX2();
+extern "C" const HashAlgorithm* get_algorithms_end_AVX2();
+extern "C" const HashAlgorithm* get_algorithms_begin_AVX512();
+extern "C" const HashAlgorithm* get_algorithms_end_AVX512();
+extern "C" const HashAlgorithm* get_algorithms_begin_ARM64();
+extern "C" const HashAlgorithm* get_algorithms_end_ARM64();
+
+#if defined(_M_X64)
+const HashAlgorithm* get_algorithms_begin(CPUFeatureLevel level) {
+    switch (level)
+    {
+    default:
+      return nullptr;
+    case CPU_SSE2:
+      return get_algorithms_begin_SSE2();
+    case CPU_AVX:
+      return get_algorithms_begin_AVX();
+    case CPU_AVX2:
+      return get_algorithms_begin_AVX2();
+    case CPU_AVX512:
+      return get_algorithms_begin_AVX512();
+    }
+}
+
+const HashAlgorithm* get_algorithms_end(CPUFeatureLevel level) {
+    switch (level)
+    {
+    default:
+      return nullptr;
+    case CPU_SSE2:
+      return get_algorithms_end_SSE2();
+    case CPU_AVX:
+      return get_algorithms_end_AVX();
+    case CPU_AVX2:
+      return get_algorithms_end_AVX2();
+    case CPU_AVX512:
+      return get_algorithms_end_AVX512();
+    }
+}
+#elif defined(_M_ARM64)
+const HashAlgorithm* get_algorithms_begin(CPUFeatureLevel level) {
   switch (level)
   {
   default:
-  case CPU_MAX:
-  case CPU_None:
-    return L"none";
-  case CPU_SSE2:
-    return L"sse2";
-  case CPU_AVX:
-    return L"avx";
-  case CPU_AVX2:
-    return L"avx2";
-  case CPU_AVX512:
-    return L"avx512";
+    return nullptr;
   case CPU_NEON:
-    return L"neon";
+    return get_algorithms_begin_ARM64();
   }
 }
+
+const HashAlgorithm* get_algorithms_end(CPUFeatureLevel level) {
+  switch (level)
+  {
+  default:
+    return nullptr;
+  case CPU_NEON:
+    return get_algorithms_end_ARM64();
+  }
+}
+#else
+#error "Unsupported architecture"
+#endif
 
 extern "C" char __ImageBase;
 
@@ -152,54 +198,19 @@ constexpr static size_t k_context_align = 64;
 
 struct AlgorithmsDll
 {
-  HMODULE hm{};
-
   const HashAlgorithm* algorithms_begin{};
   const HashAlgorithm* algorithms_end{};
 
   AlgorithmsDll()
   {
-    wchar_t dll[64] = L"AlgorithmsDll-"
-#if defined(_M_IX86)
-      L"Win32-"
-#elif defined(_M_X64)
-      L"x64-"
-#elif defined(_M_ARM64)
-      L"ARM64-"
-#else
-#error "Unsupported or unknown architecture"
-#endif
-      ;
-
-    wcscat_s(dll, get_cpu_level_wstr(get_cpu_level()));
-
-    WCHAR path[MAX_PATH]{};
-    GetModuleFileNameW((HMODULE)&__ImageBase, path, (DWORD)std::size(path));
-    const auto fname = wcsrchr(path, L'\\');
-
-    if (fname)
-      wcscpy_s(fname + 1, std::end(path) - (fname + 1), dll);
-    else
-      wcscpy_s(path, dll);
-
-    hm = LoadLibraryW(path);
-
-    if (hm)
-    {
-      const auto p_algorithms_begin = GetProcAddress(hm, "k_algorithms_begin");
-      const auto p_algorithms_end = GetProcAddress(hm, "k_algorithms_end");
-
-      algorithms_begin = *(const HashAlgorithm* const*)p_algorithms_begin;
-      algorithms_end = *(const HashAlgorithm* const*)p_algorithms_end;
-    }
+    const auto level = get_cpu_level();
+    algorithms_begin = get_algorithms_begin(level);
+    algorithms_end = get_algorithms_end(level);
   }
-  ~AlgorithmsDll()
-  {
-    FreeLibrary(hm);
-  }
+  ~AlgorithmsDll() = default;
 };
 
-const AlgorithmsDll& get_algorithms_dll()
+__declspec(dllexport) const AlgorithmsDll& get_algorithms_dll()
 {
   static AlgorithmsDll algorithms_dll;
   return algorithms_dll;
