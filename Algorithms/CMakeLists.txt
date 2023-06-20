@@ -9,7 +9,7 @@ set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 string(REGEX REPLACE "/Ob1" "/Ob2" CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELWITHDEBINFO}")
 string(REGEX REPLACE "/Ob1" "/Ob2" CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELWITHDEBINFO}")
 
-add_compile_options(-flto /GR- /GS- /guard:cf,nochecks /MT)
+add_compile_options(-flto /GR- /GS- /guard:cf,nochecks)
 
 if ("${OHT_FLAVOR}" STREQUAL "ARM64")
 elseif ("${OHT_FLAVOR}" STREQUAL "SSE2")

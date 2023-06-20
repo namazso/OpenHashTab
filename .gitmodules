@@ -4,9 +4,6 @@
 [submodule "Algorithms/mbedtls/mbedtls"]
 	path = Algorithms/mbedtls/mbedtls
 	url = https://github.com/ARMmbed/mbedtls.git
-[submodule "langcomp"]
-	path = langcomp
-	url = https://github.com/namazso/langcomp.git
 [submodule "tiny-json"]
 	path = tiny-json
 	url = https://github.com/rafagafe/tiny-json.git

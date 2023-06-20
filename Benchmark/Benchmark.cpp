@@ -20,14 +20,13 @@
 #include <Windows.h>
 #include <random>
 
-#include "../AlgorithmsLoader/Hasher.h"
+#include <Hasher.h>
 
 int main()
 {
-  //constexpr static auto k_passes = 5u;
-  //constexpr static auto k_size = 1ull << 30;
-  constexpr static auto k_passes = 3u;
-  constexpr static auto k_size = 100ull << 20;
+  constexpr static auto k_passes = 20u;
+  // 4 MB so that it fits in (my) L2 cache
+  constexpr static auto k_size = 4ull << 20;
 
   const auto p = (uint64_t*)VirtualAlloc(
     nullptr,
@@ -48,13 +47,13 @@ int main()
   LARGE_INTEGER frequency{};
   QueryPerformanceFrequency(&frequency);
 
-  uint64_t measurements[k_passes][LegacyHashAlgorithm::k_count]{};
+  uint64_t measurements[LegacyHashAlgorithm::k_count][k_passes]{};
 
-  for (auto& measurement : measurements)
+  for (auto i = 0u; i < k_passes; ++i)
   {
-    for (auto i = 0u; i < LegacyHashAlgorithm::k_count; ++i)
+    for (auto j = 0u; j < LegacyHashAlgorithm::k_count; ++j)
     {
-      auto& h = LegacyHashAlgorithm::Algorithms()[i];
+      auto& h = LegacyHashAlgorithm::Algorithms()[j];
       auto ctx = h.MakeContext();
 
       LARGE_INTEGER begin{}, end{};
@@ -92,13 +91,13 @@ int main()
       assert(fills_space);
 #endif
 
-      // copy into volatile to ensure Finish isnt optimized away
+      // copy into volatile to ensure Finish isn't optimized away
       volatile uint8_t hash_cpy[LegacyHashAlgorithm::k_max_size];
       std::copy_n(std::begin(hash), std::size(hash_cpy), std::begin(hash_cpy));
 
       QueryPerformanceCounter(&end);
 
-      measurement[i] = end.QuadPart - begin.QuadPart;
+      measurements[j][i] = end.QuadPart - begin.QuadPart;
     }
   }
 
@@ -106,18 +105,24 @@ int main()
   {
     auto& h = LegacyHashAlgorithm::Algorithms()[i];
 
-    printf("%s\t", h.GetName());
+    printf("%-16s\t", h.GetName());
 
     uint64_t sum = 0;
 
-    for (const auto& measurement : measurements)
+    auto& measurement = measurements[i];
+    std::sort(std::begin(measurement), std::end(measurement));
+
+    constexpr static auto skip = (unsigned)(0.2 * k_passes);
+    for (auto j = skip; j < k_passes - skip; ++j)
     {
-      const auto v = measurement[i];
+      const auto v = measurement[j];
       sum += v;
       printf("%llu\t", v);
     }
 
-    const auto mbps = (k_size * frequency.QuadPart) / (double(sum) / k_passes) / (1ull << 20); // MB/s
+    const auto avg = (double(sum) / (k_passes - 2 * skip));
+
+    const auto mbps = (double)(k_size * frequency.QuadPart) / avg / (1ull << 20); // MB/s
 
     printf("%.7lf MB/s\n", mbps);
   }
