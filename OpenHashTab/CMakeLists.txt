@@ -18,10 +18,10 @@ target_compile_definitions(OpenHashTab PRIVATE
         UNICODE
         _UNICODE
         _WINDLL
-        CI_VERSION=\"blah\"
-        CI_VERSION_MAJOR=1
-        CI_VERSION_MINOR=1
-        CI_VERSION_PATCH=1
+        "CI_VERSION=\"${CI_VERSION}\""
+        "CI_VERSION_MAJOR=${CI_VERSION_MAJOR}"
+        "CI_VERSION_MINOR=${CI_VERSION_MINOR}"
+        "CI_VERSION_PATCH=${CI_VERSION_PATCH}"
         )
 
 target_compile_options(OpenHashTab PRIVATE
@@ -29,3 +29,8 @@ target_compile_options(OpenHashTab PRIVATE
         )
 
 target_precompile_headers(OpenHashTab PRIVATE stdafx.h)
+
+add_custom_command(TARGET OpenHashTab POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_RUNTIME_DLLS:OpenHashTab> $<TARGET_FILE_DIR:OpenHashTab>
+        COMMAND_EXPAND_LISTS
+        )
