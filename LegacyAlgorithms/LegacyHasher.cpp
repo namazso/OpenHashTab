@@ -210,7 +210,7 @@ struct AlgorithmsDll
   ~AlgorithmsDll() = default;
 };
 
-__declspec(dllexport) const AlgorithmsDll& get_algorithms_dll()
+const AlgorithmsDll& get_algorithms_dll()
 {
   static AlgorithmsDll algorithms_dll;
   return algorithms_dll;

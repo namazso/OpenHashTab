@@ -28,6 +28,11 @@ target_compile_options(OpenHashTab PRIVATE
         /EHsc
         )
 
+target_link_options(OpenHashTab PRIVATE
+        /EXPORT:DllCanUnloadNow
+        /EXPORT:DllGetClassObject
+        )
+
 target_precompile_headers(OpenHashTab PRIVATE stdafx.h)
 
 add_custom_command(TARGET OpenHashTab POST_BUILD
