@@ -14,11 +14,6 @@
 //    You should have received a copy of the GNU General Public License
 //    along with OpenHashTab.  If not, see <https://www.gnu.org/licenses/>.
 #pragma once
-#include "resource.h"
-#include "OpenHashTab_i.h"
-
-#include <list>
-#include <string>
 
 #if defined(_WIN32_WCE) && !defined(_CE_DCOM) && !defined(_CE_ALLOW_SINGLE_THREADED_OBJECTS_IN_MTA)
 #error "Single-threaded COM objects are not properly supported on Windows CE \
@@ -101,5 +96,8 @@ END_COM_MAP()
 
   void FinalRelease();
 };
+
+class DECLSPEC_UUID("23b5bdd4-7669-42b8-9cdc-beebc8a5baa9")
+    OpenHashTabShlExt;
 
 OBJECT_ENTRY_AUTO(__uuidof(OpenHashTabShlExt), COpenHashTabShlExt)

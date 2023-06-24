@@ -13,8 +13,6 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with OpenHashTab.  If not, see <https://www.gnu.org/licenses/>.
-#include "stdafx.h"
-
 #include "MainDialog.h"
 
 #include "Coordinator.h"
@@ -26,8 +24,6 @@
 #include "wnd.h"
 #include "virustotal.h"
 #include "hash_colors.h"
-
-#include <sstream>
 
 static bool ColorLine(const Settings& settings, LPNMLVCUSTOMDRAW plvcd, HashColorType type)
 {

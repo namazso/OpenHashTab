@@ -13,12 +13,7 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with OpenHashTab.  If not, see <https://www.gnu.org/licenses/>.
-#include "stdafx.h"
-
-#include "OpenHashTab_i.h"
 #include "dllmain.h"
-
-#include <xutility>
 
 // Used to determine whether the DLL can be unloaded by OLE.
 _Use_decl_annotations_

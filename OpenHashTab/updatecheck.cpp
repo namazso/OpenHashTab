@@ -13,15 +13,11 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with OpenHashTab.  If not, see <https://www.gnu.org/licenses/>.
-#include "stdafx.h"
-
 #include "utl.h"
 
 #include "stringencrypt.h"
 #include "https.h"
 #include "json.h"
-
-#include <stdexcept>
 
 utl::Version utl::GetLatestVersion()
 {

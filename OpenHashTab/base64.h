@@ -14,8 +14,6 @@
 //    You should have received a copy of the GNU General Public License
 //    along with OpenHashTab.  If not, see <https://www.gnu.org/licenses/>.
 #pragma once
-#include <string>
-#include <vector>
 
 namespace b64
 {

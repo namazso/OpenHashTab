@@ -17,8 +17,6 @@
 #include "path.h"
 #include "Settings.h"
 
-#include <mutex>
-
 class FileHashTask;
 
 class Coordinator

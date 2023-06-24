@@ -15,10 +15,6 @@
 //    along with OpenHashTab.  If not, see <https://www.gnu.org/licenses/>.
 #pragma once
 
-#include <memory>
-#include <string>
-#include <vector>
-
 #ifdef _DEBUG
 inline void DebugMsg(PCSTR fmt, ...)
 {

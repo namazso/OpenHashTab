@@ -24,11 +24,11 @@ function(lang_json_to_include JSON DEFAULT_JSON OUT_VAR)
     string(JSON DEFAULT_STRINGS GET "${DEFAULT_JSON}" strings)
     string(JSON STRINGS_COUNT LENGTH "${DEFAULT_STRINGS}")
 
-    set(RESULT "\nLANGUAGE ")
+    set(RESULT "LANGUAGE ")
     string(APPEND RESULT "${LANGID}")
     string(APPEND RESULT ", ")
     string(APPEND RESULT "${SUBLANGID}")
-    string(APPEND RESULT "\nSTRINGTABLE\nBEGIN\n")
+    string(APPEND RESULT " \\\nSTRINGTABLE \\\nBEGIN \\\n")
 
     math(EXPR STRINGS_MAX "${STRINGS_COUNT} - 1")
 
@@ -40,10 +40,10 @@ function(lang_json_to_include JSON DEFAULT_JSON OUT_VAR)
             set(VALUE "${DEFAULT_VALUE}")
         endif ()
         sanitize_string("${VALUE}" VALUE)
-        string(APPEND RESULT "\tIDS_${KEY}\t\"${VALUE}\"\n")
+        string(APPEND RESULT "\tIDS_${KEY}\t\"${VALUE}\" \\\n")
     endforeach ()
 
-    string(APPEND RESULT "END\n")
+    string(APPEND RESULT "END \\\n")
     set(${OUT_VAR} "${RESULT}" PARENT_SCOPE)
 endfunction()
 
@@ -52,7 +52,7 @@ file(GLOB LOCALES CONFIGURE_DEPENDS "*.json")
 # TODO: Since we're using the undocumented RtlGetString, maybe the defaulting could be moved into code.
 file(READ "en-us.json" DEFAULT_LOCALE_JSON)
 
-set(LOCALE_INCLUDE_CONTENT "")
+set(LOCALE_INCLUDE_CONTENT "#define LANGUAGES_IMPL \\\n")
 
 foreach (LOCALE ${LOCALES})
     file(READ "${LOCALE}" LOCALE_JSON)

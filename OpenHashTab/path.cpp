@@ -13,15 +13,11 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with OpenHashTab.  If not, see <https://www.gnu.org/licenses/>.
-#include "stdafx.h"
-
 #include "path.h"
 
 #include "Settings.h"
 #include "SumFileParser.h"
 #include "utl.h"
-
-#include <algorithm>
 
 // This function will normalize and un-shorten a path.
 // Unfortunately unshortening a path with GetLongPathNameW requires that all directories in the way exist. This might

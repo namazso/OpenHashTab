@@ -14,10 +14,7 @@
 //    You should have received a copy of the GNU General Public License
 //    along with OpenHashTab.  If not, see <https://www.gnu.org/licenses/>.
 #pragma once
-#include "../AlgorithmsLoader/Hasher.h"
-
-#include <unordered_map>
-#include <list>
+#include <Hasher.h>
 
 #include "Settings.h"
 

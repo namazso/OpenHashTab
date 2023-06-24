@@ -15,9 +15,6 @@
 //    along with OpenHashTab.  If not, see <https://www.gnu.org/licenses/>.
 #pragma once
 
-#include <cstdint>
-#include <array>
-
 // This primitive string encryption can defeat shitty antiviruses that scream on sight of some strings / functions.
 // Make sure to use it after user interaction, else it's pretty much worthless because behavioral analysis will see
 // everything. This also means it's hardly useful for actual malware.
