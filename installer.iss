@@ -24,6 +24,7 @@
 #define MyAppURL        "https://github.com/namazso/OpenHashTab"
 #define MyCopyright     "(c) namazso. Licensed under GNU GPLv3 or (at your option) later."
 #define DLLName         "OpenHashTab.dll"
+#define StandaloneName  "StandaloneStub.exe"
 #define DLLCLSID        "{{23b5bdd4-7669-42b8-9cdc-beebc8a5baa9}"
 
 [Setup]
@@ -129,7 +130,7 @@ Root: HKA; Subkey: "Software\Classes\AllFilesystemObjects\shellex\PropertySheetH
 Root: HKA; Subkey: "Software\Classes\AllFilesystemObjects\shellex\ContextMenuHandlers\{#DLLCLSID}";    ValueName: ""; Flags: uninsdeletekey; ValueType: none; Tasks: myContextMenu
 
 Root: HKA; Subkey: "Software\Classes\{#MyAppName}";                     ValueData: "Checksum file";      ValueType: string; ValueName: ""; Flags: uninsdeletekey;
-Root: HKA; Subkey: "Software\Classes\{#MyAppName}\shell\open\command";  ValueData: "rundll32 ""{app}\{#DLLName}"",StandaloneEntry ""%1""";  ValueType: string; ValueName: ""
+Root: HKA; Subkey: "Software\Classes\{#MyAppName}\shell\open\command";  ValueData: """{app}\{#StandaloneName}"" ""%1""";  ValueType: string; ValueName: ""
 Root: HKA; Subkey: "Software\Classes\{#MyAppName}\DefaultIcon";         ValueData: "{app}\{#DLLName},0"; ValueType: string; ValueName: ""
 
 Root: HKA; Subkey: "Software\Classes\.md5";        ValueType: string; ValueName: ""; ValueData: "{#MyAppName}"; Flags: uninsdeletevalue; Tasks: myAssociation
