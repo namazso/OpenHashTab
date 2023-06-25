@@ -36,7 +36,7 @@ Most of the actions should be obvious. Some not-so-obvious features are listed h
 * Double click name or algorithm to copy the line in sumfile format
 * Right click for popup menu: copy hash, copy filename, copy line, copy everything
 * The counters next to the status text is in the format `(match/mismatch/nothing to check against/error)`
-* Columns sort lexographically, except the hash column which sorts by match type
+* Columns sort lexicographically, except the hash column which sorts by match type
 * Selecting the tab on a sumfile will interpret it as such and hash the files listed in it.
 * If a hashed file has a sumfile with same filename plus one of the recognized sumfile extensions and the option for it is enabled, the file hash is checked against it.
 
@@ -76,7 +76,7 @@ Add a `DWORD` named `ForceDisableVT` to `HKEY_LOCAL_MACHINE\SOFTWARE\OpenHashTab
 
 ## Screenshot
 
-![Screenshot](resources/screenshot.png) ![Algorithms](resources/algorithms.png)
+![Screenshot](https://github.com/namazso/OpenHashTab/assets/8676443/727943b2-8070-4dcc-b0a4-e1149fca0245) ![Algorithms](https://github.com/namazso/OpenHashTab/assets/8676443/878c9b30-ed94-4d8b-9370-75b3be02e2cb)
 
 ## Donations
 
@@ -99,22 +99,22 @@ In addition to contributors reported by git, some translations were also contrib
 
 ### Requirements
 
-* WSL Alpine with make and libxslt
-* Visual Studio 2022 (with ARM64 and clang-cl)
-* [InnoSetup](http://www.jrsoftware.org/isinfo.php)
+* Visual Studio 2022 (with desktop C++, ARM64, clang-cl)
+* vswhere in PATH
+* CMake
+* InnoSetup
 
 ### Compiling
 
-1. Run build-xkcp.bat
-2. Build AlgorithmsDll.sln for all Release targets
-3. Build OpenHashTab.sln for all Release targets
-4. Use Inno Setup Compiler to compile installer.iss
+1. Run build_algorithms.ps1
+2. Run build_openhashtab.ps1
+3. Use Inno Setup Compiler to compile installer.iss
 
 More options and commands can be found in the [GitHub Actions workflow](.github/workflows/ci.yml)
 
 ## Relationship to HashTab
 
-HashTab is a similar purpose proprietary software. While this software has been inspired by it, I was never an user of HashTab and this software contains no code or resources related to it.
+HashTab was a similar purpose proprietary software. While this software has been inspired by it, I was never a user of HashTab and this software contains no code or resources related to it.
 
 ## License
 
