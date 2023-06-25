@@ -15,6 +15,18 @@ function Invoke-CmdScript {
 
 $Env:RC = "llvm-rc";
 
+If (Test-Path "Env:CI_VERSION") {
+    $CI_VERSION = $Env:CI_VERSION;
+    $CI_VERSION_MAJOR = $Env:CI_VERSION_MAJOR;
+    $CI_VERSION_MINOR = $Env:CI_VERSION_MINOR;
+    $CI_VERSION_PATCH = $Env:CI_VERSION_PATCH;
+} Else {
+    $CI_VERSION = "(unknown)";
+    $CI_VERSION_MAJOR = 0;
+    $CI_VERSION_MINOR = 0;
+    $CI_VERSION_PATCH = 0;
+}
+
 $Environment = (Get-ChildItem Env:);
 
 Invoke-CmdScript "$VSRoot\VC\Auxiliary\Build\vcvars64.bat"
@@ -26,14 +38,14 @@ cmake `
     -DCMAKE_BUILD_TYPE=RelWithDebInfo `
     -DCMAKE_C_COMPILER=clang-cl `
     -DCMAKE_CXX_COMPILER=clang-cl `
-    "-DCI_VERSION=$Env:CI_VERSION" `
-    "-DCI_VERSION_MINOR=$Env:CI_VERSION_MINOR" `
-    "-DCI_VERSION_MAJOR=$Env:CI_VERSION_MAJOR" `
-    "-DCI_VERSION_PATCH=$Env:CI_VERSION_PATCH"
+    "-DCI_VERSION=$CI_VERSION" `
+    "-DCI_VERSION_MINOR=$CI_VERSION_MINOR" `
+    "-DCI_VERSION_MAJOR=$CI_VERSION_MAJOR" `
+    "-DCI_VERSION_PATCH=$CI_VERSION_PATCH"
 cmake --build "cmake-openhashtab-x64"
 
 Remove-Item -Path Env:*
-$Environment | % { Set-Item "env:$($_.Name)" $_.Value }
+$Environment | ForEach-Object { Set-Item "env:$($_.Name)" $_.Value }
 
 Invoke-CmdScript "$VSRoot\VC\Auxiliary\Build\vcvarsamd64_arm64.bat"
 $ExtraFlags = "--target=arm64-pc-windows-msvc";
@@ -48,11 +60,11 @@ cmake `
     -DCMAKE_BUILD_TYPE=RelWithDebInfo `
     -DCMAKE_C_COMPILER=clang-cl `
     -DCMAKE_CXX_COMPILER=clang-cl `
-    "-DCI_VERSION=$Env:CI_VERSION" `
-    "-DCI_VERSION_MINOR=$Env:CI_VERSION_MINOR" `
-    "-DCI_VERSION_MAJOR=$Env:CI_VERSION_MAJOR" `
-    "-DCI_VERSION_PATCH=$Env:CI_VERSION_PATCH"
+    "-DCI_VERSION=$CI_VERSION" `
+    "-DCI_VERSION_MINOR=$CI_VERSION_MINOR" `
+    "-DCI_VERSION_MAJOR=$CI_VERSION_MAJOR" `
+    "-DCI_VERSION_PATCH=$CI_VERSION_PATCH"
 cmake --build "cmake-openhashtab-ARM64"
 
 Remove-Item -Path Env:*
-$Environment | % { Set-Item "env:$($_.Name)" $_.Value }
+$Environment | ForEach-Object { Set-Item "env:$($_.Name)" $_.Value }

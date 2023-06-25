@@ -15,7 +15,7 @@ function Invoke-CmdScript {
 
 $Environment = (Get-ChildItem Env:);
 
-"SSE2", "AVX", "AVX2", "AVX512", "ARM64" | ForEach {
+"SSE2", "AVX", "AVX2", "AVX512", "ARM64" | ForEach-Object {
     $ExtraFlags = "";
     If ($_ -eq "ARM64") {
         Invoke-CmdScript "$VSRoot\VC\Auxiliary\Build\vcvarsamd64_arm64.bat"
@@ -40,5 +40,5 @@ $Environment = (Get-ChildItem Env:);
     cmake --install "cmake-algorithms-$_"
 
     Remove-Item -Path Env:*
-    $Environment | % { Set-Item "env:$($_.Name)" $_.Value }
+    $Environment | ForEach-Object { Set-Item "env:$($_.Name)" $_.Value }
 }
