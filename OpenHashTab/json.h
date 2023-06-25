@@ -17,37 +17,36 @@
 
 #include <tiny-json.h>
 
-class json_parser : jsonPool_t
-{
-  static json_t* alloc_fn(jsonPool_t* pool)
-  {
-    const auto list_pool = static_cast<json_parser*>(pool);
+class json_parser : jsonPool_t {
+  static json_t* alloc_fn(jsonPool_t* pool) {
+    const auto list_pool = static_cast<json_parser*>(pool); // NOLINT(cppcoreguidelines-pro-type-static-cast-downcast)
     return &list_pool->_list.emplace_back();
   }
 
   std::list<json_t> _list{};
   std::string _str{};
-  json_t const* _root{};
+  const json_t* _root{};
 
 public:
-  json_parser() : jsonPool_t{ &alloc_fn, &alloc_fn } {}
-  json_parser(const char* str)
-    : jsonPool_t{ &alloc_fn, &alloc_fn }
-    , _str{ str }
-  {
+  json_parser()
+      : jsonPool_t{&alloc_fn, &alloc_fn} {}
+
+  explicit json_parser(const char* str)
+      : jsonPool_t{&alloc_fn, &alloc_fn}
+      , _str{str} {
     _root = json_createWithPool(_str.data(), this);
   }
+
   json_parser(const json_parser&) = delete;
   json_parser(json_parser&&) = delete;
   json_parser& operator=(const json_parser&) = delete;
   json_parser& operator=(json_parser&&) = delete;
 
-  void parse(const char* str)
-  {
+  void parse(const char* str) {
     _str = str;
     _list.clear();
     _root = json_createWithPool(_str.data(), this);
   }
 
-  json_t const* root() const { return _root; }
+  [[nodiscard]] const json_t* root() const { return _root; }
 };

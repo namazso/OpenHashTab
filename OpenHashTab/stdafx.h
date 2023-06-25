@@ -26,9 +26,14 @@
 // thanks, microsoft
 #define Unknown Unknown_FROM_WINDOWS
 
-#include "targetver.h"
+#include <WinSDKVer.h>
 
-#define ISOLATION_AWARE_ENABLED 1
+// Windows 7
+#define _WIN32_WINNT 0x0601
+
+#include <SDKDDKVer.h>
+
+#define ISOLATION_AWARE_ENABLED   1
 #define SIDEBYSIDE_COMMONCONTROLS 1
 
 #include <ntstatus.h>
@@ -38,43 +43,45 @@
 // ATL
 #define _ATL_APARTMENT_THREADED
 #define _ATL_NO_AUTOMATIC_NAMESPACE
-#define _ATL_CSTRING_EXPLICIT_CONSTRUCTORS	// some CString constructors will be explicit
+#define _ATL_CSTRING_EXPLICIT_CONSTRUCTORS // some CString constructors will be explicit
 #define ATL_NO_ASSERT_ON_DESTROY_NONEXISTENT_WINDOW
 
 #include "resource.h"
-#include <atlbase.h>
-#include <atlcom.h>
-#include <atlctl.h>
-#include <oaidl.h>
-#include <ocidl.h>
-#include <shobjidl.h>
 
 // Windows
 #include <Windows.h>
+
 #include <windowsx.h>
-#include <WinUser.h>
+
+#include <atlbase.h>
+#include <atlcom.h>
+#include <atlctl.h>
 #include <CommCtrl.h>
-#include <VersionHelpers.h>
+#include <oaidl.h>
+#include <ocidl.h>
 #include <PathCch.h>
+#include <shobjidl.h>
+#include <VersionHelpers.h>
 #include <winhttp.h>
+#include <WinUser.h>
 
 #undef Unknown
 
-#include <string>
-#include <vector>
+#include <algorithm>
+#include <array>
+#include <atomic>
 #include <cassert>
+#include <cstdint>
+#include <list>
+#include <memory>
 #include <mutex>
 #include <sstream>
-#include <algorithm>
-#include <list>
-#include <atomic>
-#include <memory>
-#include <array>
-#include <xutility>
-#include <unordered_map>
 #include <stdexcept>
-#include <cstdint>
+#include <string>
+#include <unordered_map>
 #include <utility>
+#include <vector>
+#include <xutility>
 
 EXTERN_C const IID LIBID_OpenHashTabLib;
 EXTERN_C const IID IID_IOpenHashTabShlExt;

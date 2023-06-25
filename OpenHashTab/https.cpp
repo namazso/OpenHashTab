@@ -17,8 +17,7 @@
 
 #include "stringencrypt.h"
 
-struct WinHTTPFunctions
-{
+struct WinHTTPFunctions {
   HMODULE h;
 
 #define FN(name) decltype(&::name) name = (decltype(&::name))GetProcAddress(h, ESTRt(#name))
@@ -35,17 +34,16 @@ struct WinHTTPFunctions
 
 #undef FN
 
-  WinHTTPFunctions(HMODULE h) : h(h) {}
+  explicit WinHTTPFunctions(HMODULE h)
+      : h(h) {}
 };
 
-HTTPResult DoHTTPS(const HTTPRequest& r)
-{
+HTTPResult DoHTTPS(const HTTPRequest& r) {
   HTTPResult result{};
 
   const auto h = LoadLibraryExW(ESTRt(L"winhttp"), nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);
-  if (h)
-  {
-    const auto fn = WinHTTPFunctions{ h };
+  if (h) {
+    const auto fn = WinHTTPFunctions{h};
 
     // Use WinHttpOpen to obtain a session handle.
     const auto session = fn.WinHttpOpen(
@@ -56,8 +54,7 @@ HTTPResult DoHTTPS(const HTTPRequest& r)
       0
     );
 
-    if (session)
-    {
+    if (session) {
       // Specify an HTTP server.
       const auto connection = fn.WinHttpConnect(
         session,
@@ -66,8 +63,7 @@ HTTPResult DoHTTPS(const HTTPRequest& r)
         0
       );
 
-      if (connection)
-      {
+      if (connection) {
         // Create an HTTP Request handle.
         const auto request = fn.WinHttpOpenRequest(
           connection,
@@ -79,8 +75,7 @@ HTTPResult DoHTTPS(const HTTPRequest& r)
           WINHTTP_FLAG_SECURE
         );
 
-        if (request)
-        {
+        if (request) {
           // Send a Request.
           auto ret = fn.WinHttpSendRequest(
             request,
@@ -92,15 +87,13 @@ HTTPResult DoHTTPS(const HTTPRequest& r)
             0
           );
 
-          if (ret)
-          {
+          if (ret) {
             ret = fn.WinHttpReceiveResponse(
               request,
               nullptr
             );
 
-            if (ret)
-            {
+            if (ret) {
               DWORD http_code = 0;
               DWORD size = sizeof(http_code);
               ret = fn.WinHttpQueryHeaders(
@@ -112,25 +105,21 @@ HTTPResult DoHTTPS(const HTTPRequest& r)
                 WINHTTP_NO_HEADER_INDEX
               );
 
-              if (ret)
-              {
+              if (ret) {
                 DWORD bytes_available;
                 std::string out;
-                do
-                {
+                do {
                   bytes_available = 0;
                   ret = fn.WinHttpQueryDataAvailable(
                     request,
                     &bytes_available
                   );
-                  if (!ret)
-                  {
+                  if (!ret) {
                     result.error_location = 8;
                     break;
                   }
 
-                  if (bytes_available == 0)
-                  {
+                  if (bytes_available == 0) {
                     result.error_code = 0;
                     result.http_code = http_code;
                     result.body = std::move(out);
@@ -146,8 +135,7 @@ HTTPResult DoHTTPS(const HTTPRequest& r)
                     bytes_available,
                     &bytes_read
                   );
-                  if(!ret)
-                  {
+                  if (!ret) {
                     result.error_location = 8;
                     break;
                   }
@@ -156,57 +144,42 @@ HTTPResult DoHTTPS(const HTTPRequest& r)
 
                 result.error_code = GetLastError();
 
-                success:
-                ;
-              }
-              else
-              {
+success:;
+              } else {
                 result.error_code = GetLastError();
                 result.error_location = 7;
               }
 
-            }
-            else
-            {
+            } else {
               result.error_code = GetLastError();
               result.error_location = 6;
             }
 
-          }
-          else
-          {
+          } else {
             result.error_code = GetLastError();
             result.error_location = 5;
           }
 
           fn.WinHttpCloseHandle(request);
-        }
-        else
-        {
+        } else {
           result.error_code = GetLastError();
           result.error_location = 4;
         }
 
         fn.WinHttpCloseHandle(connection);
-      }
-      else
-      {
+      } else {
         result.error_code = GetLastError();
         result.error_location = 3;
       }
 
       fn.WinHttpCloseHandle(session);
-    }
-    else
-    {
+    } else {
       result.error_code = GetLastError();
       result.error_location = 2;
     }
 
     FreeLibrary(h);
-  }
-  else
-  {
+  } else {
     result.error_code = GetLastError();
     result.error_location = 1;
   }

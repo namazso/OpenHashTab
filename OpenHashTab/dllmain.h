@@ -15,8 +15,7 @@
 //    along with OpenHashTab.  If not, see <https://www.gnu.org/licenses/>.
 #pragma once
 
-class COpenHashTabModule : public ATL::CAtlDllModuleT<COpenHashTabModule>
-{
+class COpenHashTabModule : public ATL::CAtlDllModuleT<COpenHashTabModule> {
 public:
   DECLARE_LIBID(LIBID_OpenHashTabLib)
   DECLARE_REGISTRY_APPID_RESOURCEID(IDR_OPENHASHTAB, "{715dae2b-0063-4d88-8f94-3dc072fc3fb0}")

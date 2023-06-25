@@ -15,8 +15,7 @@
 //    along with OpenHashTab.  If not, see <https://www.gnu.org/licenses/>.
 #pragma once
 
-struct HTTPRequest
-{
+struct HTTPRequest {
   const wchar_t* user_agent;
   const wchar_t* server_name;
   const wchar_t* method;
@@ -26,12 +25,11 @@ struct HTTPRequest
   DWORD body_size;
 };
 
-struct HTTPResult
-{
+struct HTTPResult {
   std::string body;
   DWORD error_code;
-  union
-  {
+
+  union {
     DWORD http_code;
     DWORD error_location;
   };

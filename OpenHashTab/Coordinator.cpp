@@ -15,23 +15,21 @@
 //    along with OpenHashTab.  If not, see <https://www.gnu.org/licenses/>.
 #include "Coordinator.h"
 
+#include "FileHashTask.h"
+#include "Settings.h"
 #include "utl.h"
 #include "wnd.h"
-#include "Settings.h"
-#include "FileHashTask.h"
 
 Coordinator::Coordinator(std::list<std::wstring> files)
-  : _files_raw(std::move(files)) {}
+    : _files_raw(std::move(files)) {}
 
-Coordinator::~Coordinator()
-{
+Coordinator::~Coordinator() {
   Cancel();
   while (_references != 0)
     ;
 }
 
-void Coordinator::RegisterWindow(HWND window)
-{
+void Coordinator::RegisterWindow(HWND window) {
   // Turns out the dialog can sometimes be still running at the time we receive a RELEASE, so let's reference here
   Reference();
   std::lock_guard guard{_window_mutex};
@@ -39,49 +37,42 @@ void Coordinator::RegisterWindow(HWND window)
   _window = window;
 }
 
-void Coordinator::UnregisterWindow()
-{
+void Coordinator::UnregisterWindow() {
   {
-    std::lock_guard guard{ _window_mutex };
+    std::lock_guard guard{_window_mutex};
     assert(_window != nullptr);
     _window = nullptr;
   }
   Dereference();
 }
 
-unsigned Coordinator::Reference()
-{
+unsigned Coordinator::Reference() {
   const auto references = ++_references;
   DebugMsg("ref+ %d\n", references);
   return references;
 }
 
-unsigned Coordinator::Dereference()
-{
+unsigned Coordinator::Dereference() {
   const auto references = --_references;
   DebugMsg("ref- %d\n", references);
   return references;
 }
 
-void Coordinator::AddFile(const std::wstring& path, const ProcessedFileList::FileInfo& fi)
-{
+void Coordinator::AddFile(const std::wstring& path, const ProcessedFileList::FileInfo& fi) {
   const auto task = new FileHashTask(this, path, fi);
   _size_total += task->GetSize();
   _file_tasks.emplace_back(task);
 }
 
-void Coordinator::AddFiles()
-{
+void Coordinator::AddFiles() {
   _files = ProcessEverything(_files_raw, &settings);
   const auto type = _files.sumfile_type;
-  if(type != -2)
-  {
+  if (type != -2) {
     _is_sumfile = true;
-    if (type != -1)
-    {
+    if (type != -1) {
       if (settings.sumfile_algorithm_only)
         for (auto& a : settings.algorithms)
-          a.SetNoSave(false); // disable all algorithms
+          a.SetNoSave(false);                    // disable all algorithms
       settings.algorithms[type].SetNoSave(true); // enable algorithm the sumfile is made with
     }
   }
@@ -89,34 +80,29 @@ void Coordinator::AddFiles()
     AddFile(file.first, file.second);
 }
 
-void Coordinator::ProcessFiles()
-{
+void Coordinator::ProcessFiles() {
   // We have 0 files, oops!
-  if(_file_tasks.empty() && _window)
-  {
+  if (_file_tasks.empty() && _window) {
     SendNotifyMessageW(_window, wnd::WM_USER_ALL_FILES_FINISHED, wnd::k_user_magic_wparam, 0);
     return;
   }
-  for (const auto& task : _file_tasks)
-  {
+  for (const auto& task : _file_tasks) {
     ++_files_not_finished;
     task->StartProcessing();
   }
 }
 
-void Coordinator::Cancel(bool wait)
-{
+void Coordinator::Cancel(bool wait) {
   for (const auto& file : _file_tasks)
     file->SetCancelled();
 
-  if(wait)
+  if (wait)
     while (_files_not_finished > 0)
       Sleep(1);
 }
 
-void Coordinator::FileCompletionCallback(FileHashTask* file)
-{
-  std::lock_guard guard{ _window_mutex };
+void Coordinator::FileCompletionCallback(FileHashTask* file) {
+  std::lock_guard guard{_window_mutex};
 
   const auto not_finished = --_files_not_finished;
 
@@ -124,8 +110,7 @@ void Coordinator::FileCompletionCallback(FileHashTask* file)
     SendNotifyMessageW(_window, wnd::WM_USER_ALL_FILES_FINISHED, wnd::k_user_magic_wparam, 0);
 }
 
-void Coordinator::FileProgressCallback(uint64_t size_progress)
-{
+void Coordinator::FileProgressCallback(uint64_t size_progress) {
   if (_size_total == 0)
     return;
 
@@ -134,10 +119,9 @@ void Coordinator::FileProgressCallback(uint64_t size_progress)
   const auto old_part = old_progress * k_progress_resolution / _size_total;
   const auto new_part = new_progress * k_progress_resolution / _size_total;
 
-  if(old_part != new_part)
-  {
-    std::lock_guard guard{ _window_mutex };
-    if(_window)
+  if (old_part != new_part) {
+    std::lock_guard guard{_window_mutex};
+    if (_window)
       SendNotifyMessageW(
         _window,
         wnd::WM_USER_FILE_PROGRESS,
@@ -147,15 +131,13 @@ void Coordinator::FileProgressCallback(uint64_t size_progress)
   }
 }
 
-std::pair<std::wstring, std::wstring> Coordinator::GetSumfileDefaultSavePathAndBaseName()
-{
-  std::wstring name{ L"checksums" };
-  if(_files.files.size() == 1)
-  {
+std::pair<std::wstring, std::wstring> Coordinator::GetSumfileDefaultSavePathAndBaseName() {
+  std::wstring name{L"checksums"};
+  if (_files.files.size() == 1) {
     const auto& file = _files.files.begin()->first;
     const auto file_path = file.c_str();
     const auto file_name = (LPCWSTR)PathFindFileNameW(file_path);
     name = file_name;
   }
-  return { _files.base_path, std::move(name) };
+  return {_files.base_path, std::move(name)};
 }

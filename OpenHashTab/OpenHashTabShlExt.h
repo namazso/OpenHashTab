@@ -16,7 +16,8 @@
 #pragma once
 
 #if defined(_WIN32_WCE) && !defined(_CE_DCOM) && !defined(_CE_ALLOW_SINGLE_THREADED_OBJECTS_IN_MTA)
-#error "Single-threaded COM objects are not properly supported on Windows CE \
+#error \
+  "Single-threaded COM objects are not properly supported on Windows CE \
 platform, such as the Windows Mobile platforms that do not include full DCOM \
 support. Define _CE_ALLOW_SINGLE_THREADED_OBJECTS_IN_MTA to force ATL to \
 support creating single-thread COM object's and allow use of it's \
@@ -27,13 +28,11 @@ DCOM Windows CE platforms."
 
 using namespace ATL;
 
-class ATL_NO_VTABLE COpenHashTabShlExt :
-  public CComObjectRootEx<CComSingleThreadModel>,
-  public CComCoClass<COpenHashTabShlExt, &CLSID_OpenHashTabShlExt>,
-  public IShellExtInit,
-  public IShellPropSheetExt,
-  public IContextMenu
-{
+class ATL_NO_VTABLE COpenHashTabShlExt : public CComObjectRootEx<CComSingleThreadModel>
+    , public CComCoClass<COpenHashTabShlExt, &CLSID_OpenHashTabShlExt>
+    , public IShellExtInit
+    , public IShellPropSheetExt
+    , public IContextMenu {
 protected:
   std::list<std::wstring> _files_raw;
 
@@ -42,53 +41,53 @@ public:
 
   // IShellExtInit
   HRESULT STDMETHODCALLTYPE Initialize(
-    _In_opt_  PCIDLIST_ABSOLUTE folder,
-    _In_opt_  IDataObject*      data,
-    _In_opt_  HKEY              prog_id
+    _In_opt_ PCIDLIST_ABSOLUTE folder,
+    _In_opt_ IDataObject* data,
+    _In_opt_ HKEY prog_id
   ) override;
 
   // IShellPropSheetExt
   HRESULT STDMETHODCALLTYPE AddPages(
-    _In_  LPFNSVADDPROPSHEETPAGE  add_page_proc,
-    _In_  LPARAM                  lparam
+    _In_ LPFNSVADDPROPSHEETPAGE add_page_proc,
+    _In_ LPARAM lparam
   ) override;
 
   HRESULT STDMETHODCALLTYPE ReplacePage(
-    _In_ EXPPS                  page_id,
+    _In_ EXPPS page_id,
     _In_ LPFNSVADDPROPSHEETPAGE replace_with_proc,
-    _In_ LPARAM                 lparam
+    _In_ LPARAM lparam
   ) override;
 
   // IContextMenu
   HRESULT STDMETHODCALLTYPE QueryContextMenu(
-    _In_  HMENU hmenu,
-    _In_  UINT indexMenu,
-    _In_  UINT idCmdFirst,
-    _In_  UINT idCmdLast,
-    _In_  UINT uFlags
+    _In_ HMENU hmenu,
+    _In_ UINT indexMenu,
+    _In_ UINT idCmdFirst,
+    _In_ UINT idCmdLast,
+    _In_ UINT uFlags
   ) override;
 
   HRESULT STDMETHODCALLTYPE InvokeCommand(
-    _In_  CMINVOKECOMMANDINFO* pici
+    _In_ CMINVOKECOMMANDINFO* pici
   ) override;
 
   HRESULT STDMETHODCALLTYPE GetCommandString(
-    _In_  UINT_PTR idCmd,
-    _In_  UINT uType,
-    _Reserved_  UINT* pReserved,
-    _Out_writes_bytes_((uType& GCS_UNICODE) ? (cchMax * sizeof(wchar_t)) : cchMax) _When_(!(uType& (GCS_VALIDATEA | GCS_VALIDATEW)), _Null_terminated_)  CHAR* pszName,
-    _In_  UINT cchMax
+    _In_ UINT_PTR idCmd,
+    _In_ UINT uType,
+    _Reserved_ UINT* pReserved,
+    _Out_writes_bytes_((uType & GCS_UNICODE) ? (cchMax * sizeof(wchar_t)) : cchMax) _When_(!(uType & (GCS_VALIDATEA | GCS_VALIDATEW)), _Null_terminated_) CHAR* pszName,
+    _In_ UINT cchMax
   ) override;
 
-DECLARE_REGISTRY_RESOURCEID(IDR_OPENHASHTABSHLEXT)
+  DECLARE_REGISTRY_RESOURCEID(IDR_OPENHASHTABSHLEXT)
 
-DECLARE_NOT_AGGREGATABLE(COpenHashTabShlExt)
+  DECLARE_NOT_AGGREGATABLE(COpenHashTabShlExt)
 
-BEGIN_COM_MAP(COpenHashTabShlExt)
+  BEGIN_COM_MAP(COpenHashTabShlExt)
   COM_INTERFACE_ENTRY(IShellExtInit)
   COM_INTERFACE_ENTRY(IShellPropSheetExt)
   COM_INTERFACE_ENTRY(IContextMenu)
-END_COM_MAP()
+  END_COM_MAP()
 
   DECLARE_PROTECT_FINAL_CONSTRUCT()
 
@@ -97,7 +96,6 @@ END_COM_MAP()
   void FinalRelease();
 };
 
-class DECLSPEC_UUID("23b5bdd4-7669-42b8-9cdc-beebc8a5baa9")
-    OpenHashTabShlExt;
+class DECLSPEC_UUID("23b5bdd4-7669-42b8-9cdc-beebc8a5baa9") OpenHashTabShlExt;
 
 OBJECT_ENTRY_AUTO(__uuidof(OpenHashTabShlExt), COpenHashTabShlExt)

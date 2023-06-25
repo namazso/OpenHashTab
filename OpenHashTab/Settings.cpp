@@ -17,10 +17,9 @@
 
 #include "utl.h"
 
-constexpr static auto k_reg_path = L"Software\\OpenHashTab";
+static constexpr auto k_reg_path = L"Software\\OpenHashTab";
 
-DWORD detail::GetMachineSettingDWORD(const char* name, DWORD default_value)
-{
+DWORD detail::GetMachineSettingDWORD(const char* name, DWORD default_value) {
   DWORD value;
   DWORD size = sizeof(value);
   const auto status = RegGetValueW(
@@ -35,8 +34,7 @@ DWORD detail::GetMachineSettingDWORD(const char* name, DWORD default_value)
   return status == ERROR_SUCCESS ? value : default_value;
 }
 
-DWORD detail::GetSettingDWORD(const char* name, DWORD default_value)
-{
+DWORD detail::GetSettingDWORD(const char* name, DWORD default_value) {
   DWORD value;
   DWORD size = sizeof(value);
   const auto status = RegGetValueW(
@@ -51,8 +49,7 @@ DWORD detail::GetSettingDWORD(const char* name, DWORD default_value)
   return status == ERROR_SUCCESS ? value : default_value;
 }
 
-void detail::SetSettingDWORD(const char* name, DWORD new_value)
-{
+void detail::SetSettingDWORD(const char* name, DWORD new_value) {
   RegSetKeyValueW(
     HKEY_CURRENT_USER,
     k_reg_path,
@@ -63,8 +60,7 @@ void detail::SetSettingDWORD(const char* name, DWORD new_value)
   );
 }
 
-Settings::Settings()
-{
+Settings::Settings() {
   bool defaults[LegacyHashAlgorithm::k_count]{};
   for (const auto name : {"MD5", "SHA-1", "SHA-256", "SHA-512"})
     defaults[LegacyHashAlgorithm::IdxByName(name)] = true;

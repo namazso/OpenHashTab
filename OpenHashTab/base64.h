@@ -15,8 +15,7 @@
 //    along with OpenHashTab.  If not, see <https://www.gnu.org/licenses/>.
 #pragma once
 
-namespace b64
-{
+namespace b64 {
   std::string encode(const uint8_t* src, size_t len);
   std::vector<uint8_t> decode(const char* str, const size_t len);
 }

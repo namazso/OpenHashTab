@@ -15,41 +15,36 @@
 //    along with OpenHashTab.  If not, see <https://www.gnu.org/licenses/>.
 #include "OpenHashTabShlExt.h"
 
-#include "dllmain.h"
-#include "utl.h"
 #include "Coordinator.h"
+#include "dllmain.h"
 #include "MainDialog.h"
+#include "utl.h"
 
 // COpenHashTabShlExt
 
 HRESULT STDMETHODCALLTYPE COpenHashTabShlExt::Initialize(
-  _In_opt_  PCIDLIST_ABSOLUTE folder,
-  _In_opt_  IDataObject*      data,
-  _In_opt_  HKEY              prog_id
-)
-{
+  _In_opt_ PCIDLIST_ABSOLUTE folder,
+  _In_opt_ IDataObject* data,
+  _In_opt_ HKEY prog_id
+) {
   UNREFERENCED_PARAMETER(folder);
   UNREFERENCED_PARAMETER(prog_id);
 
   // Init the common controls.
-  INITCOMMONCONTROLSEX iccex
-  {
+  INITCOMMONCONTROLSEX iccex{
     sizeof(INITCOMMONCONTROLSEX),
-    ICC_WIN95_CLASSES
-  };
+    ICC_WIN95_CLASSES};
   InitCommonControlsEx(&iccex);
 
   // Read the list of folders from the data object. They're stored in HDROP
   // form, so just get the HDROP handle and then use the drag 'n' drop APIs
   // on it.
-  FORMATETC etc
-  {
+  FORMATETC etc{
     CF_HDROP,
     nullptr,
     DVASPECT_CONTENT,
     -1,
-    TYMED_HGLOBAL
-  };
+    TYMED_HGLOBAL};
   STGMEDIUM stg;
   if (FAILED(data->GetData(&etc, &stg)))
     return E_INVALIDARG;
@@ -57,8 +52,7 @@ HRESULT STDMETHODCALLTYPE COpenHashTabShlExt::Initialize(
   // Get an HDROP handle.
   const auto drop = static_cast<HDROP>(GlobalLock(stg.hGlobal));
 
-  if (!drop)
-  {
+  if (!drop) {
     ReleaseStgMedium(&stg);
     return E_INVALIDARG;
   }
@@ -73,8 +67,7 @@ HRESULT STDMETHODCALLTYPE COpenHashTabShlExt::Initialize(
 
   const auto file_name_buf = std::make_unique<wchar_t[]>(PATHCCH_MAX_CCH);
 
-  for (auto i = 0u; i < file_count; i++)
-  {
+  for (auto i = 0u; i < file_count; i++) {
     // Get the next filename.
     if (0 == DragQueryFileW(drop, i, file_name_buf.get(), static_cast<UINT>(PATHCCH_MAX_CCH)))
       continue;
@@ -93,19 +86,15 @@ HRESULT STDMETHODCALLTYPE COpenHashTabShlExt::Initialize(
   return _files_raw.empty() ? E_FAIL : S_OK;
 }
 
-
-void COpenHashTabShlExt::FinalRelease()
-{
+void COpenHashTabShlExt::FinalRelease() {
 }
-
 
 // IShellPropSheetExt
 
 HRESULT STDMETHODCALLTYPE COpenHashTabShlExt::AddPages(
-  _In_  LPFNSVADDPROPSHEETPAGE  add_page_proc,
-  _In_  LPARAM                  lparam
-)
-{
+  _In_ LPFNSVADDPROPSHEETPAGE add_page_proc,
+  _In_ LPARAM lparam
+) {
   // We shouldn't ever get called with empty files, since Initialize should
   // return failure. So if we somehow do, just don't add any pages.
   assert(!_files_raw.empty());
@@ -126,8 +115,7 @@ HRESULT STDMETHODCALLTYPE COpenHashTabShlExt::AddPages(
 
   const auto hpage = wnd::MakePropPage<PropPageCoordinator, MainDialog>(psp, _files_raw);
 
-  if (hpage)
-  {
+  if (hpage) {
     // Call the shell's callback function, so it adds the page to
     // the property sheet.
     if (!add_page_proc(hpage, lparam))
@@ -138,11 +126,10 @@ HRESULT STDMETHODCALLTYPE COpenHashTabShlExt::AddPages(
 }
 
 HRESULT STDMETHODCALLTYPE COpenHashTabShlExt::ReplacePage(
-  _In_  EXPPS                   page_id,
-  _In_  LPFNSVADDPROPSHEETPAGE  replace_with_proc,
-  _In_  LPARAM                  lparam
-)
-{
+  _In_ EXPPS page_id,
+  _In_ LPFNSVADDPROPSHEETPAGE replace_with_proc,
+  _In_ LPARAM lparam
+) {
   UNREFERENCED_PARAMETER(page_id);
   UNREFERENCED_PARAMETER(replace_with_proc);
   UNREFERENCED_PARAMETER(lparam);
@@ -153,13 +140,12 @@ HRESULT STDMETHODCALLTYPE COpenHashTabShlExt::ReplacePage(
 // IContextMenu
 
 HRESULT COpenHashTabShlExt::QueryContextMenu(
-  _In_  HMENU hmenu,
-  _In_  UINT indexMenu,
-  _In_  UINT idCmdFirst,
-  _In_  UINT idCmdLast,
-  _In_  UINT uFlags
-)
-{
+  _In_ HMENU hmenu,
+  _In_ UINT indexMenu,
+  _In_ UINT idCmdFirst,
+  _In_ UINT idCmdLast,
+  _In_ UINT uFlags
+) {
   // If the flags include CMF_DEFAULTONLY then we shouldn't do anything.
   if (uFlags & CMF_DEFAULTONLY)
     return S_OK;
@@ -180,11 +166,9 @@ HRESULT COpenHashTabShlExt::QueryContextMenu(
 }
 
 HRESULT COpenHashTabShlExt::InvokeCommand(
-  _In_  CMINVOKECOMMANDINFO* pici
-)
-{
-  if(IS_INTRESOURCE(pici->lpVerb) && (UINT)(UINT_PTR)pici->lpVerb == 0)
-  {
+  _In_ CMINVOKECOMMANDINFO* pici
+) {
+  if (IS_INTRESOURCE(pici->lpVerb) && (UINT)(UINT_PTR)pici->lpVerb == 0) {
     const auto coordinator = new WindowedCoordinator(_files_raw);
 
     const auto dialog = wnd::CreateDialogFromChildDialogResourceParam(
@@ -203,19 +187,17 @@ HRESULT COpenHashTabShlExt::InvokeCommand(
 }
 
 HRESULT COpenHashTabShlExt::GetCommandString(
-  _In_  UINT_PTR idCmd,
-  _In_  UINT uType,
-  _Reserved_  UINT* pReserved,
-  _Out_writes_bytes_((uType& GCS_UNICODE) ? (cchMax * sizeof(wchar_t)) : cchMax) _When_(!(uType& (GCS_VALIDATEA | GCS_VALIDATEW)), _Null_terminated_)  CHAR* pszName,
-  _In_  UINT cchMax
-)
-{
+  _In_ UINT_PTR idCmd,
+  _In_ UINT uType,
+  _Reserved_ UINT* pReserved,
+  _Out_writes_bytes_((uType & GCS_UNICODE) ? (cchMax * sizeof(wchar_t)) : cchMax) _When_(!(uType & (GCS_VALIDATEA | GCS_VALIDATEW)), _Null_terminated_) CHAR* pszName,
+  _In_ UINT cchMax
+) {
   // Check idCmd, it must be 0 since we have only one menu item.
   if (0 != idCmd)
     return E_INVALIDARG;
 
-  if (uType == GCS_HELPTEXTW)
-  {
+  if (uType == GCS_HELPTEXTW) {
     wcscpy_s((LPWSTR)pszName, cchMax, L"Is this even displayed anywhere??");
     return S_OK;
   }

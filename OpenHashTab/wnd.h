@@ -16,23 +16,19 @@
 #pragma once
 #include "utl.h"
 
-namespace wnd
-{
+namespace wnd {
   // apparently you can get random WM_USER messages from malfunctioning other apps
   static constexpr auto k_user_magic_wparam = (WPARAM)0x1c725fcfdcbf5843;
 
-  enum UserWindowMessages : UINT
-  {
+  enum UserWindowMessages : UINT {
     WM_USER_ALL_FILES_FINISHED = WM_USER,
     WM_USER_FILE_PROGRESS
   };
 
-#define MAKE_IDC_MEMBER(hwnd, name) HWND _hwnd_ ## name = GetDlgItem(hwnd, IDC_ ## name)
+#define MAKE_IDC_MEMBER(hwnd, name) HWND _hwnd_##name = GetDlgItem(hwnd, IDC_##name)
 
-  class WindowLayoutAdapter
-  {
-    struct ItemInfo
-    {
+  class WindowLayoutAdapter {
+    struct ItemInfo {
       HWND hwnd;
       LONG original_x;
       LONG original_y;
@@ -43,8 +39,7 @@ namespace wnd
       LONG scale_w;
       LONG scale_h;
 
-      ItemInfo(HWND parent, HWND hwnd, const SHORT* ps)
-      {
+      ItemInfo(HWND parent, HWND hwnd, const SHORT* ps) {
         this->hwnd = hwnd;
         RECT rect;
         GetWindowRect(hwnd, &rect);
@@ -59,8 +54,7 @@ namespace wnd
         scale_h = *ps++;
       }
 
-      void Adjust(HDWP hdwp, LONG delta_x, LONG delta_y) const
-      {
+      void Adjust(HDWP hdwp, LONG delta_x, LONG delta_y) const {
         // some elements get angry at negative values
         const auto x = std::max(0l, original_x + delta_x * scale_x / 100);
         const auto y = std::max(0l, original_y + delta_y * scale_y / 100);
@@ -77,8 +71,7 @@ namespace wnd
     LONG original_h;
 
   public:
-    WindowLayoutAdapter(HWND parent, int resid)
-    {
+    WindowLayoutAdapter(HWND parent, int resid) {
       _hwnd = parent;
       RECT rect;
       GetClientRect(parent, &rect);
@@ -93,8 +86,7 @@ namespace wnd
         _info.emplace_back(parent, wnd, pw);
     }
 
-    void Adjust() const
-    {
+    void Adjust() const {
       RECT rect;
       GetClientRect(_hwnd, &rect);
       const auto new_w = rect.right - rect.left;
@@ -108,29 +100,23 @@ namespace wnd
     }
   };
 
-
   // T should be a class handling a dialog, having implemented these:
   //   T(HWND hDlg, void* user_param)
   //     hDlg: the HWND of the dialog, guaranteed to be valid for the lifetime of the object
   //     user_param: parameter passed to the function creating the dialog
   //   INT_PTR DlgProc(UINT uMsg, WPARAM wParam, LPARAM lParam)
   template <typename T>
-  INT_PTR CALLBACK DlgProcClassBinder(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
-  {
+  INT_PTR CALLBACK DlgProcClassBinder(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
     T* p;
-    if (uMsg == WM_INITDIALOG)
-    {
+    if (uMsg == WM_INITDIALOG) {
       p = new T(hDlg, (void*)lParam);
       SetWindowLongPtrW(hDlg, GWLP_USERDATA, (LONG_PTR)p);
-    }
-    else
-    {
+    } else {
       p = (T*)GetWindowLongPtrW(hDlg, GWLP_USERDATA);
     }
     // there are some unimportant messages sent before WM_INITDIALOG
     const INT_PTR ret = p ? p->DlgProc(uMsg, wParam, lParam) : (INT_PTR)FALSE;
-    if (uMsg == WM_NCDESTROY)
-    {
+    if (uMsg == WM_NCDESTROY) {
       delete p;
       // even if we were to somehow receive messages after WM_NCDESTROY make sure we dont call invalid ptr
       SetWindowLongPtrW(hDlg, GWLP_USERDATA, 0);
@@ -138,27 +124,23 @@ namespace wnd
     return ret;
   }
 
-  namespace detail
-  {
+  namespace detail {
     template <typename Dialog>
-    INT_PTR CALLBACK DlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
-    {
+    INT_PTR CALLBACK DlgProc(HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) {
       if (uMsg == WM_INITDIALOG)
         lParam = ((LPPROPSHEETPAGEW)lParam)->lParam;
       return DlgProcClassBinder<Dialog>(hDlg, uMsg, wParam, lParam);
     };
 
     template <typename PropPage>
-    UINT CALLBACK Callback(HWND hwnd, UINT msg, LPPROPSHEETPAGEW ppsp)
-    {
+    UINT CALLBACK Callback(HWND hwnd, UINT msg, LPPROPSHEETPAGEW ppsp) {
       const auto object = (PropPage*)ppsp->lParam;
       UINT ret = 1;
 
-      static const char* const msgname[] = { "ADDREF", "RELEASE", "CREATE" };
+      static const char* const msgname[] = {"ADDREF", "RELEASE", "CREATE"};
       DebugMsg("%s %p object %p ppsp %p\n", msgname[msg], hwnd, object, ppsp->lParam);
 
-      switch (msg)
-      {
+      switch (msg) {
       case PSPCB_ADDREF:
         object->AddRef(hwnd, ppsp);
         break;
@@ -174,7 +156,7 @@ namespace wnd
 
       return ret;
     };
-  }
+  } // namespace detail
 
   // PropPage should have the following functions:
   //   PropPage(args...)
@@ -185,8 +167,7 @@ namespace wnd
   // Dialog should have the functions described in DlgProcClassBinder. Additionally, dialog receives a Coordinator*
   //   as lParam in it's constructor. A dialog may or may not get created for a property sheet during lifetime.
   template <typename PropPage, typename Dialog, typename... Args>
-  HPROPSHEETPAGE MakePropPage(PROPSHEETPAGEW psp, Args&&... args)
-  {
+  HPROPSHEETPAGE MakePropPage(PROPSHEETPAGEW psp, Args&&... args) {
     // Things are generally called in the following order:
     // name           dlg   when
     // -----------------------------------------------
@@ -214,8 +195,7 @@ namespace wnd
     return page;
   }
 
-  enum Match : UINT
-  {
+  enum Match : UINT {
     Match_l = 1 << 0,
     Match_w = 1 << 1,
     Match_wl = 1 << 2,
@@ -229,25 +209,24 @@ namespace wnd
   };
 
   template <typename T>
-  class MessageMatcher
-  {
-    using fn_t = INT_PTR(T::*)(UINT message, WPARAM wparam, LPARAM lparam);
+  class MessageMatcher {
+    using fn_t = INT_PTR (T::*)(UINT message, WPARAM wparam, LPARAM lparam);
 
     fn_t _fn;
     LPARAM _lparam;
     WPARAM _wparam;
     UINT _message;
     UINT _conditions;
+
   public:
     constexpr MessageMatcher(fn_t fn, UINT message, UINT conditions = 0, WPARAM wparam = 0, LPARAM lparam = 0)
-      : _fn(fn)
-      , _lparam(lparam)
-      , _wparam(wparam)
-      , _message(message)
-      , _conditions(conditions) {}
+        : _fn(fn)
+        , _lparam(lparam)
+        , _wparam(wparam)
+        , _message(message)
+        , _conditions(conditions) {}
 
-    bool TryRoute(T* c, UINT message, WPARAM wparam, LPARAM lparam, INT_PTR& ret) const
-    {
+    bool TryRoute(T* c, UINT message, WPARAM wparam, LPARAM lparam, INT_PTR& ret) const {
       if (message != _message)
         return false;
       if (message == WM_NOTIFY)
@@ -263,11 +242,10 @@ namespace wnd
       ret = (c->*_fn)(message, wparam, lparam);
       return true;
     }
-
   };
+
   template <typename T, typename It>
-  FORCEINLINE bool RouteMessage(T* c, It begin, It end, UINT message, WPARAM wparam, LPARAM lparam, INT_PTR& ret)
-  {
+  FORCEINLINE bool RouteMessage(T* c, It begin, It end, UINT message, WPARAM wparam, LPARAM lparam, INT_PTR& ret) {
     // this with the if ladders might look like terrible performance, but in reality as long as the table is constexpr
     // the loop will unroll and the compiler will do compiler magic, to get us to a roughly log2(n) decision tree. Be
     // sure to thank your compiler for it's hard work!
@@ -280,24 +258,23 @@ namespace wnd
   }
 
   inline HWND CreateDialogFromChildDialogResourceParam(
-    _In_opt_  HINSTANCE hInstance,
-    _In_      LPCWSTR   lpTemplateName,
-    _In_opt_  HWND      hWndParent,
-    _In_opt_  DLGPROC   lpDialogFunc,
-    _In_      LPARAM    dwInitParam
-  )
-  {
+    _In_opt_ HINSTANCE hInstance,
+    _In_ LPCWSTR lpTemplateName,
+    _In_opt_ HWND hWndParent,
+    _In_opt_ DLGPROC lpDialogFunc,
+    _In_ LPARAM dwInitParam
+  ) {
     typedef struct {
-      WORD      dlgVer;
-      WORD      signature;
-      DWORD     helpID;
-      DWORD     exStyle;
-      DWORD     style;
-      WORD      cDlgItems;
-      short     x;
-      short     y;
-      short     cx;
-      short     cy;
+      WORD dlgVer;
+      WORD signature;
+      DWORD helpID;
+      DWORD exStyle;
+      DWORD style;
+      WORD cDlgItems;
+      short x;
+      short y;
+      short cx;
+      short cy;
       //sz_Or_Ord menu;
       //sz_Or_Ord windowClass;
       //WCHAR     title[titleLen];
@@ -310,32 +287,24 @@ namespace wnd
 
     HWND hwnd = nullptr;
     const auto hRsrc = FindResourceExW(hInstance, RT_DIALOG, lpTemplateName, 0);
-    if (hRsrc)
-    {
+    if (hRsrc) {
       const auto hGlobal = LoadResource(hInstance, hRsrc);
-      if (hGlobal)
-      {
+      if (hGlobal) {
         const auto pOrigTemplate = static_cast<const DLGTEMPLATEEX*>(LockResource(hGlobal));
-        if (pOrigTemplate)
-        {
+        if (pOrigTemplate) {
           const auto dwSize = SizeofResource(hInstance, hRsrc);
-          if (dwSize)
-          {
+          if (dwSize) {
             const auto pTemplate = static_cast<DLGTEMPLATE*>(malloc(dwSize));
             const auto pTemplateEx = reinterpret_cast<DLGTEMPLATEEX*>(pTemplate);
-            if (pTemplateEx)
-            {
+            if (pTemplateEx) {
               memcpy(pTemplateEx, pOrigTemplate, dwSize);
 
               PDWORD pStyle, pexStyle;
 
-              if (pTemplateEx->signature == 0xFFFF)
-              {
+              if (pTemplateEx->signature == 0xFFFF) {
                 pStyle = &pTemplateEx->style;
                 pexStyle = &pTemplateEx->exStyle;
-              }
-              else
-              {
+              } else {
                 pStyle = &pTemplate->style;
                 pexStyle = &pTemplate->dwExtendedStyle;
               }
@@ -355,4 +324,4 @@ namespace wnd
     return hwnd;
   }
 
-}
+} // namespace wnd

@@ -19,15 +19,14 @@
 
 class Coordinator;
 
-class FileHashTask
-{
+class FileHashTask {
   // Increasing this will make CPU use more efficient,
   // but also increase memory usage
-  constexpr static size_t k_block_size = 2 << 20; // 2 MB
+  static constexpr size_t k_block_size = 2 << 20; // 2 MB
 
   // Increasing this will increase memory use and reduce
   // possibility of a slower disk clogging up the queue
-  constexpr static intptr_t k_max_allocations = 512; // 1 GB
+  static constexpr intptr_t k_max_allocations = 512; // 1 GB
 
   static std::atomic<intptr_t> s_allocations_remaining;
 
@@ -36,18 +35,18 @@ class FileHashTask
   static void BlockFree(uint8_t* p);
 
   static VOID NTAPI HashWorkCallback(
-    _Inout_     PTP_CALLBACK_INSTANCE instance,
-    _Inout_opt_ PVOID                 ctx,
-    _Inout_     PTP_WORK              work
+    _Inout_ PTP_CALLBACK_INSTANCE instance,
+    _Inout_opt_ PVOID ctx,
+    _Inout_ PTP_WORK work
   );
 
   static VOID WINAPI IoCallback(
-    _Inout_     PTP_CALLBACK_INSTANCE instance,
-    _Inout_opt_ PVOID                 ctx,
-    _Inout_opt_ PVOID                 overlapped,
-    _In_        ULONG                 result,
-    _In_        ULONG_PTR             bytes_transferred,
-    _Inout_     PTP_IO                io
+    _Inout_ PTP_CALLBACK_INSTANCE instance,
+    _Inout_opt_ PVOID ctx,
+    _Inout_opt_ PVOID overlapped,
+    _In_ ULONG result,
+    _In_ ULONG_PTR bytes_transferred,
+    _Inout_ PTP_IO io
   );
 
   static void ProcessReadQueue(uint8_t* reuse_block = nullptr);
@@ -78,10 +77,10 @@ class FileHashTask
   uint64_t _file_index;
   uint32_t _volume_serial;
 
-  DWORD _error{ ERROR_SUCCESS };
+  DWORD _error{ERROR_SUCCESS};
 
-  std::atomic<unsigned> _hash_start_counter{ 0 };
-  std::atomic<unsigned> _hash_finish_counter{ 0 };
+  std::atomic<unsigned> _hash_start_counter{0};
+  std::atomic<unsigned> _hash_finish_counter{0};
 
   int _match_state{};
   bool _cancelled{};
@@ -94,7 +93,7 @@ public:
   FileHashTask& operator=(const FileHashTask&) = delete;
   FileHashTask& operator=(FileHashTask&&) = delete;
 
-  FileHashTask(Coordinator* prop_page, const std::wstring& path, const ProcessedFileList::FileInfo& file_info);
+  FileHashTask(Coordinator* prop_page, const std::wstring& path, ProcessedFileList::FileInfo file_info);
 
   // You should only ever delete this object after Finish() was called or StartProcessing() was never called.
   // TODO: check this somehow
@@ -119,8 +118,7 @@ private:
   // This may be the last reference to Coordinator, which then deletes us in destructor.
   void Finish();
 
-  size_t GetCurrentBlockSize() const
-  {
+  size_t GetCurrentBlockSize() const {
     auto size = _file_size - _current_offset;
     if (size > k_block_size)
       size = k_block_size;
@@ -129,23 +127,27 @@ private:
 
 public:
   LPARAM ToLparam(size_t hasher) const { return reinterpret_cast<LPARAM>(&_lparam_idx[hasher]); }
-  static std::pair<FileHashTask*, size_t> FromLparam(LPARAM lparam)
-  {
+
+  static std::pair<FileHashTask*, size_t> FromLparam(LPARAM lparam) {
     const auto lp = reinterpret_cast<const uint8_t*>(lparam);
-    return { CONTAINING_RECORD(lp - *lp, FileHashTask, _lparam_idx), *lp };
+    return {CONTAINING_RECORD(lp - *lp, FileHashTask, _lparam_idx), *lp};
   }
 
   DWORD GetError() const { return _error; }
+
   uint64_t GetSize() const { return _file_size; }
+
   HANDLE GetHandle() const { return _handle; }
+
   const hash_results_t& GetHashResult() const { return _hash_results; }
+
   const std::wstring& GetDisplayName() const { return _file_info.relative_path; }
 
-  enum : int
-  {
+  enum : int {
     MatchState_None = -1,
     MatchState_Mismatch = -2
   };
+
   int GetMatchState() const { return _match_state; }
 
   void SetCancelled() { _cancelled = true; }

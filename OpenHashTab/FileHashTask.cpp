@@ -21,10 +21,8 @@
 
 std::atomic<intptr_t> FileHashTask::s_allocations_remaining = k_max_allocations;
 
-uint8_t* FileHashTask::BlockTryAllocate()
-{
-  if (--s_allocations_remaining >= 0)
-  {
+uint8_t* FileHashTask::BlockTryAllocate() {
+  if (--s_allocations_remaining >= 0) {
     const auto p = VirtualAlloc(
       nullptr,
       k_block_size,
@@ -40,8 +38,7 @@ uint8_t* FileHashTask::BlockTryAllocate()
   return nullptr;
 }
 
-void FileHashTask::BlockReset(uint8_t* p)
-{
+void FileHashTask::BlockReset(uint8_t* p) {
   VirtualAlloc(
     p,
     k_block_size,
@@ -51,8 +48,7 @@ void FileHashTask::BlockReset(uint8_t* p)
   // We don't care about errors
 }
 
-void FileHashTask::BlockFree(uint8_t* p)
-{
+void FileHashTask::BlockFree(uint8_t* p) {
   const auto ret = VirtualFree(p, 0, MEM_RELEASE);
   (void)ret;
   assert(ret);
@@ -60,36 +56,32 @@ void FileHashTask::BlockFree(uint8_t* p)
 }
 
 VOID NTAPI FileHashTask::HashWorkCallback(
-  _Inout_     PTP_CALLBACK_INSTANCE instance,
-  _Inout_opt_ PVOID                 ctx,
-  _Inout_     PTP_WORK              work
-)
-{
+  _Inout_ PTP_CALLBACK_INSTANCE instance,
+  _Inout_opt_ PVOID ctx,
+  _Inout_ PTP_WORK work
+) {
   UNREFERENCED_PARAMETER(instance);
   UNREFERENCED_PARAMETER(work);
   static_cast<FileHashTask*>(ctx)->DoHashRound();
 }
 
 VOID WINAPI FileHashTask::IoCallback(
-  _Inout_     PTP_CALLBACK_INSTANCE instance,
-  _Inout_opt_ PVOID                 ctx,
-  _Inout_opt_ PVOID                 overlapped,
-  _In_        ULONG                 result,
-  _In_        ULONG_PTR             bytes_transferred,
-  _Inout_     PTP_IO                io
-)
-{
+  _Inout_ PTP_CALLBACK_INSTANCE instance,
+  _Inout_opt_ PVOID ctx,
+  _Inout_opt_ PVOID overlapped,
+  _In_ ULONG result,
+  _In_ ULONG_PTR bytes_transferred,
+  _Inout_ PTP_IO io
+) {
   UNREFERENCED_PARAMETER(instance);
   UNREFERENCED_PARAMETER(overlapped);
   UNREFERENCED_PARAMETER(io);
   static_cast<FileHashTask*>(ctx)->OverlappedCompletionRoutine(result, bytes_transferred);
 }
 
-void FileHashTask::ProcessReadQueue(uint8_t* reuse_block)
-{
+void FileHashTask::ProcessReadQueue(uint8_t* reuse_block) {
   FileHashTask* waiting_for_read = nullptr;
-  do
-  {
+  do {
     auto ret = g_read_queue.try_dequeue(waiting_for_read);
     if (!ret)
       break;
@@ -97,22 +89,19 @@ void FileHashTask::ProcessReadQueue(uint8_t* reuse_block)
     reuse_block = nullptr;
     if (!ret)
       break;
-  }
-  while (true);
+  } while (true);
   if (reuse_block)
     BlockFree(reuse_block);
 }
 
-FileHashTask::FileHashTask(Coordinator* prop_page, const std::wstring& path, const ProcessedFileList::FileInfo& file_info)
-  : _hash_contexts{}
-  , _prop_page{ prop_page }
-  , _file_info{ file_info }
-{
+FileHashTask::FileHashTask(Coordinator* prop_page, const std::wstring& path, ProcessedFileList::FileInfo  file_info)
+    : _hash_contexts{}
+    , _prop_page{prop_page}
+    , _file_info{std::move(file_info)} {
   // Instead of exception, set _error because a failed file is still a finished
   // file task. Finish mechanism will trigger on first block read
 
-  for (auto i = 0u; i < LegacyHashAlgorithm::k_count; ++i)
-  {
+  for (auto i = 0u; i < LegacyHashAlgorithm::k_count; ++i) {
     _lparam_idx[i] = static_cast<uint8_t>(i);
     if (_prop_page->settings.algorithms[i])
       _hash_contexts[i] = LegacyHashAlgorithm::Algorithms()[i].MakeContext();
@@ -120,15 +109,13 @@ FileHashTask::FileHashTask(Coordinator* prop_page, const std::wstring& path, con
 
   _handle = utl::OpenForRead(path, true);
 
-  if(_handle == INVALID_HANDLE_VALUE)
-  {
+  if (_handle == INVALID_HANDLE_VALUE) {
     _error = GetLastError();
     return;
   }
 
   BY_HANDLE_FILE_INFORMATION fi;
-  if (!GetFileInformationByHandle(_handle, &fi))
-  {
+  if (!GetFileInformationByHandle(_handle, &fi)) {
     _error = GetLastError();
     return;
   }
@@ -145,8 +132,7 @@ FileHashTask::FileHashTask(Coordinator* prop_page, const std::wstring& path, con
     nullptr
   );
 
-  if (!_threadpool_hash_work)
-  {
+  if (!_threadpool_hash_work) {
     _error = GetLastError();
     return;
   }
@@ -158,35 +144,30 @@ FileHashTask::FileHashTask(Coordinator* prop_page, const std::wstring& path, con
     nullptr
   );
 
-  if(!_threadpool_io)
-  {
+  if (!_threadpool_io) {
     _error = GetLastError();
     return;
   }
 }
 
-FileHashTask::~FileHashTask()
-{
+FileHashTask::~FileHashTask() {
   assert(_block == nullptr);
 
-  if(_handle != INVALID_HANDLE_VALUE)
+  if (_handle != INVALID_HANDLE_VALUE)
     CloseHandle(_handle);
-  if(_threadpool_hash_work)
+  if (_threadpool_hash_work)
     CloseThreadpoolWork(_threadpool_hash_work);
-  if(_threadpool_io)
+  if (_threadpool_io)
     CloseThreadpoolIo(_threadpool_io);
 }
 
-void FileHashTask::StartProcessing()
-{
+void FileHashTask::StartProcessing() {
   _prop_page->Reference();
   ReadBlockAsync();
 }
 
-bool FileHashTask::ReadBlockAsync(uint8_t* reuse_block)
-{
-  if(_error != ERROR_SUCCESS)
-  {
+bool FileHashTask::ReadBlockAsync(uint8_t* reuse_block) {
+  if (_error != ERROR_SUCCESS) {
     if (reuse_block)
       BlockFree(reuse_block);
     Finish();
@@ -194,14 +175,13 @@ bool FileHashTask::ReadBlockAsync(uint8_t* reuse_block)
   }
 
   // Set up OVERLAPPED fields for either reading or enqueueing for read
-  _overlapped.Internal = 0; // reserved
+  _overlapped.Internal = 0;     // reserved
   _overlapped.InternalHigh = 0; // reserved
   _overlapped.Offset = static_cast<DWORD>(_current_offset);
   _overlapped.OffsetHigh = static_cast<DWORD>(_current_offset >> 32);
   //_overlapped.hEvent = this; // for caller use
 
-  if (const auto block = reuse_block ? reuse_block : BlockTryAllocate())
-  {
+  if (const auto block = reuse_block ? reuse_block : BlockTryAllocate()) {
     const auto read_size = static_cast<DWORD>(GetCurrentBlockSize());
 
     StartThreadpoolIo(_threadpool_io);
@@ -229,8 +209,7 @@ bool FileHashTask::ReadBlockAsync(uint8_t* reuse_block)
     BlockFree(block);
 
     // If we got some unknown error don't reschedule, fail instead
-    if (error != ERROR_INVALID_USER_BUFFER && error != ERROR_NOT_ENOUGH_MEMORY)
-    {
+    if (error != ERROR_INVALID_USER_BUFFER && error != ERROR_NOT_ENOUGH_MEMORY) {
       assert(_error);
       _error = error;
       Finish();
@@ -243,8 +222,7 @@ bool FileHashTask::ReadBlockAsync(uint8_t* reuse_block)
   return false;
 }
 
-void FileHashTask::OverlappedCompletionRoutine(ULONG error_code, ULONG_PTR bytes_transferred)
-{
+void FileHashTask::OverlappedCompletionRoutine(ULONG error_code, ULONG_PTR bytes_transferred) {
   UNREFERENCED_PARAMETER(bytes_transferred);
 
   uint8_t* reuse_block = nullptr;
@@ -252,24 +230,20 @@ void FileHashTask::OverlappedCompletionRoutine(ULONG error_code, ULONG_PTR bytes
   if (_cancelled)
     error_code = ERROR_CANCELLED;
 
-  if (error_code != ERROR_SUCCESS)
-  {
+  if (error_code != ERROR_SUCCESS) {
     _error = error_code;
     reuse_block = _block;
     _block = nullptr;
     BlockReset(reuse_block);
     Finish();
-  }
-  else
-  {
+  } else {
     AddToHashQueue();
   }
 
   ProcessReadQueue(reuse_block);
 }
 
-void FileHashTask::AddToHashQueue()
-{
+void FileHashTask::AddToHashQueue() {
   assert(_block);
 
   _hash_start_counter.store(LegacyHashAlgorithm::k_count, std::memory_order_relaxed);
@@ -279,8 +253,7 @@ void FileHashTask::AddToHashQueue()
     SubmitThreadpoolWork(_threadpool_hash_work);
 }
 
-void FileHashTask::DoHashRound()
-{
+void FileHashTask::DoHashRound() {
   const auto ctx_index = --_hash_start_counter;
   auto& ctx = _hash_contexts[ctx_index];
   const auto block_size = GetCurrentBlockSize();
@@ -291,8 +264,7 @@ void FileHashTask::DoHashRound()
     FinishedBlock();
 }
 
-void FileHashTask::FinishedBlock()
-{
+void FileHashTask::FinishedBlock() {
   const auto block_size = GetCurrentBlockSize();
   _prop_page->FileProgressCallback(block_size);
   _current_offset += block_size;
@@ -300,13 +272,10 @@ void FileHashTask::FinishedBlock()
   _block = nullptr;
   BlockReset(reuse_block);
 
-  if (GetCurrentBlockSize() > 0 && !_cancelled)
-  {
+  if (GetCurrentBlockSize() > 0 && !_cancelled) {
     ReadBlockAsync(reuse_block);
     reuse_block = nullptr;
-  }
-  else
-  {
+  } else {
     if (_cancelled)
       _error = ERROR_CANCELLED;
     Finish();
@@ -315,31 +284,26 @@ void FileHashTask::FinishedBlock()
   ProcessReadQueue(reuse_block);
 }
 
-void FileHashTask::Finish()
-{
-  if (!_error)
-  {
+void FileHashTask::Finish() {
+  if (!_error) {
     // If we expect a hash but none match, write no match to all algos
     _match_state = _file_info.expected_hashes.empty() ? MatchState_None : MatchState_Mismatch;
 
-    for (auto i = 0u; i < LegacyHashAlgorithm::k_count; ++i)
-    {
+    for (auto i = 0u; i < LegacyHashAlgorithm::k_count; ++i) {
       auto& it_result = _hash_results[i];
       auto& it_ctx = _hash_contexts[i];
-      if(it_ctx.IsInitialized())
-      {
+      if (it_ctx.IsInitialized()) {
         it_result.resize(it_ctx.GetOutputSize());
         it_ctx.Finish(it_result.data());
       }
 
       // TODO: O(n^2) BABY HERE WE GO
-      for(const auto& expected : _file_info.expected_hashes)
-      if (_match_state != MatchState_None && it_result == expected)
-      {
-        // secure algorithms trump insecure ones
-        if(_match_state == MatchState_Mismatch || !LegacyHashAlgorithm::Algorithms()[_match_state].IsSecure())
-        _match_state = i; // TODO: store all matches somehow
-      }
+      for (const auto& expected : _file_info.expected_hashes)
+        if (_match_state != MatchState_None && it_result == expected) {
+          // secure algorithms trump insecure ones
+          if (_match_state == MatchState_Mismatch || !LegacyHashAlgorithm::Algorithms()[_match_state].IsSecure())
+            _match_state = (int)i; // TODO: store all matches somehow
+        }
     }
   }
 

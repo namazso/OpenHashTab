@@ -26,84 +26,69 @@ auto k_regex_hex = ctre::match<R"(([0-9a-fA-F]{8,512}) [ \*](.+))">;
 auto k_regex_b64 = ctre::match<R"(([0-9a-zA-Z=+\/,\-_]{6,512}) [ \*](.+))">;
 auto k_regex_sfv = ctre::match<R"((.+)\s+([0-9a-fA-F]{8}))">;
 
-class SumFileParser2
-{
-  enum class CommentStyle
-  {
+class SumFileParser2 {
+  enum class CommentStyle {
     Unknown,
     Semicolon,
     Hash
-  } _comment{ CommentStyle::Unknown };
+  } _comment{CommentStyle::Unknown};
 
-  enum class HashStyle
-  {
+  enum class HashStyle {
     Unknown,
     Hex,
     Sfv,
     Base64
-  } _hash{ HashStyle::Unknown };
+  } _hash{HashStyle::Unknown};
 
 public:
   FileSumList files{};
 
-  bool ProcessLine(std::string_view sv)
-  {
+  bool ProcessLine(std::string_view sv) {
     if (sv.find_first_not_of("\r\n\t\f\v ") == std::string_view::npos)
       return true; // empty line
 
-    if ((_comment == CommentStyle::Unknown || _comment == CommentStyle::Hash) && sv[0] == L'#')
-    {
+    if ((_comment == CommentStyle::Unknown || _comment == CommentStyle::Hash) && sv[0] == L'#') {
       _comment = CommentStyle::Hash;
       return true;
     }
 
-    if ((_comment == CommentStyle::Unknown || _comment == CommentStyle::Semicolon) && sv[0] == L';')
-    {
+    if ((_comment == CommentStyle::Unknown || _comment == CommentStyle::Semicolon) && sv[0] == L';') {
       _comment = CommentStyle::Semicolon;
       return true;
     }
 
-    if ((_hash == HashStyle::Unknown || _hash == HashStyle::Sfv))
-    {
-      if(auto [whole, file_match, hash_str] = k_regex_sfv(sv); whole)
-      {
+    if ((_hash == HashStyle::Unknown || _hash == HashStyle::Sfv)) {
+      if (auto [whole, file_match, hash_str] = k_regex_sfv(sv); whole) {
         _hash = HashStyle::Sfv;
         // According to wikipedia delimiter is always space.
         auto file = std::string(file_match);
         const auto notspace = file.find_last_not_of(' ');
         file.resize(notspace == std::string_view::npos ? 0 : notspace + 1);
-        auto hash = utl::HashStringToBytes(std::string_view{ hash_str });
-        if (!hash.empty())
-        {
+        auto hash = utl::HashStringToBytes(std::string_view{hash_str});
+        if (!hash.empty()) {
           files.emplace_back(std::move(file), std::move(hash));
           return true;
         }
       }
     }
 
-    if ((_hash == HashStyle::Unknown || _hash == HashStyle::Hex))
-    {
-      if (auto [whole, hash_str, file] = k_regex_hex(sv); whole)
-      {
+    if ((_hash == HashStyle::Unknown || _hash == HashStyle::Hex)) {
+      if (auto [whole, hash_str, file] = k_regex_hex(sv); whole) {
         _hash = HashStyle::Hex;
-        auto hash = utl::HashStringToBytes(std::string_view{ hash_str });
-        if (!hash.empty())
-        {
+        auto hash = utl::HashStringToBytes(std::string_view{hash_str});
+        if (!hash.empty()) {
           files.emplace_back(file, std::move(hash));
           return true;
         }
       }
     }
 
-    if ((_hash == HashStyle::Unknown || _hash == HashStyle::Base64))
-    {
-      if (auto [whole, hash_match, file] = k_regex_hex(sv); whole)
-      {
+    if ((_hash == HashStyle::Unknown || _hash == HashStyle::Base64)) {
+      if (auto [whole, hash_match, file] = k_regex_hex(sv); whole) {
         _hash = HashStyle::Base64;
         const auto hash_str = std::string(hash_match);
         auto hash = b64::decode(hash_str.c_str(), hash_str.size());
-        if (!hash.empty())
-        {
+        if (!hash.empty()) {
           files.emplace_back(file, std::move(hash));
           return true;
         }
@@ -115,8 +100,7 @@ public:
 };
 
 // Returns error code if reading failed. If the file is not a sumfile or empty success is returned, but output is empty
-DWORD TryParseSumFile(HANDLE h, FileSumList& output)
-{
+DWORD TryParseSumFile(HANDLE h, FileSumList& output) {
   static constexpr auto k_min_sumfile_size = 6; // 6 bytes for base64 CRC
 
   output.clear();
@@ -133,7 +117,8 @@ DWORD TryParseSumFile(HANDLE h, FileSumList& output)
     h,
     nullptr,
     PAGE_READONLY,
-    0, 0,
+    0,
+    0,
     nullptr
   );
 
@@ -143,12 +128,12 @@ DWORD TryParseSumFile(HANDLE h, FileSumList& output)
   const auto address = MapViewOfFile(
     mapping,
     FILE_MAP_READ,
-    0, 0,
+    0,
+    0,
     0
   );
 
-  if (!address)
-  {
+  if (!address) {
     const auto error = GetLastError();
     CloseHandle(mapping);
     return error;
@@ -164,15 +149,13 @@ DWORD TryParseSumFile(HANDLE h, FileSumList& output)
   // special handling files with only a single hash in them
   if (size <= LegacyHashAlgorithm::k_max_size * 2 * 2) // longest hash, hexed, and extra for newlines / spaces
   {
-    const std::string_view sv{ first, (size_t)(last - first) };
+    const std::string_view sv{first, (size_t)(last - first)};
     const auto nwfirst = sv.find_first_not_of("\r\n\t\f\v ");
-    if(nwfirst != std::string_view::npos)
-    {
+    if (nwfirst != std::string_view::npos) {
       const auto nwlast = sv.find_last_not_of("\r\n\t\f\v ");
-      const std::string_view nwsv{ first + nwfirst, nwlast + 1 - nwfirst };
+      const std::string_view nwsv{first + nwfirst, nwlast + 1 - nwfirst};
       auto hash = utl::HashStringToBytes(nwsv);
-      if(!hash.empty())
-      {
+      if (!hash.empty()) {
         output.emplace_back(std::string{}, std::move(hash));
         return ERROR_SUCCESS;
       }
@@ -181,19 +164,16 @@ DWORD TryParseSumFile(HANDLE h, FileSumList& output)
 
   SumFileParser2 sfp;
   auto failed = false;
-  for (auto it = first; it != last;)
-  {
+  for (auto it = first; it != last;) {
     // for CRLF we just accidentally interpret an extra empty line, which is valid in all formats
     const auto newline = std::find_if(it, last, [](char c) { return c == '\n' || c == '\r'; });
     // skip empty line
-    if (newline == it)
-    {
+    if (newline == it) {
       ++it;
       continue;
     }
 
-    if (!sfp.ProcessLine({ it, (size_t)(newline - it) }))
-    {
+    if (!sfp.ProcessLine({it, (size_t)(newline - it)})) {
       failed = true;
       break;
     }
@@ -204,10 +184,8 @@ DWORD TryParseSumFile(HANDLE h, FileSumList& output)
   UnmapViewOfFile(address);
   CloseHandle(mapping);
 
-  for (const auto& file : sfp.files)
-  {
-    if (!file.first.empty() && utl::UTF8ToWide(file.first.c_str()).empty())
-    {
+  for (const auto& file : sfp.files) {
+    if (!file.first.empty() && utl::UTF8ToWide(file.first.c_str()).empty()) {
       failed = true;
       break;
     }

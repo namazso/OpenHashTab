@@ -16,26 +16,24 @@
 #include "virustotal.h"
 
 #include "FileHashTask.h"
+#include "https.h"
+#include "json.h"
 #include "Settings.h"
 #include "stringencrypt.h"
 #include "utl.h"
-#include "https.h"
-#include "json.h"
 
 #include "virustotal_api.h"
 
-bool vt::CheckForToS(Settings* settings, HWND hwnd)
-{
-  if(!settings->virustotal_tos)
-  {
+bool vt::CheckForToS(Settings* settings, HWND hwnd) {
+  if (!settings->virustotal_tos) {
     const auto answer = utl::FormattedMessageBox(
       hwnd,
       ESTRt(L"VirusTotal Terms of Service"),
       MB_YESNO,
       ESTRt(L"The following data will be sent: file path, creation date, hash\r\n"
-      L"You must agree to VirusTotal's terms of service to use this.\r\n"
-      L"The ToS is available at https://www.virustotal.com/about/terms-of-service\r\n"
-      L"Do you agree to the VirusTotal Terms of Service?")
+            L"You must agree to VirusTotal's terms of service to use this.\r\n"
+            L"The ToS is available at https://www.virustotal.com/about/terms-of-service\r\n"
+            L"Do you agree to the VirusTotal Terms of Service?")
     );
 
     if (answer == IDYES)
@@ -44,15 +42,13 @@ bool vt::CheckForToS(Settings* settings, HWND hwnd)
   return settings->virustotal_tos;
 }
 
-std::list<vt::Result> vt::Query(const std::list<FileHashTask*>& files, size_t algo)
-{
+std::list<vt::Result> vt::Query(const std::list<FileHashTask*>& files, size_t algo) {
   std::string query_str;
   {
     std::stringstream query;
     query << "[";
     bool first = true;
-    for (const auto& h : files)
-    {
+    for (const auto& h : files) {
       if (h->GetError() != 0)
         continue;
 
@@ -76,20 +72,24 @@ std::list<vt::Result> vt::Query(const std::list<FileHashTask*>& files, size_t al
         "image_path": "%S",
         "creation_datetime": "%04u-%02u-%02u %02u:%02u:%02u"
         })",
-        hash,
-        h->GetDisplayName().c_str(),
-        st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond
-      );
+                                 hash,
+                                 h->GetDisplayName().c_str(),
+                                 st.wYear,
+                                 st.wMonth,
+                                 st.wDay,
+                                 st.wHour,
+                                 st.wMinute,
+                                 st.wSecond);
     }
     query << "]";
     query_str = query.str();
   }
 
-  const auto user_agent =   ESTR(TEXT(VT_USERAGENT))();
-  const auto server_name =  ESTR(L"www.virustotal.com")();
-  const auto method =       ESTR(L"POST")();
-  const auto uri =          ESTR(L"/partners/sysinternals/file-reports?\x0061\x0070\x0069\x006b\x0065\x0079=" VT_MAGICNUMBERS)();
-  const auto headers =      ESTR(L"Content-Type: application/json\r\n")();
+  const auto user_agent = ESTR(TEXT(VT_USERAGENT))();
+  const auto server_name = ESTR(L"www.virustotal.com")();
+  const auto method = ESTR(L"POST")();
+  const auto uri = ESTR(L"/partners/sysinternals/file-reports?\x0061\x0070\x0069\x006b\x0065\x0079=" VT_MAGICNUMBERS)();
+  const auto headers = ESTR(L"Content-Type: application/json\r\n")();
 
   HTTPRequest r{};
   r.user_agent = user_agent.data();
@@ -102,7 +102,7 @@ std::list<vt::Result> vt::Query(const std::list<FileHashTask*>& files, size_t al
 
   const auto reply = DoHTTPS(r);
 
-  if(reply.error_code)
+  if (reply.error_code)
     throw std::runtime_error(utl::FormatString(
       ESTRt("Error %08X at %d: %s"),
       reply.error_code,
@@ -110,7 +110,7 @@ std::list<vt::Result> vt::Query(const std::list<FileHashTask*>& files, size_t al
       utl::ErrorToString(reply.error_code).c_str()
     ));
 
-  if(reply.http_code != 200)
+  if (reply.http_code != 200)
     throw std::runtime_error(utl::FormatString(
       ESTRt("HTTP Status %d received. Server says: %s"),
       reply.http_code,
@@ -118,17 +118,17 @@ std::list<vt::Result> vt::Query(const std::list<FileHashTask*>& files, size_t al
     ));
 
 
-  json_parser parser{ reply.body.c_str() };
+  json_parser parser{reply.body.c_str()};
   const auto root = parser.root();
 
-  if(!root)
+  if (!root)
     throw std::runtime_error(utl::FormatString(
       ESTRt("JSON parse error. Body: %s"),
       reply.body.c_str()
     ));
 
   const auto j_data = json_getProperty(root, "data");
-  if(!j_data || json_getType(j_data) != JSON_ARRAY)
+  if (!j_data || json_getType(j_data) != JSON_ARRAY)
     throw std::runtime_error(utl::FormatString(
       ESTRt("Malformed reply. Body: %s"),
       reply.body.c_str()
@@ -136,15 +136,12 @@ std::list<vt::Result> vt::Query(const std::list<FileHashTask*>& files, size_t al
 
   auto j_child = json_getChild(j_data);
   std::unordered_map<std::string, Result> result_map;
-  do
-  {
+  do {
     const auto j_found = json_getProperty(j_child, "found");
     const auto j_hash = json_getProperty(j_child, "hash");
-    if(j_found && j_hash && json_getType(j_found) == JSON_BOOLEAN && json_getType(j_hash) == JSON_TEXT)
-    {
+    if (j_found && j_hash && json_getType(j_found) == JSON_BOOLEAN && json_getType(j_hash) == JSON_TEXT) {
       Result res{};
-      if (json_getBoolean(j_found) == true)
-      {
+      if (json_getBoolean(j_found)) {
         res.found = true;
         const auto j_permalink = json_getProperty(j_child, "permalink");
         const auto j_positives = json_getProperty(j_child, "positives");
@@ -164,13 +161,11 @@ std::list<vt::Result> vt::Query(const std::list<FileHashTask*>& files, size_t al
   } while (j_child);
 
   std::list<Result> result;
-  for(const auto f : files)
-  {
+  for (const auto f : files) {
     char hash[LegacyHashAlgorithm::k_max_size * 2 + 1]{};
     utl::HashBytesToString(hash, f->GetHashResult()[algo]);
     const auto res = result_map.find(hash);
-    if(res != end(result_map))
-    {
+    if (res != end(result_map)) {
       auto copy = res->second;
       copy.file = f;
       result.push_back(copy);

@@ -16,19 +16,15 @@
 #include "dllmain.h"
 
 // Used to determine whether the DLL can be unloaded by OLE.
-_Use_decl_annotations_
-STDAPI DllCanUnloadNow()
-{
+_Use_decl_annotations_ STDAPI DllCanUnloadNow() {
   return _AtlModule.DllCanUnloadNow();
 }
 
 // Returns a class factory to create an object of the requested type.
-_Use_decl_annotations_
-STDAPI DllGetClassObject(
-  _In_      REFCLSID  rclsid,
-  _In_      REFIID    riid,
-  _Outptr_  LPVOID*   ppv
-)
-{
+_Use_decl_annotations_ STDAPI DllGetClassObject(
+  _In_ REFCLSID rclsid,
+  _In_ REFIID riid,
+  _Outptr_ LPVOID* ppv
+) {
   return _AtlModule.DllGetClassObject(rclsid, riid, ppv);
 }

@@ -18,12 +18,10 @@
 class FileHashTask;
 struct Settings;
 
-namespace vt
-{
+namespace vt {
   bool CheckForToS(Settings* settings, HWND hwnd);
 
-  struct Result
-  {
+  struct Result {
     std::string permalink;
     FileHashTask* file{};
     int positives{};

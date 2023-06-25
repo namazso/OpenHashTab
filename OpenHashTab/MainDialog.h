@@ -63,7 +63,8 @@ class MainDialog
 
   bool _temporary_status{};
   bool _finished{};
-  bool _inhibit_reformat{};
+  // volatile because reentrancy, and clang-tidy doesn't recognize that
+  volatile bool _inhibit_reformat{};
 
   static INT_PTR CustomDrawListView(LPARAM lparam, HWND list);
 

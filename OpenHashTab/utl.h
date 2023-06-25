@@ -16,8 +16,7 @@
 #pragma once
 
 #ifdef _DEBUG
-inline void DebugMsg(PCSTR fmt, ...)
-{
+inline void DebugMsg(PCSTR fmt, ...) {
   va_list args;
   va_start(args, fmt);
   char text[4096];
@@ -26,30 +25,32 @@ inline void DebugMsg(PCSTR fmt, ...)
   OutputDebugStringA(text);
 }
 #else
-inline void DebugMsg(PCSTR fmt, ...) { }
+inline void DebugMsg(PCSTR fmt, ...) {
+  UNREFERENCED_PARAMETER(fmt);
+}
 #endif
 
-namespace utl
-{
-  inline HINSTANCE GetInstance() { return (HINSTANCE)&__ImageBase; }
+namespace utl {
+  inline HINSTANCE GetInstance() {
+    return (HINSTANCE)&__ImageBase;
+  }
 
   template <typename Char>
-  Char hex(uint8_t n, bool upper = true)
-  {
+  Char hex(uint8_t n, bool upper = true) {
     if (n < 0xA)
       return Char('0') + n;
     return Char(upper ? 'A' : 'a') + (n - 0xA);
-  };
+  }
 
   template <typename Char>
-  uint8_t unhex(Char ch)
-  {
+  uint8_t unhex(Char ch) {
     if (ch >= 0x80 || ch <= 0)
       return 0xFF;
 
     const auto c = (char)ch;
 
-#define TEST_RANGE(c, a, b, offset) if (uint8_t(c) >= uint8_t(a) && uint8_t(c) <= uint8_t(b))\
+#define TEST_RANGE(c, a, b, offset)                         \
+  if (uint8_t(c) >= uint8_t(a) && uint8_t(c) <= uint8_t(b)) \
   return uint8_t(c) - uint8_t(a) + (offset)
 
     TEST_RANGE(c, '0', '9', 0x0);
@@ -59,13 +60,11 @@ namespace utl
 #undef TEST_RANGE
 
     return 0xFF;
-  };
+  }
 
   template <typename Char>
-  void HashBytesToString(Char* str, const std::vector<uint8_t>& hash, bool upper = true)
-  {
-    for (auto b : hash)
-    {
+  void HashBytesToString(Char* str, const std::vector<uint8_t>& hash, bool upper = true) {
+    for (auto b : hash) {
       *str++ = utl::hex<Char>(b >> 4, upper);
       *str++ = utl::hex<Char>(b & 0xF, upper);
     }
@@ -73,16 +72,13 @@ namespace utl
   }
 
   template <typename Char>
-  std::vector<uint8_t> HashStringToBytes(std::basic_string_view<Char> str)
-  {
+  std::vector<uint8_t> HashStringToBytes(std::basic_string_view<Char> str) {
     std::vector<uint8_t> res;
 
-    for (size_t i = 0u; i < str.size() - 1; i += 2)
-    {
-      while (str[i] == ' ')
-      {
+    for (size_t i = 0u; i < str.size() - 1; i += 2) {
+      while (str[i] == ' ') {
         i++;
-        if (!(i < str.size() - 1))
+        if (i >= str.size() - 1)
           break;
       }
       const auto a = utl::unhex<Char>(str[i]);
@@ -97,19 +93,15 @@ namespace utl
   std::vector<uint8_t> FindHashInString(std::wstring_view wv);
 
   template <typename Char>
-  auto FormatStringV(_In_z_ _Printf_format_string_ const Char* fmt, va_list va) -> std::basic_string<Char>
-  {
-    using cfn_t = int(*)(const Char*, va_list);
-    using fn_t = int(*)(Char*, size_t, const Char*, va_list);
+  auto FormatStringV(const _In_z_ _Printf_format_string_ Char* fmt, va_list va) -> std::basic_string<Char> {
+    using cfn_t = int (*)(const Char*, va_list);
+    using fn_t = int (*)(Char*, size_t, const Char*, va_list);
     cfn_t cfn;
     fn_t fn;
-    if constexpr (std::is_same_v<Char, char>)
-    {
+    if constexpr (std::is_same_v<Char, char>) {
       cfn = &_vscprintf;
       fn = &vsprintf_s;
-    }
-    else
-    {
+    } else {
       cfn = &_vscwprintf;
       fn = &vswprintf_s;
     }
@@ -124,8 +116,7 @@ namespace utl
   }
 
   template <typename Char>
-  auto FormatString(_In_z_ _Printf_format_string_ const Char* fmt, ...) -> std::basic_string<Char>
-  {
+  auto FormatString(const _In_z_ _Printf_format_string_ Char* fmt, ...) -> std::basic_string<Char> {
     va_list args;
     va_start(args, fmt);
     auto str = FormatStringV(fmt, args);
@@ -166,9 +157,11 @@ namespace utl
 
   std::pair<const char*, size_t> GetResource(LPCWSTR name, LPCWSTR type);
 
-  struct FontDeleter
-  {
-    void operator()(HFONT hfont) const { if(hfont) DeleteFont(hfont); }
+  struct FontDeleter {
+    void operator()(HFONT hfont) const {
+      if (hfont)
+        DeleteFont(hfont);
+    }
   };
 
   using UniqueFont = std::unique_ptr<std::remove_pointer_t<HFONT>, FontDeleter>;
@@ -179,25 +172,26 @@ namespace utl
 
   int GetDPIScaledPixels(HWND hwnd, int px);
 
-  struct Version
-  {
+  struct Version {
     uint16_t major{};
     uint16_t minor{};
     uint16_t patch{};
 
     constexpr Version(uint16_t major, uint16_t minor, uint16_t patch)
-      : major(major)
-      , minor(minor)
-      , patch(patch) {}
+        : major(major)
+        , minor(minor)
+        , patch(patch) {}
 
     constexpr Version() = default;
 
-    constexpr uint64_t AsNumber() const { return ((uint64_t)major << 32) | ((uint64_t)minor << 16) | patch; }
+    [[nodiscard]] constexpr uint64_t AsNumber() const { return ((uint64_t)major << 32) | ((uint64_t)minor << 16) | patch; }
 
     constexpr bool operator==(const Version& rhs) const { return AsNumber() == rhs.AsNumber(); }
+
     constexpr bool operator<(const Version& rhs) const { return AsNumber() < rhs.AsNumber(); }
+
     constexpr bool operator>(const Version& rhs) const { return AsNumber() > rhs.AsNumber(); }
   };
 
   Version GetLatestVersion();
-}
+} // namespace utl

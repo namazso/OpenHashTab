@@ -15,12 +15,11 @@
 //    along with OpenHashTab.  If not, see <https://www.gnu.org/licenses/>.
 #include "utl.h"
 
-#include "stringencrypt.h"
 #include "https.h"
 #include "json.h"
+#include "stringencrypt.h"
 
-utl::Version utl::GetLatestVersion()
-{
+utl::Version utl::GetLatestVersion() {
   const auto user_agent = ESTR(L"OpenHashTab_Update_Checker")();
   const auto server_name = ESTR(L"api.github.com")();
   const auto method = ESTR(L"GET")();
@@ -52,7 +51,7 @@ utl::Version utl::GetLatestVersion()
     ));
 
 
-  json_parser parser{ reply.body.c_str() };
+  json_parser parser{reply.body.c_str()};
   const auto j_root = parser.root();
 
   if (!j_root)
@@ -64,11 +63,7 @@ utl::Version utl::GetLatestVersion()
   const json_t* j_child;
   const json_t* j_name;
 
-  if (json_getType(j_root) != JSON_ARRAY
-    || !((j_child = json_getChild(j_root)))
-    || json_getType(j_child) != JSON_OBJ
-    || !((j_name = json_getProperty(j_child, "name")))
-    || json_getType(j_name) != JSON_TEXT)
+  if (json_getType(j_root) != JSON_ARRAY || !((j_child = json_getChild(j_root))) || json_getType(j_child) != JSON_OBJ || !((j_name = json_getProperty(j_child, "name"))) || json_getType(j_name) != JSON_TEXT)
     throw std::runtime_error(FormatString(
       ESTRt("Malformed reply. Body: %s"),
       reply.body.c_str()
@@ -76,7 +71,7 @@ utl::Version utl::GetLatestVersion()
 
   const auto ver = json_getValue(j_name);
   Version v{};
-  if(3 != sscanf_s(ver, "v%hu.%hu.%hu", &v.major, &v.minor, &v.patch))
+  if (3 != sscanf_s(ver, "v%hu.%hu.%hu", &v.major, &v.minor, &v.patch))
     throw std::runtime_error(FormatString(
       ESTRt("Malformed version number: %s"),
       ver

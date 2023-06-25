@@ -19,16 +19,15 @@
 class FileHashTask;
 struct Settings;
 
-class Exporter
-{
+class Exporter {
 protected:
   ~Exporter() = default;
 
-  constexpr Exporter() {}
+  constexpr Exporter() = default;
 
 public:
-  virtual const char* GetName() const = 0;
-  virtual const char* GetExtension() const = 0;
+  [[nodiscard]] virtual const char* GetName() const = 0;
+  [[nodiscard]] virtual const char* GetExtension() const = 0;
   virtual bool IsEnabled(Settings* settings) const = 0;
   virtual std::string GetExportString(
     Settings* settings,
@@ -36,6 +35,6 @@ public:
     const std::list<FileHashTask*>& files
   ) const = 0;
 
-  constexpr static auto k_count = LegacyHashAlgorithm::k_count + 2;
-  const static std::array<const Exporter*, k_count> k_exporters;
+  static constexpr auto k_count = LegacyHashAlgorithm::k_count + 2;
+  static const std::array<const Exporter*, k_count> k_exporters;
 };

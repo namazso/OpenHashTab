@@ -18,8 +18,7 @@
 
 #include "Settings.h"
 
-struct ProcessedFileList
-{
+struct ProcessedFileList {
   // -2: not sumfile
   // -1: unknown sumfile
   // 0+: a sumfile belonging to the algorithm given
@@ -30,8 +29,7 @@ struct ProcessedFileList
   // A Win32 path to a directory that supposedly contains all files hashed. Ends with a slash.
   std::wstring base_path;
 
-  struct FileInfo
-  {
+  struct FileInfo {
     // Path relative to base_path, absolute if base_path is not root for the file
     std::wstring relative_path;
 

@@ -14,36 +14,34 @@
 //    You should have received a copy of the GNU General Public License
 //    along with OpenHashTab.  If not, see <https://www.gnu.org/licenses/>.
 #pragma once
-#include <cstdint>
-#include <vector>
-#include <string_view>
 #include <array>
+#include <cstdint>
+#include <string_view>
+#include <vector>
 
 #include "../Algorithms/Hasher2.h"
 
-class LegacyHashAlgorithm
-{
+class LegacyHashAlgorithm {
 public:
-  constexpr static auto k_count = 31;
-  constexpr static auto k_max_size = 66;
+  static constexpr auto k_count = 31;
+  static constexpr auto k_max_size = 66;
 
   using AlgorithmsType = LegacyHashAlgorithm[k_count];
 
   static AlgorithmsType& Algorithms();
 
-  static const LegacyHashAlgorithm* ByName(std::string_view name)
-  {
+  static const LegacyHashAlgorithm* ByName(std::string_view name) {
     for (const auto& algo : Algorithms())
       if (algo.GetName() == name)
         return &algo;
     return nullptr;
   }
-  static int Idx(const LegacyHashAlgorithm* algorithm)
-  {
+
+  static int Idx(const LegacyHashAlgorithm* algorithm) {
     return algorithm ? (int)(algorithm - std::begin(Algorithms())) : -1;
   }
-  static int IdxByName(std::string_view name)
-  {
+
+  static int IdxByName(std::string_view name) {
     return Idx(ByName(name));
   }
 
@@ -72,7 +70,10 @@ public:
   constexpr bool IsSecure() const { return _is_secure; }
 
   constexpr const char* GetName() const { return _name; }
+
   constexpr uint32_t GetSize() const { return _size; }
+
   constexpr const char* const* GetExtensions() const { return _extensions; }
+
   HashBox MakeContext() const;
 };
