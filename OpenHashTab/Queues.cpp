@@ -13,8 +13,6 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with OpenHashTab.  If not, see <https://www.gnu.org/licenses/>.
-#include "stdafx.h"
-
 #include "Queues.h"
 
 moodycamel::ConcurrentQueue<FileHashTask*> g_read_queue;

@@ -1,32 +1,29 @@
 [submodule "concurrentqueue"]
 	path = concurrentqueue
 	url = https://github.com/cameron314/concurrentqueue.git
-[submodule "Algorithms/deps/mbedtls"]
-	path = Algorithms/deps/mbedtls
+[submodule "Algorithms/mbedtls/mbedtls"]
+	path = Algorithms/mbedtls/mbedtls
 	url = https://github.com/ARMmbed/mbedtls.git
-[submodule "langcomp"]
-	path = langcomp
-	url = https://github.com/namazso/langcomp.git
 [submodule "tiny-json"]
 	path = tiny-json
 	url = https://github.com/rafagafe/tiny-json.git
-[submodule "Algorithms/deps/xxHash"]
-	path = Algorithms/deps/xxHash
+[submodule "Algorithms/xxHash/xxHash"]
+	path = Algorithms/xxHash/xxHash
 	url = https://github.com/Cyan4973/xxHash.git
-[submodule "Algorithms/deps/BLAKE3"]
-	path = Algorithms/deps/BLAKE3
+[submodule "Algorithms/BLAKE3/BLAKE3"]
+	path = Algorithms/BLAKE3/BLAKE3
 	url = https://github.com/BLAKE3-team/BLAKE3.git
-[submodule "Algorithms/deps/XKCP"]
-	path = Algorithms/deps/XKCP
+[submodule "Algorithms/XKCP/XKCP"]
+	path = Algorithms/XKCP/XKCP
 	url = https://github.com/XKCP/XKCP.git
-[submodule "Algorithms/deps/streebog"]
-	path = Algorithms/deps/streebog
+[submodule "Algorithms/streebog/streebog"]
+	path = Algorithms/streebog/streebog
 	url = https://github.com/adegtyarev/streebog.git
-[submodule "Algorithms/deps/crc32"]
-	path = Algorithms/deps/crc32
+[submodule "Algorithms/crc32/crc32"]
+	path = Algorithms/crc32/crc32
 	url = https://github.com/stbrumme/crc32.git
-[submodule "Algorithms/deps/QuickXorHash"]
-	path = Algorithms/deps/QuickXorHash
+[submodule "Algorithms/QuickXorHash/QuickXorHash"]
+	path = Algorithms/QuickXorHash/QuickXorHash
 	url = https://github.com/namazso/QuickXorHash.git
 [submodule "compile-time-regular-expressions"]
 	path = compile-time-regular-expressions

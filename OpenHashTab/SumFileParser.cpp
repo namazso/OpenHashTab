@@ -13,8 +13,6 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with OpenHashTab.  If not, see <https://www.gnu.org/licenses/>.
-#include "stdafx.h"
-
 #include "SumFileParser.h"
 
 #include <ctre-unicode.hpp>
@@ -22,7 +20,7 @@
 
 #include "base64.h"
 #include "utl.h"
-#include "../AlgorithmsLoader/Hasher.h"
+#include <Hasher.h>
 
 auto k_regex_hex = ctre::match<R"(([0-9a-fA-F]{8,512}) [ \*](.+))">;
 auto k_regex_b64 = ctre::match<R"(([0-9a-zA-Z=+\/,\-_]{6,512}) [ \*](.+))">;

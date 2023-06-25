@@ -13,16 +13,12 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with OpenHashTab.  If not, see <https://www.gnu.org/licenses/>.
-#include "stdafx.h"
-
 #include "Coordinator.h"
 
 #include "utl.h"
 #include "wnd.h"
 #include "Settings.h"
 #include "FileHashTask.h"
-
-#include <cassert>
 
 Coordinator::Coordinator(std::list<std::wstring> files)
   : _files_raw(std::move(files)) {}

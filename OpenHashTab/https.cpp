@@ -13,13 +13,9 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with OpenHashTab.  If not, see <https://www.gnu.org/licenses/>.
-#include "stdafx.h"
-
 #include "https.h"
 
 #include "stringencrypt.h"
-
-#include <winhttp.h>
 
 struct WinHTTPFunctions
 {

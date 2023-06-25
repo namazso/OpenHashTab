@@ -16,8 +16,6 @@
 #pragma once
 #include "utl.h"
 
-#include <algorithm>
-
 namespace wnd
 {
   // apparently you can get random WM_USER messages from malfunctioning other apps

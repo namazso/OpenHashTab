@@ -45,6 +45,9 @@
 #include <atlbase.h>
 #include <atlcom.h>
 #include <atlctl.h>
+#include <oaidl.h>
+#include <ocidl.h>
+#include <shobjidl.h>
 
 // Windows
 #include <Windows.h>
@@ -53,5 +56,26 @@
 #include <CommCtrl.h>
 #include <VersionHelpers.h>
 #include <PathCch.h>
+#include <winhttp.h>
 
 #undef Unknown
+
+#include <string>
+#include <vector>
+#include <cassert>
+#include <mutex>
+#include <sstream>
+#include <algorithm>
+#include <list>
+#include <atomic>
+#include <memory>
+#include <array>
+#include <xutility>
+#include <unordered_map>
+#include <stdexcept>
+#include <cstdint>
+#include <utility>
+
+EXTERN_C const IID LIBID_OpenHashTabLib;
+EXTERN_C const IID IID_IOpenHashTabShlExt;
+EXTERN_C const IID CLSID_OpenHashTabShlExt;

@@ -13,15 +13,6 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - name: Install Alpine WSLv1
-        uses: Vampire/setup-wsl@v2
-        with:
-          distribution: Alpine
-
-      - name: Install tools on Alpine
-        run: |
-          wsl -d Alpine -u root -- apk add libxslt make
-
       - name: Checkout
         uses: actions/checkout@v3
         with:
@@ -57,69 +48,30 @@ jobs:
           Echo ("version_minor=" + $VersionMinor) >> $Env:GITHUB_OUTPUT;
           Echo ("version_patch=" + $VersionPatch) >> $Env:GITHUB_OUTPUT;
 
-      - name: Set up MSBuild
-        uses: microsoft/setup-msbuild@v1
-
-      - name: Build XKCP
+      - name: Build Algorithms
         run: |
           cd ${{ github.workspace }}
-          cd Algorithms\deps
-          cmd /C build-xkcp.bat
+          .\build_algorithms.ps1
 
-      - name: Build Algorithms (ARM64)
+      - name: Build OpenHashTab
         run: |
-          msbuild AlgorithmsDll.sln /p:Configuration=Release /p:Platform=a64-neon
-
-      - name: Build Algorithms (x86)
-        run: |
-          msbuild AlgorithmsDll.sln /p:Configuration=Release /p:Platform=x86-sse2
-
-      - name: Build Algorithms (x64)
-        run: |
-          msbuild AlgorithmsDll.sln /p:Configuration=Release /p:Platform=x64-sse2
-          msbuild AlgorithmsDll.sln /p:Configuration=Release /p:Platform=x64-avx
-          msbuild AlgorithmsDll.sln /p:Configuration=Release /p:Platform=x64-avx2
-          msbuild AlgorithmsDll.sln /p:Configuration=Release /p:Platform=x64-avx512
-
-      - name: Build Solution (Win32)
-        run: |
-          msbuild "-property:Configuration=Release;Platform=x86;CI_VERSION=${{ steps.checktag.outputs.version }};CI_VERSION_MAJOR=${{ steps.checktag.outputs.version_major }};CI_VERSION_MINOR=${{ steps.checktag.outputs.version_minor }};CI_VERSION_PATCH=${{ steps.checktag.outputs.version_patch }}" OpenHashTab.sln
-
-      - name: Build Solution (x64)
-        run: |
-          msbuild "-property:Configuration=Release;Platform=x64;CI_VERSION=${{ steps.checktag.outputs.version }};CI_VERSION_MAJOR=${{ steps.checktag.outputs.version_major }};CI_VERSION_MINOR=${{ steps.checktag.outputs.version_minor }};CI_VERSION_PATCH=${{ steps.checktag.outputs.version_patch }}" OpenHashTab.sln
-
-      - name: Build Solution (ARM64)
-        run: |
-          msbuild "-property:Configuration=Release;Platform=ARM64;CI_VERSION=${{ steps.checktag.outputs.version }};CI_VERSION_MAJOR=${{ steps.checktag.outputs.version_major }};CI_VERSION_MINOR=${{ steps.checktag.outputs.version_minor }};CI_VERSION_PATCH=${{ steps.checktag.outputs.version_patch }}" OpenHashTab.sln
+          cd ${{ github.workspace }}
+          $Env:CI_VERSION = "${{ steps.checktag.outputs.version }}";
+          $Env:CI_VERSION_MAJOR = "${{ steps.checktag.outputs.version_major }}";
+          $Env:CI_VERSION_MINOR = "${{ steps.checktag.outputs.version_minor }}";
+          $Env:CI_VERSION_PATCH = "${{ steps.checktag.outputs.version_patch }}";
+          .\build_openhashtab.ps1
 
       - name: Build Installer
         run: |
           iscc .\installer.iss -DCI_VERSION="${{ steps.checktag.outputs.version }}" -DCI_VERSION_NUMERIC="${{ steps.checktag.outputs.version_major }}.${{ steps.checktag.outputs.version_minor }}.${{ steps.checktag.outputs.version_patch }}"
 
-      - name: Pack artifacts
-        run: |
-          7z a artifacts.7z .\bin\Release\
-
-      - name: Upload setup
+      - name: Upload Installer
         uses: actions/upload-artifact@v3
         with:
           name: setup
           path: |
             .\OpenHashTab_setup.exe
-
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: artifacts
-          path: |
-            .\artifacts.7z
-
-      - name: Pack release symbols
-        if: ${{ steps.checktag.outputs.is_release == 'yes' }}
-        run: |
-          cd ${{ github.workspace }}
-          7z a symbols.7z .\bin\Release\*\*.pdb
 
       - name: Release
         uses: softprops/action-gh-release@v1

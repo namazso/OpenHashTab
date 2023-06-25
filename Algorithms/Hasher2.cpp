@@ -28,23 +28,23 @@
 #include <mbedtls/ripemd160.h>
 #include "blake2sp.h"
 #include "Hasher2.h"
-#include "deps/crc32/Crc32.h"
-#include "deps/BLAKE3/c/blake3.h"
+#include <Crc32.h>
+#include <blake3.h>
 extern "C" {
 #include "KeccakHash.h"
 #include "KangarooTwelve.h"
 #include "SP800-185.h"
 }
 #include "crc64.h"
-#include "deps/QuickXorHash/quickxorhash.h"
+#include <quickxorhash.h>
 
 #define XXH_STATIC_LINKING_ONLY
 
-#include "deps/xxHash/xxhash.h"
+#include <xxhash.h>
 
 extern "C" {
 #define uint512_u uint512_u_STREEBOG
-#include "deps/streebog/gost3411-2012-core.h"
+#include <gost3411-2012-core.h>
 #undef uint512_u
 }
 
@@ -859,8 +859,11 @@ constexpr HashAlgorithm k_algorithms[] = {
   make_algorithm<QuickXorHashContext>("QuickXorHash", false),
 };
 
-extern "C" __declspec(dllexport) constexpr const HashAlgorithm* k_algorithms_begin = std::begin(k_algorithms);
-extern "C" __declspec(dllexport) constexpr const HashAlgorithm* k_algorithms_end = std::end(k_algorithms);
+constexpr const HashAlgorithm* k_algorithms_begin = std::begin(k_algorithms);
+constexpr const HashAlgorithm* k_algorithms_end = std::end(k_algorithms);
+
+extern "C" const HashAlgorithm* get_algorithms_begin() { return k_algorithms_begin; }
+extern "C" const HashAlgorithm* get_algorithms_end() { return k_algorithms_end; }
 
 /*
 // these are what I found with a quick FTP search

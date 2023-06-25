@@ -15,9 +15,6 @@
 //    along with OpenHashTab.  If not, see <https://www.gnu.org/licenses/>.
 #pragma once
 
-#include <list>
-#include <string>
-
 #include <tiny-json.h>
 
 class json_parser : jsonPool_t

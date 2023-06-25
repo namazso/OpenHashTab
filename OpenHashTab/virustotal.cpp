@@ -13,8 +13,6 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with OpenHashTab.  If not, see <https://www.gnu.org/licenses/>.
-#include "stdafx.h"
-
 #include "virustotal.h"
 
 #include "FileHashTask.h"
@@ -23,9 +21,6 @@
 #include "utl.h"
 #include "https.h"
 #include "json.h"
-
-#include <unordered_map>
-#include <sstream>
 
 #include "virustotal_api.h"
 

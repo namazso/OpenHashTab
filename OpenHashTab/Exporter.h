@@ -14,9 +14,7 @@
 //    You should have received a copy of the GNU General Public License
 //    along with OpenHashTab.  If not, see <https://www.gnu.org/licenses/>.
 #pragma once
-#include "../AlgorithmsLoader/Hasher.h"
-
-#include <list>
+#include <Hasher.h>
 
 class FileHashTask;
 struct Settings;

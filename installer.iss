@@ -51,6 +51,8 @@ VersionInfoProductTextVersion={#CI_VERSION}
 VersionInfoVersion={#CI_VERSION_NUMERIC}
 ChangesAssociations = yes
 UninstallDisplayIcon={app}\OpenHashTab.dll,0
+ArchitecturesAllowed=x64 arm64
+ArchitecturesInstallIn64BitMode=x64 arm64
 
 [Languages]
 Name: "en"; MessagesFile: "compiler:Default.isl"
@@ -82,9 +84,16 @@ Name: "ChineseSimplified"; MessagesFile: "Localization\isl\ChineseSimplified.isl
 Name: "ChineseTraditional"; MessagesFile: "Localization\isl\ChineseTraditional.isl"
 
 [Files]
-Source: "bin\Release\Win32\*.dll"; DestDir: "{app}"; Flags: ignoreversion solidbreak restartreplace 32bit; Check: InstallArch('x86')
-Source: "bin\Release\x64\*.dll";   DestDir: "{app}"; Flags: ignoreversion solidbreak restartreplace 64bit; Check: InstallArch('x64')
-Source: "bin\Release\ARM64\*.dll"; DestDir: "{app}"; Flags: ignoreversion solidbreak restartreplace 64bit; Check: InstallArch('arm64')
+Source: "AlgorithmsDlls\*.dll";                         DestDir: "{app}"; Flags: ignoreversion restartreplace;
+Source: "AlgorithmsDlls\*.pdb";                         DestDir: "{app}"; Flags: ignoreversion restartreplace;
+
+Source: "cmake-openhashtab-x64\OpenHashTab.dll";        DestDir: "{app}"; Flags: ignoreversion restartreplace 64bit; Check: InstallArch('x64')
+Source: "cmake-openhashtab-x64\StandaloneStub.exe";     DestDir: "{app}"; Flags: ignoreversion restartreplace 64bit; Check: InstallArch('x64')
+Source: "cmake-openhashtab-x64\*.pdb";                  DestDir: "{app}"; Flags: ignoreversion restartreplace 64bit; Check: InstallArch('x64')
+
+Source: "cmake-openhashtab-ARM64\OpenHashTab.dll";      DestDir: "{app}"; Flags: ignoreversion restartreplace 64bit; Check: InstallArch('ARM64')
+Source: "cmake-openhashtab-ARM64\StandaloneStub.exe";   DestDir: "{app}"; Flags: ignoreversion restartreplace 64bit; Check: InstallArch('ARM64')
+Source: "cmake-openhashtab-ARM64\*.pdb";                DestDir: "{app}"; Flags: ignoreversion restartreplace 64bit; Check: InstallArch('ARM64')
 
 [CustomMessages]
 GroupDescription=Optional features:

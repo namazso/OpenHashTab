@@ -14,7 +14,6 @@
 //    You should have received a copy of the GNU General Public License
 //    along with OpenHashTab.  If not, see <https://www.gnu.org/licenses/>.
 #pragma once
-#include "OpenHashTab_i.h"
 
 class COpenHashTabModule : public ATL::CAtlDllModuleT<COpenHashTabModule>
 {
