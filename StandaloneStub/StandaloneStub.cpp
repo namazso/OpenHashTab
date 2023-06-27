@@ -1,5 +1,4 @@
 #define WIN32_LEAN_AND_MEAN
-#define VC_EXTRALEAN
 #include <Windows.h>
 
 extern "C" __declspec(dllimport) int APIENTRY StandaloneEntryW(

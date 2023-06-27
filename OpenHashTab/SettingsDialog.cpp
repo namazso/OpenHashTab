@@ -156,7 +156,7 @@ INT_PTR SettingsDialog::DlgProc(UINT uMsg, WPARAM wParam, LPARAM lParam) {
     for (const auto& ctl : s_boxes) {
       const auto ctl_hwnd = GetDlgItem(_hwnd, ctl.control_id);
       Button_SetCheck(ctl_hwnd, _settings->*ctl.setting);
-      SetWindowTextW(ctl_hwnd, utl::GetString(ctl.string_id).c_str());
+      SetWindowTextW(ctl_hwnd, utl::GetString((UINT)ctl.string_id).c_str());
     }
 
     UpdateCheckboxAvailability();
@@ -254,7 +254,7 @@ INT_PTR SettingsDialog::DlgProc(UINT uMsg, WPARAM wParam, LPARAM lParam) {
       const auto pnmlink = (PNMLINK)pnmhdr;
       const auto shell32 = LoadLibraryExW(ESTRt(L"shell32"), nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);
       if (shell32) {
-        const auto pShellExecute = (decltype(&::ShellExecuteW))GetProcAddress(shell32, ESTRt("ShellExecuteW"));
+        const auto pShellExecute = (decltype(&::ShellExecuteW))(void*)GetProcAddress(shell32, ESTRt("ShellExecuteW"));
         if (pShellExecute)
           pShellExecute(nullptr, L"open", pnmlink->item.szUrl, nullptr, nullptr, SW_SHOW);
       }

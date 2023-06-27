@@ -102,6 +102,8 @@ void Coordinator::Cancel(bool wait) {
 }
 
 void Coordinator::FileCompletionCallback(FileHashTask* file) {
+  UNREFERENCED_PARAMETER(file);
+
   std::lock_guard guard{_window_mutex};
 
   const auto not_finished = --_files_not_finished;
@@ -126,7 +128,7 @@ void Coordinator::FileProgressCallback(uint64_t size_progress) {
         _window,
         wnd::WM_USER_FILE_PROGRESS,
         wnd::k_user_magic_wparam,
-        new_part
+        (LPARAM)new_part
       );
   }
 }

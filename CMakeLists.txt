@@ -31,14 +31,6 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 # https://github.com/llvm/llvm-project/issues/63426
 set(CMAKE_RC_FLAGS "-C65001")
 
-add_subdirectory(AlgorithmsDlls)
-
-add_subdirectory(Localization)
-
-add_subdirectory(LegacyAlgorithms)
-
-add_subdirectory(Benchmark)
-
 set(CTRE_BUILD_TESTS OFF)
 set(CTRE_BUILD_PACKAGE OFF)
 add_subdirectory(compile-time-regular-expressions)
@@ -47,6 +39,27 @@ add_subdirectory(concurrentqueue)
 
 add_library(tiny-json STATIC tiny-json/tiny-json.c)
 target_include_directories(tiny-json PUBLIC tiny-json)
+
+add_compile_options(
+        -Wall
+        -Wpedantic
+        -Wno-c++98-compat
+        -Wno-c++98-compat-pedantic
+        -Wno-pre-c++17-compat
+        -Wno-unsafe-buffer-usage
+        -Wno-old-style-cast
+        -Wno-shadow-field-in-constructor
+        -Wno-language-extension-token
+        -Wno-ctad-maybe-unsupported
+)
+
+add_subdirectory(AlgorithmsDlls)
+
+add_subdirectory(Localization)
+
+add_subdirectory(LegacyAlgorithms)
+
+add_subdirectory(Benchmark)
 
 add_subdirectory(OpenHashTab)
 

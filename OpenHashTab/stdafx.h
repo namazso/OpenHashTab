@@ -78,11 +78,21 @@
 #include <sstream>
 #include <stdexcept>
 #include <string>
+#include <string_view>
 #include <unordered_map>
 #include <utility>
 #include <vector>
 #include <xutility>
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wall"
+#include <ctre-unicode.hpp>
+#pragma clang diagnostic pop
+
 EXTERN_C const IID LIBID_OpenHashTabLib;
 EXTERN_C const IID IID_IOpenHashTabShlExt;
 EXTERN_C const IID CLSID_OpenHashTabShlExt;
+
+#undef CONTAINING_RECORD
+#define CONTAINING_RECORD(address, type, field) \
+  ((std::add_pointer_t<type>)((ULONG_PTR)(address)-offsetof(type, field)))

@@ -53,17 +53,23 @@ static CPUFeatureLevel get_cpu_level() {
 #if defined(_M_IX86)
   best = CPU_SSE2;
 #elif defined(_M_X64)
-  int abcd[4];
+  int abcdi[4];
   // Check how many CPUID pages we have
-  __cpuidex(abcd, 0, 0);
-  const auto max_leaves = abcd[0];
+  __cpuidex(abcdi, 0, 0);
+  const auto max_leaves = abcdi[0];
 
   // Shouldn't happen on hardware, but happens on some QEMU configs.
   if (max_leaves == 0)
     return best;
 
   // Check for SSE2, OSXSAVE and xgetbv
-  __cpuidex(abcd, 1, 0);
+  __cpuidex(abcdi, 1, 0);
+
+  uint32_t abcd[4];
+  abcd[0] = (uint32_t)abcdi[0];
+  abcd[1] = (uint32_t)abcdi[1];
+  abcd[2] = (uint32_t)abcdi[2];
+  abcd[3] = (uint32_t)abcdi[3];
 
   // Test for SSE2. The check is redundant on x86_64, but it doesn't hurt.
   if ((abcd[3] & SSE2_CPUID_MASK) != SSE2_CPUID_MASK)
@@ -93,7 +99,11 @@ static CPUFeatureLevel get_cpu_level() {
   best = CPU_AVX;
 
   // CPUID check for AVX2 features
-  __cpuidex(abcd, 7, 0);
+  __cpuidex(abcdi, 7, 0);
+  abcd[0] = (uint32_t)abcdi[0];
+  abcd[1] = (uint32_t)abcdi[1];
+  abcd[2] = (uint32_t)abcdi[2];
+  abcd[3] = (uint32_t)abcdi[3];
 
   // Validate that AVX2 is supported by the CPU
   if ((abcd[1] & AVX2_CPUID_MASK) != AVX2_CPUID_MASK)
@@ -134,7 +144,7 @@ extern "C" const HashAlgorithm* get_algorithms_begin_ARM64();
 extern "C" const HashAlgorithm* get_algorithms_end_ARM64();
 
 #if defined(_M_X64)
-const HashAlgorithm* get_algorithms_begin(CPUFeatureLevel level) {
+static const HashAlgorithm* get_algorithms_begin(CPUFeatureLevel level) {
   switch (level) {
   default:
     return nullptr;
@@ -149,8 +159,11 @@ const HashAlgorithm* get_algorithms_begin(CPUFeatureLevel level) {
   }
 }
 
-const HashAlgorithm* get_algorithms_end(CPUFeatureLevel level) {
+static const HashAlgorithm* get_algorithms_end(CPUFeatureLevel level) {
   switch (level) {
+  case CPU_None:
+  case CPU_NEON:
+  case CPU_MAX:
   default:
     return nullptr;
   case CPU_SSE2:
@@ -166,6 +179,12 @@ const HashAlgorithm* get_algorithms_end(CPUFeatureLevel level) {
 #elif defined(_M_ARM64)
 const HashAlgorithm* get_algorithms_begin(CPUFeatureLevel level) {
   switch (level) {
+  case CPU_None:
+  case CPU_SSE2:
+  case CPU_AVX:
+  case CPU_AVX2:
+  case CPU_AVX512:
+  case CPU_MAX:
   default:
     return nullptr;
   case CPU_NEON:
@@ -184,11 +203,6 @@ const HashAlgorithm* get_algorithms_end(CPUFeatureLevel level) {
 #else
 #error "Unsupported architecture"
 #endif
-
-extern "C" char __ImageBase;
-
-static constexpr size_t k_context_size = 1024;
-static constexpr size_t k_context_align = 64;
 
 struct AlgorithmsDll {
   const HashAlgorithm* algorithms_begin{};

@@ -66,7 +66,7 @@ public:
 class PropPageCoordinator : public Coordinator {
 public:
   using Coordinator::Coordinator;
-  ~PropPageCoordinator() = default;
+  ~PropPageCoordinator() override = default;
 
   void AddRef(HWND, LPPROPSHEETPAGEW) {}
 
@@ -78,7 +78,7 @@ public:
 class StandaloneCoordinator : public Coordinator {
 public:
   using Coordinator::Coordinator;
-  ~StandaloneCoordinator() = default;
+  ~StandaloneCoordinator() override = default;
 
   void UnregisterWindow() override {
     Coordinator::UnregisterWindow();
@@ -89,7 +89,7 @@ public:
 class WindowedCoordinator : public Coordinator {
 public:
   using Coordinator::Coordinator;
-  ~WindowedCoordinator() = default;
+  ~WindowedCoordinator() override = default;
 
   void UnregisterWindow() override {
     Coordinator::UnregisterWindow();

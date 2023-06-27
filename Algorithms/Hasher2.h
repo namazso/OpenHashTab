@@ -141,7 +141,7 @@ public:
   size_t GetOutputSize() const { return _algorithm->_get_output_size_fn(_ctx); }
 };
 
-inline HashBox HashAlgorithm::MakeContext(const uint64_t* params) const
+inline HashBox HashAlgorithm::MakeContext(const uint64_t* params_) const
 {
-  return { *this, params };
+  return { *this, params_ };
 }

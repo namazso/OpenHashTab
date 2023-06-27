@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.14)
 
 project(ShellExtension)
 
-file(GLOB FILES CONFIGURE_DEPENDS *.h *.cpp *.rc *.manifest)
+file(GLOB FILES CONFIGURE_DEPENDS *.cpp *.rc *.manifest)
 
 add_library(OpenHashTab SHARED ${FILES})
 

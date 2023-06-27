@@ -106,7 +106,7 @@ std::string SFVExporter::GetExportString(
   return ss.str();
 }
 
-std::string GetExportStringSumfile(
+static std::string GetExportStringSumfile(
   Settings* settings,
   bool for_clipboard,
   const std::list<FileHashTask*>& files,

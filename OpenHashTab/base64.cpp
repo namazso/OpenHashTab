@@ -69,7 +69,7 @@ static const uint32_t decode_table[256] = {
 
 std::vector<uint8_t> b64::decode(const char* str, const size_t len) {
   const auto p = reinterpret_cast<const uint8_t*>(str);
-  const int pad = len > 0 && (len % 4 || p[len - 1] == '=');
+  const auto pad = len > 0 && (len % 4 || p[len - 1] == '=');
   const auto L = ((len + 3) / 4 - pad) * 4;
   std::vector<uint8_t> vec(L / 4 * 3 + pad, 0);
 

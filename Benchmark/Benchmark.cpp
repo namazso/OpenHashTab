@@ -13,20 +13,19 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with OpenHashTab.  If not, see <https://www.gnu.org/licenses/>.
-#define VC_EXTRALEAN
 #define WIN32_LEAN_AND_MEAN
 
-#include <cassert>
 #include <Windows.h>
+
+#include <cassert>
 #include <random>
 
 #include <Hasher.h>
 
-int main()
-{
-  constexpr static auto k_passes = 20u;
+int main() {
+  static constexpr auto k_passes = 20u;
   // 4 MB so that it fits in (my) L2 cache
-  constexpr static auto k_size = 4ull << 20;
+  static constexpr auto k_size = 4ull << 20;
 
   const auto p = (uint64_t*)VirtualAlloc(
     nullptr,
@@ -35,24 +34,21 @@ int main()
     PAGE_READWRITE
   );
 
-  if (!p)
-  {
+  if (!p) {
     printf("VirtualAlloc failed.");
     return 1;
   }
 
-  std::mt19937_64 engine{ 0 };  // NOLINT(cert-msc51-cpp)
+  std::mt19937_64 engine{0}; // NOLINT(cert-msc51-cpp)
   std::generate_n(p, k_size / sizeof(*p), [&engine] { return engine(); });
 
   LARGE_INTEGER frequency{};
   QueryPerformanceFrequency(&frequency);
 
-  uint64_t measurements[LegacyHashAlgorithm::k_count][k_passes]{};
+  int64_t measurements[LegacyHashAlgorithm::k_count][k_passes]{};
 
-  for (auto i = 0u; i < k_passes; ++i)
-  {
-    for (auto j = 0u; j < LegacyHashAlgorithm::k_count; ++j)
-    {
+  for (auto i = 0u; i < k_passes; ++i) {
+    for (auto j = 0u; j < LegacyHashAlgorithm::k_count; ++j) {
       auto& h = LegacyHashAlgorithm::Algorithms()[j];
       auto ctx = h.MakeContext();
 
@@ -61,7 +57,7 @@ int main()
       QueryPerformanceCounter(&begin);
 
       ctx.Update(p, k_size);
-      uint8_t hash[LegacyHashAlgorithm::k_max_size+4];
+      uint8_t hash[LegacyHashAlgorithm::k_max_size + 4];
 #ifndef NDEBUG
       const auto size = h.GetSize();
       hash[size - 4] = 0xFF;
@@ -101,28 +97,26 @@ int main()
     }
   }
 
-  for (auto i = 0u; i < LegacyHashAlgorithm::k_count; ++i)
-  {
+  for (auto i = 0u; i < LegacyHashAlgorithm::k_count; ++i) {
     auto& h = LegacyHashAlgorithm::Algorithms()[i];
 
     printf("%-16s\t", h.GetName());
 
-    uint64_t sum = 0;
+    int64_t sum = 0;
 
     auto& measurement = measurements[i];
     std::sort(std::begin(measurement), std::end(measurement));
 
-    constexpr static auto skip = (unsigned)(0.2 * k_passes);
-    for (auto j = skip; j < k_passes - skip; ++j)
-    {
+    static constexpr auto skip = (unsigned)(0.2 * k_passes);
+    for (auto j = skip; j < k_passes - skip; ++j) {
       const auto v = measurement[j];
       sum += v;
-      printf("%llu\t", v);
+      printf("%lld\t", v);
     }
 
     const auto avg = (double(sum) / (k_passes - 2 * skip));
 
-    const auto mbps = (double)(k_size * frequency.QuadPart) / avg / (1ull << 20); // MB/s
+    const auto mbps = (double)(k_size * frequency.QuadPart) / avg / (1ll << 20); // MB/s
 
     printf("%.7lf MB/s\n", mbps);
   }

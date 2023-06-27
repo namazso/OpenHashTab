@@ -32,22 +32,23 @@ inline void DebugMsg(PCSTR fmt, ...) {
 
 namespace utl {
   inline HINSTANCE GetInstance() {
-    return (HINSTANCE)&__ImageBase;
+    const auto base = __builtin_assume_aligned((const char*)&__ImageBase, 0x1000);
+    return (HINSTANCE)base;
   }
 
   template <typename Char>
   Char hex(uint8_t n, bool upper = true) {
     if (n < 0xA)
-      return Char('0') + n;
-    return Char(upper ? 'A' : 'a') + (n - 0xA);
+      return (Char)((unsigned)'0' + (unsigned)n);
+    return (Char)((unsigned)(upper ? 'A' : 'a') + ((unsigned)n - 0xA));
   }
 
   template <typename Char>
   uint8_t unhex(Char ch) {
-    if (ch >= 0x80 || ch <= 0)
+    if ((unsigned)ch >= 0x80)
       return 0xFF;
 
-    const auto c = (char)ch;
+    const auto c = (char)(uint8_t)(unsigned)ch;
 
 #define TEST_RANGE(c, a, b, offset)                         \
   if (uint8_t(c) >= uint8_t(a) && uint8_t(c) <= uint8_t(b)) \
@@ -85,7 +86,7 @@ namespace utl {
       const auto b = utl::unhex<Char>(str[i + 1]);
       if (a == 0xFF || b == 0xFF)
         return {}; // invalid
-      res.push_back(a << 4 | b);
+      res.push_back((uint8_t)((unsigned)a << 4 | b));
     }
     return res;
   }
@@ -109,7 +110,7 @@ namespace utl {
     std::basic_string<Char> str;
 
     int len = cfn(fmt, va);
-    str.resize(len);
+    str.resize((size_t)len);
     fn(str.data(), str.size() + 1, fmt, va);
 
     return str;

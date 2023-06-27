@@ -20,7 +20,7 @@
 struct WinHTTPFunctions {
   HMODULE h;
 
-#define FN(name) decltype(&::name) name = (decltype(&::name))GetProcAddress(h, ESTRt(#name))
+#define FN(name) decltype(&::name) name = (decltype(&::name))(void*)GetProcAddress(h, ESTRt(#name))
 
   FN(WinHttpOpen);
   FN(WinHttpConnect);

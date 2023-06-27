@@ -15,7 +15,12 @@
 //    along with OpenHashTab.  If not, see <https://www.gnu.org/licenses/>.
 #pragma once
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wall"
+#pragma clang diagnostic ignored "-Wreserved-macro-identifier"
+#pragma clang diagnostic ignored "-Wzero-as-null-pointer-constant"
 #include <tiny-json.h>
+#pragma clang diagnostic pop
 
 class json_parser : jsonPool_t {
   static json_t* alloc_fn(jsonPool_t* pool) {

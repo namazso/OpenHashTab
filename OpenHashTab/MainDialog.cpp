@@ -493,7 +493,7 @@ INT_PTR MainDialog::OnAllFilesFinished(UINT, WPARAM, LPARAM) {
 }
 
 INT_PTR MainDialog::OnFileProgress(UINT, WPARAM, LPARAM lparam) {
-  SendMessageW(_hwnd_PROGRESS, PBM_SETPOS, lparam, 0);
+  SendMessageW(_hwnd_PROGRESS, PBM_SETPOS, (WPARAM)lparam, 0);
   return FALSE;
 }
 

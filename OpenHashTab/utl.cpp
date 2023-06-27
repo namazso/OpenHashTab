@@ -15,8 +15,6 @@
 //    along with OpenHashTab.  If not, see <https://www.gnu.org/licenses/>.
 #include "utl.h"
 
-#include <ctre-unicode.hpp>
-
 #include "Settings.h"
 
 extern "C" NTSTATUS NTAPI RtlLoadString(
@@ -54,7 +52,7 @@ std::wstring utl::GetString(UINT id) {
     langid_override = detail::GetSettingDWORD("LangIdOverride", 0);
     const auto ntdll = GetModuleHandleW(L"ntdll");
     if (ntdll)
-      pRtlLoadString = (decltype(&RtlLoadString))GetProcAddress(ntdll, "RtlLoadString");
+      pRtlLoadString = (decltype(&RtlLoadString))(void*)GetProcAddress(ntdll, "RtlLoadString");
     once = true;
   }
   PCWCH v{};
@@ -128,7 +126,7 @@ HICON utl::SetIconButton(HWND button, int resource) {
 bool utl::AreFilesTheSame(HANDLE a, HANDLE b) {
   if (const auto kernel32 = GetModuleHandleW(L"kernel32")) {
     using fn_t = decltype(GetFileInformationByHandleEx);
-    if (const auto pfn = reinterpret_cast<fn_t*>(GetProcAddress(kernel32, "GetFileInformationByHandleEx"))) {
+    if (const auto pfn = (fn_t*)(void*)GetProcAddress(kernel32, "GetFileInformationByHandleEx")) {
       struct xFILE_ID_INFO {
         ULONGLONG VolumeSerialNumber;
         FILE_ID_128 FileId;
@@ -232,7 +230,9 @@ std::wstring utl::SaveDialog(HWND hwnd, const wchar_t* defpath, const wchar_t* d
   const auto name = std::make_unique<wchar_t[]>(PATHCCH_MAX_CCH);
   wcscpy_s(name.get(), PATHCCH_MAX_CCH, defname);
 
-  OPENFILENAME of = {sizeof(OPENFILENAME), hwnd};
+  OPENFILENAME of{};
+  of.lStructSize = sizeof(OPENFILENAME);
+  of.hwndOwner = hwnd;
   of.lpstrFile = name.get();
   of.nMaxFile = PATHCCH_MAX_CCH;
   of.lpstrInitialDir = defpath;
