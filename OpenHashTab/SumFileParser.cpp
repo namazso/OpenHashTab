@@ -19,9 +19,9 @@
 #include "utl.h"
 #include <Hasher.h>
 
-static auto k_regex_hex = ctre::match<R"(([0-9a-fA-F]{8,512}) [ \*](.+))">;
-//static auto k_regex_b64 = ctre::match<R"(([0-9a-zA-Z=+\/,\-_]{6,512}) [ \*](.+))">;
-static auto k_regex_sfv = ctre::match<R"((.+)\s+([0-9a-fA-F]{8}))">;
+static auto k_regex_hex = ctre::match<R"(([0-9a-fA-F]{8,512}) [ \*](.++))">;
+static auto k_regex_b64 = ctre::match<R"(([0-9a-zA-Z=+\/,\-_]{6,512}) [ \*](.++))">;
+static auto k_regex_sfv = ctre::match<R"(([^ ]++)\s++([0-9a-fA-F]{8}))">;
 
 class SumFileParser2 {
   enum class CommentStyle {
@@ -81,7 +81,7 @@ public:
     }
 
     if ((_hash == HashStyle::Unknown || _hash == HashStyle::Base64)) {
-      if (auto [whole, hash_match, file] = k_regex_hex(sv); whole) {
+      if (auto [whole, hash_match, file] = k_regex_b64(sv); whole) {
         _hash = HashStyle::Base64;
         const auto hash_str = std::string(hash_match);
         auto hash = b64::decode(hash_str.c_str(), hash_str.size());
