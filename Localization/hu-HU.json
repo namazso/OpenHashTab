@@ -54,6 +54,7 @@
         "INSECURE_GROUP": "Nem biztonságos",
         "UNKNOWN_GROUP": "Ismeretlen",
         "FOREGROUND": "Előtér",
-        "BACKGROUND": "Háttér"
+        "BACKGROUND": "Háttér",
+        "DISPLAY_MONOSPACE": "Hashek megjelenítése monospace betűtípussal"
     }
 }
