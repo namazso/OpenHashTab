@@ -54,6 +54,7 @@
         "INSECURE_GROUP": "Osäker",
         "UNKNOWN_GROUP": "Okänd",
         "FOREGROUND": "Förgrund",
-        "BACKGROUND": "Bakgrund"
+        "BACKGROUND": "Bakgrund",
+        "DISPLAY_MONOSPACE": "Visa hashvärden med monospace teckensnitt"
     }
 }
