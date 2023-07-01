@@ -112,6 +112,9 @@ INT_PTR SettingsDialog::DlgProc(UINT uMsg, WPARAM wParam, LPARAM lParam) {
   const auto pnmhdr = (LPNMHDR)lParam;
   switch (uMsg) {
   case WM_INITDIALOG: {
+    const auto icon = LoadIconW(utl::GetInstance(), MAKEINTRESOURCEW(IDI_ICON_COG));
+    SendMessageW(_hwnd, WM_SETICON, ICON_BIG, (LPARAM)icon);
+
     SetWindowTextW(_hwnd_PROJECT_NAME, L"OpenHashTab " CI_VERSION);
 
     utl::SetWindowTextStringFromTable(_hwnd, IDS_SETTINGS_TITLE);
