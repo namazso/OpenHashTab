@@ -337,11 +337,8 @@ INT_PTR MainDialog::DlgProc(UINT msg, WPARAM wparam, LPARAM lparam) {
 }
 
 INT_PTR MainDialog::OnInitDialog(UINT, WPARAM, LPARAM) {
-  SetClassLongPtrW(
-    _hwnd,
-    GCLP_HICON,
-    reinterpret_cast<LONG_PTR>(LoadIconW(utl::GetInstance(), MAKEINTRESOURCEW(IDI_ICON1)))
-  );
+  const auto icon = LoadIconW(utl::GetInstance(), MAKEINTRESOURCEW(IDI_ICON1));
+  SendMessageW(_hwnd, WM_SETICON, ICON_BIG, (LPARAM)icon);
 
   utl::SetFontForChildren(_hwnd, _font.get());
 
