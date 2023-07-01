@@ -51,6 +51,8 @@
 // Windows
 #include <Windows.h>
 
+#include <winternl.h>
+
 #include <windowsx.h>
 
 #include <atlbase.h>

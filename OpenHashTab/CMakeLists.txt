@@ -12,6 +12,7 @@ target_link_libraries(OpenHashTab PRIVATE
         ctre
         concurrentqueue
         tiny-json
+        ntdll.lib
         )
 
 target_compile_definitions(OpenHashTab PRIVATE

@@ -17,16 +17,62 @@
 
 #include "Settings.h"
 
-extern "C" NTSTATUS NTAPI RtlLoadString(
-  HINSTANCE ImageBase,
-  USHORT StringId,
-  ULONG LangId,
+extern "C" NTSTATUS NTAPI LdrResSearchResource(
+  PVOID ImageBase,
+  PULONG_PTR ResourcePath,
+  ULONG ResourcePathLength,
   ULONG Flags,
-  PCWCH* OutPtr,
-  PUSHORT OutCch,
-  void* unk1,
-  void* unk2
+  PVOID* Resource,
+  PULONG_PTR Size,
+  PVOID Reserved1,
+  PVOID Reserved2
 );
+
+static NTSTATUS load_string(
+  HINSTANCE instance,
+  USHORT string_id,
+  ULONG lang_id,
+  PCWCH* out_ptr,
+  PUSHORT out_cch
+) {
+  *out_ptr = nullptr;
+  *out_cch = 0;
+  ULONG_PTR path[4];
+  path[0] = (ULONG_PTR)RT_STRING;
+  path[1] = ((USHORT)string_id >> 4) + 1;
+  path[2] = lang_id;
+  path[3] = (USHORT)string_id;
+  PVOID resource{};
+  ULONG_PTR size{};
+  NTSTATUS status = LdrResSearchResource(
+    instance,
+    path,
+    4,
+    1,
+    &resource,
+    &size,
+    nullptr,
+    nullptr
+  );
+  if (NT_SUCCESS(status) && resource) {
+    const size_t table_index = string_id & 0xF;
+    const auto words_begin = (PUSHORT)resource;
+    const auto words_end = words_begin + size / sizeof(USHORT);
+    size_t i = 0;
+    for (auto it = words_begin; it < words_end - 1;) {
+      const auto len = *it;
+      it += 1;
+      if (i == table_index) {
+        *out_ptr = (PCWCH)it;
+        *out_cch = len;
+        return STATUS_SUCCESS;
+      }
+      it += len;
+      ++i;
+    }
+  }
+  return status;
+}
 
 std::vector<uint8_t> utl::FindHashInString(std::wstring_view wv) {
   static auto regex = ctre::match<LR"(((?:[0-9A-F]{2} ?)(?:[0-9A-F]{2} ?)(?:[0-9A-F]{2} ?)(?:[0-9A-F]{2} ?)++|(?:[0-9a-f]{2} ?)(?:[0-9a-f]{2} ?)(?:[0-9a-f]{2} ?)(?:[0-9a-f]{2} ?)++))">;
@@ -46,35 +92,9 @@ int utl::FormattedMessageBox(HWND hwnd, LPCWSTR caption, UINT type, _In_z_ _Prin
 
 std::wstring utl::GetString(UINT id) {
   static ULONG langid_override{};
-  static decltype(&RtlLoadString) pRtlLoadString{};
-  static bool once = false;
-  if (!once) {
-    langid_override = detail::GetSettingDWORD("LangIdOverride", 0);
-    const auto ntdll = GetModuleHandleW(L"ntdll");
-    if (ntdll)
-      pRtlLoadString = (decltype(&RtlLoadString))(void*)GetProcAddress(ntdll, "RtlLoadString");
-    once = true;
-  }
   PCWCH v{};
   USHORT len{};
-  if (pRtlLoadString)
-    pRtlLoadString(
-      GetInstance(),
-      (USHORT)id,
-      langid_override,
-      0,
-      &v,
-      &len,
-      nullptr,
-      nullptr
-    );
-  else
-    len = (USHORT)LoadStringW(
-      GetInstance(),
-      id,
-      reinterpret_cast<LPWSTR>(&v),
-      0
-    );
+  load_string(GetInstance(), (USHORT)id, langid_override, &v, &len);
   return {v, v + len};
 }
 
