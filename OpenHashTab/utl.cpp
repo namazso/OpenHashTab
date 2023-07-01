@@ -377,7 +377,7 @@ std::pair<const char*, size_t> utl::GetResource(LPCWSTR name, LPCWSTR type) {
   return {nullptr, 0};
 }
 
-utl::UniqueFont utl::GetDPIScaledFont() {
+utl::UniqueFont utl::GetDPIScaledFont(const wchar_t* face_name) {
   NONCLIENTMETRICS ncm;
   ncm.cbSize = sizeof(ncm);
   SystemParametersInfoW(
@@ -386,7 +386,11 @@ utl::UniqueFont utl::GetDPIScaledFont() {
     &ncm,
     0
   );
-  return {CreateFontIndirectW(&ncm.lfStatusFont), {}};
+  auto font = ncm.lfStatusFont;
+  if (face_name) {
+    wcscpy_s(font.lfFaceName, face_name);
+  }
+  return {CreateFontIndirectW(&font), {}};
 }
 
 void utl::SetFontForChildren(HWND hwnd, HFONT font) {

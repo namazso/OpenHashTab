@@ -31,6 +31,7 @@ struct SettingCheckbox {
 static constexpr SettingCheckbox s_boxes[] =
 {
   { &Settings::display_uppercase,               CTLSTR(DISPLAY_UPPERCASE              ) },
+  { &Settings::display_monospace,               CTLSTR(DISPLAY_MONOSPACE              ) },
   { &Settings::look_for_sumfiles,               CTLSTR(LOOK_FOR_SUMFILES              ) },
   { &Settings::sumfile_uppercase,               CTLSTR(SUMFILE_UPPERCASE              ) },
   { &Settings::sumfile_unix_endings,            CTLSTR(SUMFILE_UNIX_ENDINGS           ) },

@@ -167,7 +167,7 @@ namespace utl {
 
   using UniqueFont = std::unique_ptr<std::remove_pointer_t<HFONT>, FontDeleter>;
 
-  UniqueFont GetDPIScaledFont();
+  UniqueFont GetDPIScaledFont(const wchar_t* face_name = nullptr);
 
   void SetFontForChildren(HWND hwnd, HFONT font);
 

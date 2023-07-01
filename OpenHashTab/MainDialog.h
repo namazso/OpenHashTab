@@ -34,6 +34,7 @@ class MainDialog
 
   HWND _hwnd{};
   utl::UniqueFont _font { utl::GetDPIScaledFont() };
+  utl::UniqueFont _mono_font { utl::GetDPIScaledFont(L"Lucida Console") };
   Coordinator* _prop_page;
   wnd::WindowLayoutAdapter _adapter{ _hwnd, IDD_OPENHASHTAB_PROPPAGE };
 

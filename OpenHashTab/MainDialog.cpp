@@ -119,6 +119,8 @@ INT_PTR MainDialog::CustomDrawListView(LPARAM lparam, HWND list) {
 
   case CDDS_SUBITEM | CDDS_ITEMPREPAINT: //Before a subitem is drawn
   {
+    INT_PTR flags = CDRF_DODEFAULT;
+
     switch (lplvcd->iSubItem) {
     case ColIndex_Hash: {
       const auto index = static_cast<int>(lplvcd->nmcd.dwItemSpec);
@@ -133,16 +135,20 @@ INT_PTR MainDialog::CustomDrawListView(LPARAM lparam, HWND list) {
       const auto dlg = (MainDialog*)GetWindowLongPtrW(GetParent(lplvcd->nmcd.hdr.hwndFrom), GWLP_USERDATA);
 
       if (ColorLine(dlg->_prop_page->settings, lplvcd, color_type))
-        return CDRF_NEWFONT;
+        flags |= CDRF_NEWFONT;
 
-      // fall through for normal color
+      if (dlg->_prop_page->settings.display_monospace.Get()) {
+        SelectObject(lplvcd->nmcd.hdc, dlg->_mono_font.get());
+        flags |= CDRF_NEWFONT;
+      }
+
+      break;
     }
-      [[fallthrough]];
     default:
       break;
     }
 
-    return CDRF_DODEFAULT;
+    return flags;
   }
 
   default:

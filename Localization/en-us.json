@@ -18,6 +18,7 @@
         "ERROR": "Error",
         "CANCEL": "Cancel",
         "DISPLAY_UPPERCASE": "Display hashes in uppercase",
+        "DISPLAY_MONOSPACE": "Display hashes in monospace font",
         "LOOK_FOR_SUMFILES": "Look for sumfiles next to files being hashed",
         "SUMFILE_UPPERCASE": "Export hashes in uppercase",
         "SUMFILE_UNIX_ENDINGS": "Export files with Unix line endings",

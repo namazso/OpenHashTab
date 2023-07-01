@@ -75,6 +75,7 @@ struct Settings {
   RegistrySetting<bool> algorithms[LegacyHashAlgorithm::k_count]{};
 
   RegistrySetting<bool> display_uppercase{"DisplayUppercase", true};
+  RegistrySetting<bool> display_monospace{"DisplayMonospace", true};
   RegistrySetting<bool> look_for_sumfiles{"LookForSumfiles", false};
   RegistrySetting<bool> sumfile_uppercase{"SumfileUppercase", true};
   RegistrySetting<bool> sumfile_unix_endings{"SumfileLF", true};

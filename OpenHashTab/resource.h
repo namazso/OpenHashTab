@@ -63,7 +63,7 @@
 #define IDC_UNKNOWN_FG_CHECK                      262
 #define IDC_UNKNOWN_GROUP                         263
 #define IDC_UNKNOWN_SAMPLE                        264
-#define IDC_UNK_SAMPLE5                           265
+#define IDC_CHECK_DISPLAY_MONOSPACE               265
 
 #define IDD_OPENHASHTAB_PROPPAGE                  300
 #define IDD_SETTINGS                              301
@@ -130,3 +130,4 @@
 #define IDS_UPDATE_NEWEST_TITLE             450
 #define IDS_VT_NOT_FOUND                    451
 #define IDS_VT_NO_COMPATIBLE                452
+#define IDS_DISPLAY_MONOSPACE               453
