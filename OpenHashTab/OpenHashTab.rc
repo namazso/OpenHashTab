@@ -100,12 +100,12 @@ BEGIN
 #define COLORS_W_INNER (COLORS_W_GROUP - MARGIN - MARGIN)
 
 #define MAKEGROUP(name, offset) \
-  GROUPBOX        "",                   IDC_ ## name ## _GROUP,    MUL(COLORS_W, offset) + COLORS_X,        COLORS_Y,       COLORS_W_GROUP,  114 \
+  GROUPBOX        "",                   IDC_ ## name ## _GROUP,    MUL(COLORS_W, offset) + COLORS_X,        COLORS_Y,       COLORS_W_GROUP,  102 \
   AUTOCHECKBOX    "IDS_FOREGROUND",     IDC_ ## name ## _FG_CHECK, MUL(COLORS_W, offset) + COLORS_X_INNER,  COLORS_Y + 12,  COLORS_W_INNER,   12 \
-  PUSHBUTTON      "fg color",           IDC_ ## name ## _FG_BTN,   MUL(COLORS_W, offset) + COLORS_X_INNER,  COLORS_Y + 30,  COLORS_W_INNER,   18 \
-  AUTOCHECKBOX    "IDS_BACKGROUND",     IDC_ ## name ## _BG_CHECK, MUL(COLORS_W, offset) + COLORS_X_INNER,  COLORS_Y + 54,  COLORS_W_INNER,   12 \
-  PUSHBUTTON      "bg color",           IDC_ ## name ## _BG_BTN,   MUL(COLORS_W, offset) + COLORS_X_INNER,  COLORS_Y + 72,  COLORS_W_INNER,   18 \
-  CTEXT           "0123456789ABCDEF",   IDC_ ## name ## _SAMPLE,   MUL(COLORS_W, offset) + COLORS_X_INNER,  COLORS_Y + 96,  COLORS_W_INNER,   12
+  PUSHBUTTON      "fg color",           IDC_ ## name ## _FG_BTN,   MUL(COLORS_W, offset) + COLORS_X_INNER,  COLORS_Y + 24,  COLORS_W_INNER,   18 \
+  AUTOCHECKBOX    "IDS_BACKGROUND",     IDC_ ## name ## _BG_CHECK, MUL(COLORS_W, offset) + COLORS_X_INNER,  COLORS_Y + 48,  COLORS_W_INNER,   12 \
+  PUSHBUTTON      "bg color",           IDC_ ## name ## _BG_BTN,   MUL(COLORS_W, offset) + COLORS_X_INNER,  COLORS_Y + 60,  COLORS_W_INNER,   18 \
+  CTEXT           "0123456789ABCDEF",   IDC_ ## name ## _SAMPLE,   MUL(COLORS_W, offset) + COLORS_X_INNER,  COLORS_Y + 84,  COLORS_W_INNER,   12
 
   MAKEGROUP(UNKNOWN, 0)
   MAKEGROUP(MATCH, 1)
