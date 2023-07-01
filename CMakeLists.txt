@@ -51,6 +51,8 @@ add_compile_options(
         -Wno-shadow-field-in-constructor
         -Wno-language-extension-token
         -Wno-ctad-maybe-unsupported
+        $<$<CONFIG:Debug>:-fsanitize=undefined>
+        $<$<CONFIG:Debug>:-fsanitize-trap>
 )
 
 add_subdirectory(AlgorithmsDlls)
