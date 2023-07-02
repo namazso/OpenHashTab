@@ -91,7 +91,7 @@ int utl::FormattedMessageBox(HWND hwnd, LPCWSTR caption, UINT type, _In_z_ _Prin
 }
 
 std::wstring utl::GetString(UINT id) {
-  static ULONG langid_override{};
+  static ULONG langid_override = detail::GetSettingDWORD("LangIdOverride", 0);
   PCWCH v{};
   USHORT len{};
   load_string(GetInstance(), (USHORT)id, langid_override, &v, &len);
