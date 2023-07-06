@@ -54,6 +54,7 @@
         "INSECURE_GROUP": "Inseguro",
         "UNKNOWN_GROUP": "Desconocido",
         "FOREGROUND": "Primer plano",
-        "BACKGROUND": "Segundo plano"
+        "BACKGROUND": "Segundo plano",
+        "DISPLAY_MONOSPACE": "Mostrar los hash en la fuente monoespaciada"
     }
 }
