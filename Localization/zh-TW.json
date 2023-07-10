@@ -54,6 +54,7 @@
         "ERROR_GROUP": "錯誤",
         "MATCH_GROUP": "符合",
         "MISMATCH_GROUP": "不符",
-        "UNKNOWN_GROUP": "未知"
+        "UNKNOWN_GROUP": "未知",
+        "DISPLAY_MONOSPACE": "以等寬字體顯示哈希值"
     }
 }
