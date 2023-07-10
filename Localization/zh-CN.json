@@ -54,6 +54,7 @@
         "FOREGROUND": "前景",
         "BACKGROUND": "背景",
         "MATCH_GROUP": "匹配",
-        "ERROR_GROUP": "错误"
+        "ERROR_GROUP": "错误",
+        "DISPLAY_MONOSPACE": "使用等宽字体显示哈希"
     }
 }
