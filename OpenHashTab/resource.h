@@ -64,6 +64,7 @@
 #define IDC_UNKNOWN_GROUP                         263
 #define IDC_UNKNOWN_SAMPLE                        264
 #define IDC_CHECK_DISPLAY_MONOSPACE               265
+#define IDC_BUTTON_SUMMARY                        266
 
 #define IDD_OPENHASHTAB_PROPPAGE                  300
 #define IDD_SETTINGS                              301
@@ -71,6 +72,7 @@
 #define IDI_ICON1                                 310
 #define IDI_ICON_COG                              311
 #define IDI_ICON_VT                               312
+#define IDI_ICON_SUM                              313
 
 #define IDM_COPY_EVERYTHING                       320
 #define IDM_COPY_FILE                             321
@@ -131,3 +133,4 @@
 #define IDS_VT_NOT_FOUND                    451
 #define IDS_VT_NO_COMPATIBLE                452
 #define IDS_DISPLAY_MONOSPACE               453
+#define IDS_SUMMARY                         454

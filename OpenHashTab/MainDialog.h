@@ -53,6 +53,7 @@ class MainDialog
   MAKE_IDC_MEMBER(_hwnd, ALGORITHM_LIST);
   MAKE_IDC_MEMBER(_hwnd, PROGRESS);
   MAKE_IDC_MEMBER(_hwnd, BUTTON_VT);
+  MAKE_IDC_MEMBER(_hwnd, BUTTON_SUMMARY);
 
   unsigned _count_error{};
   unsigned _count_match{};
@@ -95,6 +96,7 @@ private:
   INT_PTR OnExportClicked(UINT, WPARAM, LPARAM);
   INT_PTR OnCancelClicked(UINT, WPARAM, LPARAM);
   INT_PTR OnVTClicked(UINT, WPARAM, LPARAM);
+  INT_PTR OnSummaryClicked(UINT, WPARAM, LPARAM);
   INT_PTR OnClose(UINT, WPARAM, LPARAM);
   INT_PTR OnNeedAdjust(UINT, WPARAM, LPARAM);
   INT_PTR OnHashEditChanged(UINT, WPARAM, LPARAM);

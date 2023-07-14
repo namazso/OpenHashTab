@@ -299,17 +299,7 @@ void MainDialog::UpdateDefaultStatus(bool force_reset) {
 
   if (!_temporary_status) {
     const auto msg = _finished ? IDS_DONE : IDS_PROCESSING;
-    wchar_t done[64];
-    swprintf_s(
-      done,
-      L"%s (%u/%u/%u/%u)",
-      utl::GetString(msg).c_str(),
-      _count_match,
-      _count_mismatch,
-      _count_unknown,
-      _count_error
-    );
-    SetWindowTextW(_hwnd_STATIC_PROCESSING, done);
+    SetWindowTextW(_hwnd_STATIC_PROCESSING, utl::GetString(msg).c_str());
   }
 }
 
@@ -331,7 +321,8 @@ INT_PTR MainDialog::DlgProc(UINT msg, WPARAM wparam, LPARAM lparam) {
     { &MainDialog::OnSettingsClicked,   WM_COMMAND, wnd::Match_wlh, MAKELONG(IDC_BUTTON_SETTINGS, BN_CLICKED) },
     { &MainDialog::OnExportClicked,     WM_COMMAND, wnd::Match_wlh, MAKELONG(IDC_BUTTON_EXPORT, BN_CLICKED) },
     { &MainDialog::OnCancelClicked,     WM_COMMAND, wnd::Match_wlh, MAKELONG(IDC_BUTTON_CANCEL, BN_CLICKED) },
-    { &MainDialog::OnVTClicked,         WM_COMMAND, wnd::Match_wlh, MAKELONG(IDC_BUTTON_VT, BN_CLICKED) }
+    { &MainDialog::OnVTClicked,         WM_COMMAND, wnd::Match_wlh, MAKELONG(IDC_BUTTON_VT, BN_CLICKED) },
+    { &MainDialog::OnSummaryClicked,    WM_COMMAND, wnd::Match_wlh, MAKELONG(IDC_BUTTON_SUMMARY, BN_CLICKED) },
   };
   // clang-format on
 
@@ -348,6 +339,7 @@ INT_PTR MainDialog::OnInitDialog(UINT, WPARAM, LPARAM) {
 
   utl::SetFontForChildren(_hwnd, _font.get());
 
+  utl::SetIconButton(_hwnd_BUTTON_SUMMARY, IDI_ICON_SUM);
   utl::SetIconButton(_hwnd_BUTTON_VT, IDI_ICON_VT);
   utl::SetIconButton(_hwnd_BUTTON_SETTINGS, IDI_ICON_COG);
 
@@ -471,6 +463,8 @@ INT_PTR MainDialog::OnAllFilesFinished(UINT, WPARAM, LPARAM) {
 
   if (detail::GetMachineSettingDWORD("ForceDisableVT", 0) == 0)
     Button_Enable(_hwnd_BUTTON_VT, true);
+
+  Button_Enable(_hwnd_BUTTON_SUMMARY, true);
 
   Edit_Enable(_hwnd_EDIT_HASH, true);
 
@@ -617,6 +611,24 @@ INT_PTR MainDialog::OnVTClicked(UINT, WPARAM, LPARAM) {
   }
 
   return FALSE;
+}
+
+INT_PTR MainDialog::OnSummaryClicked(UINT, WPARAM, LPARAM) {
+  wchar_t msg[512];
+  swprintf_s(
+    msg,
+    L"%s: %u\r\n%s: %u\r\n%s: %u\r\n%s: %u",
+    utl::GetString(IDS_MATCH_GROUP).c_str(),
+    _count_match,
+    utl::GetString(IDS_MISMATCH_GROUP).c_str(),
+    _count_mismatch,
+    utl::GetString(IDS_UNKNOWN_GROUP).c_str(),
+    _count_unknown,
+    utl::GetString(IDS_ERROR_GROUP).c_str(),
+    _count_error
+  );
+  MessageBoxW(_hwnd, msg, utl::GetString(IDS_SUMMARY).c_str(), MB_OK);
+  return TRUE;
 }
 
 INT_PTR MainDialog::OnClose(UINT, WPARAM, LPARAM) {

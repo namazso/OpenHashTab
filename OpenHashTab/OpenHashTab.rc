@@ -43,7 +43,8 @@ BEGIN
 
   // First row: is sumfile, processing/done, VT button, Settings button
   LTEXT           "",IDC_STATIC_SUMFILE,6,152,98,12
-  RTEXT           "IDS_PROCESSING",IDC_STATIC_PROCESSING,104,152,80,12
+  RTEXT           "IDS_PROCESSING",IDC_STATIC_PROCESSING,104,152,62,12
+  PUSHBUTTON      "E",IDC_BUTTON_SUMMARY,168,150,16,16,BS_ICON | WS_DISABLED
   PUSHBUTTON      "V",IDC_BUTTON_VT,186,150,16,16,BS_ICON | WS_DISABLED
   PUSHBUTTON      "S",IDC_BUTTON_SETTINGS,204,150,16,16,BS_ICON | WS_DISABLED
 
@@ -158,8 +159,9 @@ END
 // Icon with the lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
 IDI_ICON1               ICON                    "icon.ico"
-IDI_ICON_VT             ICON                    "virustotal_icon.ico"
+IDI_ICON_VT             ICON                    "vt.ico"
 IDI_ICON_COG            ICON                    "cog.ico"
+IDI_ICON_SUM            ICON                    "sum.ico"
 
 VS_VERSION_INFO VERSIONINFO
   FILEVERSION CI_VERSION_MAJOR,CI_VERSION_MINOR,CI_VERSION_PATCH,0
