@@ -55,6 +55,7 @@
         "BACKGROUND": "Drugoplanowy",
         "FOREGROUND": "Pierwszoplanowy",
         "MISMATCH_GROUP": "Niezgodny",
-        "DISPLAY_MONOSPACE": "Wyświetlaj hashe czcionką o stałej szerokości"
+        "DISPLAY_MONOSPACE": "Wyświetlaj hashe czcionką o stałej szerokości",
+        "SUMMARY": "Podsumowanie"
     }
 }
