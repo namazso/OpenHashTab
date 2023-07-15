@@ -54,6 +54,20 @@ static NTSTATUS load_string(
     nullptr,
     nullptr
   );
+  if (status == STATUS_INVALID_PARAMETER_3) {
+    // win7 workaround
+
+    status = LdrResSearchResource(
+      instance,
+      path,
+      3,
+      1,
+      &resource,
+      &size,
+      nullptr,
+      nullptr
+    );
+  }
   if (NT_SUCCESS(status) && resource) {
     const size_t table_index = string_id & 0xF;
     const auto words_begin = (PUSHORT)resource;
