@@ -104,7 +104,7 @@ std::list<vt::Result> vt::Query(const std::list<FileHashTask*>& files, size_t al
 
   if (reply.error_code)
     throw std::runtime_error(utl::FormatString(
-      ESTRt("Error %08X at %d: %s"),
+      ESTRt("Error %08X at %d: %ls"),
       reply.error_code,
       reply.error_location,
       utl::ErrorToString(reply.error_code).c_str()

@@ -37,7 +37,7 @@ utl::Version utl::GetLatestVersion() {
 
   if (reply.error_code)
     throw std::runtime_error(FormatString(
-      ESTRt("Error %08X at %d: %s"),
+      ESTRt("Error %08X at %d: %ls"),
       reply.error_code,
       reply.error_location,
       ErrorToString(reply.error_code).c_str()
