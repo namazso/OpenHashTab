@@ -363,11 +363,20 @@ std::wstring utl::ErrorToString(DWORD error) {
   // FormatMessageW: "This buffer cannot be larger than 64K bytes."
   wstr.resize(64 * 1024 / sizeof(wchar_t));
 
+  HMODULE source = nullptr;
+  DWORD flags = FORMAT_MESSAGE_IGNORE_INSERTS;
+  if (error >= WINHTTP_ERROR_BASE && error < WINHTTP_ERROR_BASE + 1000) {
+    source = GetModuleHandleW(L"winhttp");
+    flags |= FORMAT_MESSAGE_FROM_HMODULE;
+  } else {
+    flags |= FORMAT_MESSAGE_FROM_SYSTEM;
+  }
+
   const auto size = FormatMessageW(
-    FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-    nullptr,
+    flags,
+    source,
     error,
-    MAKELANGID(LANG_USER_DEFAULT, SUBLANG_DEFAULT),
+    0,
     wstr.data(),
     static_cast<DWORD>(wstr.size()),
     nullptr
@@ -375,7 +384,7 @@ std::wstring utl::ErrorToString(DWORD error) {
   wstr.resize(size);
   const auto pos = wstr.find_last_not_of(L"\r\n");
   if (pos != std::wstring::npos)
-    wstr.resize(pos);
+    wstr.resize(pos + 1);
   return wstr;
 }
 
