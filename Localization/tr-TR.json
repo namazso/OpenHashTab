@@ -54,6 +54,8 @@
         "FOREGROUND": "Ön plan",
         "BACKGROUND": "Arka plan",
         "MISMATCH_GROUP": "Eşleşmeyen",
-        "UNKNOWN_GROUP": "Bilinmeyen"
+        "UNKNOWN_GROUP": "Bilinmeyen",
+        "DISPLAY_MONOSPACE": "Sağlama toplamlarını monospace font ile göster",
+        "SUMMARY": "Özet"
     }
 }
