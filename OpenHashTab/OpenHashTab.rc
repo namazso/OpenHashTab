@@ -49,7 +49,7 @@ BEGIN
   PUSHBUTTON      "S",IDC_BUTTON_SETTINGS,204,150,16,16,BS_ICON | WS_DISABLED
 
   // Check against label, vertically aligned to the text, not the buttons
-  LTEXT           "IDS_CHECK_AGAINST",IDC_STATIC_CHECK_AGAINST,6,164,180,12
+  LTEXT           "IDS_CHECK_AGAINST",IDC_STATIC_CHECK_AGAINST,6,164,162,12
   // Check against TextEdit
   EDITTEXT        IDC_EDIT_HASH,6,176,214,14,ES_AUTOHSCROLL | WS_DISABLED
   // Check against result
