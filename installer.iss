@@ -85,16 +85,16 @@ Name: "ChineseSimplified"; MessagesFile: "Localization\isl\ChineseSimplified.isl
 Name: "ChineseTraditional"; MessagesFile: "Localization\isl\ChineseTraditional.isl"
 
 [Files]
-Source: "AlgorithmsDlls\*.dll";                         DestDir: "{app}"; Flags: ignoreversion restartreplace;
-Source: "AlgorithmsDlls\*.pdb";                         DestDir: "{app}"; Flags: ignoreversion restartreplace;
+Source: "AlgorithmsDlls\*.dll";                     DestDir: "{app}"; Flags: ignoreversion restartreplace;
+Source: "AlgorithmsDlls\*.pdb";                     DestDir: "{app}"; Flags: ignoreversion restartreplace;
 
-Source: "cmake-openhashtab-x64\OpenHashTab.dll";        DestDir: "{app}"; Flags: ignoreversion restartreplace 64bit; Check: InstallArch('x64')
-Source: "cmake-openhashtab-x64\StandaloneStub.exe";     DestDir: "{app}"; Flags: ignoreversion restartreplace 64bit; Check: InstallArch('x64')
-Source: "cmake-openhashtab-x64\*.pdb";                  DestDir: "{app}"; Flags: ignoreversion restartreplace 64bit; Check: InstallArch('x64')
+Source: "cmake-openhashtab-x64\OpenHashTab.dll";    DestDir: "{app}"; Flags: ignoreversion restartreplace 64bit; Check: InstallArch('x64')
+Source: "cmake-openhashtab-x64\*.exe";              DestDir: "{app}"; Flags: ignoreversion restartreplace 64bit; Check: InstallArch('x64')
+Source: "cmake-openhashtab-x64\*.pdb";              DestDir: "{app}"; Flags: ignoreversion restartreplace 64bit; Check: InstallArch('x64')
 
-Source: "cmake-openhashtab-ARM64\OpenHashTab.dll";      DestDir: "{app}"; Flags: ignoreversion restartreplace 64bit; Check: InstallArch('ARM64')
-Source: "cmake-openhashtab-ARM64\StandaloneStub.exe";   DestDir: "{app}"; Flags: ignoreversion restartreplace 64bit; Check: InstallArch('ARM64')
-Source: "cmake-openhashtab-ARM64\*.pdb";                DestDir: "{app}"; Flags: ignoreversion restartreplace 64bit; Check: InstallArch('ARM64')
+Source: "cmake-openhashtab-ARM64\OpenHashTab.dll";  DestDir: "{app}"; Flags: ignoreversion restartreplace 64bit; Check: InstallArch('ARM64')
+Source: "cmake-openhashtab-ARM64\*.exe";            DestDir: "{app}"; Flags: ignoreversion restartreplace 64bit; Check: InstallArch('ARM64')
+Source: "cmake-openhashtab-ARM64\*.pdb";            DestDir: "{app}"; Flags: ignoreversion restartreplace 64bit; Check: InstallArch('ARM64')
 
 [CustomMessages]
 GroupDescription=Optional features:
