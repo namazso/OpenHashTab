@@ -85,7 +85,7 @@ std::list<vt::Result> vt::Query(const std::list<FileHashTask*>& files, size_t al
   }
 
   HTTPRequest r{};
-  r.user_agent = TEXT(VT_USERAGENT);
+  r.user_agent = L"" VT_USERAGENT;
   r.server_name = L"www.virustotal.com";
   r.method = L"POST";
   r.uri = L"/partners/sysinternals/file-reports?\x0061\x0070\x0069\x006b\x0065\x0079=" VT_MAGICNUMBERS;

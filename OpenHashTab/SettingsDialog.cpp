@@ -255,7 +255,7 @@ INT_PTR SettingsDialog::DlgProc(UINT uMsg, WPARAM wParam, LPARAM lParam) {
       return TRUE;
     } else if (pnmhdr->idFrom == IDC_PROJECT_LINK && (pnmhdr->code == NM_CLICK || pnmhdr->code == NM_RETURN)) {
       const auto pnmlink = (PNMLINK)pnmhdr;
-      ShellExecute(
+      ShellExecuteW(
         nullptr,
         L"open",
         pnmlink->item.szUrl,
