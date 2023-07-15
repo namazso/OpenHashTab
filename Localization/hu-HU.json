@@ -55,6 +55,7 @@
         "UNKNOWN_GROUP": "Ismeretlen",
         "FOREGROUND": "Előtér",
         "BACKGROUND": "Háttér",
-        "DISPLAY_MONOSPACE": "Hashek megjelenítése monospace betűtípussal"
+        "DISPLAY_MONOSPACE": "Hashek megjelenítése monospace betűtípussal",
+        "SUMMARY": "Összegzés"
     }
 }
