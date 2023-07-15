@@ -19,7 +19,6 @@
 #include "https.h"
 #include "json.h"
 #include "Settings.h"
-#include "stringencrypt.h"
 #include "utl.h"
 
 #include "virustotal_api.h"
@@ -28,12 +27,12 @@ bool vt::CheckForToS(Settings* settings, HWND hwnd) {
   if (!settings->virustotal_tos) {
     const auto answer = utl::FormattedMessageBox(
       hwnd,
-      ESTRt(L"VirusTotal Terms of Service"),
+      L"VirusTotal Terms of Service",
       MB_YESNO,
-      ESTRt(L"The following data will be sent: file path, creation date, hash\r\n"
-            L"You must agree to VirusTotal's terms of service to use this.\r\n"
-            L"The ToS is available at https://www.virustotal.com/about/terms-of-service\r\n"
-            L"Do you agree to the VirusTotal Terms of Service?")
+      L"The following data will be sent: file path, creation date, hash\r\n"
+      L"You must agree to VirusTotal's terms of service to use this.\r\n"
+      L"The ToS is available at https://www.virustotal.com/about/terms-of-service\r\n"
+      L"Do you agree to the VirusTotal Terms of Service?"
     );
 
     if (answer == IDYES)
@@ -85,18 +84,12 @@ std::list<vt::Result> vt::Query(const std::list<FileHashTask*>& files, size_t al
     query_str = query.str();
   }
 
-  const auto user_agent = ESTR(TEXT(VT_USERAGENT))();
-  const auto server_name = ESTR(L"www.virustotal.com")();
-  const auto method = ESTR(L"POST")();
-  const auto uri = ESTR(L"/partners/sysinternals/file-reports?\x0061\x0070\x0069\x006b\x0065\x0079=" VT_MAGICNUMBERS)();
-  const auto headers = ESTR(L"Content-Type: application/json\r\n")();
-
   HTTPRequest r{};
-  r.user_agent = user_agent.data();
-  r.server_name = server_name.data();
-  r.method = method.data();
-  r.uri = uri.data();
-  r.headers = headers.data();
+  r.user_agent = TEXT(VT_USERAGENT);
+  r.server_name = L"www.virustotal.com";
+  r.method = L"POST";
+  r.uri = L"/partners/sysinternals/file-reports?\x0061\x0070\x0069\x006b\x0065\x0079=" VT_MAGICNUMBERS;
+  r.headers = L"Content-Type: application/json\r\n";
   r.body = query_str.c_str();
   r.body_size = static_cast<DWORD>(query_str.size());
 
@@ -104,7 +97,7 @@ std::list<vt::Result> vt::Query(const std::list<FileHashTask*>& files, size_t al
 
   if (reply.error_code)
     throw std::runtime_error(utl::FormatString(
-      ESTRt("Error %08X at %d: %ls"),
+      "Error %08X at %d: %ls",
       reply.error_code,
       reply.error_location,
       utl::ErrorToString(reply.error_code).c_str()
@@ -112,7 +105,7 @@ std::list<vt::Result> vt::Query(const std::list<FileHashTask*>& files, size_t al
 
   if (reply.http_code != 200)
     throw std::runtime_error(utl::FormatString(
-      ESTRt("HTTP Status %d received. Server says: %s"),
+      "HTTP Status %d received. Server says: %s",
       reply.http_code,
       reply.body.c_str()
     ));
@@ -123,14 +116,14 @@ std::list<vt::Result> vt::Query(const std::list<FileHashTask*>& files, size_t al
 
   if (!root)
     throw std::runtime_error(utl::FormatString(
-      ESTRt("JSON parse error. Body: %s"),
+      "JSON parse error. Body: %s",
       reply.body.c_str()
     ));
 
   const auto j_data = json_getProperty(root, "data");
   if (!j_data || json_getType(j_data) != JSON_ARRAY)
     throw std::runtime_error(utl::FormatString(
-      ESTRt("Malformed reply. Body: %s"),
+      "Malformed reply. Body: %s",
       reply.body.c_str()
     ));
 

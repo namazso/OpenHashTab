@@ -16,7 +16,6 @@
 #include "SettingsDialog.h"
 
 #include "Settings.h"
-#include "stringencrypt.h"
 #include "utl.h"
 
 struct SettingCheckbox {
@@ -256,12 +255,14 @@ INT_PTR SettingsDialog::DlgProc(UINT uMsg, WPARAM wParam, LPARAM lParam) {
       return TRUE;
     } else if (pnmhdr->idFrom == IDC_PROJECT_LINK && (pnmhdr->code == NM_CLICK || pnmhdr->code == NM_RETURN)) {
       const auto pnmlink = (PNMLINK)pnmhdr;
-      const auto shell32 = LoadLibraryExW(ESTRt(L"shell32"), nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);
-      if (shell32) {
-        const auto pShellExecute = (decltype(&::ShellExecuteW))(void*)GetProcAddress(shell32, ESTRt("ShellExecuteW"));
-        if (pShellExecute)
-          pShellExecute(nullptr, L"open", pnmlink->item.szUrl, nullptr, nullptr, SW_SHOW);
-      }
+      ShellExecute(
+        nullptr,
+        L"open",
+        pnmlink->item.szUrl,
+        nullptr,
+        nullptr,
+        SW_SHOW
+      );
       return TRUE;
     }
     break;

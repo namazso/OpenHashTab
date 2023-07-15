@@ -13,6 +13,7 @@ target_link_libraries(OpenHashTab PRIVATE
         concurrentqueue
         tiny-json
         ntdll.lib
+        winhttp.lib
         )
 
 target_compile_definitions(OpenHashTab PRIVATE
@@ -32,6 +33,7 @@ target_compile_options(OpenHashTab PRIVATE
 target_link_options(OpenHashTab PRIVATE
         /EXPORT:DllCanUnloadNow
         /EXPORT:DllGetClassObject
+        /DELAYLOAD:winhttp.dll
         )
 
 target_precompile_headers(OpenHashTab PRIVATE stdafx.h)

@@ -22,7 +22,7 @@ foreach (FLAVOR ${FLAVORS})
             PROPERTY IMPORTED_LOCATION "${CMAKE_CURRENT_SOURCE_DIR}/AlgorithmsDll_${FLAVOR}.dll")
     set_property(TARGET "AlgorithmsDll_${FLAVOR}"
             PROPERTY PDB_NAME "${CMAKE_CURRENT_SOURCE_DIR}/AlgorithmsDll_${FLAVOR}.pdb")
-    target_link_options("AlgorithmsDll_${FLAVOR}" INTERFACE "/DELAYLOAD:AlgorithmsDll_${FLAVOR}")
+    target_link_options("AlgorithmsDll_${FLAVOR}" INTERFACE "/DELAYLOAD:AlgorithmsDll_${FLAVOR}.dll")
 
     target_link_libraries(AlgorithmsDlls INTERFACE "AlgorithmsDll_${FLAVOR}")
 endforeach ()
