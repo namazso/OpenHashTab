@@ -86,13 +86,3 @@ jobs:
             .\cmake-openhashtab-ARM64\OpenHashTab.dll
             .\cmake-openhashtab-ARM64\*.exe
             .\cmake-openhashtab-ARM64\*.pdb
-
-      - name: Release
-        uses: softprops/action-gh-release@v1
-        if: ${{ steps.checktag.outputs.is_release == 'yes' }}
-        with:
-          files: |
-            .\OpenHashTab_setup.exe
-          asset_path: .\symbols.7z
-          name: Release ${{ steps.checktag.outputs.version }}
-          prerelease: true
