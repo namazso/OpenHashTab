@@ -73,6 +73,20 @@ jobs:
           path: |
             .\OpenHashTab_setup.exe
 
+      - name: Upload Unpacked
+        uses: actions/upload-artifact@v3
+        with:
+          name: unpacked
+          path: |
+            .\AlgorithmsDlls\*.dll
+            .\AlgorithmsDlls\*.pdb
+            .\cmake-openhashtab-x64\OpenHashTab.dll
+            .\cmake-openhashtab-x64\*.exe
+            .\cmake-openhashtab-x64\*.pdb
+            .\cmake-openhashtab-ARM64\OpenHashTab.dll
+            .\cmake-openhashtab-ARM64\*.exe
+            .\cmake-openhashtab-ARM64\*.pdb
+
       - name: Release
         uses: softprops/action-gh-release@v1
         if: ${{ steps.checktag.outputs.is_release == 'yes' }}
