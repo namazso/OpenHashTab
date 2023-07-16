@@ -54,7 +54,7 @@ ChangesAssociations=yes
 UninstallDisplayIcon={app}\OpenHashTab.dll,0
 ArchitecturesAllowed=x64 arm64
 ArchitecturesInstallIn64BitMode=x64 arm64
-#ifndef SIGN
+#ifdef SIGN
 SignTool=signtool $f
 SignedUninstaller=yes
 #endif
