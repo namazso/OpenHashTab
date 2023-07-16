@@ -158,14 +158,22 @@ namespace utl {
 
   std::pair<const char*, size_t> GetResource(LPCWSTR name, LPCWSTR type);
 
-  struct FontDeleter {
-    void operator()(HFONT hfont) const {
-      if (hfont)
-        DeleteFont(hfont);
+  struct GdiObjectDeleter {
+    void operator()(HGDIOBJ hobj) const {
+      if (hobj)
+        DeleteObject(hobj);
     }
   };
 
-  using UniqueFont = std::unique_ptr<std::remove_pointer_t<HFONT>, FontDeleter>;
+  template <typename T>
+  using UniqueObject = std::unique_ptr<std::remove_pointer_t<T>, GdiObjectDeleter>;
+
+  using UniquePen = UniqueObject<HPEN>;
+  using UniqueBrush = UniqueObject<HBRUSH>;
+  using UniqueRgn = UniqueObject<HRGN>;
+  using UniquePalette = UniqueObject<HPALETTE>;
+  using UniqueFont = UniqueObject<HFONT>;
+  using UniqueBitmap = UniqueObject<HBITMAP>;
 
   UniqueFont GetDPIScaledFont(const wchar_t* face_name = nullptr);
 

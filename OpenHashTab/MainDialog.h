@@ -14,6 +14,7 @@
 //    You should have received a copy of the GNU General Public License
 //    along with OpenHashTab.  If not, see <https://www.gnu.org/licenses/>.
 #pragma once
+#include "hash_colors.h"
 #include "utl.h"
 #include "wnd.h"
 
@@ -65,6 +66,8 @@ class MainDialog {
   bool _finished{};
   // volatile because reentrancy, and clang-tidy doesn't recognize that
   volatile bool _inhibit_reformat{};
+  HashColorType _check_against_color{HashColorType::Unknown};
+  utl::UniqueBrush _check_against_brush{};
 
   static INT_PTR CustomDrawListView(LPARAM lparam, HWND list);
 
@@ -98,6 +101,7 @@ private:
   INT_PTR OnClose(UINT, WPARAM, LPARAM);
   INT_PTR OnNeedAdjust(UINT, WPARAM, LPARAM);
   INT_PTR OnHashEditChanged(UINT, WPARAM, LPARAM);
+  INT_PTR OnEditColor(UINT, WPARAM, LPARAM);
   INT_PTR OnClipboardClicked(UINT, WPARAM, LPARAM);
   INT_PTR OnSettingsClicked(UINT, WPARAM, LPARAM);
 };

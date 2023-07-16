@@ -323,6 +323,7 @@ INT_PTR MainDialog::DlgProc(UINT msg, WPARAM wparam, LPARAM lparam) {
     { &MainDialog::OnCancelClicked,     WM_COMMAND, wnd::Match_wlh, MAKELONG(IDC_BUTTON_CANCEL, BN_CLICKED) },
     { &MainDialog::OnVTClicked,         WM_COMMAND, wnd::Match_wlh, MAKELONG(IDC_BUTTON_VT, BN_CLICKED) },
     { &MainDialog::OnSummaryClicked,    WM_COMMAND, wnd::Match_wlh, MAKELONG(IDC_BUTTON_SUMMARY, BN_CLICKED) },
+    { &MainDialog::OnEditColor,         WM_CTLCOLOREDIT, wnd::Match_all, 0 },
   };
   // clang-format on
 
@@ -657,23 +658,61 @@ INT_PTR MainDialog::OnHashEditChanged(UINT, WPARAM, LPARAM) {
     SetWindowTextW(_hwnd_EDIT_HASH, hash_str);
     _inhibit_reformat = false;
   }
-  auto found = false;
-  for (const auto& file : _prop_page->GetFiles()) {
-    const auto& result = file->GetHashResult();
-    for (auto i = 0; i < LegacyHashAlgorithm::k_count; ++i) {
-      if (!result[i].empty() && result[i] == find_hash) {
-        found = true;
-        const auto algorithm_name = utl::UTF8ToWide(LegacyHashAlgorithm::Algorithms()[i].GetName());
-        const auto txt = algorithm_name + L" / " + file->GetDisplayName();
-        SetWindowTextW(_hwnd_STATIC_CHECK_RESULT, txt.c_str());
-        break;
+  HashColorType color = HashColorType::Unknown;
+  std::wstring text{};
+  if (!find_hash.empty()) {
+    color = HashColorType::Mismatch;
+    text = utl::GetString(IDS_NOMATCH);
+    bool found = false;
+    for (const auto& file : _prop_page->GetFiles()) {
+      const auto& result = file->GetHashResult();
+      for (auto i = 0; i < LegacyHashAlgorithm::k_count; ++i) {
+        if (!result[i].empty() && result[i] == find_hash) {
+          found = true;
+          if (LegacyHashAlgorithm::Algorithms()[i].IsSecure())
+            color = HashColorType::Match;
+          else
+            color = HashColorType::Insecure;
+          const auto algorithm_name = utl::UTF8ToWide(LegacyHashAlgorithm::Algorithms()[i].GetName());
+          text = algorithm_name + L" / " + file->GetDisplayName();
+          break;
+        }
       }
+      if (found)
+        break;
     }
-    if (found)
-      break;
   }
-  if (!found)
-    SetWindowTextW(_hwnd_STATIC_CHECK_RESULT, utl::GetString(IDS_NOMATCH).c_str());
+
+  SetWindowTextW(_hwnd_STATIC_CHECK_RESULT, text.c_str());
+  _check_against_color = color;
+  //RedrawWindow(_hwnd_EDIT_HASH, nullptr, nullptr, 0);
+  InvalidateRect(_hwnd_EDIT_HASH, nullptr, FALSE);
+
+  return FALSE;
+}
+
+INT_PTR MainDialog::OnEditColor(UINT, WPARAM wparam, LPARAM lparam) {
+  const auto dc = (HDC)wparam;
+  const auto wnd = (HWND)lparam;
+  if (wnd == _hwnd_EDIT_HASH) {
+    const auto& color = HASH_COLOR_SETTING_MAP[(size_t)_check_against_color];
+    const auto bg_enabled = (_prop_page->settings.*(color.bg_enabled)).Get();
+    const auto bg_color = (_prop_page->settings.*(color.bg_color)).Get();
+    const auto fg_enabled = (_prop_page->settings.*(color.fg_enabled)).Get();
+    const auto fg_color = (_prop_page->settings.*(color.fg_color)).Get();
+
+    SetBkMode(dc, TRANSPARENT);
+    auto bg_brush = GetStockBrush(DC_BRUSH);
+    if (bg_enabled) {
+      bg_brush = CreateSolidBrush(bg_color);
+      _check_against_brush.reset(bg_brush);
+    }
+
+    if (fg_enabled)
+      SetTextColor(dc, fg_color);
+
+    return (INT_PTR)bg_brush;
+  }
 
   return FALSE;
 }

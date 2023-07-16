@@ -196,6 +196,7 @@ namespace wnd {
   }
 
   enum Match : UINT {
+    Match_all = 0,
     Match_l = 1 << 0,
     Match_w = 1 << 1,
     Match_wl = 1 << 2,
