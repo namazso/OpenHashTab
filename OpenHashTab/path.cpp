@@ -78,7 +78,14 @@ ProcessedFileList ProcessEverything(std::list<std::wstring> list, const Settings
       // we ignore the error returned, result will just be empty
       TryParseSumFile(handle, fsl);
       CloseHandle(handle);
-      if (!fsl.empty()) {
+      size_t has_at_least_one_filename = false;
+      for (auto& filesum : fsl) {
+        if (!filesum.first.empty()) {
+          has_at_least_one_filename = true;
+          break;
+        }
+      }
+      if (has_at_least_one_filename) {
         pfl.sumfile_type = -1;
         auto extension = PathFindExtensionW(sumfile_path);
         if (*extension == L'.') {
