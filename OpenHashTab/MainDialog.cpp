@@ -554,8 +554,9 @@ INT_PTR MainDialog::OnExportClicked(UINT, WPARAM, LPARAM) {
           _hwnd,
           L"Error",
           MB_ICONERROR | MB_OK,
-          L"utl::SaveMemoryAsFile returned with error: %08X",
-          err
+          L"utl::SaveMemoryAsFile returned with error %08X: %s",
+          err,
+          utl::ErrorToString(err).c_str()
         );
     }
   }

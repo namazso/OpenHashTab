@@ -279,8 +279,9 @@ std::wstring utl::SaveDialog(HWND hwnd, const wchar_t* defpath, const wchar_t* d
         hwnd,
         L"Error",
         MB_ICONERROR | MB_OK,
-        L"GetSaveFileName returned with error: %08X",
-        error
+        L"GetSaveFileName returned with error %08X: %s",
+        error,
+        utl::ErrorToString(error).c_str()
       );
     return {};
   }
