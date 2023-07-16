@@ -50,10 +50,14 @@ SolidCompression=yes
 WizardStyle=modern
 VersionInfoProductTextVersion={#CI_VERSION}
 VersionInfoVersion={#CI_VERSION_NUMERIC}
-ChangesAssociations = yes
+ChangesAssociations=yes
 UninstallDisplayIcon={app}\OpenHashTab.dll,0
 ArchitecturesAllowed=x64 arm64
 ArchitecturesInstallIn64BitMode=x64 arm64
+#ifndef SIGN
+SignTool=signtool $f
+SignedUninstaller=yes
+#endif
 
 [Languages]
 Name: "en"; MessagesFile: "compiler:Default.isl"
