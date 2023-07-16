@@ -74,6 +74,10 @@ public:
   [[nodiscard]] const char* GetExtension() const override { return "hash"; }
 };
 
+static bool SortByName(FileHashTask* a, FileHashTask* b) {
+  return a->GetDisplayName() < b->GetDisplayName();
+}
+
 std::string SFVExporter::GetExportString(
   Settings* settings,
   bool for_clipboard,
@@ -92,7 +96,10 @@ std::string SFVExporter::GetExportString(
 
   const auto crc32 = LegacyHashAlgorithm::IdxByName("CRC32");
 
-  for (const auto file : files) {
+  std::vector<FileHashTask*> files_copy{files.cbegin(), files.cend()};
+  std::sort(files_copy.begin(), files_copy.end(), SortByName);
+
+  for (const auto file : files_copy) {
     if (file->GetError())
       continue;
     auto filename = utl::WideToUTF8(file->GetDisplayName().c_str());
@@ -138,7 +145,10 @@ static std::string GetExportStringSumfile(
     hash_name_dothash[i] = std::move(name);
   }
 
-  for (const auto file : files) {
+  std::vector<FileHashTask*> files_copy{files.cbegin(), files.cend()};
+  std::sort(files_copy.begin(), files_copy.end(), SortByName);
+
+  for (const auto file : files_copy) {
     if (file->GetError())
       continue;
 
