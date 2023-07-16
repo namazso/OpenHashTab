@@ -89,7 +89,7 @@ static NTSTATUS load_string(
 }
 
 std::vector<uint8_t> utl::FindHashInString(std::wstring_view wv) {
-  static auto regex = ctre::search<LR"(\b(?:[0-9a-f]{2})(?: ?+[0-9a-f]{2}){3,31}+\b|\b(?:[0-9A-F]{2})(?: ?+[0-9A-F]{2}){3,31}+\b)">;
+  static auto regex = ctre::search<LR"(\b(?:[0-9a-f]{2})(?: ?+[0-9a-f]{2}){3,}+\b|\b(?:[0-9A-F]{2})(?: ?+[0-9A-F]{2}){3,}+\b)">;
 
   if (auto whole = regex(wv); whole)
     return HashStringToBytes(std::wstring_view{std::wstring(whole)});
