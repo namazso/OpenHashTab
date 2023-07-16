@@ -18,6 +18,14 @@
 // https://github.com/m417z/winbindex/blob/a22c6608f4e9115793ece1b9242691c4ac72ee26/data/upd04_get_virustotal_data.py#L52C1-L64
 
 // VT api checks this
-#define VT_USERAGENT    "VirusTotal"
+#define VT_USERAGENT "VirusTotal"
 
-#define VT_MAGICNUMBERS "4e3202fdb""e953d628f""650229af5""b3eb49cd4""6b2d3bfe5""546ae3c5f""a48b554e0""c"
+#define VT_MAGICNUMBERS \
+  "4e3202fdb"           \
+  "e953d628f"           \
+  "650229af5"           \
+  "b3eb49cd4"           \
+  "6b2d3bfe5"           \
+  "546ae3c5f"           \
+  "a48b554e0"           \
+  "c"

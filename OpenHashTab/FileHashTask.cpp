@@ -94,7 +94,7 @@ void FileHashTask::ProcessReadQueue(uint8_t* reuse_block) {
     BlockFree(reuse_block);
 }
 
-FileHashTask::FileHashTask(Coordinator* prop_page, const std::wstring& path, ProcessedFileList::FileInfo  file_info)
+FileHashTask::FileHashTask(Coordinator* prop_page, const std::wstring& path, ProcessedFileList::FileInfo file_info)
     : _hash_contexts{}
     , _prop_page{prop_page}
     , _file_info{std::move(file_info)} {

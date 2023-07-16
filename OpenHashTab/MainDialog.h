@@ -21,22 +21,20 @@ class Exporter;
 class FileHashTask;
 class Coordinator;
 
-class MainDialog
-{
+class MainDialog {
   static constexpr auto k_status_update_timer_id = (UINT_PTR)0x7c253816f7ef92ea;
 
-  enum ColIndex : int
-  {
+  enum ColIndex : int {
     ColIndex_Filename,
     ColIndex_Algorithm,
     ColIndex_Hash
   };
 
   HWND _hwnd{};
-  utl::UniqueFont _font { utl::GetDPIScaledFont() };
-  utl::UniqueFont _mono_font { utl::GetDPIScaledFont(L"Lucida Console") };
+  utl::UniqueFont _font{utl::GetDPIScaledFont()};
+  utl::UniqueFont _mono_font{utl::GetDPIScaledFont(L"Lucida Console")};
   Coordinator* _prop_page;
-  wnd::WindowLayoutAdapter _adapter{ _hwnd, IDD_OPENHASHTAB_PROPPAGE };
+  wnd::WindowLayoutAdapter _adapter{_hwnd, IDD_OPENHASHTAB_PROPPAGE};
 
   MAKE_IDC_MEMBER(_hwnd, HASH_LIST);
   MAKE_IDC_MEMBER(_hwnd, EDIT_HASH);
