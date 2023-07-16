@@ -55,6 +55,7 @@
         "UNKNOWN_GROUP": "Desconocido",
         "FOREGROUND": "Primer plano",
         "BACKGROUND": "Segundo plano",
-        "DISPLAY_MONOSPACE": "Mostrar los hash en la fuente monoespaciada"
+        "DISPLAY_MONOSPACE": "Mostrar los hash en la fuente monoespaciada",
+        "SUMMARY": "Resumen"
     }
 }
