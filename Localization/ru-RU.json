@@ -54,6 +54,8 @@
         "BACKGROUND": "Цвет фона",
         "MATCH_GROUP": "Совпавшие",
         "MISMATCH_GROUP": "Несовпавшие",
-        "INSECURE_GROUP": "Небезопасные"
+        "INSECURE_GROUP": "Небезопасные",
+        "SUMMARY": "Отчет",
+        "DISPLAY_MONOSPACE": "Отображать хэши моноширинным шрифтом"
     }
 }
