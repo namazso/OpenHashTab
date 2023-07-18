@@ -18,7 +18,7 @@
         "ERROR": "Błąd",
         "CANCEL": "Anuluj",
         "DISPLAY_UPPERCASE": "Wyświetlaj hashe wielkimi literami",
-        "LOOK_FOR_SUMFILES": "Wyszukaj pliki sum obok przetwarzanych hashy dla plików",
+        "LOOK_FOR_SUMFILES": "Wyszukaj pliki sum obok hashowanych plików",
         "SUMFILE_UPPERCASE": "Eksportuj hashe wielkimi literami",
         "SUMFILE_UNIX_ENDINGS": "Eksportuj pliki jako ze znakami końca linii zgodnymi z Unix",
         "SUMFILE_USE_DOUBLE_SPACE": "Eksportuj pliki sum z ciągiem podwójnej spacji zamiast ciągu \"spacja-gwiazdka\"",
