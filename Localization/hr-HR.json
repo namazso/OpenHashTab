@@ -55,6 +55,7 @@
         "INSECURE_GROUP": "Nesigurno",
         "UNKNOWN_GROUP": "Nepoznato",
         "FOREGROUND": "Prednja boja",
-        "DISPLAY_MONOSPACE": "Prikaži šifre jednometričnim fontom"
+        "DISPLAY_MONOSPACE": "Prikaži šifre jednometričnim fontom",
+        "SUMMARY": "Sažetak"
     }
 }
