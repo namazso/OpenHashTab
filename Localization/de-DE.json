@@ -8,10 +8,10 @@
         "HASH": "Hash",
         "CHECK_AGAINST": "Vergleichen mit / Gegenprüfung:",
         "EXPORT_TO": "In Summendatei exportieren:",
-        "EXPORT_BTN": "Exportieren ...",
+        "EXPORT_BTN": "Exportieren…",
         "SUMFILE": "Interpretiert als Summendatei.",
         "DONE": "Fertig!",
-        "PROCESSING": "Verarbeitung ...",
+        "PROCESSING": "Verarbeitung…",
         "HASHES": "Hashes",
         "CLIPBOARD": "In Clipboard",
         "NOMATCH": "Keine Übereinstimmung gefunden.",
@@ -54,6 +54,7 @@
         "MISMATCH_GROUP": "Nichtübereinstimmung",
         "INSECURE_GROUP": "Unsicher",
         "UNKNOWN_GROUP": "Unbekannt",
-        "BACKGROUND": "Hintergrund"
+        "BACKGROUND": "Hintergrund",
+        "DISPLAY_MONOSPACE": "Hashes in Monospace-Schrift anzeigen"
     }
 }
