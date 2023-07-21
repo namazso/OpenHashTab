@@ -36,7 +36,7 @@
         "UPDATE_DISABLED_IN_DEV_BUILD": "Nedostupné ve vývojových sestaveních",
         "UPDATE_AVAILABLE_TITLE": "Aktualizace je k dispozici",
         "UPDATE_AVAILABLE_TEXT": "Je dostupná nová verze %hu.%hu.%hu",
-        "UPDATE_NEWEST_TITLE": "Gratulujeme ",
+        "UPDATE_NEWEST_TITLE": "Gratulujeme",
         "UPDATE_NEWEST_TEXT": "Již používáte nejnovější verzi",
         "CLIPBOARD_AUTOENABLE": "Pokud schránka obsahuje hash, automaticky pro běh povolí algoritmy této délky",
         "CLIPBOARD_AUTOENABLE_IF_NONE": "Pouze pokud nejsou povoleny žádné algoritmy této délky",
