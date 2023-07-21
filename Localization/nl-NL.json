@@ -52,6 +52,8 @@
         "ERROR_GROUP": "Foutmelding",
         "INSECURE_GROUP": "Onveilig",
         "BACKGROUND": "Achtergrond",
-        "FOREGROUND": "Voorgrond"
+        "FOREGROUND": "Voorgrond",
+        "MATCH_GROUP": "Overeenkomst",
+        "MISMATCH_GROUP": "Niet-overeenkomend"
     }
 }
