@@ -54,6 +54,8 @@
         "INSECURE_GROUP": "Nezabezpečená",
         "UNKNOWN_GROUP": "Neznáma",
         "FOREGROUND": "Popredie",
-        "BACKGROUND": "Pozadie"
+        "BACKGROUND": "Pozadie",
+        "DISPLAY_MONOSPACE": "Zobrazenie hesiel v monospace písme",
+        "SUMMARY": "Zhrnutie"
     }
 }
