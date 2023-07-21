@@ -54,6 +54,8 @@
         "UNKNOWN_GROUP": "Inconnu",
         "BACKGROUND": "Arrière-plan",
         "FOREGROUND": "Premier-plan",
-        "MISMATCH_GROUP": "Ne correspond pas"
+        "MISMATCH_GROUP": "Ne correspond pas",
+        "DISPLAY_MONOSPACE": "Afficher les hachages en police monospace",
+        "SUMMARY": "Résumé"
     }
 }
