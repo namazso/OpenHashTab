@@ -55,6 +55,7 @@
         "INSECURE_GROUP": "Unsicher",
         "UNKNOWN_GROUP": "Unbekannt",
         "BACKGROUND": "Hintergrund",
-        "DISPLAY_MONOSPACE": "Hashes in Monospace-Schrift anzeigen"
+        "DISPLAY_MONOSPACE": "Hashes in Monospace-Schrift anzeigen",
+        "SUMMARY": "Zusammenfassung"
     }
 }
