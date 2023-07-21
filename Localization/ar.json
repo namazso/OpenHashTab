@@ -47,7 +47,7 @@
         "UNKNOWN_GROUP": "غير معروف",
         "FOREGROUND": "المقدمة",
         "BACKGROUND": "الخلفية",
-        "SETTINGS_TITLE": "إعدادات",
+        "SETTINGS_TITLE": "الاعدادات",
         "CHECKAGAINST_AUTOFORMAT": "إعادة تنسيق التجزئة الملصقة تلقائيًا في حقل المدقق",
         "CHECKAGAINST_STRICT": "الوضع الصارم لحقل مدقق التجزئة",
         "HASH_SUMFILE_TOO": "عند معالجة ملف المجموع تجزئة ملف المجموع أيضًا",
