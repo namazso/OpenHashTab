@@ -54,6 +54,8 @@
         "FOREGROUND": "Primo piano",
         "BACKGROUND": "Sfondo",
         "MATCH_GROUP": "Corrispondente",
-        "MISMATCH_GROUP": "Differente"
+        "MISMATCH_GROUP": "Differente",
+        "DISPLAY_MONOSPACE": "Visualizza gli hash in caratteri monospazio",
+        "SUMMARY": "Riassunto"
     }
 }
