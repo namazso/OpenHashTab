@@ -68,11 +68,11 @@ std::list<vt::Result> vt::Query(const std::list<FileHashTask*>& files, size_t al
         "autostart_location": "",
         "autostart_entry": "",
         "hash": "%s",
-        "image_path": "%S",
+        "image_path": "%s",
         "creation_datetime": "%04u-%02u-%02u %02u:%02u:%02u"
         })",
                                  hash,
-                                 h->GetDisplayName().c_str(),
+                                 utl::WideToUTF8(h->GetDisplayName().c_str()).c_str(),
                                  st.wYear,
                                  st.wMonth,
                                  st.wDay,
