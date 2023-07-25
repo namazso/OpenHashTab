@@ -54,6 +54,8 @@
         "INSECURE_GROUP": "安全ではない",
         "UNKNOWN_GROUP": "未知",
         "FOREGROUND": "フォアグラウンド",
-        "BACKGROUND": "バックグラウンド"
+        "BACKGROUND": "バックグラウンド",
+        "SUMMARY": "要約",
+        "DISPLAY_MONOSPACE": "ハッシュ値を等幅フォントで表示する"
     }
 }
