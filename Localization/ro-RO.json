@@ -11,7 +11,7 @@
         "EXPORT_BTN": "Exportați…",
         "SUMFILE": "Interpretat ca fișierul suma.",
         "DONE": "Gata!",
-        "PROCESSING": "Procesarea…",
+        "PROCESSING": "In curs de procesare…",
         "HASHES": "Hașuri",
         "CLIPBOARD": "Către clipboard",
         "NOMATCH": "Nu s-a găsit nicio potrivire.",
@@ -54,6 +54,8 @@
         "INSECURE_GROUP": "Nesigură",
         "UNKNOWN_GROUP": "Necunoscut",
         "FOREGROUND": "Prim-plan",
-        "BACKGROUND": "Fond"
+        "BACKGROUND": "Fond",
+        "SUMMARY": "Sumar",
+        "DISPLAY_MONOSPACE": "Afișează hașurile cu font monospațiu"
     }
 }
