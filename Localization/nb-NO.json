@@ -43,6 +43,19 @@
         "CLIPBOARD_AUTOENABLE": "Skru på algoritmer i under hele kjøringen vis utklippstavlen inneholder en sjekksum",
         "ITEMS_MATCHING": "%d matchende filer",
         "SETTINGS_TITLE": "Innstillinger",
-        "ITEM_MATCHING": "1 matchende fil"
+        "ITEM_MATCHING": "1 matchende fil",
+        "MATCH_GROUP": "Samsvar",
+        "BACKGROUND": "Bakgrunn",
+        "CHECKAGAINST_STRICT": "Streng modus for sjekksumskontrollfelt",
+        "SUMMARY": "Sammendrag",
+        "DISPLAY_MONOSPACE": "Viser sjekksummer i fastbreddeskrift",
+        "HASH_SUMFILE_TOO": "Sjekksummer sjekksumsfilen ved behandling av den",
+        "MISMATCH_GROUP": "Ikke samsvar",
+        "UNKNOWN_GROUP": "Ukjent",
+        "SUMFILE_ALGORITHM_ONLY": "Skru av andre algoritmer ved behandling av en sjekksumsfil av kjent algoritme",
+        "ERROR_GROUP": "Feil",
+        "FOREGROUND": "Forgrunn",
+        "CHECKAGAINST_AUTOFORMAT": "Auto-reformater sjekksummer innlimt i kontrollfeltet",
+        "INSECURE_GROUP": "Usikker"
     }
 }
