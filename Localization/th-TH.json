@@ -4,9 +4,9 @@
     "strings": {
         "FILENAME": "ชื่อ",
         "ALGORITHM": "อัลกอริทึม",
-        "COPIED": "✔ คัดลอก",
+        "COPIED": "✔ คัดลอกแล้ว",
         "HASH": "แฮช",
-        "CHECK_AGAINST": "ตรวจสอบกับ:",
+        "CHECK_AGAINST": "ตรวจสอบจากค่า:",
         "EXPORT_TO": "ส่งออกไปยังไฟล์ซัม:",
         "EXPORT_BTN": "ส่งออก…",
         "SUMFILE": "แปลเป็นไฟล์ซัม",
@@ -17,7 +17,7 @@
         "NOMATCH": "ไม่เหมือนกัน",
         "ERROR": "ผิดพลาด",
         "CANCEL": "ยกเลิก",
-        "DISPLAY_UPPERCASE": "แสดงแฮชเป็นตัวพิมพ์ใหญ่",
+        "DISPLAY_UPPERCASE": "แสดงค่าแฮชเป็นตัวพิมพ์ใหญ่",
         "LOOK_FOR_SUMFILES": "มองหาไฟล์ซัมถัดจากไฟล์ที่กำลังแฮช",
         "SUMFILE_UPPERCASE": "ส่งออกแฮชเป็นตัวพิมพ์ใหญ่",
         "SUMFILE_UNIX_ENDINGS": "ส่งออกไฟล์ที่ลงท้ายด้วยบรรทัด Unix",
@@ -54,6 +54,8 @@
         "INSECURE_GROUP": "ไม่ปลอดภัย",
         "UNKNOWN_GROUP": "ไม่ทราบ",
         "FOREGROUND": "พื้นหน้า",
-        "BACKGROUND": "พื้นหลัง"
+        "BACKGROUND": "พื้นหลัง",
+        "SUMMARY": "ข้อมูลสรุป",
+        "DISPLAY_MONOSPACE": "แสดงค่าแฮชด้วยฟอนต์ monospace"
     }
 }
