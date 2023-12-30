@@ -54,6 +54,8 @@
         "MATCH_GROUP": "일치",
         "MISMATCH_GROUP": "불일치",
         "INSECURE_GROUP": "안전하지 않음",
-        "BACKGROUND": "배경 색"
+        "BACKGROUND": "배경 색",
+        "SUMMARY": "요약",
+        "DISPLAY_MONOSPACE": "해시를 고정폭 글꼴로 표시"
     }
 }
