@@ -54,6 +54,8 @@
         "BACKGROUND": "Achtergrond",
         "FOREGROUND": "Voorgrond",
         "MATCH_GROUP": "Overeenkomst",
-        "MISMATCH_GROUP": "Niet-overeenkomend"
+        "MISMATCH_GROUP": "Niet-overeenkomend",
+        "DISPLAY_MONOSPACE": "Geef hashes weer in monospace-lettertype",
+        "SUMMARY": "Samenvatting"
     }
 }
