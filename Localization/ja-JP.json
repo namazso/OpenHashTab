@@ -19,7 +19,7 @@
         "CANCEL": "キャンセル",
         "DISPLAY_UPPERCASE": "ハッシュ値を大文字で表示する",
         "LOOK_FOR_SUMFILES": "ハッシュ値を計算するファイルと対応するサムファイルを参照する",
-        "SUMFILE_UPPERCASE": "ハッシュ値を大文字でファイルを出力する",
+        "SUMFILE_UPPERCASE": "ハッシュ値を大文字でファイル出力する",
         "SUMFILE_UNIX_ENDINGS": "Unixの改行コードでファイルを出力する",
         "SUMFILE_USE_DOUBLE_SPACE": "スペース-アスタリスクの代わりに2つのスペースを用いてファイルを出力する",
         "SUMFILE_FORWARD_SLASHES": "パスにフォワードスラッシュを用いてファイルを出力する",
