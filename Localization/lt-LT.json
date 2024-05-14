@@ -54,6 +54,7 @@
         "FOREGROUND": "Priekinio plano",
         "UNKNOWN_GROUP": "Nežinomas",
         "BACKGROUND": "Foninis",
-        "MISMATCH_GROUP": "Neatitikimas"
+        "MISMATCH_GROUP": "Neatitikimas",
+        "SUMMARY": "Santrauka"
     }
 }
