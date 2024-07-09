@@ -17,6 +17,7 @@
 
 #include <new>
 #include <numeric>
+#include <limits>
 
 #include <mbedtls/md.h>
 #include <mbedtls/md2.h>
