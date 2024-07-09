@@ -52,8 +52,8 @@ VersionInfoProductTextVersion={#CI_VERSION}
 VersionInfoVersion={#CI_VERSION_NUMERIC}
 ChangesAssociations=yes
 UninstallDisplayIcon={app}\OpenHashTab.dll,0
-ArchitecturesAllowed=x64 arm64
-ArchitecturesInstallIn64BitMode=x64 arm64
+ArchitecturesAllowed=win64
+ArchitecturesInstallIn64BitMode=win64
 #ifdef SIGN
 SignTool=signtool $f
 SignedUninstaller=yes
@@ -185,7 +185,6 @@ begin
     case ProcessorArchitecture of
         paX86:    Result := Arch = 'x86';
         paX64:    Result := (Arch = 'x64') or (Arch = 'wow');
-        paIA64:   Result := (Arch = 'ia64') or (Arch = 'wow');
         paARM64:  Result := (Arch = 'arm64') or (Arch = 'wow');
     end;
 end;
