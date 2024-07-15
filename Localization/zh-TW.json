@@ -23,7 +23,7 @@
         "SUMFILE_UNIX_ENDINGS": "匯出檔案使用 Unix 行結尾",
         "SUMFILE_USE_DOUBLE_SPACE": "匯出核對和檔案時使用雙空格而非空格與星號",
         "SUMFILE_FORWARD_SLASHES": "匯出檔案中使用正斜線",
-        "SUMFILE_DOT_HASH_COMPATIBLE": "將雜湊值驗證檔匯出為 corz .hash 相容的檔案",
+        "SUMFILE_DOT_HASH_COMPATIBLE": "將雜湊值驗證檔匯出為與 corz .hash 相容的檔案",
         "SUMFILE_BANNER": "匯出檔案中加入標註",
         "SUMFILE_BANNER_DATE": "日期加入標註",
         "CHECK_FOR_UPDATES": "檢查更新",
@@ -33,13 +33,13 @@
         "COPY_EVERYTHING": "複製全部",
         "VT_NO_COMPATIBLE": "未啟用相容演算法",
         "VT_NOT_FOUND": "資料庫中未尋得",
-        "UPDATE_DISABLED_IN_DEV_BUILD": "開發建構版中無效",
+        "UPDATE_DISABLED_IN_DEV_BUILD": "無法於開發建構版中使用",
         "UPDATE_AVAILABLE_TITLE": "更新可用",
         "UPDATE_AVAILABLE_TEXT": "新版本 %hu.%hu.%hu 可用",
         "UPDATE_NEWEST_TITLE": "恭喜",
         "UPDATE_NEWEST_TEXT": "您已使用最新版",
         "CLIPBOARD_AUTOENABLE_IF_NONE": "僅用於沒有啟用與該長度相符之演算法時",
-        "CLIPBOARD_AUTOENABLE": "如果剪貼簿內含雜湊值，對長度足以執行核對之值自動啟用演算法",
+        "CLIPBOARD_AUTOENABLE": "如果剪貼簿內含雜湊值，自動啟用符合長度的演算法進行核對",
         "CLIPBOARD_AUTOENABLE_EXCLUSIVE": "停用所有其他演算法",
         "SETTINGS_TITLE": "設定",
         "CHECKAGAINST_AUTOFORMAT": "在雜湊值校驗器中自動重新格式化貼上的雜湊值",
@@ -55,6 +55,7 @@
         "MATCH_GROUP": "符合",
         "MISMATCH_GROUP": "不符",
         "UNKNOWN_GROUP": "未知",
-        "DISPLAY_MONOSPACE": "以等寬字體顯示哈希值"
+        "DISPLAY_MONOSPACE": "以等寬字體顯示雜湊值",
+        "SUMMARY": "總結"
     }
 }
