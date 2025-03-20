@@ -1,6 +1,6 @@
 {
-    "langid": "Lang_english",
-    "sublangid": "Sublang_english_us",
+    "langid": "LANG_TAMIL",
+    "sublangid": "SUBLANG_TAMIL_SRI_LANKA",
     "strings": {
         "FILENAME": "பெயர்",
         "ALGORITHM": "படிமுறை",
