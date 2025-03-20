@@ -1,5 +1,5 @@
 OpenHashTab - File hashing shell extension
-Copyright 2019-2023 namazso <admin@namazso.eu>
+Copyright 2019-2025 namazso <admin@namazso.eu>
 Licensed under GPLv3 or later.
 Code available at https://github.com/namazso/OpenHashTab
 
