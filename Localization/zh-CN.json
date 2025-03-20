@@ -46,7 +46,7 @@
         "HASH_SUMFILE_TOO": "在处理 Hash 文件时，也对校验文件进行 Hash 处理",
         "SUMFILE_ALGORITHM_ONLY": "确定 Hash 文件的算法后，不再尝试其他算法",
         "ITEMS_MATCHING": "%d 个匹配文件",
-        "ITEM_MATCHING": "1个匹配文件",
+        "ITEM_MATCHING": "1 个匹配文件",
         "SETTINGS_TITLE": "设置",
         "MISMATCH_GROUP": "不匹配",
         "INSECURE_GROUP": "不安全",
