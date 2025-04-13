@@ -54,6 +54,7 @@ cmake `
     -DCMAKE_BUILD_TYPE=RelWithDebInfo `
     -DCMAKE_C_COMPILER=clang-cl `
     -DCMAKE_CXX_COMPILER=clang-cl `
+    -DCMAKE_MT=mt `
     "-DCI_VERSION=$CI_VERSION" `
     "-DCI_VERSION_MINOR=$CI_VERSION_MINOR" `
     "-DCI_VERSION_MAJOR=$CI_VERSION_MAJOR" `
@@ -76,6 +77,7 @@ cmake `
     -DCMAKE_BUILD_TYPE=RelWithDebInfo `
     -DCMAKE_C_COMPILER=clang-cl `
     -DCMAKE_CXX_COMPILER=clang-cl `
+    -DCMAKE_MT=mt `
     "-DCI_VERSION=$CI_VERSION" `
     "-DCI_VERSION_MINOR=$CI_VERSION_MINOR" `
     "-DCI_VERSION_MAJOR=$CI_VERSION_MAJOR" `
