@@ -1,0 +1,762 @@
+<?define ProductName = "OpenHashTab"?>
+<?define ProductVersion = "3.1.0"?>
+<?define ProductFullVersion = "3.1.0.0"?>
+<?define ProductAuthor = "namazso"?>
+<?define ProductHelpLink = "https://github.com/namazso/OpenHashTab"?>
+<?define BuildDirectory32 = "cmake-openhashtab-x86"?>
+<?define AlgorithmsDllsDirectory = "AlgorithmsDlls"?>
+<?define CLSID = "{23b5bdd4-7669-42b8-9cdc-beebc8a5baa9}"?>
+
+<?if $(sys.BUILDARCH) = x64?>
+    <?define Win64 = "yes"?>
+    <?define ExpectedNativeMachine = "34404"?>
+    <?define BuildDirectory = "cmake-openhashtab-x64"?>
+<?elseif $(sys.BUILDARCH) = arm64?>
+    <?define Win64 = "yes"?>
+    <?define ExpectedNativeMachine = "43620"?>
+    <?define BuildDirectory = "cmake-openhashtab-arm64ec"?>
+<?else?>
+    <?define Win64 = "no"?>
+    <?define ExpectedNativeMachine = "332"?>
+    <?define BuildDirectory = "cmake-openhashtab-x86"?>
+<?endif?>
+
+<?if $(var.Win64) = "yes"?>
+    <?define ProgramFiles = "ProgramFiles64Folder"?>
+<?else?>
+    <?define ProgramFiles = "ProgramFilesFolder"?>
+<?endif?>
+
+<?if $(var.InstallerScope) = "perMachine"?>
+    <?define ProductUpgradeCode = "c0e09c23-c511-4ac2-885c-fed34f0dc35f"?>
+    <?define MyHKMU = "HKLM"?>
+<?else?>
+    <?define ProductUpgradeCode = "23575320-6571-41ae-b38a-e43a773f645a"?>
+    <?define MyHKMU = "HKCU"?>
+<?endif?>
+
+<Wix
+    xmlns="http://wixtoolset.org/schemas/v4/wxs"
+    xmlns:util="http://wixtoolset.org/schemas/v4/wxs/util"
+    xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
+    <Package
+        Id="$(var.ProductAuthor).$(var.ProductName)"
+        Name="$(var.ProductName)"
+        Manufacturer="$(var.ProductAuthor)"
+        Version="$(var.ProductVersion)"
+        Scope="$(var.InstallerScope)"
+        UpgradeCode="$(var.ProductUpgradeCode)">
+
+        <Property Id='ARPHELPLINK' Value='$(var.ProductHelpLink)' />
+        <?if $(var.Win64) = "yes"?>
+        <Property Id="PACKAGE_IS_WIN64" Value="1" Secure="yes" />
+        <?endif?>
+
+        <util:QueryNativeMachine />
+
+        <Launch
+            Condition="(NOT WIX_NATIVE_MACHINE OR WIX_NATIVE_MACHINE = $(var.ExpectedNativeMachine)) AND (VersionNT64 IMP PACKAGE_IS_WIN64)"
+            Message="This architecture is not supported by this install package!" />
+
+        <MediaTemplate EmbedCab="yes" />
+
+        <Icon Id="icon.ico" SourceFile="OpenHashTab\icon.ico" />
+        <Property Id="ARPPRODUCTICON" Value="icon.ico" />
+
+        <WixVariable Id="WixUILicenseRtf" Value="InstallerLicense.rtf" />
+        <ui:WixUI Id="WixUI_FeatureTree" />
+
+        <Property Id="INNO_UNINSTALL">
+            <RegistrySearch Id="InnoKeySearch" Root="$(var.MyHKMU)"
+                Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{C0EEE3CD-665D-4E4E-B3BC-ADCD0FE73C0F}_is1"
+                Name="UninstallString" Type="raw" />
+        </Property>
+
+        <StandardDirectory Id="$(var.ProgramFiles)">
+            <Directory Id="INSTALLDIR" Name="$(var.ProductName)" />
+        </StandardDirectory>
+        <StandardDirectory Id="ProgramFilesFolder">
+            <Directory Id="INSTALLDIR32" Name="$(var.ProductName)" />
+        </StandardDirectory>
+        <?if $(var.InstallerScope) = "perMachine"?>
+        <CustomAction Id="UninstallInnoSetup" Directory="INSTALLDIR" Execute="deferred"
+            ExeCommand="[INNO_UNINSTALL] /VERYSILENT /SUPPRESSMSGBOXES /NORESTART"
+            Impersonate="no"
+        />
+        <?else?>
+        <Property Id="ALLUSERS" Secure="yes" Value="2" />
+        <Property Id="MSIINSTALLPERUSER" Secure="yes" Value="1" />
+
+        <CustomAction Id="UninstallInnoSetup" Directory="INSTALLDIR" Execute="deferred"
+            Impersonate="yes"
+            ExeCommand="[INNO_UNINSTALL] /VERYSILENT /SUPPRESSMSGBOXES /NORESTART"
+        />
+        <?endif?>
+
+        <InstallExecuteSequence>
+            <Custom Action="UninstallInnoSetup" After="InstallInitialize"
+                Condition="NOT Installed AND INNO_UNINSTALL" />
+        </InstallExecuteSequence>
+
+        <Feature Id="ShExt" AllowAbsent="no" AllowAdvertise="no" Title="$(var.ProductName)"
+            Level="1">
+            <ComponentGroupRef Id="Executables" />
+            <ComponentGroupRef Id="ShExt32" />
+            <?if $(var.Win64) = "yes"?>
+            <ComponentGroupRef Id="ShExt64" />
+            <?endif?>
+        </Feature>
+        <Feature Id="PropSheet" InstallDefault="local" AllowAdvertise="no"
+            Title="Add Property Sheet Page" Level="1">
+            <ComponentGroupRef Id="PropSheet" />
+        </Feature>
+        <Feature
+            Id="ContextMenu" InstallDefault="local" AllowAdvertise="no" Title="Add Context Menu"
+            Level="1">
+            <ComponentGroupRef Id="ContextMenu" />
+        </Feature>
+        <Feature Id="Pdb" Title="Debug symbols" AllowAdvertise="no" Level="2">
+            <ComponentGroupRef Id="Pdb" />
+            <ComponentGroupRef Id="Pdb32" />
+            <ComponentGroupRef Id="Pdb64" />
+        </Feature>
+
+        <ComponentGroup Id="PropSheet" Directory="INSTALLDIR">
+            <Component Id="PropSheet" Guid="fc351dfa-326e-495c-b86c-38aa820a6490">
+                <RegistryKey Root="HKCR"
+                    Key="AllFilesystemObjects\shellex\PropertySheetHandlers\$(var.CLSID)">
+                    <RegistryValue Type="string" Value="" />
+                </RegistryKey>
+            </Component>
+        </ComponentGroup>
+
+        <ComponentGroup Id="ContextMenu" Directory="INSTALLDIR">
+            <Component Id="ContextMenu" Guid="93c15a80-e087-4f29-bc07-b0d45099da79">
+                <RegistryKey Root="HKCR"
+                    Key="AllFilesystemObjects\shellex\ContextMenuHandlers\$(var.CLSID)">
+                    <RegistryValue Type="string" Value="" />
+                </RegistryKey>
+            </Component>
+        </ComponentGroup>
+        <?if $(var.Win64) = "yes"?>
+        <ComponentGroup Id="ShExt64" Directory="INSTALLDIR">
+            <Component Id="ShExt64">
+                <File Id="OpenHashTab64.dll" Source="$(var.BuildDirectory)\OpenHashTab64.dll"
+                    KeyPath="yes">
+                    <Class Id="$(var.CLSID)" Context="InprocServer32"
+                        Description="$(var.ProductName)"
+                        Advertise="no" ThreadingModel="Apartment" />
+                </File>
+                <?if $(var.InstallerScope) = "perMachine"?>
+                <RegistryKey Root="HKLM"
+                    Key="Software\Microsoft\Windows\CurrentVersion\Shell Extensions\Approved">
+                    <RegistryValue Type="string" Name="$(var.CLSID)" Value="$(var.ProductName)" />
+                </RegistryKey>
+                <?endif?>
+            </Component>
+            <Component Id="AlgorithmsDll_SSE2">
+                <File Id="AlgorithmsDll_SSE2.dll"
+                    Source="$(var.AlgorithmsDllsDirectory)\AlgorithmsDll_SSE2.dll" KeyPath="yes" />
+            </Component>
+            <Component Id="AlgorithmsDll_AVX2">
+                <File Id="AlgorithmsDll_AVX2.dll"
+                    Source="$(var.AlgorithmsDllsDirectory)\AlgorithmsDll_AVX2.dll" KeyPath="yes" />
+            </Component>
+            <Component Id="AlgorithmsDll_AVX512">
+                <File Id="AlgorithmsDll_AVX512.dll"
+                    Source="$(var.AlgorithmsDllsDirectory)\AlgorithmsDll_AVX512.dll" KeyPath="yes" />
+            </Component>
+            <Component Id="AlgorithmsDll_ARM64">
+                <File Id="AlgorithmsDll_ARM64.dll"
+                    Source="$(var.AlgorithmsDllsDirectory)\AlgorithmsDll_ARM64.dll" KeyPath="yes" />
+            </Component>
+        </ComponentGroup>
+        <?endif?>
+
+        <ComponentGroup Id="ShExt32" Directory="INSTALLDIR32">
+            <Component Id="ShExt32" Bitness="always32">
+                <File Id="OpenHashTab32.dll" Source="$(var.BuildDirectory32)\OpenHashTab32.dll"
+                    KeyPath="yes">
+                    <Class Id="$(var.CLSID)" Context="InprocServer32"
+                        Description="$(var.ProductName)"
+                        Advertise="no" ThreadingModel="Apartment" />
+                </File>
+                <?if $(var.InstallerScope) = "perMachine"?>
+                <RegistryKey Root="HKLM"
+                    Key="Software\Microsoft\Windows\CurrentVersion\Shell Extensions\Approved">
+                    <RegistryValue Type="string" Name="$(var.CLSID)" Value="$(var.ProductName)" />
+                </RegistryKey>
+                <?endif?>
+            </Component>
+            <Component Id="AlgorithmsDll_x86" Bitness="always32">
+                <File Id="AlgorithmsDll_x86.dll"
+                    Source="$(var.AlgorithmsDllsDirectory)\AlgorithmsDll_x86.dll" KeyPath="yes" />
+            </Component>
+        </ComponentGroup>
+
+        <ComponentGroup Id="Executables" Directory="INSTALLDIR">
+            <Component Id="Benchmark">
+                <File Id="Benchmark.exe" Source="$(var.BuildDirectory)\Benchmark.exe" KeyPath="yes" />
+            </Component>
+            <Component Id="StandaloneStub">
+                <File Id="StandaloneStub.exe" Source="$(var.BuildDirectory)\StandaloneStub.exe"
+                    KeyPath="yes" />
+
+                <ProgId Id='OpenHashTab.sfv' Description='SFV File' Icon="StandaloneStub.exe"
+                    IconIndex="0">
+                    <Extension Id='sfv' ContentType='application/x-sfv'>
+                        <Verb Id='open' Command='Open' TargetFile='StandaloneStub.exe'
+                            Argument='"%1"' />
+                    </Extension>
+                </ProgId>
+                <ProgId Id='OpenHashTab.crc32' Description='CRC32 Sum File'
+                    Icon="StandaloneStub.exe" IconIndex="0">
+                    <Extension Id='crc32' ContentType='application/x-sfv'>
+                        <Verb Id='open' Command='Open' TargetFile='StandaloneStub.exe'
+                            Argument='"%1"' />
+                    </Extension>
+                </ProgId>
+                <ProgId Id='OpenHashTab.md4' Description='MD4 Sum File' Icon="StandaloneStub.exe"
+                    IconIndex="0">
+                    <Extension Id='md4' ContentType='application/x-md4sum'>
+                        <Verb Id='open' Command='Open' TargetFile='StandaloneStub.exe'
+                            Argument='"%1"' />
+                    </Extension>
+                </ProgId>
+                <ProgId Id='OpenHashTab.md4sum' Description='MD4 Sum File' Icon="StandaloneStub.exe"
+                    IconIndex="0">
+                    <Extension Id='md4sum' ContentType='application/x-md4sum'>
+                        <Verb Id='open' Command='Open' TargetFile='StandaloneStub.exe'
+                            Argument='"%1"' />
+                    </Extension>
+                </ProgId>
+                <ProgId Id='OpenHashTab.md4sums' Description='MD4 Sum File'
+                    Icon="StandaloneStub.exe" IconIndex="0">
+                    <Extension Id='md4sums' ContentType='application/x-md4sum'>
+                        <Verb Id='open' Command='Open' TargetFile='StandaloneStub.exe'
+                            Argument='"%1"' />
+                    </Extension>
+                </ProgId>
+                <ProgId Id='OpenHashTab.md5' Description='MD5 Sum File' Icon="StandaloneStub.exe"
+                    IconIndex="0">
+                    <Extension Id='md5' ContentType='application/x-md5sum'>
+                        <Verb Id='open' Command='Open' TargetFile='StandaloneStub.exe'
+                            Argument='"%1"' />
+                    </Extension>
+                </ProgId>
+                <ProgId Id='OpenHashTab.md5sum' Description='MD5 Sum File' Icon="StandaloneStub.exe"
+                    IconIndex="0">
+                    <Extension Id='md5sum' ContentType='application/x-md5sum'>
+                        <Verb Id='open' Command='Open' TargetFile='StandaloneStub.exe'
+                            Argument='"%1"' />
+                    </Extension>
+                </ProgId>
+                <ProgId Id='OpenHashTab.md5sums' Description='MD5 Sum File'
+                    Icon="StandaloneStub.exe" IconIndex="0">
+                    <Extension Id='md5sums' ContentType='application/x-md5sum'>
+                        <Verb Id='open' Command='Open' TargetFile='StandaloneStub.exe'
+                            Argument='"%1"' />
+                    </Extension>
+                </ProgId>
+                <ProgId Id='OpenHashTab.ripemd160' Description='RIPEMD160 Sum File'
+                    Icon="StandaloneStub.exe" IconIndex="0">
+                    <Extension Id='ripemd160' ContentType='application/x-ripemd160sum'>
+                        <Verb Id='open' Command='Open' TargetFile='StandaloneStub.exe'
+                            Argument='"%1"' />
+                    </Extension>
+                </ProgId>
+                <ProgId Id='OpenHashTab.ripemd160sum' Description='RIPEMD160 Sum File'
+                    Icon="StandaloneStub.exe" IconIndex="0">
+                    <Extension Id='ripemd160sum' ContentType='application/x-ripemd160sum'>
+                        <Verb Id='open' Command='Open' TargetFile='StandaloneStub.exe'
+                            Argument='"%1"' />
+                    </Extension>
+                </ProgId>
+                <ProgId Id='OpenHashTab.sha1' Description='SHA1 Sum File' Icon="StandaloneStub.exe"
+                    IconIndex="0">
+                    <Extension Id='sha1' ContentType='application/x-sha1sum'>
+                        <Verb Id='open' Command='Open' TargetFile='StandaloneStub.exe'
+                            Argument='"%1"' />
+                    </Extension>
+                </ProgId>
+                <ProgId Id='OpenHashTab.sha1sum' Description='SHA1 Sum File'
+                    Icon="StandaloneStub.exe" IconIndex="0">
+                    <Extension Id='sha1sum' ContentType='application/x-sha1sum'>
+                        <Verb Id='open' Command='Open' TargetFile='StandaloneStub.exe'
+                            Argument='"%1"' />
+                    </Extension>
+                </ProgId>
+                <ProgId Id='OpenHashTab.sha1sums' Description='SHA1 Sum File'
+                    Icon="StandaloneStub.exe" IconIndex="0">
+                    <Extension Id='sha1sums' ContentType='application/x-sha1sum'>
+                        <Verb Id='open' Command='Open' TargetFile='StandaloneStub.exe'
+                            Argument='"%1"' />
+                    </Extension>
+                </ProgId>
+                <ProgId Id='OpenHashTab.sha224' Description='SHA224 Sum File'
+                    Icon="StandaloneStub.exe" IconIndex="0">
+                    <Extension Id='sha224' ContentType='application/x-sha224sum'>
+                        <Verb Id='open' Command='Open' TargetFile='StandaloneStub.exe'
+                            Argument='"%1"' />
+                    </Extension>
+                </ProgId>
+                <ProgId Id='OpenHashTab.sha224sum' Description='SHA224 Sum File'
+                    Icon="StandaloneStub.exe" IconIndex="0">
+                    <Extension Id='sha224sum' ContentType='application/x-sha224sum'>
+                        <Verb Id='open' Command='Open' TargetFile='StandaloneStub.exe'
+                            Argument='"%1"' />
+                    </Extension>
+                </ProgId>
+                <ProgId Id='OpenHashTab.sha224sums' Description='SHA224 Sum File'
+                    Icon="StandaloneStub.exe" IconIndex="0">
+                    <Extension Id='sha224sums' ContentType='application/x-sha224sum'>
+                        <Verb Id='open' Command='Open' TargetFile='StandaloneStub.exe'
+                            Argument='"%1"' />
+                    </Extension>
+                </ProgId>
+                <ProgId Id='OpenHashTab.sha256' Description='SHA256 Sum File'
+                    Icon="StandaloneStub.exe" IconIndex="0">
+                    <Extension Id='sha256' ContentType='application/x-sha256sum'>
+                        <Verb Id='open' Command='Open' TargetFile='StandaloneStub.exe'
+                            Argument='"%1"' />
+                    </Extension>
+                </ProgId>
+                <ProgId Id='OpenHashTab.sha256sum' Description='SHA256 Sum File'
+                    Icon="StandaloneStub.exe" IconIndex="0">
+                    <Extension Id='sha256sum' ContentType='application/x-sha256sum'>
+                        <Verb Id='open' Command='Open' TargetFile='StandaloneStub.exe'
+                            Argument='"%1"' />
+                    </Extension>
+                </ProgId>
+                <ProgId Id='OpenHashTab.sha256sums' Description='SHA256 Sum File'
+                    Icon="StandaloneStub.exe" IconIndex="0">
+                    <Extension Id='sha256sums' ContentType='application/x-sha256sum'>
+                        <Verb Id='open' Command='Open' TargetFile='StandaloneStub.exe'
+                            Argument='"%1"' />
+                    </Extension>
+                </ProgId>
+                <ProgId Id='OpenHashTab.sha384' Description='SHA384 Sum File'
+                    Icon="StandaloneStub.exe" IconIndex="0">
+                    <Extension Id='sha384' ContentType='application/x-sha384sum'>
+                        <Verb Id='open' Command='Open' TargetFile='StandaloneStub.exe'
+                            Argument='"%1"' />
+                    </Extension>
+                </ProgId>
+                <ProgId Id='OpenHashTab.sha384sum' Description='SHA384 Sum File'
+                    Icon="StandaloneStub.exe" IconIndex="0">
+                    <Extension Id='sha384sum' ContentType='application/x-sha384sum'>
+                        <Verb Id='open' Command='Open' TargetFile='StandaloneStub.exe'
+                            Argument='"%1"' />
+                    </Extension>
+                </ProgId>
+                <ProgId Id='OpenHashTab.sha384sums' Description='SHA384 Sum File'
+                    Icon="StandaloneStub.exe" IconIndex="0">
+                    <Extension Id='sha384sums' ContentType='application/x-sha384sum'>
+                        <Verb Id='open' Command='Open' TargetFile='StandaloneStub.exe'
+                            Argument='"%1"' />
+                    </Extension>
+                </ProgId>
+                <ProgId Id='OpenHashTab.sha512' Description='SHA512 Sum File'
+                    Icon="StandaloneStub.exe" IconIndex="0">
+                    <Extension Id='sha512' ContentType='application/x-sha512sum'>
+                        <Verb Id='open' Command='Open' TargetFile='StandaloneStub.exe'
+                            Argument='"%1"' />
+                    </Extension>
+                </ProgId>
+                <ProgId Id='OpenHashTab.sha512sum' Description='SHA512 Sum File'
+                    Icon="StandaloneStub.exe" IconIndex="0">
+                    <Extension Id='sha512sum' ContentType='application/x-sha512sum'>
+                        <Verb Id='open' Command='Open' TargetFile='StandaloneStub.exe'
+                            Argument='"%1"' />
+                    </Extension>
+                </ProgId>
+                <ProgId Id='OpenHashTab.sha512sums' Description='SHA512 Sum File'
+                    Icon="StandaloneStub.exe" IconIndex="0">
+                    <Extension Id='sha512sums' ContentType='application/x-sha512sum'>
+                        <Verb Id='open' Command='Open' TargetFile='StandaloneStub.exe'
+                            Argument='"%1"' />
+                    </Extension>
+                </ProgId>
+                <ProgId Id='OpenHashTab.sha3' Description='SHA3-512 Sum File'
+                    Icon="StandaloneStub.exe" IconIndex="0">
+                    <Extension Id='sha3' ContentType='application/x-sha3sum'>
+                        <Verb Id='open' Command='Open' TargetFile='StandaloneStub.exe'
+                            Argument='"%1"' />
+                    </Extension>
+                </ProgId>
+                <ProgId Id='OpenHashTab.sha3sum' Description='SHA3-512 Sum File'
+                    Icon="StandaloneStub.exe" IconIndex="0">
+                    <Extension Id='sha3sum' ContentType='application/x-sha3sum'>
+                        <Verb Id='open' Command='Open' TargetFile='StandaloneStub.exe'
+                            Argument='"%1"' />
+                    </Extension>
+                </ProgId>
+                <ProgId Id='OpenHashTab.sha3sums' Description='SHA3-512 Sum File'
+                    Icon="StandaloneStub.exe" IconIndex="0">
+                    <Extension Id='sha3sums' ContentType='application/x-sha3sum'>
+                        <Verb Id='open' Command='Open' TargetFile='StandaloneStub.exe'
+                            Argument='"%1"' />
+                    </Extension>
+                </ProgId>
+                <ProgId Id='OpenHashTab.sha3-512' Description='SHA3-512 Sum File'
+                    Icon="StandaloneStub.exe" IconIndex="0">
+                    <Extension Id='sha3-512' ContentType='application/x-sha3sum'>
+                        <Verb Id='open' Command='Open' TargetFile='StandaloneStub.exe'
+                            Argument='"%1"' />
+                    </Extension>
+                </ProgId>
+                <ProgId Id='OpenHashTab.sha3-224' Description='SHA3-224 Sum File'
+                    Icon="StandaloneStub.exe" IconIndex="0">
+                    <Extension Id='sha3-224' ContentType='application/x-sha3-224sum'>
+                        <Verb Id='open' Command='Open' TargetFile='StandaloneStub.exe'
+                            Argument='"%1"' />
+                    </Extension>
+                </ProgId>
+                <ProgId Id='OpenHashTab.sha3-256' Description='SHA3-256 Sum File'
+                    Icon="StandaloneStub.exe" IconIndex="0">
+                    <Extension Id='sha3-256' ContentType='application/x-sha3-256sum'>
+                        <Verb Id='open' Command='Open' TargetFile='StandaloneStub.exe'
+                            Argument='"%1"' />
+                    </Extension>
+                </ProgId>
+                <ProgId Id='OpenHashTab.sha3-384' Description='SHA3-384 Sum File'
+                    Icon="StandaloneStub.exe" IconIndex="0">
+                    <Extension Id='sha3-384' ContentType='application/x-sha3-384sum'>
+                        <Verb Id='open' Command='Open' TargetFile='StandaloneStub.exe'
+                            Argument='"%1"' />
+                    </Extension>
+                </ProgId>
+                <ProgId Id='OpenHashTab.k12-264' Description='KangarooTwelve-264 Sum File'
+                    Icon="StandaloneStub.exe" IconIndex="0">
+                    <Extension Id='k12-264' ContentType='application/x-k12-264sum'>
+                        <Verb Id='open' Command='Open' TargetFile='StandaloneStub.exe'
+                            Argument='"%1"' />
+                    </Extension>
+                </ProgId>
+                <ProgId Id='OpenHashTab.ph128-264' Description='ParallelHash128-264 Sum File'
+                    Icon="StandaloneStub.exe" IconIndex="0">
+                    <Extension Id='ph128-264' ContentType='application/x-ph128-264sum'>
+                        <Verb Id='open' Command='Open' TargetFile='StandaloneStub.exe'
+                            Argument='"%1"' />
+                    </Extension>
+                </ProgId>
+                <ProgId Id='OpenHashTab.ph256-528' Description='ParallelHash256-528 Sum File'
+                    Icon="StandaloneStub.exe" IconIndex="0">
+                    <Extension Id='ph256-528' ContentType='application/x-ph256-528sum'>
+                        <Verb Id='open' Command='Open' TargetFile='StandaloneStub.exe'
+                            Argument='"%1"' />
+                    </Extension>
+                </ProgId>
+                <ProgId Id='OpenHashTab.blake3' Description='BLAKE3 Sum File'
+                    Icon="StandaloneStub.exe" IconIndex="0">
+                    <Extension Id='blake3' ContentType='application/x-blake3sum'>
+                        <Verb Id='open' Command='Open' TargetFile='StandaloneStub.exe'
+                            Argument='"%1"' />
+                    </Extension>
+                </ProgId>
+                <ProgId Id='OpenHashTab.blake3sum' Description='BLAKE3 Sum File'
+                    Icon="StandaloneStub.exe" IconIndex="0">
+                    <Extension Id='blake3sum' ContentType='application/x-blake3sum'>
+                        <Verb Id='open' Command='Open' TargetFile='StandaloneStub.exe'
+                            Argument='"%1"' />
+                    </Extension>
+                </ProgId>
+                <ProgId Id='OpenHashTab.blake2sp' Description='BLAKE2sp Sum File'
+                    Icon="StandaloneStub.exe" IconIndex="0">
+                    <Extension Id='blake2sp' ContentType='application/x-blake2sp'>
+                        <Verb Id='open' Command='Open' TargetFile='StandaloneStub.exe'
+                            Argument='"%1"' />
+                    </Extension>
+                </ProgId>
+                <ProgId Id='OpenHashTab.xxh32' Description='xxHash-32 Sum File'
+                    Icon="StandaloneStub.exe" IconIndex="0">
+                    <Extension Id='xxh32' ContentType='application/x-xxh32'>
+                        <Verb Id='open' Command='Open' TargetFile='StandaloneStub.exe'
+                            Argument='"%1"' />
+                    </Extension>
+                </ProgId>
+                <ProgId Id='OpenHashTab.xxh64' Description='xxHash-64 Sum File'
+                    Icon="StandaloneStub.exe" IconIndex="0">
+                    <Extension Id='xxh64' ContentType='application/x-xxh64'>
+                        <Verb Id='open' Command='Open' TargetFile='StandaloneStub.exe'
+                            Argument='"%1"' />
+                    </Extension>
+                </ProgId>
+                <ProgId Id='OpenHashTab.xxh3' Description='xxHash3 Sum File'
+                    Icon="StandaloneStub.exe" IconIndex="0">
+                    <Extension Id='xxh3' ContentType='application/x-xxh3sum'>
+                        <Verb Id='open' Command='Open' TargetFile='StandaloneStub.exe'
+                            Argument='"%1"' />
+                    </Extension>
+                </ProgId>
+                <ProgId Id='OpenHashTab.xxh3sum' Description='xxHash3 Sum File'
+                    Icon="StandaloneStub.exe" IconIndex="0">
+                    <Extension Id='xxh3sum' ContentType='application/x-xxh3sum'>
+                        <Verb Id='open' Command='Open' TargetFile='StandaloneStub.exe'
+                            Argument='"%1"' />
+                    </Extension>
+                </ProgId>
+                <ProgId Id='OpenHashTab.xxhash3sum' Description='xxHash3 Sum File'
+                    Icon="StandaloneStub.exe" IconIndex="0">
+                    <Extension Id='xxhash3sum' ContentType='application/x-xxh3sum'>
+                        <Verb Id='open' Command='Open' TargetFile='StandaloneStub.exe'
+                            Argument='"%1"' />
+                    </Extension>
+                </ProgId>
+                <ProgId Id='OpenHashTab.xxh3-64' Description='xxHash3 Sum File'
+                    Icon="StandaloneStub.exe" IconIndex="0">
+                    <Extension Id='xxh3-64' ContentType='application/x-xxh3sum'>
+                        <Verb Id='open' Command='Open' TargetFile='StandaloneStub.exe'
+                            Argument='"%1"' />
+                    </Extension>
+                </ProgId>
+                <ProgId Id='OpenHashTab.xxh128' Description='xxHash128 Sum File'
+                    Icon="StandaloneStub.exe" IconIndex="0">
+                    <Extension Id='xxh128' ContentType='application/x-xxh128sum'>
+                        <Verb Id='open' Command='Open' TargetFile='StandaloneStub.exe'
+                            Argument='"%1"' />
+                    </Extension>
+                </ProgId>
+                <ProgId Id='OpenHashTab.xxh128sum' Description='xxHash128 Sum File'
+                    Icon="StandaloneStub.exe" IconIndex="0">
+                    <Extension Id='xxh128sum' ContentType='application/x-xxh128sum'>
+                        <Verb Id='open' Command='Open' TargetFile='StandaloneStub.exe'
+                            Argument='"%1"' />
+                    </Extension>
+                </ProgId>
+                <ProgId Id='OpenHashTab.xxhash128sum' Description='xxHash128 Sum File'
+                    Icon="StandaloneStub.exe" IconIndex="0">
+                    <Extension Id='xxhash128sum' ContentType='application/x-xxh128sum'>
+                        <Verb Id='open' Command='Open' TargetFile='StandaloneStub.exe'
+                            Argument='"%1"' />
+                    </Extension>
+                </ProgId>
+                <ProgId Id='OpenHashTab.xxh3-128' Description='xxHash128 Sum File'
+                    Icon="StandaloneStub.exe" IconIndex="0">
+                    <Extension Id='xxh3-128' ContentType='application/x-xxh128sum'>
+                        <Verb Id='open' Command='Open' TargetFile='StandaloneStub.exe'
+                            Argument='"%1"' />
+                    </Extension>
+                </ProgId>
+                <!-- corz checksum -->
+                <ProgId Id='OpenHashTab.hash' Description='Checksum File' Icon="StandaloneStub.exe"
+                    IconIndex="0">
+                    <Extension Id='hash' ContentType='application/x-corz-checksum'>
+                        <Verb Id='open' Command='Open' TargetFile='StandaloneStub.exe'
+                            Argument='"%1"' />
+                    </Extension>
+                </ProgId>
+                <!-- OpenHashTab native, for unknown hashes -->
+                <ProgId Id='OpenHashTab.sums' Description='Checksum File' Icon="StandaloneStub.exe"
+                    IconIndex="0">
+                    <Extension Id='sums' ContentType='application/x-openhashtab'>
+                        <Verb Id='open' Command='Open' TargetFile='StandaloneStub.exe'
+                            Argument='"%1"' />
+                    </Extension>
+                </ProgId>
+
+                <RegistryValue Root="HKCR" Key=".sfv\OpenWithProgids" Name="OpenHashTab.sfv"
+                    Value="" Type="string" />
+                <RegistryValue Root="HKCR" Key=".crc32\OpenWithProgids" Name="OpenHashTab.crc32"
+                    Value="" Type="string" />
+                <RegistryValue Root="HKCR" Key=".md4\OpenWithProgids" Name="OpenHashTab.md4"
+                    Value="" Type="string" />
+                <RegistryValue Root="HKCR" Key=".md4sum\OpenWithProgids" Name="OpenHashTab.md4sum"
+                    Value="" Type="string" />
+                <RegistryValue Root="HKCR" Key=".md4sums\OpenWithProgids" Name="OpenHashTab.md4sums"
+                    Value="" Type="string" />
+                <RegistryValue Root="HKCR" Key=".md5\OpenWithProgids" Name="OpenHashTab.md5"
+                    Value="" Type="string" />
+                <RegistryValue Root="HKCR" Key=".md5sum\OpenWithProgids" Name="OpenHashTab.md5sum"
+                    Value="" Type="string" />
+                <RegistryValue Root="HKCR" Key=".md5sums\OpenWithProgids" Name="OpenHashTab.md5sums"
+                    Value="" Type="string" />
+                <RegistryValue Root="HKCR" Key=".ripemd160\OpenWithProgids"
+                    Name="OpenHashTab.ripemd160" Value="" Type="string" />
+                <RegistryValue Root="HKCR" Key=".ripemd160sum\OpenWithProgids"
+                    Name="OpenHashTab.ripemd160sum" Value="" Type="string" />
+                <RegistryValue Root="HKCR" Key=".sha1\OpenWithProgids" Name="OpenHashTab.sha1"
+                    Value="" Type="string" />
+                <RegistryValue Root="HKCR" Key=".sha1sum\OpenWithProgids" Name="OpenHashTab.sha1sum"
+                    Value="" Type="string" />
+                <RegistryValue Root="HKCR" Key=".sha1sums\OpenWithProgids"
+                    Name="OpenHashTab.sha1sums" Value="" Type="string" />
+                <RegistryValue Root="HKCR" Key=".sha224\OpenWithProgids" Name="OpenHashTab.sha224"
+                    Value="" Type="string" />
+                <RegistryValue Root="HKCR" Key=".sha224sum\OpenWithProgids"
+                    Name="OpenHashTab.sha224sum" Value="" Type="string" />
+                <RegistryValue Root="HKCR" Key=".sha224sums\OpenWithProgids"
+                    Name="OpenHashTab.sha224sums" Value="" Type="string" />
+                <RegistryValue Root="HKCR" Key=".sha256\OpenWithProgids" Name="OpenHashTab.sha256"
+                    Value="" Type="string" />
+                <RegistryValue Root="HKCR" Key=".sha256sum\OpenWithProgids"
+                    Name="OpenHashTab.sha256sum" Value="" Type="string" />
+                <RegistryValue Root="HKCR" Key=".sha256sums\OpenWithProgids"
+                    Name="OpenHashTab.sha256sums" Value="" Type="string" />
+                <RegistryValue Root="HKCR" Key=".sha384\OpenWithProgids" Name="OpenHashTab.sha384"
+                    Value="" Type="string" />
+                <RegistryValue Root="HKCR" Key=".sha384sum\OpenWithProgids"
+                    Name="OpenHashTab.sha384sum" Value="" Type="string" />
+                <RegistryValue Root="HKCR" Key=".sha384sums\OpenWithProgids"
+                    Name="OpenHashTab.sha384sums" Value="" Type="string" />
+                <RegistryValue Root="HKCR" Key=".sha512\OpenWithProgids" Name="OpenHashTab.sha512"
+                    Value="" Type="string" />
+                <RegistryValue Root="HKCR" Key=".sha512sum\OpenWithProgids"
+                    Name="OpenHashTab.sha512sum" Value="" Type="string" />
+                <RegistryValue Root="HKCR" Key=".sha512sums\OpenWithProgids"
+                    Name="OpenHashTab.sha512sums" Value="" Type="string" />
+                <RegistryValue Root="HKCR" Key=".sha3\OpenWithProgids" Name="OpenHashTab.sha3"
+                    Value="" Type="string" />
+                <RegistryValue Root="HKCR" Key=".sha3sum\OpenWithProgids" Name="OpenHashTab.sha3sum"
+                    Value="" Type="string" />
+                <RegistryValue Root="HKCR" Key=".sha3sums\OpenWithProgids"
+                    Name="OpenHashTab.sha3sums" Value="" Type="string" />
+                <RegistryValue Root="HKCR" Key=".sha3-512\OpenWithProgids"
+                    Name="OpenHashTab.sha3-512" Value="" Type="string" />
+                <RegistryValue Root="HKCR" Key=".sha3-224\OpenWithProgids"
+                    Name="OpenHashTab.sha3-224" Value="" Type="string" />
+                <RegistryValue Root="HKCR" Key=".sha3-256\OpenWithProgids"
+                    Name="OpenHashTab.sha3-256" Value="" Type="string" />
+                <RegistryValue Root="HKCR" Key=".sha3-384\OpenWithProgids"
+                    Name="OpenHashTab.sha3-384" Value="" Type="string" />
+                <RegistryValue Root="HKCR" Key=".k12-264\OpenWithProgids" Name="OpenHashTab.k12-264"
+                    Value="" Type="string" />
+                <RegistryValue Root="HKCR" Key=".ph128-264\OpenWithProgids"
+                    Name="OpenHashTab.ph128-264" Value="" Type="string" />
+                <RegistryValue Root="HKCR" Key=".ph256-528\OpenWithProgids"
+                    Name="OpenHashTab.ph256-528" Value="" Type="string" />
+                <RegistryValue Root="HKCR" Key=".blake3\OpenWithProgids" Name="OpenHashTab.blake3"
+                    Value="" Type="string" />
+                <RegistryValue Root="HKCR" Key=".blake3sum\OpenWithProgids"
+                    Name="OpenHashTab.blake3sum" Value="" Type="string" />
+                <RegistryValue Root="HKCR" Key=".blake2sp\OpenWithProgids"
+                    Name="OpenHashTab.blake2sp" Value="" Type="string" />
+                <RegistryValue Root="HKCR" Key=".xxh32\OpenWithProgids" Name="OpenHashTab.xxh32"
+                    Value="" Type="string" />
+                <RegistryValue Root="HKCR" Key=".xxh64\OpenWithProgids" Name="OpenHashTab.xxh64"
+                    Value="" Type="string" />
+                <RegistryValue Root="HKCR" Key=".xxh3\OpenWithProgids" Name="OpenHashTab.xxh3"
+                    Value="" Type="string" />
+                <RegistryValue Root="HKCR" Key=".xxh3sum\OpenWithProgids" Name="OpenHashTab.xxh3sum"
+                    Value="" Type="string" />
+                <RegistryValue Root="HKCR" Key=".xxhash3sum\OpenWithProgids"
+                    Name="OpenHashTab.xxhash3sum" Value="" Type="string" />
+                <RegistryValue Root="HKCR" Key=".xxh3-64\OpenWithProgids" Name="OpenHashTab.xxh3-64"
+                    Value="" Type="string" />
+                <RegistryValue Root="HKCR" Key=".xxh128\OpenWithProgids" Name="OpenHashTab.xxh128"
+                    Value="" Type="string" />
+                <RegistryValue Root="HKCR" Key=".xxh128sum\OpenWithProgids"
+                    Name="OpenHashTab.xxh128sum" Value="" Type="string" />
+                <RegistryValue Root="HKCR" Key=".xxhash128sum\OpenWithProgids"
+                    Name="OpenHashTab.xxhash128sum" Value="" Type="string" />
+                <RegistryValue Root="HKCR" Key=".xxh3-128\OpenWithProgids"
+                    Name="OpenHashTab.xxh3-128" Value="" Type="string" />
+                <RegistryValue Root="HKCR" Key=".hash\OpenWithProgids" Name="OpenHashTab.hash"
+                    Value="" Type="string" />
+                <RegistryValue Root="HKCR" Key=".sums\OpenWithProgids" Name="OpenHashTab.sums"
+                    Value="" Type="string" />
+
+                <RegistryKey Root="HKCR" Key="Applications\StandaloneStub.exe">
+                    <RegistryValue Name="FriendlyAppName" Value="OpenHashTab" Type="string" />
+
+                    <RegistryValue Key="SupportedTypes" Name=".sfv" Value="" Type="string" />
+                    <RegistryValue Key="SupportedTypes" Name=".crc32" Value="" Type="string" />
+                    <RegistryValue Key="SupportedTypes" Name=".md4" Value="" Type="string" />
+                    <RegistryValue Key="SupportedTypes" Name=".md4sum" Value="" Type="string" />
+                    <RegistryValue Key="SupportedTypes" Name=".md4sums" Value="" Type="string" />
+                    <RegistryValue Key="SupportedTypes" Name=".md5" Value="" Type="string" />
+                    <RegistryValue Key="SupportedTypes" Name=".md5sum" Value="" Type="string" />
+                    <RegistryValue Key="SupportedTypes" Name=".md5sums" Value="" Type="string" />
+                    <RegistryValue Key="SupportedTypes" Name=".ripemd160" Value="" Type="string" />
+                    <RegistryValue Key="SupportedTypes" Name=".ripemd160sum" Value="" Type="string" />
+                    <RegistryValue Key="SupportedTypes" Name=".sha1" Value="" Type="string" />
+                    <RegistryValue Key="SupportedTypes" Name=".sha1sum" Value="" Type="string" />
+                    <RegistryValue Key="SupportedTypes" Name=".sha1sums" Value="" Type="string" />
+                    <RegistryValue Key="SupportedTypes" Name=".sha224" Value="" Type="string" />
+                    <RegistryValue Key="SupportedTypes" Name=".sha224sum" Value="" Type="string" />
+                    <RegistryValue Key="SupportedTypes" Name=".sha224sums" Value="" Type="string" />
+                    <RegistryValue Key="SupportedTypes" Name=".sha256" Value="" Type="string" />
+                    <RegistryValue Key="SupportedTypes" Name=".sha256sum" Value="" Type="string" />
+                    <RegistryValue Key="SupportedTypes" Name=".sha256sums" Value="" Type="string" />
+                    <RegistryValue Key="SupportedTypes" Name=".sha384" Value="" Type="string" />
+                    <RegistryValue Key="SupportedTypes" Name=".sha384sum" Value="" Type="string" />
+                    <RegistryValue Key="SupportedTypes" Name=".sha384sums" Value="" Type="string" />
+                    <RegistryValue Key="SupportedTypes" Name=".sha512" Value="" Type="string" />
+                    <RegistryValue Key="SupportedTypes" Name=".sha512sum" Value="" Type="string" />
+                    <RegistryValue Key="SupportedTypes" Name=".sha512sums" Value="" Type="string" />
+                    <RegistryValue Key="SupportedTypes" Name=".sha3" Value="" Type="string" />
+                    <RegistryValue Key="SupportedTypes" Name=".sha3sum" Value="" Type="string" />
+                    <RegistryValue Key="SupportedTypes" Name=".sha3sums" Value="" Type="string" />
+                    <RegistryValue Key="SupportedTypes" Name=".sha3-512" Value="" Type="string" />
+                    <RegistryValue Key="SupportedTypes" Name=".sha3-224" Value="" Type="string" />
+                    <RegistryValue Key="SupportedTypes" Name=".sha3-256" Value="" Type="string" />
+                    <RegistryValue Key="SupportedTypes" Name=".sha3-384" Value="" Type="string" />
+                    <RegistryValue Key="SupportedTypes" Name=".k12-264" Value="" Type="string" />
+                    <RegistryValue Key="SupportedTypes" Name=".ph128-264" Value="" Type="string" />
+                    <RegistryValue Key="SupportedTypes" Name=".ph256-528" Value="" Type="string" />
+                    <RegistryValue Key="SupportedTypes" Name=".blake3" Value="" Type="string" />
+                    <RegistryValue Key="SupportedTypes" Name=".blake3sum" Value="" Type="string" />
+                    <RegistryValue Key="SupportedTypes" Name=".blake2sp" Value="" Type="string" />
+                    <RegistryValue Key="SupportedTypes" Name=".xxh32" Value="" Type="string" />
+                    <RegistryValue Key="SupportedTypes" Name=".xxh64" Value="" Type="string" />
+                    <RegistryValue Key="SupportedTypes" Name=".xxh3" Value="" Type="string" />
+                    <RegistryValue Key="SupportedTypes" Name=".xxh3sum" Value="" Type="string" />
+                    <RegistryValue Key="SupportedTypes" Name=".xxhash3sum" Value="" Type="string" />
+                    <RegistryValue Key="SupportedTypes" Name=".xxh3-64" Value="" Type="string" />
+                    <RegistryValue Key="SupportedTypes" Name=".xxh128" Value="" Type="string" />
+                    <RegistryValue Key="SupportedTypes" Name=".xxh128sum" Value="" Type="string" />
+                    <RegistryValue Key="SupportedTypes" Name=".xxhash128sum" Value="" Type="string" />
+                    <RegistryValue Key="SupportedTypes" Name=".xxh3-128" Value="" Type="string" />
+                    <RegistryValue Key="SupportedTypes" Name=".hash" Value="" Type="string" />
+                    <RegistryValue Key="SupportedTypes" Name=".sums" Value="" Type="string" />
+
+                </RegistryKey>
+            </Component>
+        </ComponentGroup>
+
+        <ComponentGroup Id="Pdb32" Directory="INSTALLDIR32">
+            <Component Id="Pdb32" Bitness="always32">
+                <File Id="OpenHashTab32.pdb" Source="$(var.BuildDirectory32)\OpenHashTab32.pdb"
+                    KeyPath="yes" />
+            </Component>
+            <Component Id="AlgorithmsDll_x86Pdb" Bitness="always32">
+                <File Id="AlgorithmsDll_x86.pdb"
+                    Source="$(var.AlgorithmsDllsDirectory)\AlgorithmsDll_x86.pdb" KeyPath="yes" />
+            </Component>
+        </ComponentGroup>
+        <?if $(var.Win64) = "yes"?>
+        <ComponentGroup Id="Pdb64" Directory="INSTALLDIR">
+            <Component Id="Pdb64">
+                <File Id="OpenHashTab64.pdb" Source="$(var.BuildDirectory)\OpenHashTab64.pdb"
+                    KeyPath="yes" />
+            </Component>
+            <Component Id="AlgorithmsDll_SSE2Pdb">
+                <File Id="AlgorithmsDll_SSE2.pdb"
+                    Source="$(var.AlgorithmsDllsDirectory)\AlgorithmsDll_SSE2.pdb" KeyPath="yes" />
+            </Component>
+            <Component Id="AlgorithmsDll_AVX2Pdb">
+                <File Id="AlgorithmsDll_AVX2.pdb"
+                    Source="$(var.AlgorithmsDllsDirectory)\AlgorithmsDll_AVX2.pdb" KeyPath="yes" />
+            </Component>
+            <Component Id="AlgorithmsDll_AVX512Pdb">
+                <File Id="AlgorithmsDll_AVX512.pdb"
+                    Source="$(var.AlgorithmsDllsDirectory)\AlgorithmsDll_AVX512.pdb" KeyPath="yes" />
+            </Component>
+            <Component Id="AlgorithmsDll_ARM64Pdb">
+                <File Id="AlgorithmsDll_ARM64.pdb"
+                    Source="$(var.AlgorithmsDllsDirectory)\AlgorithmsDll_ARM64.pdb" KeyPath="yes" />
+            </Component>
+        </ComponentGroup>
+        <?endif?>
+
+        <ComponentGroup Id="Pdb" Directory="INSTALLDIR">
+            <Component Id="BenchmarkPdb">
+                <File Id="Benchmark.pdb" Source="$(var.BuildDirectory)\Benchmark.pdb" KeyPath="yes" />
+            </Component>
+            <Component Id="StandaloneStubPdb">
+                <File Id="StandaloneStub.pdb" Source="$(var.BuildDirectory)\StandaloneStub.pdb"
+                    KeyPath="yes" />
+            </Component>
+        </ComponentGroup>
+    </Package>
+</Wix>

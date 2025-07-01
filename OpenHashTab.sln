@@ -1,0 +1,27 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{21a5705d-c339-4094-a7ec-53132e4f2581}") = "OpenHashTab", "OpenHashTab.wixproj", "{bc583aa7-a402-4bbb-b972-1e80a91aeb0c}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Machine|x86 = Machine|x86
+		Machine|x64 = Machine|x64
+		Machine|ARM64 = Machine|ARM64
+		User|x86 = User|x86
+		User|x64 = User|x64
+		User|ARM64 = User|ARM64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{bc583aa7-a402-4bbb-b972-1e80a91aeb0c}.Machine|x86.ActiveCfg = Machine|x86
+		{bc583aa7-a402-4bbb-b972-1e80a91aeb0c}.Machine|x86.Build.0 = Machine|x86
+		{bc583aa7-a402-4bbb-b972-1e80a91aeb0c}.Machine|x64.ActiveCfg = Machine|x64
+		{bc583aa7-a402-4bbb-b972-1e80a91aeb0c}.Machine|x64.Build.0 = Machine|x64
+		{bc583aa7-a402-4bbb-b972-1e80a91aeb0c}.Machine|ARM64.ActiveCfg = Machine|ARM64
+		{bc583aa7-a402-4bbb-b972-1e80a91aeb0c}.Machine|ARM64.Build.0 = Machine|ARM64
+		{bc583aa7-a402-4bbb-b972-1e80a91aeb0c}.User|x86.ActiveCfg = User|x86
+		{bc583aa7-a402-4bbb-b972-1e80a91aeb0c}.User|x86.Build.0 = User|x86
+		{bc583aa7-a402-4bbb-b972-1e80a91aeb0c}.User|x64.ActiveCfg = User|x64
+		{bc583aa7-a402-4bbb-b972-1e80a91aeb0c}.User|x64.Build.0 = User|x64
+		{bc583aa7-a402-4bbb-b972-1e80a91aeb0c}.User|ARM64.ActiveCfg = User|ARM64
+		{bc583aa7-a402-4bbb-b972-1e80a91aeb0c}.User|ARM64.Build.0 = User|ARM64
+	EndGlobalSection
+EndGlobal
