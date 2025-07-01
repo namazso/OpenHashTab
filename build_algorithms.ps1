@@ -49,7 +49,7 @@ $Environment = (Get-ChildItem Env:);
         -B "cmake-algorithms-$_" `
         --install-prefix ((Get-Item AlgorithmsDlls).FullName) `
         "-DOHT_FLAVOR=$_" `
-        -DCMAKE_BUILD_TYPE=RelWithDebInfo `
+        -DCMAKE_BUILD_TYPE=Release `
         -DCMAKE_C_COMPILER=clang-cl `
         -DCMAKE_CXX_COMPILER=clang-cl
     cmake --build "cmake-algorithms-$_"

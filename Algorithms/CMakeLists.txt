@@ -20,12 +20,19 @@ project(AlgorithmsDll)
 
 set(CMAKE_CXX_STANDARD 20)
 
-set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+add_compile_options(
+        -flto
+        /GR-
+        /GS-
+        /EHs-c-
+        /guard:cf,nochecks
+        /Zi
+)
 
-string(REGEX REPLACE "/Ob1" "/Ob2" CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELWITHDEBINFO}")
-string(REGEX REPLACE "/Ob1" "/Ob2" CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELWITHDEBINFO}")
-
-add_compile_options(-flto /GR- /GS- /guard:cf,nochecks)
+add_compile_definitions(
+        _CRTIMP=
+        _NO_CRT_STDIO_INLINE=
+)
 
 if ("${OHT_FLAVOR}" STREQUAL "ARM64")
 elseif ("${OHT_FLAVOR}" STREQUAL "SSE2")
@@ -49,7 +56,10 @@ add_subdirectory(mbedtls)
 add_subdirectory(blake2sp)
 add_subdirectory(BLAKE3)
 
-add_library(${PROJECT_NAME} SHARED Hasher2.cpp DllMain.c)
+add_library(${PROJECT_NAME} SHARED
+        Hasher2.cpp
+        FakeCrt.cpp
+)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME "${PROJECT_NAME}_${OHT_FLAVOR}")
 
@@ -63,6 +73,7 @@ target_link_libraries(${PROJECT_NAME}
         mbedtls
         blake2sp
         BLAKE3
+        ntdllp
         )
 
 target_link_options(${PROJECT_NAME} PRIVATE
@@ -75,6 +86,8 @@ target_link_options(${PROJECT_NAME} PRIVATE
         "/EXPORT:get_algorithms_end_${OHT_FLAVOR}=get_algorithms_end"
         /OPT:REF
         /OPT:ICF=10
+        /NOENTRY
+        /DEBUG
         )
 
 install(TARGETS ${PROJECT_NAME} DESTINATION .)

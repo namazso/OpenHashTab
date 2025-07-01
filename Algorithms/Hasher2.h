@@ -16,6 +16,7 @@
 #pragma once
 #include <cstdint>
 #include <cstddef>
+#include <cstdlib>
 
 #define ALGORITHMS_CC __stdcall
 
@@ -26,7 +27,7 @@ class HashAlgorithm
   friend class HashBox;
 
   using ParamCheckFn = size_t ALGORITHMS_CC(const uint64_t* params); // returns: length of the output for the given params, 0 if invalid
-  using FactoryFn = HashContext* ALGORITHMS_CC(const uint64_t* params);
+  using FactoryFn = HashContext* ALGORITHMS_CC(void* buf, const uint64_t* params);
 
   using UpdateFn = void ALGORITHMS_CC(HashContext* ctx, const void* data, size_t size);
   using FinishFn = void ALGORITHMS_CC(HashContext* ctx, uint8_t* out);
@@ -35,6 +36,8 @@ class HashAlgorithm
   using DeleteFn = void ALGORITHMS_CC(HashContext* ctx);
 
   ParamCheckFn* _param_check_fn;
+  uint32_t _ctx_size;
+  uint32_t _ctx_align;
   FactoryFn* _factory_fn;
   UpdateFn* _update_fn;
   FinishFn* _finish_fn;
@@ -52,6 +55,8 @@ public:
 
   constexpr HashAlgorithm(
     ParamCheckFn* param_check_fn,
+    uint32_t ctx_size,
+    uint32_t ctx_align,
     FactoryFn* factory_fn,
     UpdateFn* update_fn,
     FinishFn* finish_fn,
@@ -63,6 +68,8 @@ public:
     uint32_t params_size
   ) : _param_check_fn(param_check_fn)
     , _factory_fn(factory_fn)
+    , _ctx_size(ctx_size)
+    , _ctx_align(ctx_align)
     , _update_fn(update_fn)
     , _finish_fn(finish_fn)
     , _get_output_size_fn(get_output_size_fn)
@@ -75,6 +82,8 @@ public:
   template <size_t N>
   constexpr HashAlgorithm(
     ParamCheckFn* param_check_fn,
+    uint32_t ctx_size,
+    uint32_t ctx_align,
     FactoryFn* factory_fn,
     UpdateFn* update_fn,
     FinishFn* finish_fn,
@@ -84,6 +93,8 @@ public:
     bool is_secure,
     const char* const(&params)[N]
   ) : _param_check_fn(param_check_fn)
+    , _ctx_size(ctx_size)
+    , _ctx_align(ctx_align)
     , _factory_fn(factory_fn)
     , _update_fn(update_fn)
     , _finish_fn(finish_fn)
@@ -105,9 +116,13 @@ public:
 
   HashBox(const HashAlgorithm& algorithm, const uint64_t* params)
     : _algorithm(&algorithm)
-    , _ctx(_algorithm->_factory_fn(params)) {}
+    , _ctx(_algorithm->_factory_fn(_aligned_malloc(_algorithm->_ctx_size, _algorithm->_ctx_align), params)) {}
 
-  ~HashBox() { if(_ctx) _algorithm->_delete_fn(_ctx); }
+  ~HashBox() {
+    if(_ctx)
+      _algorithm->_delete_fn(_ctx);
+    _aligned_free(_ctx);
+  }
 
   HashBox(const HashBox&) = delete;
   HashBox(HashBox&& rhs) noexcept
@@ -130,8 +145,13 @@ public:
 
   void Initialize(const HashAlgorithm& algorithm, const uint64_t* params)
   {
+    if (_ctx) {
+      _algorithm->_delete_fn(_ctx);
+      _aligned_free(_ctx);
+      _ctx = nullptr;
+    }
     _algorithm = &algorithm;
-    _ctx = _algorithm->_factory_fn(params);
+    _ctx = _algorithm->_factory_fn(_aligned_malloc(_algorithm->_ctx_size, _algorithm->_ctx_align) ,params);
   }
 
   bool IsInitialized() const { return _ctx != nullptr; }

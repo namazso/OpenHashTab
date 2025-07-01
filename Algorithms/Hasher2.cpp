@@ -732,9 +732,9 @@ public:
 template <typename T, class = void>
 class HashContextTraits
 {
-  static HashContext* ALGORITHMS_CC Factory(const uint64_t*)
+  static HashContext* ALGORITHMS_CC Factory(void* buf, const uint64_t*)
   {
-    return new T();
+    return new (buf) T();
   }
 
   static size_t ALGORITHMS_CC ParamCheck(const uint64_t*)
@@ -757,12 +757,11 @@ class HashContextTraits
     return ((T*)ctx)->GetOutputSize();
   }
 
-  static void ALGORITHMS_CC Delete(HashContext* ctx)
-  {
-    delete ((T*)ctx);
-  }
+  static void ALGORITHMS_CC Delete(HashContext* ctx) {}
 public:
   static constexpr auto param_check_fn = &ParamCheck;
+  static constexpr auto ctx_size = sizeof(T);
+  static constexpr auto ctx_align = alignof(T);
   static constexpr auto factory_fn = &Factory;
   static constexpr auto update_fn = &Update;
   static constexpr auto finish_fn = &Finish;
@@ -775,9 +774,9 @@ public:
 template <typename T>
 class HashContextTraits<T, std::void_t<decltype(T::k_params)>>
 {
-  static HashContext* ALGORITHMS_CC Factory(const uint64_t* params)
+  static HashContext* ALGORITHMS_CC Factory(void* buf, const uint64_t* params)
   {
-    return new T(params);
+    return new (buf) T(params);
   }
 
   static size_t ALGORITHMS_CC ParamCheck(const uint64_t* params)
@@ -800,12 +799,11 @@ class HashContextTraits<T, std::void_t<decltype(T::k_params)>>
     return ((T*)ctx)->GetOutputSize();
   }
 
-  static void ALGORITHMS_CC Delete(HashContext* ctx)
-  {
-    delete ((T*)ctx);
-  }
+  static void ALGORITHMS_CC Delete(HashContext* ctx) {}
 public:
   static constexpr auto param_check_fn = &ParamCheck;
+  static constexpr auto ctx_size = sizeof(T);
+  static constexpr auto ctx_align = alignof(T);
   static constexpr auto factory_fn = &Factory;
   static constexpr auto update_fn = &Update;
   static constexpr auto finish_fn = &Finish;
@@ -820,6 +818,8 @@ constexpr HashAlgorithm make_algorithm(const char* name, bool is_secure)
 {
   return HashAlgorithm{
     HashContextTraits<T>::param_check_fn,
+    HashContextTraits<T>::ctx_size,
+    HashContextTraits<T>::ctx_align,
     HashContextTraits<T>::factory_fn,
     HashContextTraits<T>::update_fn,
     HashContextTraits<T>::finish_fn,
@@ -865,72 +865,3 @@ constexpr const HashAlgorithm* k_algorithms_end = std::end(k_algorithms);
 
 extern "C" const HashAlgorithm* get_algorithms_begin() { return k_algorithms_begin; }
 extern "C" const HashAlgorithm* get_algorithms_end() { return k_algorithms_end; }
-
-/*
-// these are what I found with a quick FTP search
-static const char* const no_exts[] = { nullptr };
-static const char* const md5_exts[] = { "md5", "md5sum", "md5sums", nullptr };
-static const char* const ripemd160_exts[] = { "ripemd160", nullptr };
-static const char* const sha1_exts[] = { "sha1", "sha1sum", "sha1sums", nullptr };
-static const char* const sha224_exts[] = { "sha224", "sha224sum", nullptr };
-static const char* const sha256_exts[] = { "sha256", "sha256sum", "sha256sums", nullptr };
-static const char* const sha384_exts[] = { "sha384", nullptr };
-static const char* const sha512_exts[] = { "sha512", "sha512sum", "sha512sums", nullptr };
-static const char* const sha3_512_exts[] = { "sha3", "sha3-512",nullptr };
-
-// i made these up so people don't complain about default filenames
-static const char* const sha3_224_exts[] = { "sha3-224", nullptr };
-static const char* const sha3_256_exts[] = { "sha3-256", nullptr };
-static const char* const sha3_384_exts[] = { "sha3-384", nullptr };
-static const char* const k12_264_exts[] = { "k12-264", nullptr };
-static const char* const ph128_264_exts[] = { "ph128-264", nullptr };
-static const char* const ph256_528_exts[] = { "ph256-528", nullptr };
-static const char* const blake3_exts[] = { "blake3", nullptr };
-static const char* const blake2sp_exts[] = { "blake2sp", nullptr };
-static const char* const xxh32_exts[] = { "xxh32", nullptr };
-static const char* const xxh64_exts[] = { "xxh64", nullptr };
-static const char* const xxh3_64_exts[] = { "xxh3-64", nullptr };
-static const char* const xxh3_128_exts[] = { "xxh3-128", nullptr };
-static const char* const md4_exts[] = { "md4", nullptr };
-
-constexpr HashAlgorithm HashAlgorithm::k_algorithms[] =
-{
-  { "CRC32", 4, no_exts, hash_context_factory<Crc32HashContext>, false },
-  { "CRC64", 8, no_exts, hash_context_factory<Crc64HashContext>, false },
-  { "XXH32", 4, xxh32_exts, hash_context_factory<XXH32HashContext>, false },
-  { "XXH64", 8, xxh64_exts, hash_context_factory<XXH64HashContext>, false },
-  { "XXH3-64", 8, xxh3_64_exts, hash_context_factory<XXH3_64bitsHashContext>, false },
-  { "XXH3-128", 16, xxh3_128_exts, hash_context_factory<XXH3_128bitsHashContext>, false },
-//  { "MD2", 16, no_exts, hash_context_factory<Md2HashContext>, false },
-  { "MD4", 16, md4_exts, hash_context_factory<Md4HashContext>, false },
-  { "MD5", 16, md5_exts, hash_context_factory<Md5HashContext>, false },
-  { "RipeMD160", 20, ripemd160_exts, hash_context_factory<RipeMD160HashContext>, true },
-  { "SHA-1", 20, sha1_exts, hash_context_factory<Sha1HashContext>, true },
-  { "SHA-224", 28, sha224_exts, hash_context_factory<Sha224HashContext>, true },
-  { "SHA-256", 32, sha256_exts, hash_context_factory<Sha256HashContext>, true },
-  { "SHA-384", 48, sha384_exts, hash_context_factory<Sha384HashContext>, true },
-  { "SHA-512", 64, sha512_exts, hash_context_factory<Sha512HashContext>, true },
-  { "Blake2sp", 32, blake2sp_exts, hash_context_factory<Blake2SpHashContext>, true },
-  { "SHA3-224", 28, sha3_224_exts, hash_context_factory<SHA3_224HashContext>, true },
-  { "SHA3-256", 32, sha3_256_exts, hash_context_factory<SHA3_256HashContext>, true },
-  { "SHA3-384", 48, sha3_384_exts, hash_context_factory<SHA3_384HashContext>, true },
-  { "SHA3-512", 64, sha3_512_exts, hash_context_factory<SHA3_512HashContext>, true },
-  { "K12-264", 33, k12_264_exts, hash_context_factory<K12_264HashContext>, true },
-  { "K12-256", 32, no_exts, hash_context_factory<K12_256HashContext>, true },
-  { "K12-512", 64, no_exts, hash_context_factory<K12_512HashContext>, true },
-  { "PH128-264", 33, ph128_264_exts, hash_context_factory<PH128_264HashContext>, true },
-  { "PH256-528", 66, ph256_528_exts, hash_context_factory<PH256_528HashContext>, true },
-  { "BLAKE3", 32, blake3_exts, hash_context_factory<Blake3_256HashContext>, true },
-  { "BLAKE3-512", 64, no_exts, hash_context_factory<Blake3_512HashContext>, true },
-  { "GOST 2012 (256)", 32, no_exts, hash_context_factory<GOST34112012_256HashContext>, true },
-  { "GOST 2012 (512)", 64, no_exts, hash_context_factory<GOST34112012_512HashContext>, true },
-  { "eD2k", 16, no_exts, hash_context_factory<ED2kHashContext<false>>, false },
-  { "eD2k (Old)", 16, no_exts, hash_context_factory<ED2kHashContext<true>>, false },
-};*/
-
-/*
-extern "C" __declspec(dllexport) const HashAlgorithm* Algorithms()
-{
-  return HashAlgorithm::Algorithms();
-}
-*/
