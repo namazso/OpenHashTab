@@ -18,12 +18,14 @@ cmake_minimum_required(VERSION 3.14)
 
 project(AlgorithmsDlls)
 
-if (MSVC_C_ARCHITECTURE_ID STREQUAL "x64")
-    set(FLAVORS "SSE2" "AVX" "AVX2" "AVX512")
+if (MSVC_C_ARCHITECTURE_ID STREQUAL "X86")
+    set(FLAVORS "x86")
+elseif (MSVC_C_ARCHITECTURE_ID STREQUAL "x64" OR MSVC_C_ARCHITECTURE_ID STREQUAL "ARM64EC")
+    set(FLAVORS "SSE2" "AVX2" "AVX512")
 elseif (MSVC_C_ARCHITECTURE_ID STREQUAL "ARM64")
     set(FLAVORS "ARM64")
 else ()
-    message(FATAL_ERROR "Unsupported architecture")
+    message(FATAL_ERROR "Unsupported architecture ${MSVC_C_ARCHITECTURE_ID}")
 endif ()
 
 add_library(AlgorithmsDlls INTERFACE)

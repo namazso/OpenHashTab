@@ -38,22 +38,6 @@ set(ARM64_FILES
         XKCP/lib/low/Ketje/OptimizedLE/Ket.c
         )
 
-set(AVX_FILES
-        XKCP/lib/low/KeccakP-200/ref/KeccakP-200-reference.c
-        XKCP/lib/low/KeccakP-400/ref/KeccakP-400-reference.c
-        XKCP/lib/low/KeccakP-800/plain/KeccakP-800-opt32.c
-        XKCP/lib/low/KeccakP-1600/plain-64bits/KeccakP-1600-opt64.c
-        XKCP/lib/low/KeccakP-1600-times2/SIMD128/KeccakP-1600-times2-SIMD128.c
-        XKCP/lib/low/KeccakP-1600-times4/fallback-on2/KeccakP-1600-times4-on2.c
-        XKCP/lib/low/KeccakP-1600-times8/fallback-on2/KeccakP-1600-times8-on2.c
-        XKCP/lib/low/Xoodoo/SSE2/Xoodoo-SIMD128.c
-        XKCP/lib/low/Xoodoo/SSE2/Xoodyak-full-block-SIMD128.c
-        XKCP/lib/low/Xoodoo-times4/SSSE3/Xoodoo-times4-SIMD128.c
-        XKCP/lib/low/Xoodoo-times8/fallback-on1/Xoodoo-times8-on1.c
-        XKCP/lib/low/Xoodoo-times16/fallback-on1/Xoodoo-times16-on1.c
-        XKCP/lib/low/Ketje/SnP-compliant/Ket.c
-        )
-
 set(AVX2_FILES
         XKCP/lib/low/KeccakP-200/ref/KeccakP-200-reference.c
         XKCP/lib/low/KeccakP-400/ref/KeccakP-400-reference.c
@@ -138,27 +122,6 @@ set(ARM64_INCLUDES
         XKCP/lib/low/Ketje/OptimizedLE
         )
 
-set(AVX_INCLUDES
-        XKCP/lib/low/KeccakP-200/ref
-        XKCP/lib/low/KeccakP-400/ref
-        XKCP/lib/low/KeccakP-800/plain
-        XKCP/lib/low/KeccakP-800/plain/lcua
-        XKCP/lib/low/KeccakP-1600/common
-        XKCP/lib/low/KeccakP-1600/plain-64bits
-        XKCP/lib/low/common
-        XKCP/lib/low/KeccakP-1600/plain-64bits/lcua-shld
-        XKCP/lib/low/KeccakP-1600-times2/SIMD128
-        XKCP/lib/low/KeccakP-1600-times2/SIMD128/SSSE3-ua
-        XKCP/lib/low/KeccakP-1600-times4/fallback-on2
-        XKCP/lib/low/KeccakP-1600-times8/fallback-on2
-        XKCP/lib/low/Xoodoo
-        XKCP/lib/low/Xoodoo/SSE2
-        XKCP/lib/low/Xoodoo-times4/SSSE3
-        XKCP/lib/low/Xoodoo-times8/fallback-on1
-        XKCP/lib/low/Xoodoo-times16/fallback-on1
-        XKCP/lib/low/Ketje/SnP-compliant
-        )
-
 set(AVX2_INCLUDES
         XKCP/lib/low/KeccakP-200/ref
         XKCP/lib/low/KeccakP-400/ref
@@ -225,12 +188,9 @@ set(GENERIC_INCLUDES
 if ("${OHT_FLAVOR}" STREQUAL "ARM64")
     set(FILES ${COMMON_FILES} ${ARM64_FILES})
     set(INCLUDES ${COMMON_INCLUDES} ${ARM64_INCLUDES})
-elseif ("${OHT_FLAVOR}" STREQUAL "SSE2")
+elseif ("${OHT_FLAVOR}" STREQUAL "SSE2" OR "${OHT_FLAVOR}" STREQUAL "x86")
     set(FILES ${COMMON_FILES} ${GENERIC_FILES})
     set(INCLUDES ${COMMON_INCLUDES} ${GENERIC_INCLUDES})
-elseif ("${OHT_FLAVOR}" STREQUAL "AVX")
-    set(FILES ${COMMON_FILES} ${AVX_FILES})
-    set(INCLUDES ${COMMON_INCLUDES} ${AVX_INCLUDES})
 elseif ("${OHT_FLAVOR}" STREQUAL "AVX2")
     set(FILES ${COMMON_FILES} ${AVX2_FILES})
     set(INCLUDES ${COMMON_INCLUDES} ${AVX2_INCLUDES})

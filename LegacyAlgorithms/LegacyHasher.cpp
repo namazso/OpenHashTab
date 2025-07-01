@@ -38,6 +38,7 @@ enum : uint32_t {
 
 enum CPUFeatureLevel {
   CPU_None,
+  CPU_X86,
   CPU_SSE2,
   CPU_AVX,
   CPU_AVX2,
@@ -51,7 +52,7 @@ enum CPUFeatureLevel {
 static CPUFeatureLevel get_cpu_level() {
   auto best = CPU_None;
 #if defined(_M_IX86)
-  best = CPU_SSE2;
+  best = CPU_X86;
 #elif defined(_M_X64)
   int abcdi[4];
   // Check how many CPUID pages we have
@@ -132,10 +133,10 @@ static CPUFeatureLevel get_cpu_level() {
   return best;
 }
 
+extern "C" const HashAlgorithm* get_algorithms_begin_x86();
+extern "C" const HashAlgorithm* get_algorithms_end_x86();
 extern "C" const HashAlgorithm* get_algorithms_begin_SSE2();
 extern "C" const HashAlgorithm* get_algorithms_end_SSE2();
-extern "C" const HashAlgorithm* get_algorithms_begin_AVX();
-extern "C" const HashAlgorithm* get_algorithms_end_AVX();
 extern "C" const HashAlgorithm* get_algorithms_begin_AVX2();
 extern "C" const HashAlgorithm* get_algorithms_end_AVX2();
 extern "C" const HashAlgorithm* get_algorithms_begin_AVX512();
@@ -143,15 +144,48 @@ extern "C" const HashAlgorithm* get_algorithms_end_AVX512();
 extern "C" const HashAlgorithm* get_algorithms_begin_ARM64();
 extern "C" const HashAlgorithm* get_algorithms_end_ARM64();
 
-#if defined(_M_X64)
+#if defined(_M_IX86)
+const HashAlgorithm* get_algorithms_begin(CPUFeatureLevel level) {
+  switch (level) {
+    case CPU_None:
+    case CPU_NEON:
+    case CPU_SSE2:
+    case CPU_AVX2:
+    case CPU_AVX512:
+    case CPU_MAX:
+    default:
+      return nullptr;
+    case CPU_X86:
+      return get_algorithms_begin_x86();
+  }
+}
+
+const HashAlgorithm* get_algorithms_end(CPUFeatureLevel level) {
+  switch (level) {
+    case CPU_None:
+    case CPU_NEON:
+    case CPU_SSE2:
+    case CPU_AVX2:
+    case CPU_AVX512:
+    case CPU_MAX:
+    default:
+      return nullptr;
+    case CPU_X86:
+      return get_algorithms_end_x86();
+  }
+}
+#elif defined(_M_X64)
 static const HashAlgorithm* get_algorithms_begin(CPUFeatureLevel level) {
   switch (level) {
+  case CPU_None:
+  case CPU_X86:
+  case CPU_NEON:
+  case CPU_MAX:
   default:
     return nullptr;
   case CPU_SSE2:
-    return get_algorithms_begin_SSE2();
   case CPU_AVX:
-    return get_algorithms_begin_AVX();
+    return get_algorithms_begin_SSE2();
   case CPU_AVX2:
     return get_algorithms_begin_AVX2();
   case CPU_AVX512:
@@ -162,14 +196,14 @@ static const HashAlgorithm* get_algorithms_begin(CPUFeatureLevel level) {
 static const HashAlgorithm* get_algorithms_end(CPUFeatureLevel level) {
   switch (level) {
   case CPU_None:
+  case CPU_X86:
   case CPU_NEON:
   case CPU_MAX:
   default:
     return nullptr;
   case CPU_SSE2:
-    return get_algorithms_end_SSE2();
   case CPU_AVX:
-    return get_algorithms_end_AVX();
+    return get_algorithms_end_SSE2();
   case CPU_AVX2:
     return get_algorithms_end_AVX2();
   case CPU_AVX512:
@@ -180,8 +214,8 @@ static const HashAlgorithm* get_algorithms_end(CPUFeatureLevel level) {
 const HashAlgorithm* get_algorithms_begin(CPUFeatureLevel level) {
   switch (level) {
   case CPU_None:
+  case CPU_X86:
   case CPU_SSE2:
-  case CPU_AVX:
   case CPU_AVX2:
   case CPU_AVX512:
   case CPU_MAX:
@@ -232,6 +266,7 @@ LegacyHashAlgorithm::LegacyHashAlgorithm(
     : _name(name)
     , _extensions(extensions)
     , _params(params) {
+  UNREFERENCED_PARAMETER(expected_size);
   auto& dll = get_algorithms_dll();
   for (auto it = dll.algorithms_begin; it != dll.algorithms_end; ++it) {
     if (0 == strcmp(alg_name, it->name)) {

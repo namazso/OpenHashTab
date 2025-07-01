@@ -31,9 +31,11 @@ function Invoke-CmdScript {
 
 $Environment = (Get-ChildItem Env:);
 
-"SSE2", "AVX", "AVX2", "AVX512", "ARM64" | ForEach-Object {
+"x86", "SSE2", "AVX2", "AVX512", "ARM64" | ForEach-Object {
     $ExtraFlags = "";
-    If ($_ -eq "ARM64") {
+    If ($_ -eq "x86") {
+        Invoke-CmdScript "$VSRoot\VC\Auxiliary\Build\vcvarsamd64_x86.bat"
+    } Elseif ($_ -eq "ARM64") {
         Invoke-CmdScript "$VSRoot\VC\Auxiliary\Build\vcvarsamd64_arm64.bat"
         $ExtraFlags = "--target=arm64-pc-windows-msvc";
     } Else {

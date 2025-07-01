@@ -35,9 +35,8 @@ add_compile_definitions(
 )
 
 if ("${OHT_FLAVOR}" STREQUAL "ARM64")
+elseif ("${OHT_FLAVOR}" STREQUAL "x86")
 elseif ("${OHT_FLAVOR}" STREQUAL "SSE2")
-elseif ("${OHT_FLAVOR}" STREQUAL "AVX")
-    add_compile_options(/arch:AVX)
 elseif ("${OHT_FLAVOR}" STREQUAL "AVX2")
     add_compile_options(/arch:AVX2)
 elseif ("${OHT_FLAVOR}" STREQUAL "AVX512")
