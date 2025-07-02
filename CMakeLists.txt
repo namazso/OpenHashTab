@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with OpenHashTab.  If not, see <https://www.gnu.org/licenses/>.
 
-cmake_minimum_required(VERSION 3.31)
+cmake_minimum_required(VERSION 3.15)
 
 project(OpenHashTab)
 
@@ -22,23 +22,22 @@ set(CMAKE_CXX_STANDARD 20)
 
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
+string(REGEX REPLACE "/Ob1" "/Ob2" CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELWITHDEBINFO}")
+string(REGEX REPLACE "/Ob1" "/Ob2" CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELWITHDEBINFO}")
+
 add_compile_options(
+        -flto
         /guard:cf
-        /Zi
-        /utf-8
-        /d1nodatetime
 )
 
 add_link_options(
         /BREPRO
         /PDBALTPATH:%_PDB%
         /FILEALIGN:0x1000
+        /cetcompat
         /guard:cf
         /OPT:REF
         /OPT:ICF=10
-        /NOVCFEATURE
-        /NOCOFFGRPINFO
-        /DEBUG
 )
 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
@@ -58,7 +57,18 @@ add_library(tiny-json STATIC tiny-json/tiny-json.c)
 target_include_directories(tiny-json PUBLIC tiny-json)
 
 add_compile_options(
-        /W4
+        -Wall
+        -Wpedantic
+        -Wno-c++98-compat
+        -Wno-c++98-compat-pedantic
+        -Wno-pre-c++17-compat
+        -Wno-unsafe-buffer-usage
+        -Wno-old-style-cast
+        -Wno-shadow-field-in-constructor
+        -Wno-language-extension-token
+        -Wno-ctad-maybe-unsupported
+        $<$<CONFIG:Debug>:-fsanitize=undefined>
+        $<$<CONFIG:Debug>:-fsanitize-trap>
 )
 
 add_subdirectory(AlgorithmsDlls)
@@ -72,8 +82,3 @@ add_subdirectory(Benchmark)
 add_subdirectory(OpenHashTab)
 
 add_subdirectory(StandaloneStub)
-
-if(DEFINED BUILD_AS_ARM64X)
-    set(ARM64X_TARGETS Benchmark OpenHashTab StandaloneStub)
-    include("arm64x.cmake")
-endif()

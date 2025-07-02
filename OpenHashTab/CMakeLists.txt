@@ -22,12 +22,6 @@ file(GLOB FILES CONFIGURE_DEPENDS *.cpp *.rc *.manifest)
 
 add_library(OpenHashTab SHARED ${FILES})
 
-if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-        set_target_properties(OpenHashTab PROPERTIES OUTPUT_NAME "OpenHashTab64")
-else()
-        set_target_properties(OpenHashTab PROPERTIES OUTPUT_NAME "OpenHashTab32")
-endif()
-
 target_link_libraries(OpenHashTab PRIVATE
         Localization
         LegacyAlgorithms
