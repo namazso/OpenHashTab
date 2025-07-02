@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="WixToolset.Sdk/6.0.1" DefaultTargets="Build"
+    xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <ItemGroup Label="ProjectConfigurations">
+        <ProjectConfiguration Include="Machine|x86">
+            <Configuration>Machine</Configuration>
+            <Platform>x86</Platform>
+        </ProjectConfiguration>
+        <ProjectConfiguration Include="Machine|x64">
+            <Configuration>Machine</Configuration>
+            <Platform>x64</Platform>
+        </ProjectConfiguration>
+        <ProjectConfiguration Include="Machine|ARM64">
+            <Configuration>Machine</Configuration>
+            <Platform>ARM64</Platform>
+        </ProjectConfiguration>
+        <ProjectConfiguration Include="User|x86">
+            <Configuration>User</Configuration>
+            <Platform>x86</Platform>
+        </ProjectConfiguration>
+        <ProjectConfiguration Include="User|x64">
+            <Configuration>User</Configuration>
+            <Platform>x64</Platform>
+        </ProjectConfiguration>
+        <ProjectConfiguration Include="User|ARM64">
+            <Configuration>User</Configuration>
+            <Platform>ARM64</Platform>
+        </ProjectConfiguration>
+    </ItemGroup>
+    <PropertyGroup Condition=" '$(Configuration)' == 'Machine' ">
+        <DefineConstants>InstallerScope=perMachine</DefineConstants>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)' == 'User' ">
+        <DefineConstants>InstallerScope=perUser</DefineConstants>
+    </PropertyGroup>
+    <PropertyGroup>
+        <SignOutput>true</SignOutput>
+        <Pedantic>true</Pedantic>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="WixToolset.Util.wixext" Version="6.0.1" />
+        <PackageReference Include="WixToolset.UI.wixext" Version="6.0.1" />
+    </ItemGroup>
+    <Target Name="SignMsi">
+        <Message Importance="high" Text="SignMsi: @(SignMsi)" />
+        <Exec Command='$(AUTHENTICODE_SIGN) "%(SignMsi.FullPath)" ' />
+    </Target>
+</Project>

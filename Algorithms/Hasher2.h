@@ -67,9 +67,9 @@ public:
     const char* const* params,
     uint32_t params_size
   ) : _param_check_fn(param_check_fn)
-    , _factory_fn(factory_fn)
     , _ctx_size(ctx_size)
     , _ctx_align(ctx_align)
+    , _factory_fn(factory_fn)
     , _update_fn(update_fn)
     , _finish_fn(finish_fn)
     , _get_output_size_fn(get_output_size_fn)

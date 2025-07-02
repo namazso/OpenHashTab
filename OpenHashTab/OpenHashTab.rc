@@ -205,6 +205,11 @@ BEGIN
       VALUE "ProductName", "OpenHashTab"
     END
   END
+
+  BLOCK "VarFileInfo"
+  BEGIN
+    VALUE "Translation", 0x409, 1252
+  END
 END
 
 
