@@ -118,7 +118,9 @@
         <Feature Id="Pdb" Title="Debug symbols" AllowAdvertise="no" Level="2">
             <ComponentGroupRef Id="Pdb" />
             <ComponentGroupRef Id="Pdb32" />
+            <?if $(var.Win64) = "yes"?>
             <ComponentGroupRef Id="Pdb64" />
+            <?endif?>
         </Feature>
 
         <ComponentGroup Id="PropSheet" Directory="INSTALLDIR">
