@@ -5,7 +5,7 @@
 <?define ProductHelpLink = "https://github.com/namazso/OpenHashTab"?>
 <?define BuildDirectory32 = "cmake-openhashtab-x86"?>
 <?define AlgorithmsDllsDirectory = "AlgorithmsDlls"?>
-<?define CLSID = "{23b5bdd4-7669-42b8-9cdc-beebc8a5baa9}"?>
+<?define CLSID = "{23B5BDD4-7669-42B8-9CDC-BEEBC8A5BAA9}"?>
 
 <?if $(sys.BUILDARCH) = x64?>
     <?define Win64 = "yes"?>
@@ -14,7 +14,7 @@
 <?elseif $(sys.BUILDARCH) = arm64?>
     <?define Win64 = "yes"?>
     <?define ExpectedNativeMachine = "43620"?>
-    <?define BuildDirectory = "cmake-openhashtab-arm64ec"?>
+    <?define BuildDirectory = "cmake-openhashtab-arm64"?>
 <?else?>
     <?define Win64 = "no"?>
     <?define ExpectedNativeMachine = "332"?>
@@ -125,19 +125,15 @@
 
         <ComponentGroup Id="PropSheet" Directory="INSTALLDIR">
             <Component Id="PropSheet" Guid="fc351dfa-326e-495c-b86c-38aa820a6490">
-                <RegistryKey Root="HKCR"
-                    Key="AllFilesystemObjects\shellex\PropertySheetHandlers\$(var.CLSID)">
-                    <RegistryValue Type="string" Value="" />
-                </RegistryKey>
+                <RegistryKey ForceCreateOnInstall="yes" ForceDeleteOnUninstall="yes" Root="HKCR"
+                    Key="AllFilesystemObjects\shellex\PropertySheetHandlers\$(var.CLSID)" />
             </Component>
         </ComponentGroup>
 
         <ComponentGroup Id="ContextMenu" Directory="INSTALLDIR">
             <Component Id="ContextMenu" Guid="93c15a80-e087-4f29-bc07-b0d45099da79">
-                <RegistryKey Root="HKCR"
-                    Key="AllFilesystemObjects\shellex\ContextMenuHandlers\$(var.CLSID)">
-                    <RegistryValue Type="string" Value="" />
-                </RegistryKey>
+                <RegistryKey ForceCreateOnInstall="yes" ForceDeleteOnUninstall="yes" Root="HKCR"
+                    Key="AllFilesystemObjects\shellex\ContextMenuHandlers\$(var.CLSID)" />
             </Component>
         </ComponentGroup>
         <?if $(var.Win64) = "yes"?>
