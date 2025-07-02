@@ -37,7 +37,7 @@
         "VT_NOT_FOUND": "தரவுத்தளத்தில் காணப்படவில்லை",
         "UPDATE_DISABLED_IN_DEV_BUILD": "வளர்ச்சி கட்டமைப்பில் கிடைக்கவில்லை",
         "UPDATE_AVAILABLE_TITLE": "புதுப்பிப்பு கிடைக்கிறது",
-        "UPDATE_AVAILABLE_TEXT": "புதிய பதிப்பு%HU.%HU.%HU கிடைக்கிறது",
+        "UPDATE_AVAILABLE_TEXT": "புதிய பதிப்பு%hu.%hu.%hu கிடைக்கிறது",
         "UPDATE_NEWEST_TITLE": "வாழ்த்துக்கள்",
         "UPDATE_NEWEST_TEXT": "நீங்கள் ஏற்கனவே அண்மைக் கால பதிப்பில் இருக்கிறீர்கள்",
         "CLIPBOARD_AUTOENABLE": "கிளிப்போர்டில் ஒரு ஆச் இருந்தால், தானாகவே அந்த நீளத்தின் வழிமுறைகளை இயக்கவும்",
