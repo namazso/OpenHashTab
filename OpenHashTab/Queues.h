@@ -15,14 +15,7 @@
 //    along with OpenHashTab.  If not, see <https://www.gnu.org/licenses/>.
 #pragma once
 
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wall"
-#pragma clang diagnostic ignored "-Wsuggest-destructor-override"
-#pragma clang diagnostic ignored "-Wsign-conversion"
 #include <blockingconcurrentqueue.h>
-#pragma clang diagnostic pop
-
 
 class FileHashTask;
 

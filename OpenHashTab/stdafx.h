@@ -86,10 +86,7 @@
 #include <vector>
 #include <xutility>
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wall"
 #include <ctre-unicode.hpp>
-#pragma clang diagnostic pop
 
 EXTERN_C const IID LIBID_OpenHashTabLib;
 EXTERN_C const IID IID_IOpenHashTabShlExt;
