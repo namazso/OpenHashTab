@@ -44,11 +44,11 @@ Most of the actions should be obvious. Some not-so-obvious features are listed h
 
 **Override Windows language selection**
 
-Add a `DWORD` named `LangIdOverride` to `HKEY_CURRENT_USER\SOFTWARE\OpenHashTab` with your preferred [LCID](https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-lcid/70feba9f-294e-491e-b6eb-56532684c37f)
+Add a `DWORD` named `LangIdOverride` to `HKEY_CURRENT_USER\SOFTWARE\OpenHashTab` (create if it does not exist) with your preferred [LCID](https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-lcid/70feba9f-294e-491e-b6eb-56532684c37f)
 
 **Disable VirusTotal button for all users on a machine**
 
-Add a `DWORD` named `ForceDisableVT` to `HKEY_LOCAL_MACHINE\SOFTWARE\OpenHashTab` with a nonzero value
+Add a `DWORD` named `ForceDisableVT` to `HKEY_LOCAL_MACHINE\SOFTWARE\OpenHashTab` (create if it does not exist) with a nonzero value
 
 ## Algorithms
 
@@ -78,39 +78,11 @@ Add a `DWORD` named `ForceDisableVT` to `HKEY_LOCAL_MACHINE\SOFTWARE\OpenHashTab
 
 ![Screenshot](https://github.com/namazso/OpenHashTab/assets/8676443/727943b2-8070-4dcc-b0a4-e1149fca0245) ![Algorithms](https://github.com/namazso/OpenHashTab/assets/8676443/878c9b30-ed94-4d8b-9370-75b3be02e2cb)
 
-## Donations
-
-This software is provided completely free of charge to you, however I spent time and effort developing it. If you like this software, please consider making a donation:
-
-* Bitcoin: 1N6UzYgzn3sLV33hB2iS3FvYLzD1G4CuS2
-* Monero: 83sJ6GoeKf1U47vD9Tk6y2MEKJKxPJkECG3Ms7yzVGeiBYg2uYhBAUAZKNDH8VnAPGhwhZeqBnofDPgw9PiVtTgk95k53Rd
-
 ## Translation
 
 ![Weblate translation status](https://hosted.weblate.org/widgets/openhashtab/-/main/multi-auto.svg)
 
 Translate the project at [Weblate](https://hosted.weblate.org/projects/openhashtab/main/)
-
-### Translation contributors
-
-In addition to contributors reported by git, some translations were also contributed by: **xprism**, **[@NieLnchn](https://github.com/NieLnchn)** (Simplified Chinese), **Niccolò Zanichelli** (Italian)
-
-## Building
-
-### Requirements
-
-* Visual Studio 2022 (with desktop C++, ARM64, clang-cl)
-* vswhere in PATH
-* CMake
-* InnoSetup
-
-### Compiling
-
-1. Run build_algorithms.ps1
-2. Run build_openhashtab.ps1
-3. Use Inno Setup Compiler to compile installer.iss
-
-More options and commands can be found in the [GitHub Actions workflow](.github/workflows/ci.yml)
 
 ## Relationship to HashTab
 
@@ -118,7 +90,7 @@ HashTab was a similar purpose proprietary software. While this software has been
 
 ## License
 
-All original code in this repo are licensed under the following license, unless explicitly stated otherwise in the file:
+All original code in this repo is licensed under the following license, unless explicitly stated otherwise in the file:
 
 	Copyright 2019-2025 namazso <admin@namazso.eu>
 	OpenHashTab - File hashing shell extension
@@ -136,4 +108,4 @@ All original code in this repo are licensed under the following license, unless 
 	You should have received a copy of the GNU General Public License
 	along with OpenHashTab.  If not, see <https://www.gnu.org/licenses/>.
 
-This software also contains or uses code from various other sources, for a complete list see [license.installer.txt](license.installer.txt)
+This software also contains or uses code from various other sources, for a complete list see [InstallerLicense.rtf](InstallerLicense.rtf)
