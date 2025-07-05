@@ -19,7 +19,7 @@
 #include <string_view>
 #include <vector>
 
-#include "../Algorithms/Hasher2.h"
+#include <Hasher2.h>
 
 class LegacyHashAlgorithm {
 public:

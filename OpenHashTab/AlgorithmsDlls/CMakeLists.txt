@@ -29,17 +29,17 @@ else ()
 endif ()
 
 add_library(AlgorithmsDlls INTERFACE)
-target_include_directories(AlgorithmsDlls INTERFACE ../Algorithms)
+target_include_directories(AlgorithmsDlls INTERFACE "${OHT_ALGORITHMS_INCLUDE_DIR}")
 target_link_libraries(AlgorithmsDlls INTERFACE delayimp)
 
 foreach (FLAVOR ${FLAVORS})
     add_library("AlgorithmsDll_${FLAVOR}" SHARED IMPORTED)
     set_property(TARGET "AlgorithmsDll_${FLAVOR}"
-            PROPERTY IMPORTED_IMPLIB "${CMAKE_CURRENT_SOURCE_DIR}/AlgorithmsDll_${FLAVOR}.lib")
+            PROPERTY IMPORTED_IMPLIB "${OHT_ALGORITHMS_INSTALL_DIR}/AlgorithmsDll_${FLAVOR}.lib")
     set_property(TARGET "AlgorithmsDll_${FLAVOR}"
-            PROPERTY IMPORTED_LOCATION "${CMAKE_CURRENT_SOURCE_DIR}/AlgorithmsDll_${FLAVOR}.dll")
+            PROPERTY IMPORTED_LOCATION "${OHT_ALGORITHMS_INSTALL_DIR}/AlgorithmsDll_${FLAVOR}.dll")
     set_property(TARGET "AlgorithmsDll_${FLAVOR}"
-            PROPERTY PDB_NAME "${CMAKE_CURRENT_SOURCE_DIR}/AlgorithmsDll_${FLAVOR}.pdb")
+            PROPERTY PDB_NAME "${OHT_ALGORITHMS_INSTALL_DIR}/AlgorithmsDll_${FLAVOR}.pdb")
     target_link_options("AlgorithmsDll_${FLAVOR}" INTERFACE "/DELAYLOAD:AlgorithmsDll_${FLAVOR}.dll")
 
     target_link_libraries(AlgorithmsDlls INTERFACE "AlgorithmsDll_${FLAVOR}")

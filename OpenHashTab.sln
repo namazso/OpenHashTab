@@ -1,5 +1,5 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{21a5705d-c339-4094-a7ec-53132e4f2581}") = "OpenHashTab", "OpenHashTab.wixproj", "{bc583aa7-a402-4bbb-b972-1e80a91aeb0c}"
+Project("{21a5705d-c339-4094-a7ec-53132e4f2581}") = "OpenHashTab Setup", "Setup\OpenHashTab.wixproj", "{bc583aa7-a402-4bbb-b972-1e80a91aeb0c}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

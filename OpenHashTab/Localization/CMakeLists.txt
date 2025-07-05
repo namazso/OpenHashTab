@@ -63,10 +63,10 @@ function(lang_json_to_include JSON DEFAULT_JSON OUT_VAR)
     set(${OUT_VAR} "${RESULT}" PARENT_SCOPE)
 endfunction()
 
-file(GLOB LOCALES CONFIGURE_DEPENDS "*.json")
+file(GLOB LOCALES CONFIGURE_DEPENDS $OHT_LOCALES_DIR/*.json)
 
 # TODO: Since we're using the undocumented RtlGetString, maybe the defaulting could be moved into code.
-file(READ "en-us.json" DEFAULT_LOCALE_JSON)
+file(READ "${OHT_LOCALES_DIR}/en-us.json" DEFAULT_LOCALE_JSON)
 
 set(LOCALE_INCLUDE_CONTENT "#define LANGUAGES_IMPL \\\n")
 

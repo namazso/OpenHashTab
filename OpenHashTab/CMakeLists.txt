@@ -14,53 +14,70 @@
 # You should have received a copy of the GNU General Public License
 # along with OpenHashTab.  If not, see <https://www.gnu.org/licenses/>.
 
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.15)
 
-project(ShellExtension)
+project(OpenHashTab)
 
-file(GLOB FILES CONFIGURE_DEPENDS *.cpp *.rc *.manifest)
+set(CMAKE_CXX_STANDARD 20)
 
-add_library(OpenHashTab SHARED ${FILES})
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
-if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-        set_target_properties(OpenHashTab PROPERTIES OUTPUT_NAME "OpenHashTab64")
-else()
-        set_target_properties(OpenHashTab PROPERTIES OUTPUT_NAME "OpenHashTab32")
-endif()
+add_compile_options(
+        -flto
+        /guard:cf
+        /Zi
+)
 
-target_link_libraries(OpenHashTab PRIVATE
-        Localization
-        LegacyAlgorithms
-        ctre
-        concurrentqueue
-        tiny-json
-        ntdll.lib
-        winhttp.lib
-        )
+add_link_options(
+        /BREPRO
+        /PDBALTPATH:%_PDB%
+        /FILEALIGN:0x1000
+        /cetcompat
+        /guard:cf
+        /OPT:REF
+        /OPT:ICF=10
+        /DEBUG
+)
 
-target_compile_definitions(OpenHashTab PRIVATE
-        UNICODE
-        _UNICODE
-        _WINDLL
-        "CI_VERSION=\"${CI_VERSION}\""
-        "CI_VERSION_MAJOR=${CI_VERSION_MAJOR}"
-        "CI_VERSION_MINOR=${CI_VERSION_MINOR}"
-        "CI_VERSION_PATCH=${CI_VERSION_PATCH}"
-        )
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
-target_compile_options(OpenHashTab PRIVATE
-        /EHsc
-        )
+# https://gitlab.kitware.com/cmake/cmake/-/issues/25012
+# https://github.com/llvm/llvm-project/issues/63426
+set(CMAKE_RC_FLAGS "-C65001")
 
-target_link_options(OpenHashTab PRIVATE
-        /EXPORT:DllCanUnloadNow
-        /EXPORT:DllGetClassObject
-        /DELAYLOAD:winhttp.dll
-        )
+set(CTRE_BUILD_TESTS OFF)
+set(CTRE_BUILD_PACKAGE OFF)
+add_subdirectory(compile-time-regular-expressions)
 
-target_precompile_headers(OpenHashTab PRIVATE stdafx.h)
+add_subdirectory(concurrentqueue)
 
-add_custom_command(TARGET OpenHashTab POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_RUNTIME_DLLS:OpenHashTab> $<TARGET_FILE_DIR:OpenHashTab>
-        COMMAND_EXPAND_LISTS
-        )
+add_library(tiny-json STATIC tiny-json/tiny-json.c)
+target_include_directories(tiny-json PUBLIC tiny-json)
+
+add_compile_options(
+        -Wall
+        -Wpedantic
+        -Wno-c++98-compat
+        -Wno-c++98-compat-pedantic
+        -Wno-pre-c++17-compat
+        -Wno-unsafe-buffer-usage
+        -Wno-old-style-cast
+        -Wno-shadow-field-in-constructor
+        -Wno-language-extension-token
+        -Wno-ctad-maybe-unsupported
+        $<$<CONFIG:Debug>:-fsanitize=undefined>
+        $<$<CONFIG:Debug>:-fsanitize-trap>
+)
+
+add_subdirectory(AlgorithmsDlls)
+
+add_subdirectory(Localization)
+
+add_subdirectory(LegacyAlgorithms)
+
+add_subdirectory(Benchmark)
+
+add_subdirectory(OpenHashTab)
+
+add_subdirectory(StandaloneStub)

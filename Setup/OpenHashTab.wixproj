@@ -28,14 +28,20 @@
         </ProjectConfiguration>
     </ItemGroup>
     <PropertyGroup Condition=" '$(Configuration)' == 'Machine' ">
-        <DefineConstants>InstallerScope=perMachine</DefineConstants>
+        <DefineConstants>$(DefineConstants);InstallerScope=perMachine</DefineConstants>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)' == 'User' ">
-        <DefineConstants>InstallerScope=perUser</DefineConstants>
+        <DefineConstants>$(DefineConstants);InstallerScope=perUser</DefineConstants>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(AUTHENTICODE_SIGN)' != '' ">
+        <SignOutput>true</SignOutput>
     </PropertyGroup>
     <PropertyGroup>
-        <SignOutput>true</SignOutput>
+        <DefineConstants>$(DefineConstants);ProductVersion=$(ProductVersion);BuildDirectory=$(BuildDirectory);BuildDirectory32=$(BuildDirectory32);AlgorithmsDllsDirectory=$(AlgorithmsDllsDirectory)</DefineConstants>
         <Pedantic>true</Pedantic>
+        <IntermediateOutputPath>$(SolutionDir)build\wix_$(Configuration)_$(Platform)\</IntermediateOutputPath>
+        <OutputPath>$(SolutionDir)install\</OutputPath>
+        <TargetName>OpenHashTab_$(Configuration)_$(Platform)</TargetName>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="WixToolset.Util.wixext" Version="6.0.1" />

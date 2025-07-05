@@ -20,4 +20,4 @@ project(Benchmark)
 
 add_executable(${PROJECT_NAME} Benchmark.cpp)
 
-target_link_libraries(${PROJECT_NAME} PRIVATE LegacyAlgorithms)
+target_link_libraries(${PROJECT_NAME} PRIVATE AlgorithmsDlls LegacyAlgorithms)

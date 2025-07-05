@@ -1,11 +1,11 @@
 [submodule "concurrentqueue"]
-	path = concurrentqueue
+	path = OpenHashTab/concurrentqueue
 	url = https://github.com/cameron314/concurrentqueue.git
 [submodule "Algorithms/mbedtls/mbedtls"]
 	path = Algorithms/mbedtls/mbedtls
 	url = https://github.com/ARMmbed/mbedtls.git
 [submodule "tiny-json"]
-	path = tiny-json
+	path = OpenHashTab/tiny-json
 	url = https://github.com/rafagafe/tiny-json.git
 [submodule "Algorithms/xxHash/xxHash"]
 	path = Algorithms/xxHash/xxHash
@@ -26,5 +26,5 @@
 	path = Algorithms/QuickXorHash/QuickXorHash
 	url = https://github.com/namazso/QuickXorHash.git
 [submodule "compile-time-regular-expressions"]
-	path = compile-time-regular-expressions
+	path = OpenHashTab/compile-time-regular-expressions
 	url = https://github.com/hanickadot/compile-time-regular-expressions.git
