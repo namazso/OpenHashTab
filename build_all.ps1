@@ -165,8 +165,8 @@ If (-not $VSRoot) {
     Throw "Visual Studio not found."
 }
 
-$WinSdkVer = If ($Env:WindowsTargetPlatformVersion) { $Env:WindowsTargetPlatformVersion } Else { $(Get-Item "hklm:\SOFTWARE\Microsoft\Microsoft SDKs\Windows").GetValue("CurrentVersion") };
-$WinSdkDir = If ($Env:WindowsSdkDir) { $Env:WindowsSdkDir } Else { $(Get-Item "hklm:\SOFTWARE\Microsoft\Microsoft SDKs\Windows").GetValue("CurrentInstallFolder") };
+$WinSdkVer = If ($Env:WindowsTargetPlatformVersion) { $Env:WindowsTargetPlatformVersion } Else { $(Get-Item "hklm:\SOFTWARE\WOW6432Node\Microsoft\Microsoft SDKs\Windows").GetValue("CurrentVersion") };
+$WinSdkDir = If ($Env:WindowsSdkDir) { $Env:WindowsSdkDir } Else { $(Get-Item "hklm:\SOFTWARE\WOW6432Node\Microsoft\Microsoft SDKs\Windows").GetValue("CurrentInstallFolder") };
 
 $Cmake = Get-Command "cmake";
 $Dotnet = Get-Command "dotnet";
