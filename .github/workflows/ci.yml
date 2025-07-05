@@ -19,6 +19,12 @@ jobs:
           submodules: recursive
           fetch-depth: 0
 
+      - name: Install 26100 SDK and WDK
+        run: |
+          winget install --source winget --exact --id Microsoft.WindowsSDK.10.0.26100 --disable-interactivity --accept-source-agreements
+          winget install --source winget --exact --id Microsoft.WindowsWDK.10.0.26100 --disable-interactivity --accept-source-agreements
+          echo "WindowsTargetPlatformVersion=10.0.26100.0" >> $Env:GITHUB_ENV
+
       - name: Figure out if we're running for a tag
         id: checktag
         run: |
