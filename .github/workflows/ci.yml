@@ -1,0 +1,70 @@
+name: release
+
+on:
+  push:
+    tags:
+      - "*.*.*"
+    branches:
+      - "*"
+
+jobs:
+  build:
+    name: build-windows
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Figure out if we're running for a tag
+        id: checktag
+        run: |
+          cd ${{ github.workspace }}
+          If($Env:GITHUB_REF -match "([0-9]+)\.([0-9]+)\.([0-9]+)") {
+              $IsRelease = "yes";
+              $Version = $Matches[0];
+              $VersionMajor = $Matches[1];
+              $VersionMinor = $Matches[2];
+              $VersionPatch = $Matches[3];
+          } Else {
+              $IsRelease = "no";
+              $Version = (git describe --dirty --broken --always);
+              If($Version -match "([0-9]*)\.([0-9]*)\.([0-9]*)-.*") {
+                  $VersionMajor = $Matches[1];
+                  $VersionMinor = $Matches[2];
+                  $VersionPatch = $Matches[3];
+              } Else {
+                  $VersionMajor = 0;
+                  $VersionMinor = 0;
+                  $VersionPatch = 0;
+              }
+          }
+          Echo ("is_release=" + $IsRelease) >> $Env:GITHUB_OUTPUT;
+          Echo ("version=" + $Version) >> $Env:GITHUB_OUTPUT;
+          Echo ("version_major=" + $VersionMajor) >> $Env:GITHUB_OUTPUT;
+          Echo ("version_minor=" + $VersionMinor) >> $Env:GITHUB_OUTPUT;
+          Echo ("version_patch=" + $VersionPatch) >> $Env:GITHUB_OUTPUT;
+
+      - name: Build all
+        run: |
+          cd ${{ github.workspace }}
+          .\build_all.ps1
+
+      - name: Upload installers
+        uses: actions/upload-artifact@v4
+        with:
+          name: installers
+          path: |
+            .\install\*.msi
+
+      - name: Upload unpacked
+        uses: actions/upload-artifact@v4
+        with:
+          name: unpacked
+          path: |
+            .\build\oht-*\*.dll
+            .\build\oht-*\*.exe
+            .\build\oht-*\*.pdb
