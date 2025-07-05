@@ -42,11 +42,11 @@ Most of the actions should be obvious. Some not-so-obvious features are listed h
 
 ### Advanced features
 
-**Override Windows language selection**
+#### Override Windows language selection
 
 Add a `DWORD` named `LangIdOverride` to `HKEY_CURRENT_USER\SOFTWARE\OpenHashTab` (create if it does not exist) with your preferred [LCID](https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-lcid/70feba9f-294e-491e-b6eb-56532684c37f)
 
-**Disable VirusTotal button for all users on a machine**
+#### Disable VirusTotal button for all users on a machine
 
 Add a `DWORD` named `ForceDisableVT` to `HKEY_LOCAL_MACHINE\SOFTWARE\OpenHashTab` (create if it does not exist) with a nonzero value
 
@@ -84,6 +84,10 @@ Add a `DWORD` named `ForceDisableVT` to `HKEY_LOCAL_MACHINE\SOFTWARE\OpenHashTab
 
 Translate the project at [Weblate](https://hosted.weblate.org/projects/openhashtab/main/)
 
+## Building
+
+See [build_all.ps1](build_all.ps1)
+
 ## Relationship to HashTab
 
 HashTab was a similar purpose proprietary software. While this software has been inspired by it, I was never a user of HashTab and this software contains no code or resources related to it.
@@ -92,20 +96,20 @@ HashTab was a similar purpose proprietary software. While this software has been
 
 All original code in this repo is licensed under the following license, unless explicitly stated otherwise in the file:
 
-	Copyright 2019-2025 namazso <admin@namazso.eu>
-	OpenHashTab - File hashing shell extension
+    Copyright 2019-2025 namazso <admin@namazso.eu>
+    OpenHashTab - File hashing shell extension
 
-	OpenHashTab is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    OpenHashTab is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	OpenHashTab is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    OpenHashTab is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with OpenHashTab.  If not, see <https://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with OpenHashTab.  If not, see <https://www.gnu.org/licenses/>.
 
 This software also contains or uses code from various other sources, for a complete list see [InstallerLicense.rtf](InstallerLicense.rtf)
