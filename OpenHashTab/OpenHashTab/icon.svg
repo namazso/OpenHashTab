@@ -1,85 +1,22 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   viewBox="0 0 32 32"
-   version="1.1"
-   id="svg42"
-   sodipodi:docname="icon.svg"
-   inkscape:version="1.0.1 (3bc2e813f5, 2020-09-07)">
-  <metadata
-     id="metadata46">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
-  <sodipodi:namedview
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1"
-     objecttolerance="10"
-     gridtolerance="10"
-     guidetolerance="10"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:window-width="1306"
-     inkscape:window-height="1311"
-     id="namedview44"
-     showgrid="false"
-     inkscape:pagecheckerboard="true"
-     inkscape:zoom="11.313709"
-     inkscape:cx="5.3118165"
-     inkscape:cy="18.124701"
-     inkscape:window-x="181"
-     inkscape:window-y="70"
-     inkscape:window-maximized="0"
-     inkscape:current-layer="_351-Document_Check" />
-  <defs
-     id="defs31">
-    <style
-       id="style29">.cls-1{fill:none;stroke:#000;stroke-linejoin:round;stroke-width:2px;}</style>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 96 96">
+  <!-- Generator: Adobe Illustrator 29.6.1, SVG Export Plug-In . SVG Version: 2.1.1 Build 9)  -->
+  <defs>
+    <style>
+      .st0 {
+        fill: #fff;
+      }
+
+      .st1 {
+        fill: #979593;
+      }
+
+      .st2 {
+        fill: #107c41;
+      }
+    </style>
   </defs>
-  <g
-     data-name="351-Document Check"
-     id="_351-Document_Check">
-    <rect
-       style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero"
-       id="rect921"
-       width="18"
-       height="30"
-       x="10"
-       y="1" />
-    <rect
-       style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero"
-       id="rect923"
-       width="10.1875"
-       height="24"
-       x="4"
-       y="7" />
-    <polyline
-       class="cls-1"
-       points="10 1 10 7 4 7"
-       id="polyline37"
-       style="fill:#ffffff;fill-opacity:1" />
-    <polygon
-       class="cls-1"
-       points="10 1 4 7 4 31 28 31 28 1 10 1"
-       id="polygon35" />
-    <polyline
-       class="cls-1"
-       points="10 19 13 22 22 13"
-       id="polyline39"
-       style="stroke:#00de00;stroke-opacity:1" />
-  </g>
+  <path class="st0" d="M60.96,8H18.27c-.7,0-1.27.57-1.27,1.27v77.46c0,.7.57,1.27,1.27,1.27h59.68c.7,0,1.27-.57,1.27-1.27V26.26c0-.79-.31-1.54-.87-2.1l-15.3-15.3c-.56-.56-1.31-.87-2.1-.87Z"/>
+  <path class="st1" d="M79.12,24.71L61.29,6.88c-.57-.57-1.32-.88-2.12-.88H19c-1.65,0-3,1.35-3,3v78c0,1.65,1.35,3,3,3h58c1.65,0,3-1.35,3-3V26.83c0-.8-.31-1.55-.88-2.12ZM60,8.41l17.59,17.59h-16.59c-.55,0-1-.45-1-1V8.41ZM77,88H19c-.55,0-1-.45-1-1V9c0-.55.45-1,1-1h39v17c0,1.65,1.35,3,3,3h17v59c0,.55-.45,1-1,1Z"/>
+  <path class="st2" d="M26.98,57.85c0-.38.1-.76.24-1.14s.38-.67.62-.95.57-.48.9-.62.71-.24,1.14-.24c.76,0,1.47.29,2.04.9l9.64,8.41,22.56-22.04c.57-.57,1.28-.9,2.09-.9.38,0,.76.1,1.14.24.33.14.66.38.9.67.28.29.48.62.62.95s.24.71.24,1.14c0,.81.33,2.19-.24,2.8l-25.27,24.7c-.24.28-.57.48-.95.62-.33.14-.71.24-1.14.24-.76,0-2.09.33-2.66-.24l-11.73-11.88c-.57-.57-.24-1.76-.24-2.61h.1s0-.05,0-.05Z"/>
 </svg>
