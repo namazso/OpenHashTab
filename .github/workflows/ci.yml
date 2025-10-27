@@ -60,14 +60,14 @@ jobs:
           .\build_all.ps1
 
       - name: Upload installers
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: installers
           path: |
             .\install\*.msi
 
       - name: Upload unpacked
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: unpacked
           path: |
